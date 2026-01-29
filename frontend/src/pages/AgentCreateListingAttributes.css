@@ -1,0 +1,90 @@
+.acat-form-card {
+  padding: 28px 28px 24px;
+  max-width: 860px;
+}
+
+.acat-section {
+  margin-bottom: 32px;
+}
+
+.acat-section:last-of-type {
+  margin-bottom: 0;
+}
+
+.acat-section-title {
+  margin: 0 0 16px 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.acat-checkbox-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.acat-checkbox-row {
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.acat-checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.acat-checkbox,
+.acat-radio {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  accent-color: #2563EB;
+  flex-shrink: 0;
+}
+
+.acat-checkbox-text {
+  font-size: 14px;
+  font-weight: 500;
+  color: #111827;
+}
+
+.acat-footer-actions {
+  margin-top: 32px;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+@media (max-width: 768px) {
+  .acat-checkbox-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .acat-checkbox-row {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .acat-footer-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .acld-prev-btn,
+  .aclc-next-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .acat-checkbox-grid {
+    grid-template-columns: 1fr;
+  }
+}
+

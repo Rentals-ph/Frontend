@@ -13,4 +13,7 @@ export { default as TestimonialCard } from './TestimonialCard'
 export { default as BlogCard } from './BlogCard'
 export { default as LoginModal } from './LoginModal'
 export { default as RegisterModal } from './RegisterModal'
+export { default as AgentLayout } from './AgentLayout'
+export { default as AgentSidebar } from './AgentSidebar'
+export { default as AgentHeader } from './AgentHeader'
 

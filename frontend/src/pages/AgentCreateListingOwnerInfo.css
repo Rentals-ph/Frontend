@@ -1,0 +1,154 @@
+.acoi-form-card {
+  padding: 28px 28px 24px;
+  max-width: 860px;
+}
+
+.acoi-section {
+  margin-bottom: 32px;
+}
+
+.acoi-section:last-of-type {
+  margin-bottom: 0;
+}
+
+.acoi-section-title {
+  margin: 0 0 16px 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.acoi-file-upload {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.acoi-file-input {
+  display: none;
+}
+
+.acoi-file-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border: 1px solid #2563EB;
+  border-radius: 8px;
+  background-color: #FFFFFF;
+  color: #2563EB;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.acoi-file-label:hover {
+  background-color: #EFF6FF;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px rgba(37, 99, 235, 0.1);
+}
+
+.acoi-file-icon {
+  font-size: 18px;
+}
+
+.acoi-file-name {
+  font-size: 14px;
+  color: #6B7280;
+}
+
+.acoi-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.acoi-form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.acoi-form-group.acoi-full-width {
+  grid-column: 1 / -1;
+}
+
+.acoi-phone-input {
+  display: flex;
+  gap: 0;
+  align-items: stretch;
+}
+
+.acoi-country-code {
+  width: 180px;
+  flex-shrink: 0;
+}
+
+.acoi-country-code .aclc-select {
+  border-radius: 8px 0 0 8px;
+  border-right: none;
+}
+
+.acoi-phone-number {
+  flex: 1;
+  border-radius: 0 8px 8px 0;
+  border-left: 1px solid #D1D5DB;
+}
+
+.acoi-phone-number:focus {
+  border-left-color: #2563EB;
+}
+
+.acoi-footer-actions {
+  margin-top: 32px;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+@media (max-width: 768px) {
+  .acoi-form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .acoi-form-group.acoi-full-width {
+    grid-column: 1;
+  }
+
+  .acoi-phone-input {
+    flex-direction: column;
+  }
+
+  .acoi-country-code {
+    width: 100%;
+  }
+
+  .acoi-country-code .aclc-select {
+    border-radius: 8px 8px 0 0;
+    border-right: 1px solid #D1D5DB;
+    border-bottom: none;
+  }
+
+  .acoi-phone-number {
+    border-radius: 0 0 8px 8px;
+    border-left: 1px solid #D1D5DB;
+    border-top: none;
+  }
+
+  .acoi-phone-number:focus {
+    border-top-color: #2563EB;
+    border-left-color: #D1D5DB;
+  }
+
+  .acoi-footer-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .acld-prev-btn,
+  .aclc-next-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+

@@ -1,0 +1,198 @@
+.agent-rent-estimate-section {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.agent-rent-estimate-heading h2 {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.agent-rent-estimate-heading p {
+  margin: 6px 0 0 0;
+  font-size: 14px;
+  color: #6B7280;
+}
+
+.agent-rent-estimate-card {
+  width: 100%;
+  max-width: 520px;
+  background: #FFFFFF;
+  border-radius: 10px;
+  box-shadow: 0 10px 25px rgba(17, 24, 39, 0.12);
+  overflow: hidden;
+  margin: 0 auto;
+}
+
+.agent-rent-estimate-card-header {
+  background: #2563EB;
+  padding: 18px 22px;
+}
+
+.agent-rent-estimate-card-header h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: #FFFFFF;
+  text-align: center;
+}
+
+.agent-rent-estimate-form {
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.agent-re-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.agent-re-field label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.agent-re-select-wrap {
+  position: relative;
+}
+
+.agent-re-select {
+  width: 100%;
+  padding: 12px 44px 12px 14px;
+  border: 1px solid #D1D5DB;
+  border-radius: 8px;
+  background: #FFFFFF;
+  font-size: 14px;
+  color: #111827;
+  outline: none;
+  appearance: none;
+}
+
+.agent-re-select:focus {
+  border-color: #2563EB;
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
+}
+
+.agent-re-select-icon {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #6B7280;
+  pointer-events: none;
+}
+
+.agent-re-input-wrap {
+  position: relative;
+}
+
+.agent-re-input-icon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #9CA3AF;
+  font-size: 18px;
+}
+
+.agent-re-input {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid #D1D5DB;
+  border-radius: 8px;
+  background: #FFFFFF;
+  font-size: 14px;
+  color: #111827;
+  outline: none;
+}
+
+.agent-re-input-wrap .agent-re-input {
+  padding-left: 42px;
+}
+
+.agent-re-input::placeholder {
+  color: #9CA3AF;
+}
+
+.agent-re-input:focus {
+  border-color: #2563EB;
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
+}
+
+.agent-re-submit {
+  margin-top: 4px;
+  width: 100%;
+  padding: 13px 16px;
+  border: 0;
+  border-radius: 8px;
+  background: #2563EB;
+  color: #FFFFFF;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.06s ease, background-color 0.2s ease;
+}
+
+.agent-re-submit:hover {
+  background: #1D4ED8;
+}
+
+.agent-re-submit:active {
+  transform: translateY(1px);
+}
+
+.agent-re-result {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: #EFF6FF;
+  border: 1px solid #DBEAFE;
+}
+
+.agent-re-result-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #1D4ED8;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+}
+
+.agent-re-result-value {
+  font-size: 16px;
+  font-weight: 800;
+  color: #111827;
+}
+
+.agent-re-note {
+  padding-top: 8px;
+  text-align: center;
+  color: #6B7280;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.agent-re-note p {
+  margin: 0;
+}
+
+.agent-re-note p + p {
+  margin-top: 8px;
+}
+
+@media (max-width: 768px) {
+  .agent-rent-estimate-card {
+    max-width: 100%;
+  }
+}
+
+

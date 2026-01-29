@@ -1,0 +1,313 @@
+@import './AgentDashboard.css';
+
+/* Page specific tweaks to match the My Listings design */
+.agent-my-listings .aml-page {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.agent-my-listings .aml-title {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.agent-my-listings .aml-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+}
+
+.agent-my-listings .metric-card.red .metric-icon {
+  background-color: #FEE2E2;
+  color: #EF4444;
+}
+
+.agent-my-listings .aml-stat-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+}
+
+.agent-my-listings .aml-stat-delta {
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.agent-my-listings .aml-stat-delta.positive {
+  color: #16A34A;
+}
+
+.agent-my-listings .aml-stat-delta.muted {
+  color: #6B7280;
+  font-weight: 500;
+}
+
+.agent-my-listings .aml-search-map {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.agent-my-listings .aml-search-row {
+  display: flex;
+  gap: 12px;
+  align-items: stretch;
+}
+
+.agent-my-listings .aml-search {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background-color: #FFFFFF;
+  border: 1px solid #E5E7EB;
+  border-radius: 10px;
+  padding: 14px 16px;
+}
+
+.agent-my-listings .aml-search-icon {
+  color: #9CA3AF;
+  font-size: 18px;
+}
+
+.agent-my-listings .aml-search-input {
+  border: none;
+  outline: none;
+  width: 100%;
+  font-size: 15px;
+  color: #111827;
+  background: transparent;
+}
+
+.agent-my-listings .aml-find-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 18px;
+  min-width: 120px;
+  border: none;
+  border-radius: 10px;
+  background-color: #2563EB;
+  color: #FFFFFF;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.agent-my-listings .aml-find-btn:hover {
+  background-color: #1D4ED8;
+}
+
+.agent-my-listings .aml-map {
+  background-color: #FFFFFF;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid #E5E7EB;
+  height: 360px;
+}
+
+.agent-my-listings .aml-map-iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.agent-my-listings .aml-filters {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  color: #6B7280;
+  font-size: 13px;
+  padding: 4px 2px;
+}
+
+.agent-my-listings .aml-filter {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.agent-my-listings .aml-filter input {
+  width: 16px;
+  height: 16px;
+  accent-color: #2563EB;
+}
+
+.agent-my-listings .aml-filter-pill {
+  background: transparent;
+  border: none;
+  color: #6B7280;
+  font-size: 13px;
+  cursor: pointer;
+  padding: 6px 8px;
+  border-radius: 8px;
+}
+
+.agent-my-listings .aml-filter-pill:hover {
+  background-color: #F3F4F6;
+  color: #111827;
+}
+
+.agent-my-listings .aml-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 22px;
+  margin-top: 6px;
+}
+
+.agent-my-listings .aml-card {
+  background-color: #FFFFFF;
+  border-radius: 14px;
+  border: 1px solid #E5E7EB;
+  overflow: hidden;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+  display: flex;
+  gap: 0;
+}
+
+.agent-my-listings .aml-card-media {
+  position: relative;
+  width: 190px;
+  min-width: 190px;
+  background-color: #F3F4F6;
+}
+
+.agent-my-listings .aml-card-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.agent-my-listings .aml-pin {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  background: #FFFFFF;
+  border: 1px solid #E5E7EB;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #2563EB;
+}
+
+.agent-my-listings .aml-edit-btn {
+  position: absolute;
+  left: 14px;
+  right: 14px;
+  bottom: 12px;
+  height: 36px;
+  border-radius: 10px;
+  border: 1px solid #E5E7EB;
+  background: rgba(255, 255, 255, 0.9);
+  color: #2563EB;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.agent-my-listings .aml-edit-btn:hover {
+  background: #FFFFFF;
+  border-color: #2563EB;
+}
+
+.agent-my-listings .aml-card-body {
+  flex: 1;
+  padding: 16px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.agent-my-listings .aml-card-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #111827;
+  line-height: 1.25;
+}
+
+.agent-my-listings .aml-card-address {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #6B7280;
+  font-size: 12px;
+}
+
+.agent-my-listings .aml-address-icon {
+  color: #9CA3AF;
+}
+
+.agent-my-listings .aml-card-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 10px;
+  border-top: 1px solid #E5E7EB;
+}
+
+.agent-my-listings .aml-rating {
+  display: inline-flex;
+  gap: 4px;
+  font-size: 16px;
+  line-height: 1;
+}
+
+.agent-my-listings .aml-star {
+  color: #D1D5DB;
+}
+
+.agent-my-listings .aml-star.filled {
+  color: #FBBF24;
+}
+
+.agent-my-listings .aml-views {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #6B7280;
+  font-size: 12px;
+}
+
+@media (max-width: 1400px) {
+  .agent-my-listings .aml-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 1024px) {
+  .agent-my-listings .aml-grid {
+    grid-template-columns: 1fr;
+  }
+  .agent-my-listings .aml-card-media {
+    width: 220px;
+    min-width: 220px;
+  }
+}
+
+@media (max-width: 640px) {
+  .agent-my-listings .aml-search-row {
+    flex-direction: column;
+  }
+  .agent-my-listings .aml-find-btn {
+    height: 48px;
+    width: 100%;
+  }
+  .agent-my-listings .aml-card {
+    flex-direction: column;
+  }
+  .agent-my-listings .aml-card-media {
+    width: 100%;
+    min-width: 100%;
+    height: 220px;
+  }
+}
+
+

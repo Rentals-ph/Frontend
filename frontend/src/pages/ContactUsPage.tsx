@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
-import PageHeader from '../components/PageHeader'
 import './ContactUsPage.css'
 
 function ContactUsPage() {

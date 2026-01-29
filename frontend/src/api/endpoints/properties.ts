@@ -1,6 +1,6 @@
 import apiClient from '../client'
 import type { Property } from '../../types'
-import type { ApiResponse, PaginatedResponse } from '../types'
+import type { PaginatedResponse } from '../types'
 
 /**
  * Properties API endpoints

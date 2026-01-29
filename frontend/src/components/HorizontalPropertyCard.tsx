@@ -27,7 +27,7 @@ function HorizontalPropertyCard({
   rentManagerRole = 'Rent Manager',
   bedrooms = 4,
   bathrooms = 2,
-  parking = 2,
+  parking: _parking = 2,
   propertySize = '24 sqft',
 }: HorizontalPropertyCardProps) {
   const navigate = useNavigate()

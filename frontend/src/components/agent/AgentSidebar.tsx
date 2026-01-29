@@ -1,23 +1,61 @@
+import { useState, useEffect } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import './AgentSidebar.css'
 import {
-  FiUser,
   FiMail,
-  FiEdit3,
   FiDownload,
   FiCreditCard,
-  FiLock,
-  FiLogOut,
-  FiPlus,
+  FiHome,
   FiList,
   FiBarChart2,
   FiFileText,
-  FiBookOpen
+  FiBookOpen,
+  FiLayout,
 } from 'react-icons/fi'
 
 
 function AgentSidebar() {
   const location = useLocation()
+  const [hasUnreadMessages, setHasUnreadMessages] = useState(false)
+
+  useEffect(() => {
+    const checkUnreadMessages = () => {
+      // Check if account is processing (this would show as a notification in inbox)
+      const registrationStatus = localStorage.getItem('agent_registration_status')
+      const agentStatus = localStorage.getItem('agent_status')
+      
+      let hasUnread = false
+      
+      if (registrationStatus === 'processing' || 
+          agentStatus === 'processing' || 
+          agentStatus === 'pending' || 
+          agentStatus === 'under_review') {
+        hasUnread = true
+      }
+
+      // Check for unread messages count
+      const unreadCount = localStorage.getItem('unread_messages_count')
+      if (unreadCount && parseInt(unreadCount) > 0) {
+        hasUnread = true
+      }
+
+      setHasUnreadMessages(hasUnread)
+    }
+
+    // Check initially
+    checkUnreadMessages()
+
+    // Listen for storage changes (when inbox updates unread count)
+    window.addEventListener('storage', checkUnreadMessages)
+    
+    // Also check periodically in case localStorage is updated in the same window
+    const interval = setInterval(checkUnreadMessages, 1000)
+
+    return () => {
+      window.removeEventListener('storage', checkUnreadMessages)
+      clearInterval(interval)
+    }
+  }, [])
 
   const isActive = (path: string) => {
     if (path === '/agent') {
@@ -42,28 +80,29 @@ function AgentSidebar() {
       </div>
 
       <nav className="sidebar-nav">
-        <div className="nav-section">
-          <h3 className="nav-section-title">Profile</h3>
-          <Link
-            to="/agent/profile"
-            className={`nav-item ${isActive('/agent/profile') ? 'active' : ''}`}
+      <Link
+            to="/"
+            className={`nav-item ${isActive('/') && !location.pathname.includes('//') ? 'active' : ''}`}
           >
-            <FiUser className="nav-icon" />
-            <span>My Profile</span>
+            <FiLayout className="nav-icon" />
+            <span>Home</span>
+          </Link>
+        <Link
+            to="/agent"
+            className={`nav-item ${isActive('/agent') && !location.pathname.includes('/agent/') ? 'active' : ''}`}
+          >
+            <FiHome className="nav-icon" />
+            <span>Dashboard</span>
           </Link>
           <Link
             to="/agent/inbox"
             className={`nav-item ${isActive('/agent/inbox') ? 'active' : ''}`}
           >
-            <FiMail className="nav-icon" />
+            <div className="nav-icon-wrapper">
+              <FiMail className="nav-icon" />
+              {hasUnreadMessages && <span className="inbox-indicator"></span>}
+            </div>
             <span>Inbox</span>
-          </Link>
-          <Link
-            to="/agent/edit-profile"
-            className={`nav-item ${isActive('/agent/edit-profile') ? 'active' : ''}`}
-          >
-            <FiEdit3 className="nav-icon" />
-            <span>Edit Profile</span>
           </Link>
           <Link
             to="/agent/downloadables"
@@ -79,24 +118,9 @@ function AgentSidebar() {
             <FiCreditCard className="nav-icon" />
             <span>Digital Business Card</span>
           </Link>
-          <Link
-            to="/agent/change-password"
-            className={`nav-item ${isActive('/agent/change-password') ? 'active' : ''}`}
-          >
-            <FiLock className="nav-icon" />
-            <span>Change Password</span>
-          </Link>
-        </div>
 
         <div className="nav-section">
-          <h3 className="nav-section-title">Rent Management</h3>
-          <Link
-            to="/agent"
-            className={`nav-item ${isActive('/agent') && !location.pathname.includes('/agent/') ? 'active' : ''}`}
-          >
-            <FiPlus className="nav-icon" />
-            <span>Create Listing</span>
-          </Link>
+          <h2 className="nav-section-title">Rent Management</h2>
           <Link
             to="/agent/listings"
             className={`nav-item ${isActive('/agent/listings') ? 'active' : ''}`}
@@ -127,12 +151,7 @@ function AgentSidebar() {
           </Link>
         </div>
 
-        <div className="nav-section">
-          <Link to="/logout" className="nav-item logout">
-            <FiLogOut className="nav-icon" />
-            <span>Logout</span>
-          </Link>
-        </div>
+        
       </nav>
     </aside>
   )

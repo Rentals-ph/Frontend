@@ -382,21 +382,8 @@ class AgentController extends Controller
                 ], 401);
             }
 
-            // Check if agent account is approved
-            if ($agent->status !== 'approved') {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Your account is pending approval. Please wait for admin approval.',
-                ], 401);
-            }
-
-            // Check if agent is verified
-            if (!$agent->verified) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Your account has not been verified yet. Please wait for admin verification.',
-                ], 401);
-            }
+            // Allow login for all agents (including processing/pending)
+            // Processing agents can access dashboard but listings won't be visible to users
 
             // Revoke all existing tokens (optional - for security)
             // $agent->tokens()->delete();
@@ -404,13 +391,19 @@ class AgentController extends Controller
             // Create a new token
             $token = $agent->createToken('auth-token')->plainTextToken;
 
-            // Return success response with token
+            // Return success response with token and user status
             return response()->json([
                 'success' => true,
                 'message' => 'Login successful',
                 'data' => [
                     'token' => $token,
                     'token_type' => 'Bearer',
+                    'user' => [
+                        'id' => $agent->id,
+                        'name' => $agent->first_name . ' ' . $agent->last_name,
+                        'email' => $agent->email,
+                        'status' => $agent->status ?? 'pending',
+                    ],
                     'agent' => [
                         'id' => $agent->id,
                         'first_name' => $agent->first_name,
@@ -420,8 +413,8 @@ class AgentController extends Controller
                         'agency_name' => $agent->agency_name,
                         'prc_license_number' => $agent->prc_license_number,
                         'license_type' => $agent->license_type,
-                        'status' => $agent->status,
-                        'verified' => $agent->verified,
+                        'status' => $agent->status ?? 'pending',
+                        'verified' => $agent->verified ?? false,
                     ],
                 ],
             ], 200);

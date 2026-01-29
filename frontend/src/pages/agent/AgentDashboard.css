@@ -421,6 +421,75 @@
   color: #92400E;
 }
 
+/* Create Listing Card */
+.create-listing-card {
+  background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
+  border: none;
+  box-shadow: 0 4px 6px rgba(59, 130, 246, 0.2);
+}
+
+.create-listing-content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.create-listing-icon-wrapper {
+  width: 56px;
+  height: 56px;
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(10px);
+}
+
+.create-listing-icon {
+  font-size: 28px;
+  color: #FFFFFF;
+}
+
+.create-listing-text h2 {
+  margin: 0 0 8px 0;
+  font-size: 20px;
+  font-weight: 700;
+  color: #FFFFFF;
+}
+
+.create-listing-text p {
+  margin: 0;
+  font-size: 14px;
+  color: #E0E7FF;
+  line-height: 1.5;
+}
+
+.create-listing-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  background-color: #FFFFFF;
+  color: #3B82F6;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 14px;
+  transition: all 0.2s;
+  width: fit-content;
+  margin-top: 4px;
+}
+
+.create-listing-button:hover {
+  background-color: #F9FAFB;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+}
+
+.create-listing-button svg {
+  font-size: 18px;
+}
+
 /* Quick Actions */
 .quick-actions-list {
   display: flex;

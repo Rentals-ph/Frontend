@@ -1,13 +1,8 @@
-import { useState, useEffect } from 'react'
-import { Link, useLocation } from 'react-router-dom'
+import { useState } from 'react'
 import AgentSidebar from '../../components/agent/AgentSidebar'
 
 import { 
-  FiBarChart2, 
-  FiUsers, 
-  FiDollarSign,
   FiBell,
-  FiLayers,
   FiRefreshCw
 } from 'react-icons/fi'
 import './AdminDashboard.css'
@@ -23,16 +18,7 @@ interface Agent {
 }
 
 function AgentsPage() {
-  const location = useLocation()
-  const [activeNav, setActiveNav] = useState('agents')
   const [filter, setFilter] = useState('all')
-
-  useEffect(() => {
-    if (location.pathname.includes('/agents')) setActiveNav('agents')
-    else if (location.pathname.includes('/properties')) setActiveNav('properties')
-    else if (location.pathname.includes('/revenue')) setActiveNav('revenue')
-    else if (location.pathname === '/admin') setActiveNav('dashboard')
-  }, [location.pathname])
 
   // Agent data matching the image
   const agents: Agent[] = [

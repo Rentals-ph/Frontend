@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { authApi } from '../../api'
 import './LoginModal.css'
 
 interface LoginModalProps {
@@ -12,13 +13,68 @@ function LoginModal({ isOpen, onClose, onRegisterClick }: LoginModalProps) {
   const [password, setPassword] = useState('')
   const [rememberMe, setRememberMe] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [loginError, setLoginError] = useState<string | null>(null)
 
   if (!isOpen) return null
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    // Handle login logic here
-    console.log('Login:', { email, password, rememberMe })
+    setIsSubmitting(true)
+    setLoginError(null)
+
+    try {
+      const response = await authApi.login({
+        email,
+        password,
+        remember: rememberMe,
+      })
+
+      if (response.success && response.data?.token) {
+        // Store token and proceed with login
+        localStorage.setItem('auth_token', response.data.token)
+        
+        // Store agent name if available
+        if (response.data?.user?.name) {
+          localStorage.setItem('agent_name', response.data.user.name)
+        } else if (response.data?.user?.first_name && response.data?.user?.last_name) {
+          const fullName = `${response.data.user.first_name} ${response.data.user.last_name}`
+          localStorage.setItem('agent_name', fullName)
+        }
+        
+        // Check if account status is processing/pending and store it
+        if (response.data?.user?.status === 'processing' || 
+            response.data?.user?.status === 'pending' ||
+            response.data?.user?.status === 'under_review') {
+          localStorage.setItem('agent_registration_status', 'processing')
+          localStorage.setItem('agent_registered_email', email)
+          localStorage.setItem('agent_status', response.data.user.status)
+        } else {
+          // Clear processing status if account is approved
+          localStorage.removeItem('agent_registration_status')
+          localStorage.removeItem('agent_registered_email')
+          localStorage.setItem('agent_status', response.data.user.status || 'active')
+        }
+        
+        onClose()
+        // Redirect to agent dashboard
+        window.location.href = '/agent'
+      } else {
+        setLoginError(response.message || 'Login failed. Please try again.')
+      }
+    } catch (error: any) {
+      console.error('Login error:', error)
+      
+      if (error.response?.data?.message) {
+        setLoginError(error.response.data.message)
+      } else if (error.message) {
+        setLoginError(error.message)
+      } else {
+        setLoginError('An error occurred. Please try again.')
+      }
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
@@ -45,6 +101,21 @@ function LoginModal({ isOpen, onClose, onRegisterClick }: LoginModalProps) {
             <h2 className="login-title">LOGIN</h2>
             
             <form onSubmit={handleSubmit} className="login-form">
+              {/* Error Message */}
+              {loginError && (
+                <div className="alert alert-error" style={{ 
+                  padding: '12px 16px', 
+                  marginBottom: '20px', 
+                  backgroundColor: '#f8d7da', 
+                  color: '#721c24', 
+                  borderRadius: '4px',
+                  border: '1px solid #f5c6cb',
+                  fontSize: '14px'
+                }}>
+                  {loginError}
+                </div>
+              )}
+
               <div className="form-group">
                 <label htmlFor="email">Email</label>
                 <div className="input-with-icon">
@@ -58,6 +129,7 @@ function LoginModal({ isOpen, onClose, onRegisterClick }: LoginModalProps) {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
+                    disabled={isSubmitting}
                   />
                 </div>
               </div>
@@ -75,6 +147,7 @@ function LoginModal({ isOpen, onClose, onRegisterClick }: LoginModalProps) {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
+                    disabled={isSubmitting}
                   />
                   <button
                     type="button"
@@ -105,8 +178,8 @@ function LoginModal({ isOpen, onClose, onRegisterClick }: LoginModalProps) {
                 <label htmlFor="remember">Remember me</label>
               </div>
 
-              <button type="submit" className="login-submit-btn">
-                Login
+              <button type="submit" className="login-submit-btn" disabled={isSubmitting}>
+                {isSubmitting ? 'Logging in...' : 'Login'}
               </button>
             </form>
 

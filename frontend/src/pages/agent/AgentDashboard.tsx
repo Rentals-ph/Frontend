@@ -1,10 +1,9 @@
-import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import AgentSidebar from '../../components/agent/AgentSidebar'
+import AgentHeader from '../../components/agent/AgentHeader'
 
 import { 
   FiHome, 
-  FiBell,
   FiPlus,
   FiList,
   FiBarChart2,
@@ -12,11 +11,8 @@ import {
   FiEdit3,
   FiEye,
   FiMail,
-  FiUser,
   FiDownload,
   FiCreditCard,
-  FiLock,
-  FiLogOut,
   FiArrowRight,
   FiCheckCircle,
   FiDollarSign,
@@ -25,8 +21,6 @@ import {
 import './AgentDashboard.css'
 
 function AgentDashboard() {
-  const [activeNav, setActiveNav] = useState('dashboard')
-
   return (
     <div className="agent-dashboard">
       <AgentSidebar/>
@@ -34,31 +28,10 @@ function AgentDashboard() {
       {/* Main Content */}
       <main className="agent-main">
         {/* Header */}
-        <header className="agent-header">
-          <div className="header-content">
-            <div>
-              <h1>Dashboard</h1>
-              <p className="welcome-text">Welcome back, manage your rental properties.</p>
-            </div>
-            <div className="header-right">
-              <FiBell className="notification-icon" />
-              <div className="user-profile">
-                <div className="profile-avatar">
-                  <img src="/assets/profile-placeholder.png" alt="John Anderson" onError={(e) => {
-                    const target = e.target as HTMLImageElement;
-                    target.style.display = 'none';
-                    target.nextElementSibling?.classList.remove('hidden');
-                  }} />
-                  <div className="avatar-fallback hidden">JA</div>
-                </div>
-                <div className="user-info">
-                  <span className="user-name">John Anderson</span>
-                  <span className="user-role">Property Owner</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </header>
+        <AgentHeader 
+          title="Dashboard" 
+          subtitle="Welcome back, manage your rental properties." 
+        />
 
         {/* Metrics Cards */}
         <div className="metrics-grid">
@@ -105,18 +78,6 @@ function AgentDashboard() {
               <p className="metric-status new">New</p>
             </div>
           </div>
-        </div>
-
-        {/* Ready to List Banner */}
-        <div className="list-banner">
-          <div className="banner-content">
-            <h2>Ready to list a new property?</h2>
-            <p>Create your listing in minutes and reach thousands of potential tenants.</p>
-          </div>
-          <Link to="/agent/create-listing" className="banner-button">
-            <FiPlus />
-            <span>Create New Listing</span>
-          </Link>
         </div>
 
         {/* Bottom Content Grid */}
@@ -203,6 +164,23 @@ function AgentDashboard() {
 
           {/* Right Column - Quick Actions, Messages, Share Story */}
           <div className="content-column right">
+            {/* Create Listing - Prominent Card */}
+            <div className="section-card create-listing-card">
+              <div className="create-listing-content">
+                <div className="create-listing-icon-wrapper">
+                  <FiPlus className="create-listing-icon" />
+                </div>
+                <div className="create-listing-text">
+                  <h2>Create New Listing</h2>
+                  <p>Add a new property to your portfolio and reach thousands of potential tenants.</p>
+                </div>
+                <Link to="/agent/create-listing" className="create-listing-button">
+                  Get Started
+                  <FiArrowRight />
+                </Link>
+              </div>
+            </div>
+
             {/* Quick Actions */}
             <div className="section-card">
               <h2>Quick Actions</h2>

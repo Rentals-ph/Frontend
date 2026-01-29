@@ -1,4 +1,5 @@
 export { default as AgentDashboard } from './AgentDashboard'
+export { default as AgentAccount } from './AgentAccount'
 export { default as AgentEditProfile } from './AgentEditProfile'
 export { default as AgentMyProfile } from './AgentMyProfile'
 export { default as AgentInbox } from './AgentInbox'

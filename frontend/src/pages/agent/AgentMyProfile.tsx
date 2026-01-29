@@ -1,24 +1,12 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
 import AgentSidebar from '../../components/agent/AgentSidebar'
+import AgentHeader from '../../components/agent/AgentHeader'
 
 import {
-  FiBell,
-  FiUser,
   FiMail,
   FiPhone,
   FiHeart,
   FiShare2,
-  FiLogOut,
-  FiEdit3,
-  FiDownload,
-  FiCreditCard,
-  FiLock,
-  FiList,
-  FiBarChart2,
-  FiFileText,
-  FiBookOpen,
-  FiPlus,
   FiStar
 } from 'react-icons/fi'
 import './AgentMyProfile.css'
@@ -69,32 +57,10 @@ function AgentMyProfile() {
       {/* Main Content */}
       <main className="agent-main">
         {/* Header */}
-        <header className="agent-header">
-          <div className="header-content">
-            <div>
-              <h1>Dashboard</h1>
-              <p className="welcome-text">Welcome back, manage your rental properties.</p>
-            </div>
-            <div className="header-right">
-              <FiBell className="notification-icon" />
-              <div className="user-profile">
-                <div className="profile-avatar">
-                  <img src="/assets/profile-placeholder.png" alt="John Anderson" onError={(e) => {
-                    const target = e.target as HTMLImageElement;
-                    target.style.display = 'none';
-                    const fallback = target.nextElementSibling as HTMLElement;
-                    if (fallback) fallback.classList.remove('hidden');
-                  }} />
-                  <div className="avatar-fallback hidden">JA</div>
-                </div>
-                <div className="user-info">
-                  <span className="user-name">John Anderson</span>
-                  <span className="user-role">Property Owner</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </header>
+        <AgentHeader 
+          title="My Profile" 
+          subtitle="View and manage your profile information." 
+        />
 
         {/* Profile Section */}
         <div className="profile-section">

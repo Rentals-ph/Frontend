@@ -6,12 +6,14 @@
   display: flex;
   flex-direction: column;
   position: fixed;
-  height: 100%;
+  height: 100vh;
+  overflow: hidden;
 }
 
 .sidebar-logo {
   padding: 10px 10px;
   border-bottom: 1px solid #E5E7EB;
+  flex-shrink: 0;
 }
 
 .logo-container {
@@ -45,6 +47,9 @@
   flex-direction: column;
   gap: 16px;
   flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  min-height: 0;
 }
 
 .nav-section {
@@ -56,7 +61,7 @@
 .nav-section-title {
   margin: 0 0 4px 0;
   padding: 0 12px;
-  font-size: 11px;
+  font-size: 14px;
   font-weight: 600;
   color: #6B7280;
   text-transform: uppercase;
@@ -74,6 +79,13 @@
   font-size: 13px;
   font-weight: 500;
   transition: all 0.2s;
+}
+
+/* Smaller fonts for Profile and Rent Management sections */
+.nav-section .nav-item {
+  font-size: 12px;
+  padding: 8px 12px;
+  gap: 8px;
 }
 
 .nav-item:hover {
@@ -100,10 +112,69 @@
   font-size: 18px;
 }
 
+/* Smaller icons for Profile and Rent Management sections */
+.nav-section .nav-icon {
+  font-size: 16px;
+}
+
+/* Inbox Indicator */
+.nav-icon-wrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.inbox-indicator {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  width: 8px;
+  height: 8px;
+  background-color: #EF4444;
+  border-radius: 50%;
+  border: 2px solid #FFFFFF;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1);
+}
+
+/* Public Pages Section */
+.public-pages-section {
+  margin-top: auto;
+  padding-top: 16px;
+  padding-bottom: 12px;
+  border-top: 1px solid #E5E7EB;
+  flex-shrink: 0;
+}
+
+.public-pages-section .nav-item {
+  position: relative;
+}
+
+.public-pages-section .nav-item::after {
+  content: '↗';
+  margin-left: auto;
+  font-size: 12px;
+  opacity: 0.5;
+  transition: opacity 0.2s;
+}
+
+.public-pages-section .nav-item:hover::after {
+  opacity: 1;
+}
+
 /* Responsive Design */
 @media (max-width: 1024px) {
   .agent-sidebar {
     width: 240px;
+  }
+  
+  .sidebar-nav {
+    padding: 10px 8px;
+    gap: 12px;
+  }
+  
+  .nav-section {
+    gap: 3px;
   }
 }
 
@@ -111,4 +182,41 @@
   .agent-sidebar {
     width: 200px;
   }
+  
+  .sidebar-nav {
+    padding: 8px 6px;
+    gap: 10px;
+  }
+  
+  .nav-section-title {
+    font-size: 8px;
+    padding: 0 8px;
+  }
+  
+  .nav-section .nav-item {
+    font-size: 11px;
+    padding: 6px 8px;
+  }
+  
+  .logo-image {
+    height: 50px;
+  }
+}
+
+/* Custom scrollbar for sidebar */
+.sidebar-nav::-webkit-scrollbar {
+  width: 6px;
+}
+
+.sidebar-nav::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.sidebar-nav::-webkit-scrollbar-thumb {
+  background: #D1D5DB;
+  border-radius: 3px;
+}
+
+.sidebar-nav::-webkit-scrollbar-thumb:hover {
+  background: #9CA3AF;
 }

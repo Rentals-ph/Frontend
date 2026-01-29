@@ -1,21 +1,7 @@
 import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import AgentSidebar from '../../components/agent/AgentSidebar'
-import { 
-  FiBell,
-  FiMail,
-  FiUser,
-  FiDownload,
-  FiCreditCard,
-  FiLock,
-  FiLogOut,
-  FiPlus,
-  FiList,
-  FiBarChart2,
-  FiFileText,
-  FiEdit3,
-  FiBookOpen
-} from 'react-icons/fi'
+import AgentHeader from '../../components/agent/AgentHeader'
 import './AgentChangePassword.css'
 
 function AgentChangePassword() {
@@ -56,31 +42,10 @@ function AgentChangePassword() {
       {/* Main Content */}
       <main className="agent-main">
         {/* Header */}
-        <header className="agent-header">
-          <div className="header-content">
-            <div>
-              <h1>Dashboard</h1>
-              <p className="welcome-text">Welcome back, manage your rental properties.</p>
-            </div>
-            <div className="header-right">
-              <FiBell className="notification-icon" />
-              <div className="user-profile">
-                <div className="profile-avatar">
-                  <img src="/assets/profile-placeholder.png" alt="John Anderson" onError={(e) => {
-                    const target = e.target as HTMLImageElement;
-                    target.style.display = 'none';
-                    target.nextElementSibling?.classList.remove('hidden');
-                  }} />
-                  <div className="avatar-fallback hidden">JA</div>
-                </div>
-                <div className="user-info">
-                  <span className="user-name">John Anderson</span>
-                  <span className="user-role">Property Owner</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </header>
+        <AgentHeader 
+          title="Change Password" 
+          subtitle="Update your account password." 
+        />
 
         {/* Change Password Content */}
         <div className="change-password-content">

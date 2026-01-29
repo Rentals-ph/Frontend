@@ -98,6 +98,36 @@
   gap: 12px;
 }
 
+/* Processing Account Notice */
+.acpu-processing-notice {
+  background: #FFF4E6;
+  border: 1px solid #FE8E0A;
+  border-radius: 8px;
+  padding: 16px 20px;
+  margin: 24px 0;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.acpu-processing-notice svg {
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.acpu-processing-notice div {
+  color: #92400E;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.6;
+}
+
+.acpu-processing-notice strong {
+  color: #FE8E0A;
+  font-weight: 600;
+}
+
 .acpu-publish-btn {
   padding: 12px 24px;
   background-color: #2563EB;

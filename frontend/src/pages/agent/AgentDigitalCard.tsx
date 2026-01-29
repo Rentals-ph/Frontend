@@ -1,21 +1,9 @@
-import { Link } from 'react-router-dom'
 import AgentSidebar from '../../components/agent/AgentSidebar'
+import AgentHeader from '../../components/agent/AgentHeader'
 
 import { 
-  FiBell,
-  FiUser,
   FiMail,
-  FiPhone,
-  FiLogOut,
-  FiEdit3,
-  FiDownload,
-  FiCreditCard,
-  FiLock,
-  FiList,
-  FiBarChart2,
-  FiFileText,
-  FiBookOpen,
-  FiPlus
+  FiPhone
 } from 'react-icons/fi'
 import { FaWhatsapp } from 'react-icons/fa'
 import './AgentDigitalCard.css'
@@ -28,31 +16,10 @@ function AgentDigitalCard() {
       {/* Main Content */}
       <main className="agent-main">
         {/* Header */}
-        <header className="agent-header">
-          <div className="header-content">
-            <div>
-              <h1>Dashboard</h1>
-              <p className="welcome-text">Welcome back, manage your rental properties.</p>
-            </div>
-            <div className="header-right">
-              <FiBell className="notification-icon" />
-              <div className="user-profile">
-                <div className="profile-avatar">
-                  <img src="/assets/profile-placeholder.png" alt="John Anderson" onError={(e) => {
-                    const target = e.target as HTMLImageElement;
-                    target.style.display = 'none';
-                    target.nextElementSibling?.classList.remove('hidden');
-                  }} />
-                  <div className="avatar-fallback hidden">JA</div>
-                </div>
-                <div className="user-info">
-                  <span className="user-name">John Anderson</span>
-                  <span className="user-role">Property Owner</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </header>
+        <AgentHeader 
+          title="Digital Business Card" 
+          subtitle="Share your digital business card." 
+        />
 
         {/* Digital Business Card Section */}
         <div className="digital-card-section">

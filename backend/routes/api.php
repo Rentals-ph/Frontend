@@ -19,6 +19,7 @@ Route::get('/blogs/{id}', [BlogController::class, 'show']);
 // Agent routes
 Route::post('/agents/register', [AgentController::class, 'register']);
 Route::post('/agents/login', [AgentController::class, 'login']);
+Route::post('/auth/login', [AgentController::class, 'login']); // Alias for frontend compatibility
 Route::middleware('auth:sanctum')->get('/agents/me', [AgentController::class, 'show']);
 
 // Admin routes

@@ -12,6 +12,8 @@ function RegisterModal({ isOpen, onClose }: RegisterModalProps) {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitError, setSubmitError] = useState<string | null>(null)
   const [submitSuccess, setSubmitSuccess] = useState(false)
+  const [showProcessingStatus, setShowProcessingStatus] = useState(false)
+  const [registeredEmail, setRegisteredEmail] = useState<string>('')
   const [licenseFile, setLicenseFile] = useState<File | null>(null)
   const [fileName, setFileName] = useState<string>('')
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -204,32 +206,15 @@ function RegisterModal({ isOpen, onClose }: RegisterModalProps) {
       
       if (response.success) {
         setSubmitSuccess(true)
-        // Reset form after successful submission
+        setRegisteredEmail(formData.email)
+        // Store registration status in localStorage
+        localStorage.setItem('agent_registration_status', 'processing')
+        localStorage.setItem('agent_registered_email', formData.email)
+        // Show processing status page
         setTimeout(() => {
-          setFormData({
-            firstName: '',
-            lastName: '',
-            email: '',
-            password: '',
-            phone: '',
-            dateOfBirth: '',
-            agencyName: '',
-            officeAddress: '',
-            city: '',
-            state: '',
-            zipCode: '',
-            prcLicenseNumber: '',
-            licenseType: '',
-            expirationDate: '',
-            yearsOfExperience: '',
-            agreeToTerms: false,
-          })
-          setLicenseFile(null)
-          setFileName('')
-          setCurrentStep(1)
+          setShowProcessingStatus(true)
           setSubmitSuccess(false)
-          onClose()
-        }, 3000)
+        }, 1500)
       } else {
         setSubmitError(response.message || 'Registration failed. Please try again.')
       }
@@ -288,6 +273,53 @@ function RegisterModal({ isOpen, onClose }: RegisterModalProps) {
     } finally {
       setIsSubmitting(false)
     }
+  }
+
+  // Show processing status page
+  if (showProcessingStatus) {
+    return (
+      <div className="modal-overlay" onClick={onClose}>
+        <div className="register-modal-container processing-status-container" onClick={(e) => e.stopPropagation()}>
+          <div className="processing-status-content">
+            <div className="processing-icon-wrapper">
+              <svg className="processing-icon" width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="40" cy="40" r="38" stroke="#205ED7" strokeWidth="4" strokeDasharray="8 8" className="processing-circle"/>
+                <path d="M40 20V40L50 50" stroke="#205ED7" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"/>
+                <circle cx="40" cy="40" r="30" fill="#E3F2FD" opacity="0.3"/>
+              </svg>
+              <div className="processing-spinner"></div>
+            </div>
+            
+            <h2 className="processing-title">Account Under Review</h2>
+            <p className="processing-message">
+              Thank you for registering! Your account is currently being processed by our admin team.
+            </p>
+            <p className="processing-details">
+              We've received your registration for <strong>{registeredEmail}</strong> and are reviewing your application.
+            </p>
+            
+            <div className="processing-info-box">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="#205ED7" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M12 16V12M12 8H12.01" stroke="#205ED7" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+              <div>
+                <p className="processing-info-title">What happens next?</p>
+                <ul className="processing-steps">
+                  <li>Our admin team will review your PRC license and documents</li>
+                  <li>You'll receive an email notification once your account is approved</li>
+                  <li>This process typically takes 1-3 business days</li>
+                </ul>
+              </div>
+            </div>
+            
+            <button className="processing-close-btn" onClick={onClose}>
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    )
   }
 
   return (

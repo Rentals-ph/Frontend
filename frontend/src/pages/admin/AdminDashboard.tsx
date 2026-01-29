@@ -1,8 +1,5 @@
-import { useState } from 'react'
-import { Link } from 'react-router-dom'    
 import AgentSidebar from '../../components/agent/AgentSidebar'
 import { 
-  FiBarChart2, 
   FiUsers, 
   FiHome, 
   FiDollarSign,
@@ -13,8 +10,6 @@ import {
 import './AdminDashboard.css'
 
 function AdminDashboard() {
-  const [activeNav, setActiveNav] = useState('dashboard')
-
   return (
     <div className="admin-dashboard">
       <AgentSidebar/>

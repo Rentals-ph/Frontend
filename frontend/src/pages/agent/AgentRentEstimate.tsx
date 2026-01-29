@@ -1,21 +1,8 @@
 import { useMemo, useState } from 'react'
-import { Link } from 'react-router-dom'
 import AgentSidebar from '../../components/agent/AgentSidebar'
+import AgentHeader from '../../components/agent/AgentHeader'
 
 import {
-  FiBell,
-  FiUser,
-  FiMail,
-  FiEdit3,
-  FiDownload,
-  FiCreditCard,
-  FiLock,
-  FiLogOut,
-  FiPlus,
-  FiList,
-  FiBarChart2,
-  FiFileText,
-  FiBookOpen,
   FiMapPin,
   FiChevronDown
 } from 'react-icons/fi'
@@ -57,35 +44,10 @@ function AgentRentEstimate() {
       {/* Main Content */}
       <main className="agent-main">
         {/* Header */}
-        <header className="agent-header">
-          <div className="header-content">
-            <div>
-              <h1>Dashboard</h1>
-              <p className="welcome-text">Welcome back, manage your rental properties.</p>
-            </div>
-            <div className="header-right">
-              <FiBell className="notification-icon" />
-              <div className="user-profile">
-                <div className="profile-avatar">
-                  <img
-                    src="/assets/profile-placeholder.png"
-                    alt="John Anderson"
-                    onError={(e) => {
-                      const target = e.target as HTMLImageElement
-                      target.style.display = 'none'
-                      target.nextElementSibling?.classList.remove('hidden')
-                    }}
-                  />
-                  <div className="avatar-fallback hidden">JA</div>
-                </div>
-                <div className="user-info">
-                  <span className="user-name">John Anderson</span>
-                  <span className="user-role">Property Owner</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </header>
+        <AgentHeader 
+          title="Rent Estimate" 
+          subtitle="Calculate estimated rental value for your properties." 
+        />
 
         <section className="agent-rent-estimate-section">
           <div className="agent-rent-estimate-heading">

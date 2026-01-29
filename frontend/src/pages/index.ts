@@ -21,6 +21,7 @@ export {
 // Agent pages
 export {
     AgentDashboard,
+    AgentAccount,
     AgentEditProfile,
     AgentMyProfile,
     AgentInbox,

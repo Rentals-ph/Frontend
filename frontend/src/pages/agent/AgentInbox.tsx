@@ -1,24 +1,13 @@
-import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { useState, useEffect } from 'react'
 import AgentSidebar from '../../components/agent/AgentSidebar'
+import AgentHeader from '../../components/agent/AgentHeader'
 
 import { 
-  FiBell,
-  FiPlus,
-  FiList,
-  FiBarChart2,
-  FiFileText,
-  FiEdit3,
-  FiMail,
-  FiUser,
-  FiDownload,
-  FiCreditCard,
-  FiLock,
-  FiLogOut,
   FiSearch,
   FiRefreshCw,
   FiCheckSquare,
-  FiBookOpen
+  FiAlertCircle,
+  FiX
 } from 'react-icons/fi'
 import './AgentInbox.css'
 
@@ -35,8 +24,9 @@ interface InboxItem {
 function AgentInbox() {
   const [activeFilter, setActiveFilter] = useState<string>('all')
   const [searchQuery, setSearchQuery] = useState('')
-
-  const inboxItems: InboxItem[] = [
+  const [isProcessing, setIsProcessing] = useState(false)
+  const [showProcessingBanner, setShowProcessingBanner] = useState(true)
+  const [inboxItems, setInboxItems] = useState<InboxItem[]>([
     {
       id: 1,
       sender: 'Marcel',
@@ -73,7 +63,37 @@ function AgentInbox() {
       snippet: 'I want to know more about your properties. Can I contact you now for more details?',
       isNew: true
     }
-  ]
+  ])
+
+  useEffect(() => {
+    // Check if agent account is processing
+    const registrationStatus = localStorage.getItem('agent_registration_status')
+    const agentStatus = localStorage.getItem('agent_status')
+    
+    if (registrationStatus === 'processing' || 
+        agentStatus === 'processing' || 
+        agentStatus === 'pending' || 
+        agentStatus === 'under_review') {
+      setIsProcessing(true)
+    }
+  }, [])
+
+  useEffect(() => {
+    // Update unread count in localStorage for sidebar indicator
+    const unreadCount = inboxItems.filter(item => item.isNew).length
+    localStorage.setItem('unread_messages_count', unreadCount.toString())
+    
+    // Trigger a custom event to notify sidebar of the change
+    window.dispatchEvent(new Event('storage'))
+  }, [inboxItems])
+
+  const toggleReadStatus = (itemId: number) => {
+    setInboxItems(prevItems => 
+      prevItems.map(item => 
+        item.id === itemId ? { ...item, isNew: !item.isNew } : item
+      )
+    )
+  }
 
   const filteredItems = inboxItems.filter(item => {
     if (activeFilter === 'all') return true
@@ -116,35 +136,36 @@ function AgentInbox() {
       {/* Main Content */}
       <main className="agent-main">
         {/* Header */}
-        <header className="agent-header">
-          <div className="header-content">
-            <div>
-              <h1>Dashboard</h1>
-              <p className="welcome-text">Welcome back, manage your rental properties.</p>
-            </div>
-            <div className="header-right">
-              <FiBell className="notification-icon" />
-              <div className="user-profile">
-                <div className="profile-avatar">
-                  <img src="/assets/profile-placeholder.png" alt="John Anderson" onError={(e) => {
-                    const target = e.target as HTMLImageElement;
-                    target.style.display = 'none';
-                    target.nextElementSibling?.classList.remove('hidden');
-                  }} />
-                  <div className="avatar-fallback hidden">JA</div>
-                </div>
-                <div className="user-info">
-                  <span className="user-name">John Anderson</span>
-                  <span className="user-role">Property Owner</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </header>
+        <AgentHeader 
+          title="Inbox" 
+          subtitle="Manage your messages and inquiries." 
+        />
 
         {/* Inbox Content */}
         <div className="inbox-container">
           <h2 className="inbox-title">Inbox</h2>
+
+          {/* Account Processing Reminder Banner */}
+          {isProcessing && showProcessingBanner && (
+            <div className="processing-banner">
+              <div className="processing-banner-content">
+                <div className="processing-banner-icon">
+                  <FiAlertCircle />
+                </div>
+                <div className="processing-banner-text">
+                  <h3>Account Under Review</h3>
+                  <p>Your account is currently being processed by our admin team. Your listings won't be visible to users until your account is approved.</p>
+                </div>
+              </div>
+              <button 
+                className="processing-banner-close"
+                onClick={() => setShowProcessingBanner(false)}
+                aria-label="Close banner"
+              >
+                <FiX />
+              </button>
+            </div>
+          )}
 
           {/* Search Bar */}
           <div className="inbox-search">
@@ -196,7 +217,11 @@ function AgentInbox() {
           {/* Inbox Items List */}
           <div className="inbox-items">
             {filteredItems.map((item) => (
-              <div key={item.id} className="inbox-item">
+              <div 
+                key={item.id} 
+                className={`inbox-item ${item.isNew ? 'unread' : 'read'}`}
+                onClick={() => toggleReadStatus(item.id)}
+              >
                 <div className="inbox-item-avatar">
                   <div className="avatar-circle">
                     <div className="avatar-fallback">{item.senderInitials}</div>

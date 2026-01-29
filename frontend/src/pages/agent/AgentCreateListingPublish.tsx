@@ -1,21 +1,9 @@
-import { useMemo } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { useMemo, useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import AgentSidebar from '../../components/agent/AgentSidebar'
+import AgentHeader from '../../components/agent/AgentHeader'
 
 import {
-  FiBarChart2,
-  FiBell,
-  FiBookOpen,
-  FiCreditCard,
-  FiDownload,
-  FiEdit3,
-  FiFileText,
-  FiList,
-  FiLock,
-  FiLogOut,
-  FiMail,
-  FiPlus,
-  FiUser,
   FiCheck,
   FiEdit,
   FiArrowLeft
@@ -71,6 +59,20 @@ function ProgressRing({ percent }: { percent: number }) {
 
 export default function AgentCreateListingPublish() {
   const navigate = useNavigate()
+  const [isProcessing, setIsProcessing] = useState(false)
+
+  useEffect(() => {
+    // Check if agent account is processing
+    const registrationStatus = localStorage.getItem('agent_registration_status')
+    const agentStatus = localStorage.getItem('agent_status')
+    
+    if (registrationStatus === 'processing' || 
+        agentStatus === 'processing' || 
+        agentStatus === 'pending' || 
+        agentStatus === 'under_review') {
+      setIsProcessing(true)
+    }
+  }, [])
 
   const stepLabels = [
     'Category',
@@ -117,35 +119,10 @@ export default function AgentCreateListingPublish() {
       <AgentSidebar/>
 
       <main className="agent-main">
-        <header className="agent-header">
-          <div className="header-content">
-            <div>
-              <h1>Dashboard</h1>
-              <p className="welcome-text">Welcome back, manage your rental properties</p>
-            </div>
-            <div className="header-right">
-              <FiBell className="notification-icon" />
-              <div className="user-profile">
-                <div className="profile-avatar">
-                  <img
-                    src="/assets/profile-placeholder.png"
-                    alt="John Anderson"
-                    onError={(e) => {
-                      const target = e.target as HTMLImageElement
-                      target.style.display = 'none'
-                      target.nextElementSibling?.classList.remove('hidden')
-                    }}
-                  />
-                  <div className="avatar-fallback hidden">JA</div>
-                </div>
-                <div className="user-info">
-                  <span className="user-name">John Anderson</span>
-                  <span className="user-role">Property Owner</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </header>
+        <AgentHeader 
+          title="Create Listing" 
+          subtitle="Review and publish your listing." 
+        />
 
         <div className="aclc-breadcrumb">
           <span className="aclc-breadcrumb-strong">Create Listing</span>
@@ -185,6 +162,19 @@ export default function AgentCreateListingPublish() {
 
         <div className="section-card acpu-form-card">
           <h2 className="aclc-form-title">Review and Publish</h2>
+          
+          {/* Processing Account Notice */}
+          {isProcessing && (
+            <div className="acpu-processing-notice">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <path d="M10 18C14.4183 18 18 14.4183 18 10C18 5.58172 14.4183 2 10 2C5.58172 2 2 5.58172 2 10C2 14.4183 5.58172 18 10 18Z" stroke="#FE8E0A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M10 6V10M10 14H10.01" stroke="#FE8E0A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+              <div>
+                <strong>Note:</strong> Your account is currently under review. Your listing will be saved but won't be visible to users until your account is approved by our admin team.
+              </div>
+            </div>
+          )}
 
           <div className="acpu-summary-section">
             <div className="acpu-summary-header">

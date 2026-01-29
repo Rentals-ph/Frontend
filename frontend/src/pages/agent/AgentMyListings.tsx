@@ -1,26 +1,13 @@
-import { Link } from 'react-router-dom'
 import AgentSidebar from '../../components/agent/AgentSidebar'
+import AgentHeader from '../../components/agent/AgentHeader'
 
 import {
-  FiBarChart2,
-  FiBell,
-  FiBookOpen,
   FiCheckCircle,
-  FiCreditCard,
-  FiDownload,
-  FiEdit3,
   FiEye,
-  FiFileText,
   FiHome,
-  FiList,
-  FiLock,
-  FiLogOut,
-  FiMail,
   FiMapPin,
-  FiPlus,
   FiSearch,
-  FiSlash,
-  FiUser
+  FiSlash
 } from 'react-icons/fi'
 import './AgentMyListings.css'
 
@@ -102,35 +89,10 @@ function AgentMyListings() {
       {/* Main Content */}
       <main className="agent-main">
         {/* Header */}
-        <header className="agent-header">
-          <div className="header-content">
-            <div>
-              <h1>Dashboard</h1>
-              <p className="welcome-text">Welcome back, manage your rental properties.</p>
-            </div>
-            <div className="header-right">
-              <FiBell className="notification-icon" />
-              <div className="user-profile">
-                <div className="profile-avatar">
-                  <img
-                    src="/assets/profile-placeholder.png"
-                    alt="John Anderson"
-                    onError={(e) => {
-                      const target = e.target as HTMLImageElement
-                      target.style.display = 'none'
-                      target.nextElementSibling?.classList.remove('hidden')
-                    }}
-                  />
-                  <div className="avatar-fallback hidden">JA</div>
-                </div>
-                <div className="user-info">
-                  <span className="user-name">John Anderson</span>
-                  <span className="user-role">Property Owner</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </header>
+        <AgentHeader 
+          title="My Listings" 
+          subtitle="Manage and track all your property listings." 
+        />
 
         {/* Page content */}
         <div className="aml-page">

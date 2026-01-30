@@ -11,7 +11,7 @@ import PageHeader from '../../components/layout/PageHeader'
 
 // Force dynamic rendering for this page
 export const dynamic = 'force-dynamic'
-export const revalidate = 0
+export const revalidate = false;
 
 function PropertiesContent() {
   const searchParams = useSearchParams()

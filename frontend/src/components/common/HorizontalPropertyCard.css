@@ -320,10 +320,10 @@
 
 /* =========================
    MOBILE-SPECIFIC STYLES (≤768px)
-   Minimal card design - 2 cards per row like reference image
+   Minimal card design - 2 cards per row for grid, full-width for carousel
 ========================= */
 @media (max-width: 768px) {
-  /* Card Container - Mobile: Compact 2-column layout */
+  /* Card Container - Mobile: Default compact layout */
   .horizontal-property-card {
     flex-direction: column;
     min-height: auto;
@@ -331,6 +331,43 @@
     box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.06), 0px 1px 3px rgba(0, 0, 0, 0.04);
     overflow: hidden;
     margin-bottom: 0;
+  }
+
+  /* Override for carousel - make cards wider */
+  .property-carousel .horizontal-property-card {
+    min-width: calc(100vw - 80px);
+    max-width: calc(100vw - 80px);
+    width: calc(100vw - 80px);
+    flex-shrink: 0;
+    border-radius: 16px;
+  }
+
+  .property-carousel .horizontal-property-image {
+    height: 220px;
+    min-height: 220px;
+  }
+
+  .property-carousel .horizontal-property-content {
+    padding: 16px;
+    gap: 12px;
+  }
+
+  .property-carousel .horizontal-property-price {
+    font-size: 24px;
+  }
+
+  .property-carousel .horizontal-property-title {
+    font-size: 16px;
+    max-height: 48px;
+  }
+
+  .property-carousel .horizontal-property-type {
+    font-size: 11px;
+    padding: 4px 8px;
+  }
+
+  .property-carousel .horizontal-property-date {
+    font-size: 11px;
   }
 
   .horizontal-property-card:hover {

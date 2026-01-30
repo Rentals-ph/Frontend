@@ -149,4 +149,12 @@
     padding: 20px 20px;
     gap: 16px;
   }
+
+  /* Make cards in carousel nearly full-width on mobile */
+  .featured-section .property-carousel .horizontal-property-card {
+    min-width: calc(100vw - 80px);
+    max-width: calc(100vw - 80px);
+    width: calc(100vw - 80px);
+    flex-shrink: 0;
+  }
 }

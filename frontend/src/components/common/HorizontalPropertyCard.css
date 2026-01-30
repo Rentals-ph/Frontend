@@ -389,7 +389,7 @@
   }
   
   .horizontal-property-price {
-    font-size: 24px;
+    font-size: 22px;
     font-weight: 700;
   }
 
@@ -449,7 +449,7 @@
   
   /* Title - Mobile Optimized */
   .horizontal-property-title {
-    font-size: 16px;
+    font-size: 15px;
     font-weight: 600;
     line-height: 1.4;
     max-height: 44px;
@@ -584,8 +584,12 @@
   }
   
   .horizontal-property-title {
-    font-size: 15px;
+    font-size: 14px;
     max-height: 42px;
+  }
+
+  .horizontal-property-price {
+    font-size: 20px;
   }
 
   .horizontal-rent-manager-badge {

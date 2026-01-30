@@ -566,19 +566,19 @@
 }
 
 .message-sender {
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
   color: #111827;
 }
 
 .message-time {
-  font-size: 12px;
+  font-size: 11px;
   color: #6B7280;
 }
 
 .message-text {
   margin: 0;
-  font-size: 13px;
+  font-size: 12px;
   color: #6B7280;
 }
 
@@ -853,15 +853,37 @@
   .metric-icon {
     width: 40px;
     height: 40px;
-    font-size: 20px;
+    font-size: 18px;
+  }
+
+  .metric-content h3 {
+    font-size: 13px;
   }
 
   .metric-value {
-    font-size: 24px;
+    font-size: 22px;
+  }
+
+  .metric-change,
+  .metric-status,
+  .metric-frequency {
+    font-size: 11px;
   }
 
   .section-card h2 {
-    font-size: 16px;
+    font-size: 15px;
+  }
+
+  .listing-info h4 {
+    font-size: 13px;
+  }
+
+  .listing-details {
+    font-size: 11px;
+  }
+
+  .listing-price {
+    font-size: 13px;
   }
 
   .listing-item {

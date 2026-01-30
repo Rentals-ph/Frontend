@@ -244,13 +244,17 @@
   }
   
   .nav-section-title {
-    font-size: 12px;
+    font-size: 11px;
     padding: 0 12px;
   }
   
   .nav-section .nav-item {
-    font-size: 13px;
+    font-size: 12px;
     padding: 10px 12px;
+  }
+
+  .nav-item {
+    font-size: 12px;
   }
   
   .logo-image {

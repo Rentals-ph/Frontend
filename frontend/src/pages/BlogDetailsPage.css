@@ -373,7 +373,7 @@ width: 100%;  margin: 0 auto;
   }
 
   .blog-details-title {
-    font-size: 28px;
+    font-size: 26px;
   }
 
   .blog-details-social {
@@ -398,16 +398,16 @@ width: 100%;  margin: 0 auto;
   }
 
   .blog-details-title {
-    font-size: 24px;
+    font-size: 22px;
   }
 
   .blog-details-paragraph {
-    font-size: 14px;
+    font-size: 13px;
   }
 
   .blog-details-comments-title,
   .blog-details-related-title {
-    font-size: 18px;
+    font-size: 17px;
   }
 }
 

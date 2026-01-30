@@ -884,13 +884,13 @@
     }
 
     .section-title {
-      font-size: 16px;
+      font-size: 15px;
       margin-bottom: 24px;
     }
 
     .properties-breadcrumbs {
       padding: 20px 20px;
-      font-size: 12px;
+      font-size: 11px;
     }
 
     .top-search-bar-container {
@@ -918,11 +918,27 @@
     .hamburger-menu-btn {
       width: 100%;
     }
+
+    .no-results-title {
+      font-size: 24px;
+    }
+
+    .no-results-text {
+      font-size: 14px;
+    }
   }
 
   @media (max-width: 480px) {
     .section-title {
-      font-size: 16px;
+      font-size: 14px;
+    }
+
+    .no-results-title {
+      font-size: 22px;
+    }
+
+    .no-results-text {
+      font-size: 13px;
     }
 
     .advance-search-section,
@@ -1091,11 +1107,11 @@
     }
 
     .featured-properties-title {
-      font-size: 28px;
+      font-size: 26px;
     }
 
     .featured-properties-subtitle {
-      font-size: 16px;
+      font-size: 15px;
     }
 
     .featured-properties-carousel {
@@ -1219,7 +1235,7 @@
     }
 
     .short-term-rent-title {
-      font-size: 24px;
+      font-size: 22px;
       margin-bottom: 24px;
     }
 

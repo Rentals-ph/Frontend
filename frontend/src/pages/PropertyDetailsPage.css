@@ -730,12 +730,12 @@
   }
 
   .property-details-banner-title {
-    font-size: 28px;
+    font-size: 26px;
   }
 
   .property-details-breadcrumbs {
     padding: 20px 20px;
-    font-size: 12px;
+    font-size: 11px;
   }
 
   .property-details-main {
@@ -759,7 +759,7 @@
   }
 
   .similar-properties-title {
-    font-size: 24px;
+    font-size: 22px;
     margin-bottom: 24px;
   }
 
@@ -770,19 +770,19 @@
 
 @media (max-width: 480px) {
   .property-details-banner-title {
-    font-size: 24px;
+    font-size: 22px;
   }
 
   .property-section-title {
-    font-size: 20px;
+    font-size: 18px;
   }
 
   .property-title {
-    font-size: 20px;
+    font-size: 18px;
   }
 
   .property-price {
-    font-size: 24px;
+    font-size: 22px;
   }
 
   .similar-property-card {

@@ -568,11 +568,31 @@
   }
 
   .item-info h4 {
-    font-size: 13px;
+    font-size: 12px;
   }
 
   .item-info p {
+    font-size: 10px;
+  }
+
+  .metric-content h3 {
+    font-size: 13px;
+  }
+
+  .metric-value {
+    font-size: 24px;
+  }
+
+  .metric-change {
     font-size: 11px;
+  }
+
+  .chart-card h2 {
+    font-size: 16px;
+  }
+
+  .list-header h2 {
+    font-size: 16px;
   }
 }
 
@@ -590,11 +610,19 @@
   .metric-icon {
     width: 40px;
     height: 40px;
-    font-size: 20px;
+    font-size: 18px;
+  }
+
+  .metric-content h3 {
+    font-size: 12px;
   }
 
   .metric-value {
-    font-size: 24px;
+    font-size: 22px;
+  }
+
+  .metric-change {
+    font-size: 10px;
   }
 
   .chart-card h2 {

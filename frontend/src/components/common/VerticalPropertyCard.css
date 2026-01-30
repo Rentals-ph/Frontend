@@ -391,7 +391,7 @@
   }
   
   .vertical-property-price {
-    font-size: 24px;
+    font-size: 22px;
     font-weight: 700;
     color: #205ED7;
   }
@@ -454,7 +454,7 @@
   
   /* Title - Mobile Optimized */
   .vertical-property-title {
-    font-size: 16px;
+    font-size: 15px;
     font-weight: 600;
     line-height: 1.4;
     margin: 0;
@@ -593,8 +593,12 @@
   }
   
   .vertical-property-title {
-    font-size: 15px;
+    font-size: 14px;
     max-height: 42px;
+  }
+
+  .vertical-property-price {
+    font-size: 20px;
   }
 
   .vertical-rent-manager-badge {

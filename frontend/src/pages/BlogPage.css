@@ -469,11 +469,11 @@
   }
 
   .featured-article-title {
-    font-size: 24px;
+    font-size: 22px;
   }
 
   .featured-article-excerpt {
-    font-size: 14px;
+    font-size: 13px;
   }
 
   .trending-header {
@@ -510,11 +510,11 @@
   }
 
   .newsletter-title {
-    font-size: 28px;
+    font-size: 26px;
   }
 
   .newsletter-text {
-    font-size: 16px;
+    font-size: 15px;
   }
 
   .newsletter-form {
@@ -539,7 +539,7 @@
   .pagination-btn {
     width: 36px;
     height: 36px;
-    font-size: 14px;
+    font-size: 13px;
   }
 }
 
@@ -557,12 +557,12 @@
   }
 
   .featured-article-title {
-    font-size: 20px;
+    font-size: 18px;
     margin-bottom: 12px;
   }
 
   .featured-article-excerpt {
-    font-size: 13px;
+    font-size: 12px;
     margin-bottom: 16px;
   }
 
@@ -609,22 +609,22 @@
   }
 
   .newsletter-title {
-    font-size: 24px;
+    font-size: 22px;
     margin-bottom: 12px;
   }
 
   .newsletter-text {
-    font-size: 14px;
+    font-size: 13px;
     margin-bottom: 24px;
   }
 
   .newsletter-input {
-    font-size: 14px;
+    font-size: 13px;
     padding: 12px 16px;
   }
 
   .newsletter-btn {
-    font-size: 14px;
+    font-size: 13px;
     padding: 12px 24px;
   }
 
@@ -632,6 +632,6 @@
   .pagination-btn {
     width: 32px;
     height: 32px;
-    font-size: 12px;
+    font-size: 11px;
   }
 }

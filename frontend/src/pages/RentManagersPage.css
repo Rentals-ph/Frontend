@@ -559,12 +559,12 @@
 
   .properties-breadcrumbs {
     padding: 20px 20px;
-    font-size: 12px;
+    font-size: 11px;
   }
 
   .what-are-rm-title,
   .find-rm-title {
-    font-size: 28px;
+    font-size: 26px;
   }
 
   .features-grid {
@@ -589,11 +589,11 @@
   }
 
   .become-rm-title {
-    font-size: 28px;
+    font-size: 26px;
   }
 
   .become-rm-text {
-    font-size: 16px;
+    font-size: 15px;
   }
 }
 
@@ -601,7 +601,7 @@
   .what-are-rm-title,
   .find-rm-title,
   .become-rm-title {
-    font-size: 24px;
+    font-size: 22px;
   }
 
   .become-rm-button {

@@ -515,7 +515,7 @@
   }
 
   .news-hero-title {
-    font-size: 36px;
+    font-size: 32px;
   }
 
   .news-hero-accent {
@@ -527,7 +527,7 @@
   }
 
   .news-section-title {
-    font-size: 20px;
+    font-size: 18px;
   }
 
   .news-content-layout {
@@ -568,23 +568,23 @@
   }
 
   .ad-text {
-    font-size: 24px;
+    font-size: 22px;
   }
 }
 
 @media (max-width: 480px) {
   .news-hero-title {
-    font-size: 28px;
+    font-size: 26px;
   }
 
   .news-section-title {
-    font-size: 18px;
+    font-size: 17px;
   }
 
   .featured-news-title,
   .editors-article-title,
   .editors-small-title {
-    font-size: 14px;
+    font-size: 13px;
   }
 
   .editors-featured-title {

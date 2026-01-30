@@ -1,5 +1,7 @@
+'use client'
+
 import { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
+import Link from 'next/link'
 import { blogsApi } from '../../api'
 import type { Blog } from '../../types'
 import './Blogs.css'
@@ -64,7 +66,7 @@ function Blogs() {
             <h2 className="section-title">Blogs</h2>
             <p className="section-subtitle">We Share Our Knowledge</p>
           </div>
-          <Link to="/blog" className="section-link">
+          <Link href="/blog" className="section-link">
             Visit Blogs
             <svg width="14" height="16" viewBox="0 0 14 16" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M7 1L13 8L7 15M13 8H1" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -80,7 +82,7 @@ function Blogs() {
           <div className="blogs-grid">
             {smallBlog && (
               <div className="blog-card-wrapper blog-card-small-wrapper">
-                <Link to={`/blog/${smallBlog.id}`} className="blog-card-link">
+                <Link href={`/blog/${smallBlog.id}`} className="blog-card-link">
                   <article className="blog-card blog-card-small">
                     <img
                       src={smallBlogImage}
@@ -124,7 +126,7 @@ function Blogs() {
             )}
             {largeBlog && (
               <div className="blog-card-wrapper blog-card-large-wrapper">
-                <Link to={`/blog/${largeBlog.id}`} className="blog-card-link">
+                <Link href={`/blog/${largeBlog.id}`} className="blog-card-link">
                   <article className="blog-card blog-card-large">
                     <img
                       src={largeBlogImage}

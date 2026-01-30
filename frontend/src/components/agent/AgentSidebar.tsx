@@ -1,5 +1,8 @@
+'use client'
+
 import { useState, useEffect } from 'react'
-import { Link, useLocation } from 'react-router-dom'
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import './AgentSidebar.css'
 import {
   FiMail,
@@ -15,7 +18,7 @@ import {
 
 
 function AgentSidebar() {
-  const location = useLocation()
+  const pathname = usePathname()
   const [hasUnreadMessages, setHasUnreadMessages] = useState(false)
 
   useEffect(() => {
@@ -58,13 +61,14 @@ function AgentSidebar() {
   }, [])
 
   const isActive = (path: string) => {
+    if (!pathname) return false
     if (path === '/agent') {
       // For create listing pages, check if we're on any create-listing route
-      return location.pathname === '/agent' ||
-        location.pathname === '/agent/' ||
-        location.pathname.startsWith('/agent/create-listing')
+      return pathname === '/agent' ||
+        pathname === '/agent/' ||
+        pathname.startsWith('/agent/create-listing')
     }
-    return location.pathname === path || location.pathname.startsWith(path + '/')
+    return pathname === path || pathname.startsWith(path + '/')
   }
 
   return (
@@ -81,21 +85,21 @@ function AgentSidebar() {
 
       <nav className="sidebar-nav">
       <Link
-            to="/"
-            className={`nav-item ${isActive('/') && !location.pathname.includes('//') ? 'active' : ''}`}
+            href="/"
+            className={`nav-item ${isActive('/') && !pathname?.includes('//') ? 'active' : ''}`}
           >
             <FiLayout className="nav-icon" />
             <span>Home</span>
           </Link>
         <Link
-            to="/agent"
-            className={`nav-item ${isActive('/agent') && !location.pathname.includes('/agent/') ? 'active' : ''}`}
+            href="/agent"
+            className={`nav-item ${isActive('/agent') && !pathname?.includes('/agent/') ? 'active' : ''}`}
           >
             <FiHome className="nav-icon" />
             <span>Dashboard</span>
           </Link>
           <Link
-            to="/agent/inbox"
+            href="/agent/inbox"
             className={`nav-item ${isActive('/agent/inbox') ? 'active' : ''}`}
           >
             <div className="nav-icon-wrapper">
@@ -105,14 +109,14 @@ function AgentSidebar() {
             <span>Inbox</span>
           </Link>
           <Link
-            to="/agent/downloadables"
+            href="/agent/downloadables"
             className={`nav-item ${isActive('/agent/downloadables') ? 'active' : ''}`}
           >
             <FiDownload className="nav-icon" />
             <span>Downloadables</span>
           </Link>
           <Link
-            to="/agent/digital-card"
+            href="/agent/digital-card"
             className={`nav-item ${isActive('/agent/digital-card') ? 'active' : ''}`}
           >
             <FiCreditCard className="nav-icon" />
@@ -122,28 +126,28 @@ function AgentSidebar() {
         <div className="nav-section">
           <h2 className="nav-section-title">Rent Management</h2>
           <Link
-            to="/agent/listings"
+            href="/agent/listings"
             className={`nav-item ${isActive('/agent/listings') ? 'active' : ''}`}
           >
             <FiList className="nav-icon" />
             <span>My Listings</span>
           </Link>
           <Link
-            to="/agent/tracker"
+            href="/agent/tracker"
             className={`nav-item ${isActive('/agent/tracker') ? 'active' : ''}`}
           >
             <FiBarChart2 className="nav-icon" />
             <span>Rental Tracker</span>
           </Link>
           <Link
-            to="/agent/rent-estimate"
+            href="/agent/rent-estimate"
             className={`nav-item ${isActive('/agent/rent-estimate') ? 'active' : ''}`}
           >
             <FiFileText className="nav-icon" />
             <span>Rent Estimate</span>
           </Link>
           <Link
-            to="/agent/blogs"
+            href="/agent/blogs"
             className={`nav-item ${isActive('/agent/blogs') ? 'active' : ''}`}
           >
             <FiBookOpen className="nav-icon" />

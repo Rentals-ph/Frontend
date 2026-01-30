@@ -1,5 +1,8 @@
+'use client'
+
 import { useState, useEffect, useRef } from 'react'
-import { Link, useLocation, useNavigate } from 'react-router-dom'
+import Link from 'next/link'
+import { usePathname, useRouter } from 'next/navigation'
 import { FiUser, FiLogOut, FiChevronDown, FiHome, FiMenu, FiX } from 'react-icons/fi'
 import './Navbar.css'
 import LoginModal from '../common/LoginModal'
@@ -13,8 +16,8 @@ function Navbar() {
   const [isUserLoggedIn, setIsUserLoggedIn] = useState(false)
   const [userName, setUserName] = useState('User')
   const [userRole, setUserRole] = useState<'agent' | 'admin'>('agent')
-  const location = useLocation()
-  const navigate = useNavigate()
+  const pathname = usePathname()
+  const router = useRouter()
   const userMenuRef = useRef<HTMLDivElement>(null)
   const mobileMenuRef = useRef<HTMLDivElement>(null)
 
@@ -58,7 +61,7 @@ function Navbar() {
   // Also check on location change (in case navigating from agent pages)
   useEffect(() => {
     checkAuthStatus()
-  }, [location.pathname])
+  }, [pathname])
 
   useEffect(() => {
     // Close user menu when clicking outside
@@ -83,7 +86,7 @@ function Navbar() {
   // Close mobile menu when route changes
   useEffect(() => {
     setIsMobileMenuOpen(false)
-  }, [location.pathname])
+  }, [pathname])
 
   const handleLoginClick = () => {
     setIsLoginOpen(true)
@@ -112,8 +115,8 @@ function Navbar() {
     setShowUserMenu(false)
     
     // If currently on agent or admin pages, redirect to home and reload
-    if (location.pathname.startsWith('/agent') || location.pathname.startsWith('/admin')) {
-      navigate('/')
+    if (pathname?.startsWith('/agent') || pathname?.startsWith('/admin')) {
+      router.push('/')
       // Small delay to ensure navigation happens before reload
       setTimeout(() => {
         window.location.reload()
@@ -146,22 +149,22 @@ function Navbar() {
 
           {/* Desktop Navigation */}
           <nav className="navbar-desktop">
-            <Link to="/" className={`nav-link ${location.pathname === '/' ? 'active' : ''}`}>
+            <Link href="/" className={`nav-link ${pathname === '/' ? 'active' : ''}`}>
               HOME
             </Link>
-            <Link to="/about" className={`nav-link ${location.pathname === '/about' ? 'active' : ''}`}>
+            <Link href="/about" className={`nav-link ${pathname === '/about' ? 'active' : ''}`}>
               ABOUT US
             </Link>
-            <Link to="/properties" className={`nav-link ${location.pathname === '/properties' ? 'active' : ''}`}>
+            <Link href="/properties" className={`nav-link ${pathname === '/properties' ? 'active' : ''}`}>
               PROPERTIES
             </Link>
-            <Link to="/rent-managers" className={`nav-link ${location.pathname === '/rent-managers' ? 'active' : ''}`}>
+            <Link href="/rent-managers" className={`nav-link ${pathname === '/rent-managers' ? 'active' : ''}`}>
               RENT MANAGERS
             </Link>
-            <Link to="/blog" className={`nav-link ${location.pathname === '/blog' ? 'active' : ''}`}>
+            <Link href="/blog" className={`nav-link ${pathname === '/blog' ? 'active' : ''}`}>
               BLOG
             </Link>
-            <Link to="/contact" className={`nav-link ${location.pathname === '/contact' ? 'active' : ''}`}>
+            <Link href="/contact" className={`nav-link ${pathname === '/contact' ? 'active' : ''}`}>
               CONTACT US
             </Link>
             {isUserLoggedIn ? (
@@ -201,7 +204,7 @@ function Navbar() {
                     <button 
                       className="navbar-user-menu-item" 
                       onClick={() => {
-                        navigate(userRole === 'admin' ? '/admin' : '/agent')
+                        router.push(userRole === 'admin' ? '/admin' : '/agent')
                         setShowUserMenu(false)
                       }}
                     >
@@ -212,7 +215,7 @@ function Navbar() {
                       <button 
                         className="navbar-user-menu-item" 
                         onClick={() => {
-                          navigate('/agent/account')
+                          router.push('/agent/account')
                           setShowUserMenu(false)
                         }}
                       >
@@ -249,22 +252,22 @@ function Navbar() {
 
         {/* Mobile Navigation */}
         <nav className={`navbar-mobile ${isMobileMenuOpen ? 'open' : ''}`} ref={mobileMenuRef}>
-          <Link to="/" className={`nav-link ${location.pathname === '/' ? 'active' : ''}`} onClick={() => setIsMobileMenuOpen(false)}>
+          <Link href="/" className={`nav-link ${pathname === '/' ? 'active' : ''}`} onClick={() => setIsMobileMenuOpen(false)}>
             HOME
           </Link>
-          <Link to="/about" className={`nav-link ${location.pathname === '/about' ? 'active' : ''}`} onClick={() => setIsMobileMenuOpen(false)}>
+          <Link href="/about" className={`nav-link ${pathname === '/about' ? 'active' : ''}`} onClick={() => setIsMobileMenuOpen(false)}>
             ABOUT US
           </Link>
-          <Link to="/properties" className={`nav-link ${location.pathname === '/properties' ? 'active' : ''}`} onClick={() => setIsMobileMenuOpen(false)}>
+          <Link href="/properties" className={`nav-link ${pathname === '/properties' ? 'active' : ''}`} onClick={() => setIsMobileMenuOpen(false)}>
             PROPERTIES
           </Link>
-          <Link to="/rent-managers" className={`nav-link ${location.pathname === '/rent-managers' ? 'active' : ''}`} onClick={() => setIsMobileMenuOpen(false)}>
+          <Link href="/rent-managers" className={`nav-link ${pathname === '/rent-managers' ? 'active' : ''}`} onClick={() => setIsMobileMenuOpen(false)}>
             RENT MANAGERS
           </Link>
-          <Link to="/blog" className={`nav-link ${location.pathname === '/blog' ? 'active' : ''}`} onClick={() => setIsMobileMenuOpen(false)}>
+          <Link href="/blog" className={`nav-link ${pathname === '/blog' ? 'active' : ''}`} onClick={() => setIsMobileMenuOpen(false)}>
             BLOG
           </Link>
-          <Link to="/contact" className={`nav-link ${location.pathname === '/contact' ? 'active' : ''}`} onClick={() => setIsMobileMenuOpen(false)}>
+          <Link href="/contact" className={`nav-link ${pathname === '/contact' ? 'active' : ''}`} onClick={() => setIsMobileMenuOpen(false)}>
             CONTACT US
           </Link>
           {isUserLoggedIn ? (
@@ -294,7 +297,7 @@ function Navbar() {
               <button 
                 className="navbar-mobile-menu-item" 
                 onClick={() => {
-                  navigate(userRole === 'admin' ? '/admin' : '/agent')
+                  router.push(userRole === 'admin' ? '/admin' : '/agent')
                   setIsMobileMenuOpen(false)
                 }}
               >
@@ -305,7 +308,7 @@ function Navbar() {
                 <button 
                   className="navbar-mobile-menu-item" 
                   onClick={() => {
-                    navigate('/agent/account')
+                    router.push('/agent/account')
                     setIsMobileMenuOpen(false)
                   }}
                 >

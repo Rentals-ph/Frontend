@@ -1,12 +1,14 @@
+'use client'
+
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useRouter } from 'next/navigation'
 import './Hero.css'
 
 function Hero() {
   const [searchQuery, setSearchQuery] = useState('')
   const [propertyType, setPropertyType] = useState('')
   const [location, setLocation] = useState('')
-  const navigate = useNavigate()
+  const router = useRouter()
 
   // Map property types from Hero to PropertiesForRentPage format
   const propertyTypeMap: { [key: string]: string } = {
@@ -48,7 +50,7 @@ function Hero() {
     
     // Navigate to properties page with query parameters
     const queryString = params.toString()
-    navigate(`/properties${queryString ? `?${queryString}` : ''}`)
+    router.push(`/properties${queryString ? `?${queryString}` : ''}`)
   }
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {

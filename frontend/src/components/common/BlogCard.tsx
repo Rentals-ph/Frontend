@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import Link from 'next/link'
 import './BlogCard.css'
 
 interface BlogCardProps {
@@ -25,7 +25,7 @@ function BlogCard({
   size = 'small',
 }: BlogCardProps) {
   return (
-    <Link to={link} style={{ textDecoration: 'none', display: 'block' }}>
+    <Link href={link} style={{ textDecoration: 'none', display: 'block' }}>
       <article className={`blog-card blog-card-${size}`}>
       {size === 'large' ? (
         <>

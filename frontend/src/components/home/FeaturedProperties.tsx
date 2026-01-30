@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import Link from 'next/link'
 import HorizontalPropertyCard from '../common/VerticalPropertyCard'
 import './FeaturedProperties.css'
 
@@ -14,7 +14,7 @@ function FeaturedProperties() {
             </p>
           </div>
 
-          <Link to="/properties" className="section-link">
+          <Link href="/properties" className="section-link">
             View All Properties <span>→</span>
           </Link>
         </div>

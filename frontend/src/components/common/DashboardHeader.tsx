@@ -1,5 +1,7 @@
+'use client'
+
 import { useState, useEffect, useRef } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useRouter } from 'next/navigation'
 import { FiLogOut, FiChevronDown, FiUser, FiBell } from 'react-icons/fi'
 import './DashboardHeader.css'
 
@@ -22,7 +24,7 @@ function DashboardHeader({
   showNotifications = false,
   avatarFallback
 }: DashboardHeaderProps) {
-  const navigate = useNavigate()
+  const router = useRouter()
   const [showUserMenu, setShowUserMenu] = useState(false)
   const userMenuRef = useRef<HTMLDivElement>(null)
 
@@ -57,7 +59,7 @@ function DashboardHeader({
     localStorage.removeItem('user_role')
     
     // Navigate to home page
-    navigate('/')
+    router.push('/')
     // Small delay to ensure navigation happens before reload
     setTimeout(() => {
       window.location.reload()
@@ -121,7 +123,7 @@ function DashboardHeader({
                   <button 
                     className="user-menu-item" 
                     onClick={() => {
-                      navigate(accountRoute)
+                      router.push(accountRoute)
                       setShowUserMenu(false)
                     }}
                   >

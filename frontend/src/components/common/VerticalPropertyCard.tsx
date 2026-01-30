@@ -1,4 +1,6 @@
-import { useNavigate } from 'react-router-dom'
+'use client'
+
+import { useRouter } from 'next/navigation'
 import './VerticalPropertyCard.css'
 
 interface VerticalPropertyCardProps {
@@ -32,7 +34,7 @@ function VerticalPropertyCard({
   propertySize = '24 sqft',
   location,
 }: VerticalPropertyCardProps) {
-  const navigate = useNavigate()
+  const router = useRouter()
 
   const handleCardClick = (e: React.MouseEvent) => {
     // Don't navigate if clicking on buttons or links
@@ -40,7 +42,7 @@ function VerticalPropertyCard({
       return
     }
     if (id) {
-      navigate(`/property/${id}`)
+      router.push(`/property/${id}`)
     }
   }
 

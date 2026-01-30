@@ -1,5 +1,8 @@
+'use client'
+
 import { useState, useEffect, useRef } from 'react'
-import { Link, useLocation } from 'react-router-dom'
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import './AppSidebar.css'
 import {
   FiMail,
@@ -21,14 +24,14 @@ import {
 
 
 function AppSidebar() {
-  const location = useLocation()
+  const pathname = usePathname()
   const [hasUnreadMessages, setHasUnreadMessages] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const sidebarRef = useRef<HTMLElement>(null)
   
   // Determine if we're on admin or agent routes
-  const isAdminRoute = location.pathname.startsWith('/admin')
-  const isAgentRoute = location.pathname.startsWith('/agent')
+  const isAdminRoute = pathname?.startsWith('/admin')
+  const isAgentRoute = pathname?.startsWith('/agent')
 
   useEffect(() => {
     // Only check unread messages for agent routes
@@ -75,7 +78,7 @@ function AppSidebar() {
   // Close mobile menu when route changes
   useEffect(() => {
     setIsMobileMenuOpen(false)
-  }, [location.pathname])
+  }, [pathname])
 
   // Close mobile menu when clicking outside
   useEffect(() => {
@@ -104,37 +107,38 @@ function AppSidebar() {
   }, [isMobileMenuOpen])
 
   const isActive = (path: string) => {
+    if (!pathname) return false
     if (path === '/agent') {
       // For create listing pages, check if we're on any create-listing route
-      return location.pathname === '/agent' ||
-        location.pathname === '/agent/' ||
-        location.pathname.startsWith('/agent/create-listing')
+      return pathname === '/agent' ||
+        pathname === '/agent/' ||
+        pathname.startsWith('/agent/create-listing')
     }
     if (path === '/admin') {
-      return location.pathname === '/admin' || location.pathname === '/admin/'
+      return pathname === '/admin' || pathname === '/admin/'
     }
-    return location.pathname === path || location.pathname.startsWith(path + '/')
+    return pathname === path || pathname.startsWith(path + '/')
   }
 
   // Agent sidebar content
   const renderAgentSidebar = () => (
     <>
       <Link
-        to="/"
-        className={`nav-item ${isActive('/') && !location.pathname.includes('//') ? 'active' : ''}`}
+        href="/"
+        className={`nav-item ${isActive('/') && !pathname?.includes('//') ? 'active' : ''}`}
       >
         <FiLayout className="nav-icon" />
         <span>Home</span>
       </Link>
       <Link
-        to="/agent"
-        className={`nav-item ${isActive('/agent') && !location.pathname.includes('/agent/') ? 'active' : ''}`}
+        href="/agent"
+        className={`nav-item ${isActive('/agent') && !pathname?.includes('/agent/') ? 'active' : ''}`}
       >
         <FiHome className="nav-icon" />
         <span>Dashboard</span>
       </Link>
       <Link
-        to="/agent/inbox"
+        href="/agent/inbox"
         className={`nav-item ${isActive('/agent/inbox') ? 'active' : ''}`}
       >
         <div className="nav-icon-wrapper">
@@ -144,14 +148,14 @@ function AppSidebar() {
         <span>Inbox</span>
       </Link>
       <Link
-        to="/agent/downloadables"
+        href="/agent/downloadables"
         className={`nav-item ${isActive('/agent/downloadables') ? 'active' : ''}`}
       >
         <FiDownload className="nav-icon" />
         <span>Downloadables</span>
       </Link>
       <Link
-        to="/agent/digital-card"
+        href="/agent/digital-card"
         className={`nav-item ${isActive('/agent/digital-card') ? 'active' : ''}`}
       >
         <FiCreditCard className="nav-icon" />
@@ -161,61 +165,33 @@ function AppSidebar() {
       <div className="nav-section">
         <h2 className="nav-section-title">Rent Management</h2>
         <Link
-          to="/agent/listings"
+          href="/agent/listings"
           className={`nav-item ${isActive('/agent/listings') ? 'active' : ''}`}
         >
           <FiList className="nav-icon" />
           <span>My Listings</span>
         </Link>
         <Link
-          to="/agent/tracker"
+          href="/agent/tracker"
           className={`nav-item ${isActive('/agent/tracker') ? 'active' : ''}`}
         >
           <FiBarChart2 className="nav-icon" />
           <span>Rental Tracker</span>
         </Link>
         <Link
-          to="/agent/rent-estimate"
+          href="/agent/rent-estimate"
           className={`nav-item ${isActive('/agent/rent-estimate') ? 'active' : ''}`}
         >
           <FiFileText className="nav-icon" />
           <span>Rent Estimate</span>
         </Link>
         <Link
-          to="/agent/blogs"
+          href="/agent/blogs"
           className={`nav-item ${isActive('/agent/blogs') ? 'active' : ''}`}
         >
           <FiBookOpen className="nav-icon" />
           <span>Share Blogs</span>
         </Link>
-      </div>
-
-      <div className="nav-section public-pages-section">
-        <h3 className="nav-section-title">Public Pages</h3>
-        <a href="/" target="_blank" rel="noopener noreferrer" className="nav-item">
-          <FiHome className="nav-icon" />
-          <span>Home</span>
-        </a>
-        <a href="/properties" target="_blank" rel="noopener noreferrer" className="nav-item">
-          <FiLayers className="nav-icon" />
-          <span>Properties</span>
-        </a>
-        <a href="/rent-managers" target="_blank" rel="noopener noreferrer" className="nav-item">
-          <FiUsers className="nav-icon" />
-          <span>Rent Managers</span>
-        </a>
-        <a href="/blog" target="_blank" rel="noopener noreferrer" className="nav-item">
-          <FiBookOpen className="nav-icon" />
-          <span>Blog</span>
-        </a>
-        <a href="/about" target="_blank" rel="noopener noreferrer" className="nav-item">
-          <FiLayout className="nav-icon" />
-          <span>About</span>
-        </a>
-        <a href="/contact" target="_blank" rel="noopener noreferrer" className="nav-item">
-          <FiMessageCircle className="nav-icon" />
-          <span>Contact</span>
-        </a>
       </div>
     </>
   )
@@ -224,68 +200,47 @@ function AppSidebar() {
   const renderAdminSidebar = () => (
     <>
       <Link
-        to="/admin"
+        href="/"
+        className={`nav-item ${isActive('/') && !pathname?.includes('//') ? 'active' : ''}`}
+      >
+        <FiLayout className="nav-icon" />
+        <span>Home</span>
+      </Link>
+      <Link
+        href="/admin"
         className={`nav-item ${isActive('/admin') ? 'active' : ''}`}
       >
         <FiHome className="nav-icon" />
         <span>Dashboard</span>
       </Link>
       <Link
-        to="/admin/agents"
+        href="/admin/agents"
         className={`nav-item ${isActive('/admin/agents') ? 'active' : ''}`}
       >
         <FiUsers className="nav-icon" />
         <span>Agents</span>
       </Link>
       <Link
-        to="/admin/properties"
+        href="/admin/properties"
         className={`nav-item ${isActive('/admin/properties') ? 'active' : ''}`}
       >
         <FiLayers className="nav-icon" />
         <span>Properties</span>
       </Link>
       <Link
-        to="/admin/revenue"
+        href="/admin/revenue"
         className={`nav-item ${isActive('/admin/revenue') ? 'active' : ''}`}
       >
         <FiDollarSign className="nav-icon" />
         <span>Revenue</span>
       </Link>
       <Link
-        to="/admin/users"
+        href="/admin/users"
         className={`nav-item ${isActive('/admin/users') ? 'active' : ''}`}
       >
         <FiUsers className="nav-icon" />
         <span>Users</span>
       </Link>
-
-      <div className="nav-section public-pages-section">
-        <h3 className="nav-section-title">Public Pages</h3>
-        <a href="/" target="_blank" rel="noopener noreferrer" className="nav-item">
-          <FiHome className="nav-icon" />
-          <span>Home</span>
-        </a>
-        <a href="/properties" target="_blank" rel="noopener noreferrer" className="nav-item">
-          <FiLayers className="nav-icon" />
-          <span>Properties</span>
-        </a>
-        <a href="/rent-managers" target="_blank" rel="noopener noreferrer" className="nav-item">
-          <FiUsers className="nav-icon" />
-          <span>Rent Managers</span>
-        </a>
-        <a href="/blog" target="_blank" rel="noopener noreferrer" className="nav-item">
-          <FiBookOpen className="nav-icon" />
-          <span>Blog</span>
-        </a>
-        <a href="/about" target="_blank" rel="noopener noreferrer" className="nav-item">
-          <FiLayout className="nav-icon" />
-          <span>About</span>
-        </a>
-        <a href="/contact" target="_blank" rel="noopener noreferrer" className="nav-item">
-          <FiMessageCircle className="nav-icon" />
-          <span>Contact</span>
-        </a>
-      </div>
     </>
   )
 

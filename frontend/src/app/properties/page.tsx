@@ -8,6 +8,8 @@ import VerticalPropertyCard from '../../components/common/VerticalPropertyCard'
 import HorizontalPropertyCard from '../../components/common/HorizontalPropertyCard'
 import '../../pages-old/PropertiesForRentPage.css'
 import PageHeader from '../../components/layout/PageHeader'
+import { propertiesApi } from '../../api/endpoints/properties'
+import type { Property } from '../../types'
 
 function PropertiesContent() {
   const searchParams = useSearchParams()
@@ -22,6 +24,11 @@ function PropertiesContent() {
   const [currentPage, setCurrentPage] = useState(1)
   const [viewMode, setViewMode] = useState<'horizontal' | 'vertical'>('vertical')
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
+  const [properties, setProperties] = useState<Property[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [totalPages, setTotalPages] = useState(1)
+  const [totalProperties, setTotalProperties] = useState(0)
   const itemsPerPage = 9
 
   // Initialize state from URL query parameters
@@ -67,88 +74,117 @@ function PropertiesContent() {
     'Pet Friendly Unit In Manila'
   ]
 
-  // Sample properties data
-  const properties = [
-    {
-      id: 1,
-      propertyType: 'Condominium',
-      date: 'Jan 15, 2026',
-      price: '₱35,000/Month',
-      title: 'Azure Urban Residences - 2BR Fully Furnished',
-      image: '/assets/property-main.png',
-      rentManagerName: 'Maria Santos',
-      rentManagerRole: 'Senior Rent Manager',
-      bedrooms: 2,
-      bathrooms: 2,
-      parking: 1,
-      location: 'Makati City'
-    },
-    {
-      id: 2,
-      propertyType: 'Apartment',
-      date: 'Jan 18, 2026',
-      price: '₱18,000/Month',
-      title: 'Cozy 1BR Apartment Near BGC',
-      image: '/assets/property-main.png',
-      rentManagerName: 'John Reyes',
-      rentManagerRole: 'Property Specialist',
-      bedrooms: 1,
-      bathrooms: 1,
-      parking: 0,
-      location: 'BGC'
-    },
-  ]
+  // Helper function to format price
+  const formatPrice = (price: number): string => {
+    return `₱${price.toLocaleString('en-US')}/Month`
+  }
 
-  // Filter logic
+  // Helper function to format date
+  const formatDate = (dateString: string | null): string => {
+    if (!dateString) return 'Date not available'
+    const date = new Date(dateString)
+    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+  }
+
+  // Helper function to get rent manager role
+  const getRentManagerRole = (isOfficial: boolean | undefined): string => {
+    return isOfficial ? 'Rent Manager' : 'Property Specialist'
+  }
+
+  // Fetch properties from API
+  useEffect(() => {
+    const fetchProperties = async () => {
+      setLoading(true)
+      setError(null)
+      
+      try {
+        const params: {
+          type?: string
+          location?: string
+          search?: string
+          page?: number
+        } = {
+          page: currentPage,
+        }
+
+        // Add filters to API params
+        if (selectedType && selectedType !== 'All Types') {
+          params.type = selectedType
+        }
+        if (selectedLocation) {
+          params.location = selectedLocation
+        }
+        if (searchQuery) {
+          params.search = searchQuery
+        }
+
+        const response = await propertiesApi.getAll(params)
+        
+        // Handle paginated response
+        if (response && typeof response === 'object' && 'data' in response) {
+          const paginatedResponse = response as any
+          setProperties(paginatedResponse.data || [])
+          setTotalPages(paginatedResponse.last_page || 1)
+          setTotalProperties(paginatedResponse.total || 0)
+        } else {
+          // Handle array response
+          setProperties(Array.isArray(response) ? response : [])
+          setTotalPages(1)
+          setTotalProperties(Array.isArray(response) ? response.length : 0)
+        }
+      } catch (err: any) {
+        console.error('Error fetching properties:', err)
+        setError(err.message || 'Failed to load properties. Please try again later.')
+        setProperties([])
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchProperties()
+  }, [selectedLocation, selectedType, searchQuery, currentPage])
+
+  // Client-side filtering for additional filters (bathrooms, bedrooms, price range)
+  // Note: These filters could also be moved to the backend API for better performance
   const filteredProperties = properties.filter(property => {
-    const typeMatch = selectedType === 'All Types' || property.propertyType === selectedType
-    const locationMatch = !selectedLocation || property.location === selectedLocation
     const bathMatch = !minBaths || property.bathrooms >= parseInt(minBaths)
     const bedMatch = !minBeds || property.bedrooms >= parseInt(minBeds)
 
     let priceMatch = true
     if (priceMin || priceMax) {
-      const price = parseInt(property.price.replace(/[^0-9]/g, ''))
+      const price = property.price
       if (priceMin) priceMatch = priceMatch && price >= parseInt(priceMin)
       if (priceMax) priceMatch = priceMatch && price <= parseInt(priceMax)
     }
 
-    const searchMatch = !searchQuery ||
-      property.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      property.propertyType.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      property.location.toLowerCase().includes(searchQuery.toLowerCase())
-
-    return typeMatch && locationMatch && bathMatch && bedMatch && priceMatch && searchMatch
+    return bathMatch && bedMatch && priceMatch
   })
 
-  // Sort properties
+  // Client-side sorting
   const sortedProperties = [...filteredProperties].sort((a, b) => {
     if (sortBy === 'price-low') {
-      const priceA = parseInt(a.price.replace(/[^0-9]/g, ''))
-      const priceB = parseInt(b.price.replace(/[^0-9]/g, ''))
-      return priceA - priceB
+      return a.price - b.price
     } else if (sortBy === 'price-high') {
-      const priceA = parseInt(a.price.replace(/[^0-9]/g, ''))
-      const priceB = parseInt(b.price.replace(/[^0-9]/g, ''))
-      return priceB - priceA
+      return b.price - a.price
     } else if (sortBy === 'newest') {
-      return new Date(b.date).getTime() - new Date(a.date).getTime()
+      const dateA = a.published_at ? new Date(a.published_at).getTime() : 0
+      const dateB = b.published_at ? new Date(b.published_at).getTime() : 0
+      return dateB - dateA
     } else if (sortBy === 'oldest') {
-      return new Date(a.date).getTime() - new Date(b.date).getTime()
+      const dateA = a.published_at ? new Date(a.published_at).getTime() : 0
+      const dateB = b.published_at ? new Date(b.published_at).getTime() : 0
+      return dateA - dateB
     }
     return 0
   })
 
-  // Pagination calculations
-  const totalPages = Math.ceil(sortedProperties.length / itemsPerPage)
-  const startIndex = (currentPage - 1) * itemsPerPage
-  const endIndex = startIndex + itemsPerPage
-  const paginatedProperties = sortedProperties.slice(startIndex, endIndex)
+  // Pagination - use API pagination if available, otherwise use client-side
+  const paginatedProperties = sortedProperties
 
-  // Reset to page 1 when filters change
+  // Reset to page 1 when filters change (that trigger API calls)
   useEffect(() => {
     setCurrentPage(1)
-  }, [selectedLocation, selectedType, minBaths, minBeds, priceMin, priceMax, searchQuery, sortBy])
+  }, [selectedLocation, selectedType, searchQuery])
 
   return (
     <div className="properties-for-rent-page">
@@ -350,47 +386,91 @@ function PropertiesContent() {
           </div>
 
           <div className="properties-content-wrapper">
-            {paginatedProperties.length > 0 ? (
+            {loading ? (
+              <div className="no-results">
+                <h3 className="no-results-title">Loading Properties...</h3>
+                <p className="no-results-text">Please wait while we fetch the latest properties</p>
+              </div>
+            ) : error ? (
+              <div className="no-results">
+                <h3 className="no-results-title">Error Loading Properties</h3>
+                <p className="no-results-text">{error}</p>
+              </div>
+            ) : paginatedProperties.length > 0 ? (
               <>
                 <div className={viewMode === 'horizontal' ? 'properties-list' : 'properties-grid'}>
-                  {paginatedProperties.map(property =>
-                    viewMode === 'horizontal' ? (
-                      <HorizontalPropertyCard
-                        key={property.id}
-                        id={property.id}
-                        propertyType={property.propertyType}
-                        date={property.date}
-                        price={property.price}
-                        title={property.title}
-                        image={property.image}
-                        rentManagerName={property.rentManagerName}
-                        rentManagerRole={property.rentManagerRole}
-                        bedrooms={property.bedrooms}
-                        bathrooms={property.bathrooms}
-                        parking={property.parking}
-                        propertySize={`${(property.bedrooms * 15 + property.bathrooms * 5)} sqft`}
-                        location={property.location}
-                      />
+                  {paginatedProperties.map(property => {
+                    const propertySize = property.area 
+                      ? `${property.area} sqft` 
+                      : `${(property.bedrooms * 15 + property.bathrooms * 5)} sqft`
+                    
+                    const cardProps = {
+                      id: property.id,
+                      propertyType: property.type,
+                      date: formatDate(property.published_at),
+                      price: formatPrice(property.price),
+                      title: property.title,
+                      image: property.image || '/assets/property-main.png',
+                      rentManagerName: property.rent_manager?.name || 'Rental.Ph Official',
+                      rentManagerRole: getRentManagerRole(property.rent_manager?.is_official),
+                      bedrooms: property.bedrooms,
+                      bathrooms: property.bathrooms,
+                      parking: 0, // Parking not in backend model, defaulting to 0
+                      propertySize,
+                      location: property.location,
+                    }
+
+                    return viewMode === 'horizontal' ? (
+                      <HorizontalPropertyCard key={property.id} {...cardProps} />
                     ) : (
-                      <VerticalPropertyCard
-                        key={property.id}
-                        id={property.id}
-                        propertyType={property.propertyType}
-                        date={property.date}
-                        price={property.price}
-                        title={property.title}
-                        image={property.image}
-                        rentManagerName={property.rentManagerName}
-                        rentManagerRole={property.rentManagerRole}
-                        bedrooms={property.bedrooms}
-                        bathrooms={property.bathrooms}
-                        parking={property.parking}
-                        propertySize={`${(property.bedrooms * 15 + property.bathrooms * 5)} sqft`}
-                        location={property.location}
-                      />
+                      <VerticalPropertyCard key={property.id} {...cardProps} />
                     )
-                  )}
+                  })}
                 </div>
+                
+                {/* Pagination Controls */}
+                {totalPages > 1 && (
+                  <div style={{ 
+                    display: 'flex', 
+                    justifyContent: 'center', 
+                    alignItems: 'center', 
+                    gap: '1rem',
+                    marginTop: '2rem',
+                    padding: '1rem'
+                  }}>
+                    <button
+                      onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                      disabled={currentPage === 1}
+                      style={{
+                        padding: '0.5rem 1rem',
+                        backgroundColor: currentPage === 1 ? '#ccc' : '#FE8E0A',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '4px',
+                        cursor: currentPage === 1 ? 'not-allowed' : 'pointer'
+                      }}
+                    >
+                      Previous
+                    </button>
+                    <span style={{ fontSize: '1rem' }}>
+                      Page {currentPage} of {totalPages} ({totalProperties} properties)
+                    </span>
+                    <button
+                      onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                      disabled={currentPage === totalPages}
+                      style={{
+                        padding: '0.5rem 1rem',
+                        backgroundColor: currentPage === totalPages ? '#ccc' : '#FE8E0A',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '4px',
+                        cursor: currentPage === totalPages ? 'not-allowed' : 'pointer'
+                      }}
+                    >
+                      Next
+                    </button>
+                  </div>
+                )}
               </>
             ) : (
               <div className="no-results">

@@ -47,8 +47,11 @@ apiClient.interceptors.response.use(
       })
       
       // Provide helpful error message
+      const backendUrl = API_BASE_URL.startsWith('/') 
+        ? 'http://127.0.0.1:8000' 
+        : API_BASE_URL.replace('/api', '') || 'http://127.0.0.1:8000'
       const networkError = new Error(
-        `Unable to connect to the API server. Please ensure the backend is running on ${API_BASE_URL.replace('/api', '') || 'http://localhost:8000'}.`
+        `Unable to connect to the API server. Please ensure the backend is running on ${backendUrl}. Error: ${error.message}`
       )
       return Promise.reject(networkError)
     }

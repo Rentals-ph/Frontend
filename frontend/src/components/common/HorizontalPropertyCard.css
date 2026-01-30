@@ -320,17 +320,17 @@
 
 /* =========================
    MOBILE-SPECIFIC STYLES (≤768px)
-   Transforms to vertical layout optimized for mobile
+   Minimal card design - 2 cards per row like reference image
 ========================= */
 @media (max-width: 768px) {
-  /* Card Container - Mobile: Switch to Vertical Layout */
+  /* Card Container - Mobile: Compact 2-column layout */
   .horizontal-property-card {
     flex-direction: column;
     min-height: auto;
-    border-radius: 16px;
-    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.08), 0px 2px 4px rgba(0, 0, 0, 0.04);
-    overflow: visible;
-    margin-bottom: 16px;
+    border-radius: 12px;
+    box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.06), 0px 1px 3px rgba(0, 0, 0, 0.04);
+    overflow: hidden;
+    margin-bottom: 0;
   }
 
   .horizontal-property-card:hover {
@@ -343,78 +343,84 @@
     transition: transform 0.1s ease;
   }
   
-  /* Image - Mobile: Full Width at Top */
+  /* Image - Mobile: Compact for 2-column layout */
   .horizontal-property-image {
     width: 100%;
     min-width: 100%;
-    height: 180px;
-    min-height: 180px;
-    border-radius: 16px 16px 0 0;
+    height: 140px;
+    min-height: 140px;
+    border-radius: 12px 12px 0 0;
   }
 
   .horizontal-property-card:hover .horizontal-property-image {
     transform: none; /* Disable hover scale on mobile */
   }
   
-  /* Content - Mobile Optimized */
+  /* Content - Mobile Compact */
   .horizontal-property-content {
-    padding: 12px;
-    gap: 10px;
+    padding: 10px;
+    gap: 6px;
   }
   
-  /* Header Row - Mobile Layout */
+  /* Header Row - Mobile Compact */
   .horizontal-property-header-row {
     flex-wrap: wrap;
-    gap: 6px;
+    gap: 4px;
+    margin-bottom: 2px;
   }
 
   .horizontal-property-type {
-    font-size: 11px;
-    padding: 4px 8px;
+    font-size: 9px;
+    padding: 2px 6px;
     background: #EFF6FF;
-    border-radius: 6px;
+    border-radius: 4px;
     display: inline-block;
+    font-weight: 500;
   }
 
   .horizontal-property-date {
-    font-size: 11px;
+    font-size: 9px;
     margin-left: auto;
+    color: #6B7280;
   }
 
-  /* Price Row - Mobile Layout */
+  /* Price Row - Mobile Compact */
   .horizontal-property-price-row {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 8px;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 4px;
+    margin-top: 4px;
   }
   
   .horizontal-property-price {
-    font-size: 22px;
+    font-size: 16px;
     font-weight: 700;
+    line-height: 1.2;
   }
 
-  /* Contact Icons - Mobile: Repositioned */
+  /* Contact Icons - Mobile Compact */
   .horizontal-property-contact-icons {
     position: absolute;
-    top: 12px;
-    right: 12px;
+    top: 8px;
+    right: 8px;
     flex-direction: column;
-    gap: 8px;
+    gap: 4px;
     background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(8px);
-    padding: 8px;
-    border-radius: 12px;
-    box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
+    padding: 4px;
+    border-radius: 8px;
+    box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.1);
     z-index: 10;
   }
 
   .horizontal-property-contact-icons svg {
-    width: 36px;
-    height: 36px;
-    padding: 8px;
+    width: 28px;
+    height: 28px;
+    padding: 6px;
     background: #ffffff;
     border: 1px solid #e5e7eb;
-    border-radius: 10px;
+    border-radius: 6px;
   }
 
   .horizontal-property-contact-icons svg:active {
@@ -422,24 +428,24 @@
     background: #f3f4f6;
   }
 
-  /* Like Button - Mobile: Repositioned */
+  /* Like Button - Mobile Compact */
   .horizontal-property-like {
     position: absolute;
-    top: 12px;
-    left: 12px;
-    width: 40px;
-    height: 40px;
+    top: 8px;
+    left: 8px;
+    width: 32px;
+    height: 32px;
     background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(8px);
     border: 1px solid #e5e7eb;
-    border-radius: 12px;
-    box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.1);
     z-index: 10;
   }
 
   .horizontal-property-like svg {
-    width: 20px;
-    height: 20px;
+    width: 16px;
+    height: 16px;
   }
 
   .horizontal-property-like:active {
@@ -447,20 +453,22 @@
     background: #fef2f2;
   }
   
-  /* Title - Mobile Optimized */
+  /* Title - Mobile Compact */
   .horizontal-property-title {
-    font-size: 15px;
+    font-size: 12px;
     font-weight: 600;
-    line-height: 1.4;
-    max-height: 44px;
+    line-height: 1.3;
+    max-height: 32px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
   }
 
-  /* Rent Manager Badge - Mobile Optimized */
+  /* Rent Manager Badge - Mobile Compact (Hidden on small cards) */
   .horizontal-rent-manager-badge {
-    padding: 12px;
-    background: #F9FAFB;
-    border: 1px solid #E5E7EB;
-    border-radius: 12px;
+    display: none; /* Hide on compact 2-column layout */
   }
 
   .horizontal-rent-manager-avatar {
@@ -476,27 +484,28 @@
     font-size: 12px;
   }
 
-  /* Features Bar - Mobile: Grid Layout */
+  /* Features Bar - Mobile Compact */
   .horizontal-property-features {
     gap: 0;
-    padding-top: 10px;
+    padding-top: 8px;
     border-top: 1px solid #E5E7EB;
     background: #FAFAFA;
-    margin-top: 6px;
-    padding: 10px 6px;
-    border-radius: 0 0 16px 16px;
+    margin-top: 4px;
+    padding: 8px 6px;
+    border-radius: 0 0 12px 12px;
+    justify-content: space-around;
   }
 
   .horizontal-property-feature-item {
-    flex: 1 1 calc(33.333% - 8px);
-    min-width: 80px;
-    padding: 10px 6px;
-    flex-direction: column;
-    gap: 6px;
-    border-right: 1px solid #E5E7EB;
+    flex: 0 0 auto;
+    min-width: auto;
+    padding: 4px 6px;
+    flex-direction: row;
+    gap: 3px;
+    border-right: none;
     border-bottom: none;
     background: transparent;
-    border-radius: 8px;
+    border-radius: 4px;
     transition: background 0.2s ease;
   }
 
@@ -504,19 +513,17 @@
     background: #F3F4F6;
   }
 
-  .horizontal-property-feature-item:nth-child(3n) {
-    border-right: none;
-  }
-
   .horizontal-property-feature-item svg {
-    width: 22px;
-    height: 22px;
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
   }
 
   .horizontal-property-feature-item span:not(.feature-tooltip) {
-    font-size: 14px;
-    font-weight: 700;
+    font-size: 10px;
+    font-weight: 600;
     color: #111827;
+    white-space: nowrap;
   }
 
   /* Hide tooltips on mobile */
@@ -530,32 +537,32 @@
 ========================= */
 @media (max-width: 480px) {
   .horizontal-property-card {
-    border-radius: 12px;
-    margin-bottom: 12px;
+    border-radius: 10px;
+    margin-bottom: 0;
   }
   
   .horizontal-property-image {
-    height: 150px;
-    min-height: 150px;
-    border-radius: 12px 12px 0 0;
+    height: 120px;
+    min-height: 120px;
+    border-radius: 10px 10px 0 0;
   }
   
   .horizontal-property-content {
-    padding: 10px;
-    gap: 8px;
+    padding: 8px;
+    gap: 5px;
   }
 
   .horizontal-property-type {
-    font-size: 10px;
-    padding: 3px 6px;
+    font-size: 8px;
+    padding: 2px 4px;
   }
 
   .horizontal-property-date {
-    font-size: 10px;
+    font-size: 8px;
   }
   
   .horizontal-property-price {
-    font-size: 22px;
+    font-size: 14px;
   }
 
   .horizontal-property-contact-icons {
@@ -584,12 +591,64 @@
   }
   
   .horizontal-property-title {
-    font-size: 14px;
-    max-height: 42px;
+    font-size: 11px;
+    max-height: 28px;
   }
 
   .horizontal-property-price {
-    font-size: 20px;
+    font-size: 14px;
+  }
+
+  .horizontal-property-type {
+    font-size: 8px;
+    padding: 2px 4px;
+  }
+
+  .horizontal-property-date {
+    font-size: 8px;
+  }
+
+  .horizontal-property-contact-icons {
+    top: 6px;
+    right: 6px;
+    padding: 3px;
+    gap: 3px;
+  }
+
+  .horizontal-property-contact-icons svg {
+    width: 24px;
+    height: 24px;
+    padding: 4px;
+  }
+
+  .horizontal-property-like {
+    top: 6px;
+    left: 6px;
+    width: 28px;
+    height: 28px;
+  }
+
+  .horizontal-property-like svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  .horizontal-property-features {
+    padding: 6px 4px;
+  }
+
+  .horizontal-property-feature-item {
+    padding: 3px 4px;
+    gap: 2px;
+  }
+
+  .horizontal-property-feature-item svg {
+    width: 12px;
+    height: 12px;
+  }
+
+  .horizontal-property-feature-item span:not(.feature-tooltip) {
+    font-size: 9px;
   }
 
   .horizontal-rent-manager-badge {

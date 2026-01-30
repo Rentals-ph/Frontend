@@ -320,21 +320,21 @@
 
 /* =========================
    MOBILE-SPECIFIC STYLES (≤768px)
-   Different perspective and layout optimized for mobile
+   Minimal card design - 2 cards per row like reference image
 ========================= */
 @media (max-width: 768px) { 
-  /* Card Container - Mobile Optimized */
+  /* Card Container - Mobile Optimized for 2-column layout */
   .vertical-property-card {
     max-width: 100%;
     width: 100%;
     height: auto;
     min-height: auto;
     flex-direction: column;
-    border-radius: 16px;
-    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.08), 0px 2px 4px rgba(0, 0, 0, 0.04);
+    border-radius: 12px;
+    box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.06), 0px 1px 3px rgba(0, 0, 0, 0.04);
     border: 1px solid #e5e7eb;
-    overflow: visible;
-    margin-bottom: 16px;
+    overflow: hidden;
+    margin-bottom: 0;
   }
 
   .vertical-property-card:hover {
@@ -347,10 +347,10 @@
     transition: transform 0.1s ease;
   }
   
-  /* Image - Mobile Optimized */
+  /* Image - Mobile Optimized for compact 2-column layout */
   .vertical-property-image {
-    height: 180px;
-    border-radius: 16px 16px 0 0;
+    height: 140px;
+    border-radius: 12px 12px 0 0;
     object-fit: cover;
   }
 
@@ -358,67 +358,73 @@
     transform: none; /* Disable hover scale on mobile */
   }
   
-  /* Content - Mobile Optimized Spacing */
+  /* Content - Mobile Optimized Spacing for compact cards */
   .vertical-property-content {
-    padding: 12px;
-    gap: 10px;
+    padding: 10px;
+    gap: 6px;
   }
   
-  /* Header Row - Mobile Layout */
+  /* Header Row - Mobile Layout - Compact */
   .vertical-property-header-row {
     flex-wrap: wrap;
-    gap: 6px;
+    gap: 4px;
+    margin-bottom: 2px;
   }
 
   .vertical-property-type {
-    font-size: 11px;
-    padding: 4px 8px;
+    font-size: 9px;
+    padding: 2px 6px;
     background: #EFF6FF;
-    border-radius: 6px;
+    border-radius: 4px;
     display: inline-block;
+    font-weight: 500;
   }
 
   .vertical-property-date {
-    font-size: 11px;
+    font-size: 9px;
     margin-left: auto;
+    color: #6B7280;
   }
   
-  /* Price Row - Mobile Optimized */
+  /* Price Row - Mobile Optimized - Compact */
   .vertical-property-price-row {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 8px;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 4px;
+    margin-top: 4px;
   }
   
   .vertical-property-price {
-    font-size: 22px;
+    font-size: 16px;
     font-weight: 700;
     color: #205ED7;
+    line-height: 1.2;
   }
 
-  /* Contact Icons - Mobile Positioned Differently */
+  /* Contact Icons - Mobile Compact */
   .vertical-property-contact-icons {
     position: absolute;
-    top: 12px;
-    right: 12px;
+    top: 8px;
+    right: 8px;
     bottom: auto;
     flex-direction: column;
-    gap: 8px;
+    gap: 4px;
     background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(8px);
-    padding: 8px;
-    border-radius: 12px;
-    box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
+    padding: 4px;
+    border-radius: 8px;
+    box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.1);
     z-index: 10;
   }
 
   .vertical-property-contact-icons svg {
-    width: 36px;
-    height: 36px;
-    padding: 8px;
+    width: 28px;
+    height: 28px;
+    padding: 6px;
     background: #ffffff;
     border: 1px solid #e5e7eb;
-    border-radius: 10px;
+    border-radius: 6px;
     transition: all 0.2s ease;
   }
 
@@ -427,24 +433,24 @@
     background: #f3f4f6;
   }
 
-  /* Like Button - Mobile Positioned */
+  /* Like Button - Mobile Compact */
   .vertical-property-like {
     position: absolute;
-    top: 12px;
-    left: 12px;
-    width: 40px;
-    height: 40px;
+    top: 8px;
+    left: 8px;
+    width: 32px;
+    height: 32px;
     background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(8px);
     border: 1px solid #e5e7eb;
-    border-radius: 12px;
-    box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.1);
     z-index: 10;
   }
 
   .vertical-property-like svg {
-    width: 20px;
-    height: 20px;
+    width: 16px;
+    height: 16px;
   }
 
   .vertical-property-like:active {
@@ -452,48 +458,36 @@
     background: #fef2f2;
   }
   
-  /* Title - Mobile Optimized */
+  /* Title - Mobile Optimized - Compact */
   .vertical-property-title {
-    font-size: 15px;
+    font-size: 12px;
     font-weight: 600;
-    line-height: 1.4;
+    line-height: 1.3;
     margin: 0;
     -webkit-line-clamp: 2;
-    max-height: 44px;
+    max-height: 32px;
     color: #111827;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
   }
 
-  /* Rent Manager Badge - Mobile Optimized */
+  /* Rent Manager Badge - Mobile Compact (Hidden on small cards) */
   .vertical-rent-manager-badge {
-    padding: 12px;
-    background: #F9FAFB;
-    border: 1px solid #E5E7EB;
-    border-radius: 12px;
-    margin-top: 4px;
+    display: none; /* Hide on compact 2-column layout */
   }
 
-  .vertical-rent-manager-avatar {
-    width: 40px;
-    height: 40px;
-  }
-
-  .vertical-rent-manager-name {
-    font-size: 14px;
-  }
-
-  .vertical-rent-manager-role {
-    font-size: 12px;
-  }
-
-  /* Features Bar - Mobile Optimized */
+  /* Features Bar - Mobile Compact (Simplified) */
   .vertical-property-features {
     height: auto;
-    min-height: 60px;
+    min-height: auto;
     border-top: 1px solid #E5E7EB;
     background: #FAFAFA;
-    padding: 12px 8px;
+    padding: 8px 6px;
     gap: 0;
     flex-wrap: wrap;
+    justify-content: space-around;
   }
 
   .vertical-property-feature-item {
@@ -518,14 +512,16 @@
   }
 
   .vertical-property-feature-item svg {
-    width: 22px;
-    height: 22px;
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
   }
 
   .vertical-property-feature-item span:not(.feature-tooltip) {
-    font-size: 14px;
-    font-weight: 700;
+    font-size: 10px;
+    font-weight: 600;
     color: #111827;
+    white-space: nowrap;
   }
 
   /* Hide tooltips on mobile - not needed with touch */
@@ -540,18 +536,18 @@
 ========================= */
 @media (max-width: 480px) {
   .vertical-property-card {
-    border-radius: 12px;
-    margin-bottom: 12px;
+    border-radius: 10px;
+    margin-bottom: 0;
   }
   
   .vertical-property-image {
-    height: 150px;
-    border-radius: 12px 12px 0 0;
+    height: 120px;
+    border-radius: 10px 10px 0 0;
   }
   
   .vertical-property-content {
-    padding: 10px;
-    gap: 8px;
+    padding: 8px;
+    gap: 5px;
   }
 
   .vertical-property-type {
@@ -564,37 +560,64 @@
   }
   
   .vertical-property-price {
-    font-size: 22px;
+    font-size: 14px;
+  }
+
+  .vertical-property-title {
+    font-size: 11px;
+    max-height: 28px;
+  }
+
+  .vertical-property-type {
+    font-size: 8px;
+    padding: 2px 4px;
+  }
+
+  .vertical-property-date {
+    font-size: 8px;
   }
 
   .vertical-property-contact-icons {
-    top: 10px;
-    right: 10px;
-    padding: 6px;
-    gap: 6px;
+    top: 6px;
+    right: 6px;
+    padding: 3px;
+    gap: 3px;
   }
 
   .vertical-property-contact-icons svg {
-    width: 32px;
-    height: 32px;
-    padding: 6px;
+    width: 24px;
+    height: 24px;
+    padding: 4px;
   }
 
   .vertical-property-like {
-    top: 10px;
-    left: 10px;
-    width: 36px;
-    height: 36px;
+    top: 6px;
+    left: 6px;
+    width: 28px;
+    height: 28px;
   }
 
   .vertical-property-like svg {
-    width: 18px;
-    height: 18px;
+    width: 14px;
+    height: 14px;
   }
-  
-  .vertical-property-title {
-    font-size: 14px;
-    max-height: 42px;
+
+  .vertical-property-features {
+    padding: 6px 4px;
+  }
+
+  .vertical-property-feature-item {
+    padding: 3px 4px;
+    gap: 2px;
+  }
+
+  .vertical-property-feature-item svg {
+    width: 12px;
+    height: 12px;
+  }
+
+  .vertical-property-feature-item span:not(.feature-tooltip) {
+    font-size: 9px;
   }
 
   .vertical-property-price {

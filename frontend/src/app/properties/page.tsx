@@ -9,10 +9,6 @@ import HorizontalPropertyCard from '../../components/common/HorizontalPropertyCa
 import '../../pages-old/PropertiesForRentPage.css'
 import PageHeader from '../../components/layout/PageHeader'
 
-// Force dynamic rendering for this page
-export const dynamic = 'force-dynamic'
-export const revalidate = false;
-
 function PropertiesContent() {
   const searchParams = useSearchParams()
   const [selectedLocation, setSelectedLocation] = useState('')

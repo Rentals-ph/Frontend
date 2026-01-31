@@ -4,7 +4,7 @@
  * To switch between local and remote backend:
  * - Default: Uses local backend (http://localhost:8000) when running locally
  * - Set USE_LOCAL_API=false to use Railway backend
- * - On Vercel: Always uses Railway backend
+ * - In production (Vercel): Always uses Railway backend
  * - Or override with NEXT_PUBLIC_API_BASE_URL or NEXT_PUBLIC_API_URL
  */
 
@@ -17,7 +17,7 @@ const LOCAL_API_URL = 'http://localhost:8000'
 const useRemoteApi = process.env.USE_LOCAL_API === 'false' || process.env.USE_LOCAL_API === '0'
 
 // Determine API base URL
-// Priority: 1. Explicit env var, 2. Vercel detection, 3. USE_LOCAL_API flag, 4. Default to local
+// Priority: 1. Explicit env var, 2. Production detection, 3. USE_LOCAL_API flag, 4. Default to local
 export const getApiBaseUrl = (): string => {
   // If explicitly set, use it
   if (process.env.NEXT_PUBLIC_API_BASE_URL) {
@@ -28,8 +28,17 @@ export const getApiBaseUrl = (): string => {
     return process.env.NEXT_PUBLIC_API_URL
   }
   
-  // On Vercel, always use Railway
-  if (process.env.VERCEL) {
+  // Check if we're in production (Vercel deployment)
+  // Check NODE_ENV first (available in both server and client)
+  const isProduction = process.env.NODE_ENV === 'production'
+  
+  // In browser, also check hostname (not localhost = production)
+  const isProductionHost = typeof window !== 'undefined' 
+    ? window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1'
+    : false
+  
+  // In production (Vercel), always use Railway
+  if (isProduction || isProductionHost || process.env.VERCEL) {
     return `${RAILWAY_API_URL}/api`
   }
   

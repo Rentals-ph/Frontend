@@ -4,6 +4,11 @@ import { getApiBaseUrl } from '../config/api'
 // Get API base URL (respects USE_LOCAL_API env var to switch between local and remote)
 const API_BASE_URL = getApiBaseUrl()
 
+// Log the API URL being used (helpful for debugging)
+if (typeof window !== 'undefined') {
+  console.log('API Base URL:', API_BASE_URL)
+}
+
 /**
  * Create and configure the Axios instance
  */
@@ -47,12 +52,12 @@ apiClient.interceptors.response.use(
         baseURL: error.config?.baseURL,
       })
       
-      // Provide helpful error message
+      // Provide helpful error message with actual API URL being used
       const backendUrl = API_BASE_URL.startsWith('/') 
         ? 'http://127.0.0.1:8000' 
-        : API_BASE_URL.replace('/api', '') || 'http://127.0.0.1:8000'
+        : API_BASE_URL.replace('/api', '') || API_BASE_URL
       const networkError = new Error(
-        `Unable to connect to the API server. Please ensure the backend is running on ${backendUrl}. Error: ${error.message}`
+        `Unable to connect to the API server at ${backendUrl}. Error: ${error.message}`
       )
       return Promise.reject(networkError)
     }

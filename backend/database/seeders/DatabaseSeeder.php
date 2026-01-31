@@ -35,7 +35,7 @@ class DatabaseSeeder extends Seeder
 
         Testimonial::create([
             'name' => 'Elaine Mae Ofiaza',
-            'role' => 'Lessee',
+            'role' => 'Lessee', 
             'content' => 'Rentals.ph made finding my perfect home so easy! The platform is user-friendly and the properties are all verified. Highly recommended!',
             'avatar' => 'https://i.pravatar.cc/150?img=1',
         ]);

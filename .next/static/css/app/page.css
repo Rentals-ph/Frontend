@@ -1505,6 +1505,13 @@
 /*!**************************************************************************************************************************************************************************************************************************************************************************!*\
   !*** css ./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[12].use[2]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[12].use[3]!./src/components/home/Hero.css ***!
   \**************************************************************************************************************************************************************************************************************************************************************************/
+/* Hero Section */
+.hero-section {
+  position: relative;
+  height: 700px;
+  overflow: hidden;
+}
+
 /* Hero Section Background */
 .hero-background {
   width: 100%;
@@ -1856,6 +1863,16 @@
 
 /* Responsive */
 @media (max-width: 1024px) {
+  .hero-section {
+    height: auto;
+    min-height: 650px;
+  }
+
+  .hero-background {
+    height: 100%;
+    min-height: 650px;
+  }
+
   .search-container {
     max-width: 800px;
     padding: 35px 28px;
@@ -1879,17 +1896,19 @@
 
 @media (max-width: 768px) {
   .hero-background {
-    height: 700px;
+    height: 100%;
+    min-height: 600px;
   }
 
   section#home {
     height: auto !important;
-    min-height: 700px;
+    min-height: 600px;
     padding-bottom: 40px;
   }
 
   .hero-title {
     font-size: 28px;
+    margin-top: 60px;
   }
 
   .hero-subtitle {
@@ -1962,13 +1981,9 @@
     text-align: center;
   }
 
-  .recommended-searches-label {
-    font-size: 13px;
-  }
-
-  .recommended-search-chip {
-    font-size: 12px;
-    padding: 6px 12px;
+  /* Hide recommended searches on mobile */
+  .recommended-searches {
+    display: none;
   }
 
   .advanced-options-panel {
@@ -1980,23 +1995,25 @@
 @media (max-width: 480px) {
   section#home {
     height: auto !important;
-    min-height: 600px;
+    min-height: 550px;
     padding-bottom: 30px;
   }
 
   .hero-background {
-    height: 600px;
+    height: 100%;
+    min-height: 550px;
   }
 
   .hero-title {
     font-size: 22px;
-    margin-top: 30px;
+    margin-top: 40px;
     line-height: 1.2;
   }
 
   .hero-subtitle {
     font-size: 13px;
     margin-top: 12px;
+    margin-bottom: 24px;
   }
 
   .search-container {
@@ -2039,16 +2056,12 @@
     padding: 6px 10px;
   }
 
-  .recommended-searches-label {
-    font-size: 12px;
+  /* Hide recommended searches on mobile */
+  .recommended-searches {
+    display: none;
   }
 
-  .recommended-search-chip {
-    font-size: 11px;
-    padding: 5px 10px;
-  }
-
-yy  .advanced-options-panel {
+  .advanced-options-panel {
     margin-top: 12px;
     padding: 12px 0 0 0;
   }

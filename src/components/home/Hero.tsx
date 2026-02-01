@@ -94,7 +94,7 @@ function Hero() {
   }
 
   return (
-    <section id="home" style={{ position: 'relative', height: '700px', overflow: 'hidden', }}>
+    <section id="home" className="hero-section">
       {/* Background image that matches Figma hero */}
       <img
         src="/assets/landing-hero-bg-784ecf.png"

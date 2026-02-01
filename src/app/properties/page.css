@@ -32,9 +32,9 @@
     gap: 0;
     min-height: calc(100vh - 200px);
     width: 100%;
-    max-width: 100%;
-    margin-top: 20px;
-    padding: 0;
+    max-width: 1400px; /* Constrained width like professional rental sites */
+    margin: 20px auto 0; /* Center the container with auto margins */
+    padding: 0 40px; /* Side padding for breathing room */
     background: #f9fafb;
     position: relative;
   }
@@ -516,7 +516,6 @@
 
   .properties-content-wrapper {
     padding-top: 40px;
-    padding-right: 48px;
     flex: 1;
     background: #f9fafb;
   }
@@ -568,19 +567,25 @@
     font-weight: 600;
   }
 
-  /* Top Search Bar Container */
+  /* Top Search Bar Container - Full width background */
   .top-search-bar-container {
     background: #205ED7;
-    padding: 28px 48px;
+    padding: 28px 0; /* Vertical padding only */
     margin-bottom: 0;
+    margin-left: -40px; /* Break out of parent padding */
+    margin-right: -40px; /* Break out of parent padding */
+    width: calc(100% + 80px); /* Extend to full width */
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   }
 
-  /* Top Search Bar */
+  /* Top Search Bar - Constrained content */
   .top-search-bar {
     display: flex;
     gap: 12px;
     align-items: center;
+    max-width: 1400px; /* Match parent max-width */
+    margin: 0 auto; /* Center the content */
+    padding: 0 48px; /* Horizontal padding for content */
   }
 
   /* Sort and View Controls Row - Desktop */
@@ -882,6 +887,11 @@
 
   /* Responsive Design */
   @media (max-width: 1200px) {
+    .properties-main-layout {
+      max-width: 100%;
+      padding: 0 32px; /* Reduced side padding on medium screens */
+    }
+
     .properties-sidebar {
       width: 30%;
       min-width: 300px;
@@ -901,7 +911,14 @@
     }
 
     .top-search-bar-container {
-      padding: 24px 40px;
+      margin-left: -32px; /* Match parent padding */
+      margin-right: -32px;
+      width: calc(100% + 64px);
+      padding: 24px 0;
+    }
+
+    .top-search-bar {
+      padding: 0 40px;
     }
 
     .properties-grid {
@@ -914,6 +931,8 @@
     .properties-main-layout {
       flex-direction: column;
       display: flex;
+      max-width: 100%;
+      padding: 0 24px; /* Reduced padding on tablets */
     }
 
     .properties-sidebar {
@@ -953,7 +972,14 @@
     }
 
     .top-search-bar-container {
-      padding: 20px 24px;
+      margin-left: -24px; /* Match parent padding */
+      margin-right: -24px;
+      width: calc(100% + 48px);
+      padding: 20px 0;
+    }
+
+    .top-search-bar {
+      padding: 0 24px;
     }
 
     .top-search-bar {
@@ -968,7 +994,7 @@
   @media (max-width: 768px) {
     .properties-main-layout {
       margin-top: 0;
-      padding: 0;
+      padding: 0 16px; /* Minimal side padding on mobile */
     }
 
     /* Hide desktop sidebar on mobile */
@@ -1281,9 +1307,16 @@
     }
 
     .top-search-bar-container {
-      padding: 12px 16px;
+      margin-left: -16px; /* Match parent padding */
+      margin-right: -16px;
+      width: calc(100% + 32px);
+      padding: 12px 0;
       background: #205ED7;
       margin-top: 0;
+    }
+
+    .top-search-bar {
+      padding: 0 16px;
     }
 
     .properties-content-wrapper {
@@ -1498,12 +1531,16 @@
     }
 
     .top-search-bar-container {
-      padding: 12px 16px;
+      margin-left: -16px; /* Match parent padding */
+      margin-right: -16px;
+      width: calc(100% + 32px);
+      padding: 12px 0;
     }
 
     .top-search-bar {
       gap: 8px;
       display: flex;
+      padding: 0 16px;
       flex-direction: column;
     }
 

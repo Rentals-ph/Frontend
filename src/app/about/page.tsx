@@ -34,119 +34,161 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Main Content - 4 Cards Grid with Images */}
-      <section className="about-cards-section">
-        <div className="about-cards-container">
-          <div className="about-cards-grid">
-            {/* Card 1 - Rent.ph Cares */}
+      {/* Section 1: Our Story & Platform Introduction */}
+      <section className="about-main-section">
+        <div className="about-main-container">
+          <div className="about-main-content">
+            {/* Left - Image */}
+            <div className="about-main-image-wrapper">
+              <img
+                src="/assets/tropical-travel-real-estate.png"
+                alt="Rentals.ph Platform"
+                className="about-main-image"
+                onError={(e) => {
+                  e.currentTarget.src = '/assets/aboutusbackgroundphoto.svg'
+                }}
+              />
+            </div>
             
-            <div className="about-card">
-                <img 
-                  src="/assets/pin-orange.svg" 
-                  alt="Pinned Icon" 
-                  className="pinned-icon-image"
-                  onError={(e) => { e.currentTarget.style.display = 'none' }}
-                />
-              <div className="about-card-icon-wrapper">
-                
-                <img 
-                  src="/assets/rentph-cares.png" 
-                  alt="Rent.ph Cares - Your Rental, Their Hope" 
-                  className="about-card-icon-image"
-                  onError={(e) => { e.currentTarget.style.display = 'none' }}
-                />
+            {/* Right - Comprehensive Content */}
+            <div className="about-main-text">
+              <h2 className="about-main-title">OUR STORY</h2>
+              
+              <div className="about-main-intro">
+                <p className="about-main-paragraph">
+                  Established in 2014 under Philippine Real Estate Management Solutions Inc., Rentals.ph was organized with one clear goal: to serve as the vehicle in translating real estate investments into productive assets. What started as a vision to revolutionize the rental market has grown into the Philippines' most trusted rental platform.
+                </p>
+                <p className="about-main-paragraph">
+                  Today, Rentals.ph stands as the only rental portal backed by realtors, rent managers, and licensed real estate professionals. We don't just list properties—we provide comprehensive support to property owners and personalized assistance to clients, making us the most trusted brand in rental marketing and servicing.
+                </p>
               </div>
-              <h3 className="about-card-title">Rent.ph Cares Your Rental, Their Hope</h3>
-              <p className="about-card-text">
-                Our tagline, 'Your Rentals, Their Hope,' reflects this commitment. It's a reminder that the simple act of renting a home can inspire meaningful, lasting change for those in need. With Rent.ph Cares, every successful rental transaction becomes an opportunity to give back. Whether it's supporting local families, empowering education, or funding community programs, your trust in us fuels hope and transforms lives.
+
+              <div className="about-main-grid">
+                <div className="about-main-item">
+                  <h3 className="about-main-item-title">OUR MISSION</h3>
+                  <p className="about-main-item-text">
+                    To transform real estate investments into productive assets while providing exceptional service to property owners and tenants across the Philippines.
+                  </p>
+                </div>
+                <div className="about-main-item">
+                  <h3 className="about-main-item-title">OUR VISION</h3>
+                  <p className="about-main-item-text">
+                    To be the leading rental platform that connects property owners with quality tenants through innovative technology and trusted professional networks.
+                  </p>
+                </div>
+              </div>
+
+              <div className="about-main-services">
+                <h3 className="about-main-services-title">WHAT WE OFFER</h3>
+                <div className="about-main-services-grid">
+                  <div className="about-main-service-item">
+                    <div className="about-main-service-icon">
+                      <img 
+                        src="/assets/rentph-cares.png" 
+                        alt="Rent.ph Cares" 
+                        className="about-main-service-icon-img"
+                        onError={(e) => { e.currentTarget.style.display = 'none' }}
+                      />
+                    </div>
+                    <h4 className="about-main-service-name">Rent.ph Cares</h4>
+                    <p className="about-main-service-desc">Your Rentals, Their Hope—every transaction becomes an opportunity to give back to communities in need.</p>
+                  </div>
+                  <div className="about-main-service-item">
+                    <div className="about-main-service-icon">
+                      <img 
+                        src="/assets/your-trusted-rental-partner.png" 
+                        alt="Trusted Partner" 
+                        className="about-main-service-icon-img"
+                        onError={(e) => { e.currentTarget.style.display = 'none' }}
+                      />
+                    </div>
+                    <h4 className="about-main-service-name">Trusted Partner</h4>
+                    <p className="about-main-service-desc">Backed by certified real estate professionals ensuring expertise, integrity, and personalized service.</p>
+                  </div>
+                  <div className="about-main-service-item">
+                    <div className="about-main-service-icon">
+                      <img 
+                        src="/assets/transforming-real-estate.png" 
+                        alt="Transforming Investment" 
+                        className="about-main-service-icon-img"
+                        onError={(e) => { e.currentTarget.style.display = 'none' }}
+                      />
+                    </div>
+                    <h4 className="about-main-service-name">Productive Assets</h4>
+                    <p className="about-main-service-desc">Transforming real estate investments into productive assets through comprehensive rental solutions.</p>
+                  </div>
+                  <div className="about-main-service-item">
+                    <div className="about-main-service-icon">
+                      <img 
+                        src="/assets/comprehensive-rental-solution.png" 
+                        alt="Nationwide Solution" 
+                        className="about-main-service-icon-img"
+                        onError={(e) => { e.currentTarget.style.display = 'none' }}
+                      />
+                    </div>
+                    <h4 className="about-main-service-name">Nationwide Coverage</h4>
+                    <p className="about-main-service-desc">Comprehensive rental solutions across the Philippines through our network of rent professionals.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Section 2: Recognition & Impact */}
+      <section className="about-recognition-section">
+        <div className="about-recognition-container">
+          <h2 className="about-recognition-title">RECOGNITION & IMPACT</h2>
+          <p className="about-recognition-subtitle">
+            Our commitment to excellence has earned the trust of thousands across the Philippines
+          </p>
+          
+          <div className="about-recognition-content">
+            <div className="about-recognition-text">
+              <p className="about-recognition-paragraph">
+                Rentals.ph has established itself as the premier rental platform in the country, recognized for our industry-leading approach to real estate rental services. We take pride in being the only rental portal backed by certified real estate professionals, ensuring that every transaction is handled with expertise, integrity, and care.
+              </p>
+              <p className="about-recognition-paragraph">
+                Together with our sister brand Filipino Homes, we have successfully serviced owners and companies in marketing their properties—from lands and apartments to houses, condominiums, warehouses, and commercial spaces—creating lasting value for all stakeholders across key cities and provinces nationwide.
               </p>
             </div>
-
-            {/* Card 2 - Trusted Partner */}
-            <div className="about-card">
-              <img 
-                  src="/assets/pin-orange.svg" 
-                  alt="Pinned Icon" 
-                  className="pinned-icon-image"
-                  onError={(e) => { e.currentTarget.style.display = 'none' }}
-                />
-              <div className="about-card-icon-wrapper">
-                <img 
-                  src="/assets/your-trusted-rental-partner.png" 
-                  alt="Your Trusted Rental Partner" 
-                  className="about-card-icon-image"
-                  onError={(e) => { e.currentTarget.style.display = 'none' }}
-                />
+            <div className="about-recognition-stats">
+              <div className="about-recognition-stat">
+                <div className="about-recognition-stat-number">2014</div>
+                <div className="about-recognition-stat-label">Established</div>
               </div>
-              <h3 className="about-card-title">Your Trusted Rental Partner</h3>
-              <p className="about-card-text">
-                To date, Rentals.ph is the only rental portal backed by realtors, rent managers and licensed real estate professionals to help property owners and assist clients personally making us the most trusted brand in rental marketing and servicing.
-              </p>
+              <div className="about-recognition-stat">
+                <div className="about-recognition-stat-number">#1</div>
+                <div className="about-recognition-stat-label">Trusted Platform</div>
+              </div>
+              <div className="about-recognition-stat">
+                <div className="about-recognition-stat-number">Nationwide</div>
+                <div className="about-recognition-stat-label">Coverage</div>
+              </div>
             </div>
+          </div>
+        </div>
+      </section>
 
-            {/* Card 3 - Transforming Investment */}
-            <div className="about-card">
-              <img 
-                  src="/assets/pin-orange.svg" 
-                  alt="Pinned Icon" 
-                  className="pinned-icon-image"
-                  onError={(e) => { e.currentTarget.style.display = 'none' }}
-                />
-              <div className="about-card-icon-wrapper">
-                <img 
-                  src="/assets/transforming-real-estate.png" 
-                  alt="Transforming Real Estate Investment" 
-                  className="about-card-icon-image"
-                  onError={(e) => { e.currentTarget.style.display = 'none' }}
-                />
-              </div>
-              <h3 className="about-card-title">Transforming Real Estate Investment Into Productive Assets</h3>
-              <p className="about-card-text">
-                Established in 2014, under Philippine Real Estate Management Solutions Inc., Rentals.ph was organized with one goal in mind - to serve as the vehicle in translating real estate investments into productive assets.
-              </p>
+      {/* Section 3: Social Proof - Testimonials & Partners */}
+      <section className="about-social-proof-section">
+        <div className="about-social-proof-container">
+          <Testimonials />
+          
+          <div className="about-partners-compact">
+            <Partners />
+            <div className="partners-subtitle-container">
+              <p className="partners-subtitle-text">Building Dreams, Together</p>
             </div>
-
-            {/* Card 4 - Comprehensive Solution */}
-            <div className="about-card">
-              <img 
-                  src="/assets/pin-orange.svg" 
-                  alt="Pinned Icon" 
-                  className="pinned-icon-image"
-                  onError={(e) => { e.currentTarget.style.display = 'none' }}
-                />
-              <div className="about-card-icon-wrapper">
-                <img 
-                  src="/assets/comprehensive-rental-solution.png" 
-                  alt="Comprehensive Rental Solution Nationwide" 
-                  className="about-card-icon-image"
-                  onError={(e) => { e.currentTarget.style.display = 'none' }}
-                />
-              </div>
-              <h3 className="about-card-title">Your Comprehensive Rental Solution Nationwide</h3>
-              <p className="about-card-text">
-                Together with its sister brand Filipino Homes, Rentals.ph has serviced owners and companies in marketing their lands, apartments, houses, condominiums, warehouses and commercial spaces across the country through our network of rent professionals in key cities and provinces in the Philippines.
+            <div className="partners-description-container">
+              <p className="partners-description">
+                We collaborate with industry-leading organizations and trusted partners who share our commitment to excellence in real estate and rental services, delivering comprehensive solutions and exceptional value across the Philippines.
               </p>
             </div>
           </div>
         </div>
       </section>
-      
-      
-      
-        <Testimonials />
-     
-      
-     
-        <Partners />
-        <p className="partners-subtitle-wrapper">Building Dreams, Together</p>
-        
-        {/* Partners Description */}
-        <div className="partners-description-container">
-          <p className="partners-description">
-            We are proud to collaborate with industry-leading organizations and trusted partners who share our commitment to excellence in real estate and rental services. Our strategic partnerships enable us to deliver comprehensive solutions, innovative services, and exceptional value to property owners and tenants across the Philippines. Together, we build stronger communities and create lasting relationships that drive success in the rental market.
-          </p>
-        </div>
-      
       
       <Footer />
     </div>

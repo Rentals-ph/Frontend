@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import './Hero.css'
+import HeroBanner from './HeroBanner'
 
 function Hero() {
   const [searchQuery, setSearchQuery] = useState('')
@@ -243,6 +244,9 @@ function Hero() {
           </div>
         </div>
       </div>
+
+      {/* Hero Banner - Positioned absolutely at bottom */}
+      <HeroBanner />
     </section>
   )
 }

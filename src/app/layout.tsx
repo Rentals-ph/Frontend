@@ -3,7 +3,7 @@ import '../index.css'
 import '../styles/landing.css'
 
 export const metadata: Metadata = {
-  title: 'Rental.ph - Your Trusted Property Rental Platform',
+  title: 'Rentals.ph - Your Trusted Property Rental Platform',
   description: 'Find the perfect rental property in the Philippines',
 }
 

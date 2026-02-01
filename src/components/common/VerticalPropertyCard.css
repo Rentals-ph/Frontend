@@ -12,8 +12,8 @@
   box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.1), 0px 1px 2px rgba(0, 0, 0, 0.06);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   flex-shrink: 0;
-  width: 360px; /* Increased width for better visibility */
-  max-width: 360px;
+  width: 390px; /* Increased width for better visibility */
+  max-width: 390px;
 }
 
 .vertical-property-card:hover {

@@ -71,58 +71,6 @@ export default function RentManagerDetailsPage() {
     message: '',
   })
 
-  if (loading) {
-    return (
-      <div className="rm-details-page">
-        <Navbar />
-        <PageHeader title="MY LISTING" />
-        <div style={{ textAlign: 'center', padding: '40px' }}>
-          <p>Loading rent manager details...</p>
-        </div>
-        <Footer />
-      </div>
-    )
-  }
-
-  if (!manager) {
-    return (
-      <div className="rm-details-page">
-        <Navbar />
-        <PageHeader title="MY LISTING" />
-
-        <div className="rm-details-breadcrumbs">
-          <Link href="/" className="breadcrumb-link">Home</Link>
-          <span className="breadcrumb-separator">&gt;</span>
-          <Link href="/rent-managers" className="breadcrumb-link">RM</Link>
-          <span className="breadcrumb-separator">&gt;</span>
-          <span className="breadcrumb-current">Not Found</span>
-        </div>
-        <main className="rm-details-main">
-          <div className="rm-details-container">
-            <div className="rm-not-found-card">
-              <h2>Rent Manager not found</h2>
-              <p>Please go back and select a valid rent manager.</p>
-              <Link className="rm-back-link" href="/rent-managers">Back to Rent Managers</Link>
-            </div>
-          </div>
-        </main>
-        <Footer />
-      </div>
-    )
-  }
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target
-    setFormData(prev => ({ ...prev, [name]: value }))
-  }
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    console.log('Rent manager contact submitted:', { managerId: manager.id, ...formData })
-    alert('Message sent successfully!')
-    setFormData({ firstName: '', lastName: '', phone: '', email: '', message: '' })
-  }
-
   // Helper functions
   const formatPrice = (price: number): string => {
     return `₱${price.toLocaleString('en-US')}/Month`
@@ -145,7 +93,7 @@ export default function RentManagerDetailsPage() {
     return image
   }
 
-  // Filter and sort properties
+  // Filter and sort properties - must be called before any conditional returns
   const filteredAndSortedProperties = useMemo(() => {
     if (!manager) return []
     
@@ -225,6 +173,61 @@ export default function RentManagerDetailsPage() {
 
   const overallRating = reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length
   const roundedRating = Math.round(overallRating * 10) / 10
+
+  // Handler functions
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target
+    setFormData(prev => ({ ...prev, [name]: value }))
+  }
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!manager) return
+    console.log('Rent manager contact submitted:', { managerId: manager.id, ...formData })
+    alert('Message sent successfully!')
+    setFormData({ firstName: '', lastName: '', phone: '', email: '', message: '' })
+  }
+
+  // Conditional returns - must come after all hooks
+  if (loading) {
+    return (
+      <div className="rm-details-page">
+        <Navbar />
+        <PageHeader title="MY LISTING" />
+        <div style={{ textAlign: 'center', padding: '40px' }}>
+          <p>Loading rent manager details...</p>
+        </div>
+        <Footer />
+      </div>
+    )
+  }
+
+  if (!manager) {
+    return (
+      <div className="rm-details-page">
+        <Navbar />
+        <PageHeader title="MY LISTING" />
+
+        <div className="rm-details-breadcrumbs">
+          <Link href="/" className="breadcrumb-link">Home</Link>
+          <span className="breadcrumb-separator">&gt;</span>
+          <Link href="/rent-managers" className="breadcrumb-link">RM</Link>
+          <span className="breadcrumb-separator">&gt;</span>
+          <span className="breadcrumb-current">Not Found</span>
+        </div>
+        <main className="rm-details-main">
+          <div className="rm-details-container">
+            <div className="rm-not-found-card">
+              <h2>Rent Manager not found</h2>
+              <p>Please go back and select a valid rent manager.</p>
+              <Link className="rm-back-link" href="/rent-managers">Back to Rent Managers</Link>
+            </div>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    )
+  }
 
   return (
     <div className="rm-details-page">

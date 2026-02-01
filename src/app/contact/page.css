@@ -2,6 +2,9 @@
 .contact-page {
   min-height: 100vh;
   background: #ffffff;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
 }
 
 /* Main Content */

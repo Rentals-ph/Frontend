@@ -3,6 +3,9 @@
     min-height: 100vh;
     background: #ffffff;
     position: relative;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
   }
 
   /* Animations */

@@ -7,9 +7,9 @@
 /* Main Content */
 .contact-main-content {
   position: relative;
-  max-width: 1280px;
+  max-width: 1400px; /* Match properties page */
   margin: 0 auto;
-  padding: 40px 80px 50px;
+  padding: 40px 40px 50px; /* Match properties page side spacing */
   min-height: 500px;
 }
 
@@ -261,9 +261,15 @@
 
 
 /* Responsive */
+@media (max-width: 1200px) {
+  .contact-main-content {
+    padding: 40px 32px 50px; /* Match properties page responsive spacing */
+  }
+}
+
 @media (max-width: 1024px) {
   .contact-main-content {
-    padding: 50px 40px 50px;
+    padding: 50px 24px 50px; /* Match properties page responsive spacing */
   }
 
   .contact-grid {
@@ -278,7 +284,7 @@
 
 @media (max-width: 768px) {
   .contact-main-content {
-    padding: 40px 20px;
+    padding: 40px 16px; /* Match properties page responsive spacing */
   }
 
   .contact-form-section,
@@ -308,7 +314,7 @@
 
 @media (max-width: 480px) {
   .contact-main-content {
-    padding: 30px 16px;
+    padding: 30px 16px; /* Already matches properties page responsive spacing */
   }
 
   .contact-form-section,

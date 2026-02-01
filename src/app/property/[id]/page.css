@@ -7,7 +7,7 @@
 /* Property Details Banner */
 .property-details-banner {
   background: #205ED7;
-  padding: 30px 80px;
+  padding: 30px 40px; /* Match properties page side spacing */
   position: relative;
   overflow: hidden;
   min-height: 135px;
@@ -60,7 +60,7 @@
 
 /* Breadcrumbs */
 .property-details-breadcrumbs {
-  padding: 20px 80px;
+  padding: 20px 40px; /* Match properties page side spacing */
   display: flex;
   align-items: center;
   gap: 8px;
@@ -94,11 +94,11 @@
 /* Main Content */
 .property-details-main {
   background: #f9fafb;
-  padding: 40px 80px;
+  padding: 40px 40px; /* Match properties page side spacing */
 }
 
 .property-details-container {
-  max-width: 1280px;
+  max-width: 1400px; /* Match properties page */
   margin: 0 auto;
   display: grid;
   grid-template-columns: 1fr 400px;
@@ -615,11 +615,11 @@
 /* Similar Properties Section */
 .similar-properties-section {
   background: #ffffff;
-  padding: 60px 80px;
+  padding: 60px 40px; /* Match properties page side spacing */
 }
 
 .similar-properties-container {
-  max-width: 1280px;
+  max-width: 1400px; /* Match properties page */
   margin: 0 auto;
 }
 
@@ -680,19 +680,19 @@
   }
 
   .property-details-main {
-    padding: 32px 40px;
+    padding: 32px 32px; /* Match properties page responsive spacing */
   }
 
   .property-details-banner {
-    padding: 30px 40px;
+    padding: 30px 32px; /* Match properties page responsive spacing */
   }
 
   .property-details-breadcrumbs {
-    padding: 20px 40px;
+    padding: 20px 32px; /* Match properties page responsive spacing */
   }
 
   .similar-properties-section {
-    padding: 48px 40px;
+    padding: 48px 32px; /* Match properties page responsive spacing */
   }
 }
 
@@ -723,9 +723,27 @@
   }
 }
 
+@media (max-width: 1024px) {
+  .property-details-main {
+    padding: 40px 24px; /* Match properties page responsive spacing */
+  }
+
+  .property-details-banner {
+    padding: 30px 24px; /* Match properties page responsive spacing */
+  }
+
+  .property-details-breadcrumbs {
+    padding: 20px 24px; /* Match properties page responsive spacing */
+  }
+
+  .similar-properties-section {
+    padding: 48px 24px; /* Match properties page responsive spacing */
+  }
+}
+
 @media (max-width: 768px) {
   .property-details-banner {
-    padding: 24px 24px;
+    padding: 24px 16px; /* Match properties page responsive spacing */
     min-height: 100px;
   }
 
@@ -734,12 +752,12 @@
   }
 
   .property-details-breadcrumbs {
-    padding: 20px 20px;
+    padding: 20px 16px; /* Match properties page responsive spacing */
     font-size: 11px;
   }
 
   .property-details-main {
-    padding: 24px 24px;
+    padding: 24px 16px; /* Match properties page responsive spacing */
   }
 
   .property-overview-section,
@@ -755,7 +773,7 @@
   }
 
   .similar-properties-section {
-    padding: 32px 20px;
+    padding: 32px 16px; /* Match properties page responsive spacing */
   }
 
   .similar-properties-title {
@@ -798,7 +816,7 @@
   }
 
   .similar-properties-section {
-    padding: 24px 16px;
+    padding: 24px 16px; /* Already matches properties page responsive spacing */
   }
 
   .similar-property-card {

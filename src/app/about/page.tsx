@@ -5,12 +5,13 @@ import Testimonials from '../../components/home/Testimonials'
 import Footer from '../../components/layout/Footer'
 import Partners from '../../components/home/Partners'
 import './page.css'
+import PageHeader from '../../components/layout/PageHeader'
 
 export default function AboutPage() {
   return (
     <div className="about-page">
       <Navbar />
-      
+      <PageHeader title="ABOUT US" />
       {/* Page Header */}
       
       {/* Hero Section with Background Image */}

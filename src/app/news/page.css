@@ -8,7 +8,7 @@
 .news-hero-banner {
   position: relative;
   background: #002D84;
-  padding: 40px 80px;
+  padding: 40px 40px; /* Match properties page side spacing */
   overflow: hidden;
   min-height: 120px;
   display: flex;
@@ -47,8 +47,9 @@
 
 /* Main Content */
 .news-main-content {
+  max-width: 1400px; /* Match properties page */
   margin: 0 auto;
-  padding: 40px 80px;
+  padding: 40px 40px; /* Match properties page side spacing */
   width: 100%;
 }
 
@@ -475,6 +476,14 @@
 
 /* Responsive Design */
 @media (max-width: 1200px) {
+  .news-hero-banner {
+    padding: 40px 32px; /* Match properties page responsive spacing */
+  }
+
+  .news-main-content {
+    padding: 40px 32px; /* Match properties page responsive spacing */
+  }
+
   .news-content-layout {
     grid-template-columns: 1fr 1fr;
     gap: 30px;
@@ -483,15 +492,11 @@
   .news-column-3 {
     grid-column: 1 / -1;
   }
-
-  .news-main-content {
-    padding: 40px 60px;
-  }
 }
 
 @media (max-width: 1024px) {
   .news-hero-banner {
-    padding: 30px 40px;
+    padding: 30px 24px; /* Match properties page responsive spacing */
     min-height: 100px;
   }
 
@@ -504,13 +509,13 @@
   }
 
   .news-main-content {
-    padding: 30px 40px;
+    padding: 30px 24px; /* Match properties page responsive spacing */
   }
 }
 
 @media (max-width: 768px) {
   .news-hero-banner {
-    padding: 24px 20px;
+    padding: 24px 16px; /* Match properties page responsive spacing */
     min-height: 80px;
   }
 
@@ -523,7 +528,7 @@
   }
 
   .news-main-content {
-    padding: 24px 20px;
+    padding: 24px 16px; /* Match properties page responsive spacing */
   }
 
   .news-section-title {

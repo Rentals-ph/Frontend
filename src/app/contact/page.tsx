@@ -4,6 +4,7 @@ import { useState } from 'react'
 import Navbar from '../../components/layout/Navbar'
 import Footer from '../../components/layout/Footer'
 import './page.css'
+import PageHeader from '../../components/layout/PageHeader'
 
 export default function ContactUsPage() {
   const [formData, setFormData] = useState({
@@ -30,7 +31,7 @@ export default function ContactUsPage() {
   return (
     <div className="contact-page">
       <Navbar />
-
+      <PageHeader title="CONTACT US" />
       <main className="contact-main-content">
         <div className="contact-background-illustration"></div>
 

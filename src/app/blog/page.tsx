@@ -5,6 +5,7 @@ import Link from 'next/link'
 import Navbar from '../../components/layout/Navbar'
 import Footer from '../../components/layout/Footer'
 import './page.css'
+import PageHeader from '../../components/layout/PageHeader'
 
 export default function BlogPage() {
   const [currentPage, setCurrentPage] = useState(1)
@@ -102,7 +103,7 @@ export default function BlogPage() {
   return (
     <div className="blog-page">
       <Navbar />
-
+      <PageHeader title="BLOG" />
       <main className="blog-main-content">
         <div className="blog-content-layout">
           <div className="blog-featured-column">

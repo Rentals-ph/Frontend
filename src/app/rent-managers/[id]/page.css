@@ -7,7 +7,7 @@
 /* Banner */
 .rm-details-banner {
   background: #205ED7;
-  padding: 30px 80px;
+  padding: 30px 40px; /* Match properties page side spacing */
   position: relative;
   overflow: hidden;
   min-height: 135px;
@@ -60,7 +60,7 @@
 
 /* Breadcrumbs */
 .rm-details-breadcrumbs {
-  padding: 20px 80px;
+  padding: 20px 40px; /* Match properties page side spacing */
   display: flex;
   align-items: center;
   gap: 8px;
@@ -73,11 +73,11 @@
 /* Main */
 .rm-details-main {
   background: #f9fafb;
-  padding: 36px 80px 60px;
+  padding: 36px 40px 60px; /* Match properties page side spacing */
 }
 
 .rm-details-container {
-  max-width: 1280px;
+  max-width: 1400px; /* Match properties page */
   margin: 0 auto;
 }
 
@@ -508,7 +508,17 @@
 .rm-listings-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 20px;
+  gap: 24px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Ensure property cards fit within grid and don't overlap */
+.rm-listings-grid .vertical-property-card {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  box-sizing: border-box;
 }
 
 .rm-reviews-panel {
@@ -760,13 +770,13 @@
 /* Responsive */
 @media (max-width: 1200px) {
   .rm-details-main {
-    padding: 32px 40px 56px;
+    padding: 32px 32px 56px; /* Match properties page responsive spacing */
   }
   .rm-details-banner {
-    padding: 30px 40px;
+    padding: 30px 32px; /* Match properties page responsive spacing */
   }
   .rm-details-breadcrumbs {
-    padding: 20px 40px;
+    padding: 20px 32px; /* Match properties page responsive spacing */
   }
   .rm-top-grid {
     grid-template-columns: 1fr 340px;
@@ -779,20 +789,32 @@
   }
 }
 
+@media (max-width: 1024px) {
+  .rm-details-main {
+    padding: 24px 24px 48px; /* Match properties page responsive spacing */
+  }
+  .rm-details-banner {
+    padding: 24px 24px; /* Match properties page responsive spacing */
+  }
+  .rm-details-breadcrumbs {
+    padding: 20px 24px; /* Match properties page responsive spacing */
+  }
+}
+
 @media (max-width: 768px) {
   .rm-details-banner {
-    padding: 24px 24px;
+    padding: 24px 16px; /* Match properties page responsive spacing */
     min-height: 100px;
   }
   .rm-details-banner-title {
     font-size: 28px;
   }
   .rm-details-breadcrumbs {
-    padding: 20px 20px;
+    padding: 20px 16px; /* Match properties page responsive spacing */
     font-size: 12px;
   }
   .rm-details-main {
-    padding: 24px 24px 48px;
+    padding: 24px 16px 48px; /* Match properties page responsive spacing */
   }
   .rm-profile-photo {
     width: 100%;
@@ -804,6 +826,24 @@
   }
   .rm-profile-name {
     font-size: 26px;
+  }
+  
+  /* Responsive grid for mobile */
+  .rm-listings-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+  
+  .rm-listings-grid .vertical-property-card {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .rm-listings-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
   }
 }
 

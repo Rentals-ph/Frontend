@@ -823,7 +823,7 @@
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     grid-template-rows: repeat(3, auto);
-    gap: 16px;
+    gap: 24px;
     margin-bottom: 24px;
     min-height: 0;
   }
@@ -949,7 +949,7 @@
 
     .properties-grid {
       grid-template-columns: repeat(2, 1fr);
-      gap: 16px;
+      gap: 20px;
     }
   }
 
@@ -1358,7 +1358,7 @@
 
     .properties-grid {
       grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
+      gap: 16px;
     }
 
     .top-search-bar {
@@ -1650,7 +1650,7 @@
 
     .properties-grid {
       grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
+      gap: 16px;
     }
 
     /* Ensure property cards fit in 2 columns on small screens */

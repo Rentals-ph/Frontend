@@ -11,7 +11,8 @@
 .agent-main {
   margin-left: 280px;
   flex: 1;
-  padding: 32px;
+  max-width: 1400px; /* Match properties page */
+  padding: 32px 40px; /* Match properties page side spacing */
   min-height: 100vh;
 }
 
@@ -731,12 +732,18 @@
   }
 }
 
+@media (max-width: 1200px) {
+  .agent-main {
+    padding: 32px 32px; /* Match properties page responsive spacing */
+  }
+}
+
 @media (max-width: 1024px) {
   /* Sidebar width handled by component */
 
   .agent-main {
     margin-left: 240px;
-    padding: 24px;
+    padding: 24px 24px; /* Match properties page responsive spacing */
   }
 
   .content-grid {
@@ -752,7 +759,7 @@
 @media (max-width: 768px) {
   .agent-main {
     margin-left: 0;
-    padding: 16px;
+    padding: 16px; /* Match properties page responsive spacing */
     padding-top: 80px; /* Space for mobile menu button */
   }
 

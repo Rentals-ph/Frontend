@@ -206,7 +206,59 @@ function PropertiesContent() {
     <div className="properties-for-rent-page">
       <Navbar />
       <PageHeader title="Properties for Rent" />
-
+      
+      <div className="top-search-bar-container">
+            <div className="top-search-bar">
+              <div className="search-input-container">
+                <svg className="search-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="11" cy="11" r="8" stroke="#666" strokeWidth="2" />
+                  <path d="m21 21-4.35-4.35" stroke="#666" strokeWidth="2" strokeLinecap="round" />
+                </svg>
+                <input
+                  type="text"
+                  className="main-search-input"
+                  placeholder="Search here..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+              </div>
+              <div className="top-search-bar-controls">
+                <select
+                  className="sort-dropdown-btn"
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
+                >
+                  <option value="price-low">Price Low to High</option>
+                  <option value="price-high">Price High to Low</option>
+                  <option value="newest">Newest First</option>
+                  <option value="oldest">Oldest First</option>
+                </select>
+                <button
+                  className="hamburger-menu-btn"
+                  aria-label="List View"
+                  onClick={() => setViewMode('horizontal')}
+                  style={{ backgroundColor: viewMode === 'horizontal' ? '#FE8E0A' : '#ffffff' }}
+                >
+                  <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M3 12H21M3 6H21M3 18H21" stroke={viewMode === 'horizontal' ? "#ffffff" : "#333"} strokeWidth="2" strokeLinecap="round" />
+                  </svg>
+                </button>
+                <button
+                  className="grid-view-btn"
+                  aria-label="Grid View"
+                  onClick={() => setViewMode('vertical')}
+                  style={{ backgroundColor: viewMode === 'vertical' ? '#FE8E0A' : '#ffffff' }}
+                >
+                  <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="3" y="3" width="7" height="7" stroke={viewMode === 'vertical' ? "#ffffff" : "#333"} strokeWidth="2" fill="none" />
+                    <rect x="14" y="3" width="7" height="7" stroke={viewMode === 'vertical' ? "#ffffff" : "#333"} strokeWidth="2" fill="none" />
+                    <rect x="3" y="14" width="7" height="7" stroke={viewMode === 'vertical' ? "#ffffff" : "#333"} strokeWidth="2" fill="none" />
+                    <rect x="14" y="14" width="7" height="7" stroke={viewMode === 'vertical' ? "#ffffff" : "#333"} strokeWidth="2" fill="none" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
       <main className="properties-main-layout">
         {/* Dropdown Filter Menu */}
         {isSidebarOpen && (
@@ -316,12 +368,13 @@ function PropertiesContent() {
                       />
                     </div>
                   </div>
+
                 </div>
               </div>
             </div>
           </>
         )}
-
+        
         {/* Desktop Sidebar - Hidden on mobile */}
         <div className="properties-sidebar">
           <div className="advance-search-section">
@@ -410,6 +463,7 @@ function PropertiesContent() {
                 />
               </div>
             </div>
+            
           </div>
 
           <div className="categories-section">
@@ -435,7 +489,7 @@ function PropertiesContent() {
             </ul>
           </div>
         </div>
-
+        
         <div className="properties-main-content">
           <button
             className={`mobile-filter-btn ${isSidebarOpen ? 'active' : ''}`}
@@ -448,58 +502,7 @@ function PropertiesContent() {
             <span>Filters</span>
           </button>
 
-          <div className="top-search-bar-container">
-            <div className="top-search-bar">
-              <div className="search-input-container">
-                <svg className="search-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <circle cx="11" cy="11" r="8" stroke="#666" strokeWidth="2" />
-                  <path d="m21 21-4.35-4.35" stroke="#666" strokeWidth="2" strokeLinecap="round" />
-                </svg>
-                <input
-                  type="text"
-                  className="main-search-input"
-                  placeholder="Search here..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                />
-              </div>
-              <div className="top-search-bar-controls">
-                <select
-                  className="sort-dropdown-btn"
-                  value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value)}
-                >
-                  <option value="price-low">Price Low to High</option>
-                  <option value="price-high">Price High to Low</option>
-                  <option value="newest">Newest First</option>
-                  <option value="oldest">Oldest First</option>
-                </select>
-                <button
-                  className="hamburger-menu-btn"
-                  aria-label="List View"
-                  onClick={() => setViewMode('horizontal')}
-                  style={{ backgroundColor: viewMode === 'horizontal' ? '#FE8E0A' : '#ffffff' }}
-                >
-                  <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M3 12H21M3 6H21M3 18H21" stroke={viewMode === 'horizontal' ? "#ffffff" : "#333"} strokeWidth="2" strokeLinecap="round" />
-                  </svg>
-                </button>
-                <button
-                  className="grid-view-btn"
-                  aria-label="Grid View"
-                  onClick={() => setViewMode('vertical')}
-                  style={{ backgroundColor: viewMode === 'vertical' ? '#FE8E0A' : '#ffffff' }}
-                >
-                  <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <rect x="3" y="3" width="7" height="7" stroke={viewMode === 'vertical' ? "#ffffff" : "#333"} strokeWidth="2" fill="none" />
-                    <rect x="14" y="3" width="7" height="7" stroke={viewMode === 'vertical' ? "#ffffff" : "#333"} strokeWidth="2" fill="none" />
-                    <rect x="3" y="14" width="7" height="7" stroke={viewMode === 'vertical' ? "#ffffff" : "#333"} strokeWidth="2" fill="none" />
-                    <rect x="14" y="14" width="7" height="7" stroke={viewMode === 'vertical' ? "#ffffff" : "#333"} strokeWidth="2" fill="none" />
-                  </svg>
-                </button>
-              </div>
-            </div>
-          </div>
+          
 
           <div className="properties-content-wrapper">
             {loading ? (

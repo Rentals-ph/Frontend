@@ -2,6 +2,7 @@
   .properties-for-rent-page {
     min-height: 100vh;
     background: #ffffff;
+    position: relative;
   }
 
   /* Animations */
@@ -35,8 +36,8 @@
     max-width: 1400px; /* Constrained width like professional rental sites */
     margin: 20px auto 0; /* Center the container with auto margins */
     padding: 0 40px; /* Side padding for breathing room */
-    background: #f9fafb;
     position: relative;
+    overflow-x: visible;
   }
 
   /* =========================
@@ -46,7 +47,7 @@
     width: 25%;
     min-width: 320px;
     max-width: 380px;
-    margin-top: -50px;
+    margin-top: -170px;
     padding: 48px 36px;
     border-right: #e5e7eb;
     overflow-y: auto;
@@ -504,6 +505,7 @@
     padding: 0;
     background: #f9fafb;
     overflow-y: auto;
+    overflow-x: visible;
     display: flex;
     flex-direction: column;
     min-width: 0;
@@ -518,6 +520,7 @@
     padding-top: 40px;
     flex: 1;
     background: #f9fafb;
+    overflow-x: visible;
   }
 
     /* Categories and Top Searches in Main Content - Hidden on desktop (they're in sidebar) */
@@ -570,12 +573,33 @@
   /* Top Search Bar Container - Full width background */
   .top-search-bar-container {
     background: #205ED7;
-    padding: 28px 0; /* Vertical padding only */
+    margin-top: 25px;
+    padding: 28px 28px;
     margin-bottom: 0;
-    margin-left: -40px; /* Break out of parent padding */
-    margin-right: -40px; /* Break out of parent padding */
-    width: calc(100% + 80px); /* Extend to full width */
+    margin-right: 0;
+    max-width: none;
+    min-width: 0;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    display: flex;
+    justify-content: flex-start;
+    position: relative;
+    box-sizing: border-box;
+  }
+  
+  /* For screens where container is full width but sidebar is still 25% */
+  @media (max-width: 1480px) {
+    .top-search-bar-container {
+      margin-left: calc(25% + 40px);
+      width: calc(100vw - 25% - 40px);
+    }
+  }
+  
+  /* For very large screens, ensure it stays aligned */
+  @media (min-width: 1481px) {
+    .top-search-bar-container {
+      margin-left: calc((98vw - 1400px) / 2 + 350px + 40px);
+      width: calc(100vw - ((98vw - 1410px) / 2 + 350px + 40px));
+    }
   }
 
   /* Top Search Bar - Constrained content */
@@ -583,9 +607,9 @@
     display: flex;
     gap: 12px;
     align-items: center;
+    justify-content: space-between; /* Space between search input and controls */
     max-width: 1400px; /* Match parent max-width */
-    margin: 0 auto; /* Center the content */
-    padding: 0 48px; /* Horizontal padding for content */
+    width: 100%;
   }
 
   /* Sort and View Controls Row - Desktop */
@@ -594,6 +618,7 @@
     gap: 12px;
     align-items: center;
     flex-shrink: 0;
+    margin-left: auto; /* Push controls to the right */
   }
 
   .search-input-container {
@@ -602,6 +627,7 @@
     display: flex;
     align-items: center;
     margin-top: 0;
+    min-width: 0; /* Allow flex item to shrink */
   }
 
   .search-icon {
@@ -911,9 +937,9 @@
     }
 
     .top-search-bar-container {
-      margin-left: -32px; /* Match parent padding */
-      margin-right: -32px;
-      width: calc(100% + 64px);
+      margin-left: calc(30% + 32px); /* Match sidebar width (30%) + container padding */
+      margin-right: 0;
+      width: calc(100vw - 30% - 32px);
       padding: 24px 0;
     }
 
@@ -972,9 +998,9 @@
     }
 
     .top-search-bar-container {
-      margin-left: -24px; /* Match parent padding */
-      margin-right: -24px;
-      width: calc(100% + 48px);
+      margin-left: 0; /* Sidebar is full width below, so search bar starts at edge */
+      margin-right: 0;
+      width: 100vw;
       padding: 20px 0;
     }
 
@@ -1167,6 +1193,12 @@
       box-shadow: none;
     }
 
+    .filter-dropdown .apply-filter-btn {
+      font-size: 13px;
+      padding: 12px 20px;
+      margin-top: 12px;
+    }
+
     /* Categories and Top Searches removed from sidebar - now in main content */
 
     /* Mobile Section Titles */
@@ -1307,12 +1339,12 @@
     }
 
     .top-search-bar-container {
-      margin-left: -16px; /* Match parent padding */
-      margin-right: -16px;
-      width: calc(100% + 32px);
+      margin-left: 0;
+      margin-right: 0;
+      width: 100vw;
       padding: 12px 0;
       background: #205ED7;
-      margin-top: 0;
+      margin-top: 20px;
     }
 
     .top-search-bar {
@@ -1531,9 +1563,9 @@
     }
 
     .top-search-bar-container {
-      margin-left: -16px; /* Match parent padding */
-      margin-right: -16px;
-      width: calc(100% + 32px);
+      margin-left: 0;
+      margin-right: 0;
+      width: 100vw;
       padding: 12px 0;
     }
 
@@ -1675,7 +1707,8 @@
   .featured-properties-section {
     background-color: #ffffff;
     padding: 20px 0;
-    overflow: hidden;
+    overflow-x: visible;
+    overflow-y: hidden;
   }
 
   .featured-properties-container {
@@ -1739,7 +1772,8 @@
     right: 50%;
     margin-left: -50vw;
     margin-right: -50vw;
-    overflow: hidden;
+    overflow-x: visible;
+    overflow-y: hidden;
   }
 
   .featured-properties-carousel {
@@ -1862,7 +1896,8 @@
   .short-term-rent-section {
     background-color: #ffffff;
     padding: 20px 0;
-    overflow: hidden;
+    overflow-x: visible;
+    overflow-y: hidden;
   }
 
   .short-term-rent-container {
@@ -1888,7 +1923,8 @@
     right: 50%;
     margin-left: -50vw;
     margin-right: -50vw;
-    overflow: hidden;
+    overflow-x: visible;
+    overflow-y: hidden;
   }
 
   .short-term-carousel {

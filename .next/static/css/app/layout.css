@@ -96,6 +96,9 @@
 .max-w-6xl{
   max-width: 72rem;
 }
+.shrink{
+  flex-shrink: 1;
+}
 .grow{
   flex-grow: 1;
 }

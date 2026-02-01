@@ -221,8 +221,8 @@
 
 .advanced-options-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  grid-template-rows: repeat(2, auto);
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: 1fr;
   gap: 12px;
 }
 
@@ -233,8 +233,8 @@
 }
 
 .advanced-option-group.price-range-group {
-  grid-column: 1 / -1; /* Span both columns */
-  grid-row: 2; /* Second row */
+  grid-column: span 1; /* Single column on desktop */
+  grid-row: 1; /* Same row */
 }
 
 .advanced-option-label {

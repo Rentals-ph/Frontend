@@ -12,6 +12,8 @@
   box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.1), 0px 1px 2px rgba(0, 0, 0, 0.06);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   flex-shrink: 0;
+  width: 360px; /* Increased width for better visibility */
+  max-width: 360px;
 }
 
 .vertical-property-card:hover {
@@ -29,7 +31,7 @@
 ========================= */
 .vertical-property-image {
   width: 100%;
-  height: 320px;
+  height: 300px; /* Increased to give more prominence to images */
   object-fit: cover;
   object-position: center;
   flex-shrink: 0;
@@ -42,10 +44,10 @@
    CONTENT
 ========================= */
 .vertical-property-content {
-  flex: 1;
+  flex: 0 0 auto; /* Don't grow, just take needed space - gives more prominence to image */
   display: flex;
   flex-direction: column;
-  padding: 18px;
+  padding: 16px 18px; /* Slightly reduced vertical padding */
   gap: 8px;
 }
 
@@ -180,7 +182,7 @@
 .vertical-rent-manager-badge {
   display: flex;
   gap: 8px;
-  padding: 10px;
+  padding: 8px 10px; /* Slightly reduced vertical padding */
   background: #eff6ff;
   border-radius: 8px;
   margin-top: auto;
@@ -231,7 +233,7 @@
 .vertical-property-features {
   display: flex;
   align-items: center;
-  height: 52px;
+  height: 48px; /* Slightly reduced to give more space to image */
   border-top: 1px solid #e5e7eb;
   background: #fafafa;
   flex-shrink: 0;
@@ -347,7 +349,7 @@
   }
 
   .property-carousel .vertical-property-image {
-    height: 220px;
+    height: 260px; /* Increased for better visibility in carousel */
   }
 
   .property-carousel .vertical-property-content {

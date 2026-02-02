@@ -135,28 +135,112 @@
 .business-card {
   background-color: #FFFFFF;
   border-radius: 16px;
-  padding: 48px 40px;
+  padding: 0;
   width: 100%;
-  max-width: 500px;
+  max-width: 900px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: row;
+  position: relative;
+  overflow: hidden;
+  min-height: 400px;
+}
+
+/* Rentals.ph Logo in top-right */
+.card-logo {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  z-index: 10;
+}
+
+.rentals-logo {
+  height: 40px;
+  width: auto;
+  object-fit: contain;
+}
+
+/* Left Decorative Strip */
+.card-decorative-strip {
+  width: 80px;
+  position: relative;
+  flex-shrink: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 20px;
+}
+
+.strip-icon {
+  position: absolute;
+  top: 20px;
+  z-index: 5;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: white;
+  border-radius: 50%;
+  padding: 4px;
+}
+
+.strip-blue {
+  width: 50%;
+  height: 100%;
+  background: #0073e6;
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
+.strip-orange {
+  width: 50%;
+  height: 100%;
+  background: #ff8c00;
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
+.strip-wave {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  transform: translateX(-50%);
+  z-index: 2;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='40' viewBox='0 0 4 40'%3E%3Cpath d='M0,0 Q2,5 0,10 T0,20 T0,30 T0,40' stroke='white' stroke-width='2.5' fill='none'/%3E%3C/svg%3E");
+  background-repeat: repeat-y;
+  background-size: 4px 20px;
+  background-position: center;
+}
+
+/* Main Content Area */
+.card-content {
+  flex: 1;
+  padding: 40px 40px 40px 60px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  position: relative;
+  padding-top: 60px;
 }
 
 /* Profile Image */
 .card-profile-image {
-  width: 120px;
-  height: 120px;
+  width: 140px;
+  height: 140px;
   border-radius: 50%;
   overflow: hidden;
   position: relative;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+  background: #E5E7EB;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 8px;
+  align-self: flex-start;
+  margin-bottom: 4px;
 }
 
 .card-profile-image img {
@@ -175,22 +259,40 @@
   justify-content: center;
   color: white;
   font-weight: 700;
-  font-size: 36px;
+  font-size: 42px;
   position: relative;
   z-index: 1;
+  background: linear-gradient(135deg, #0073e6 0%, #ff8c00 100%);
 }
 
 .card-avatar-fallback.hidden {
   display: none;
 }
 
-/* Name */
+/* Name Section */
+.card-name-section {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 0;
+}
+
 .card-name {
   margin: 0;
-  font-size: 32px;
+  font-size: 36px;
   font-weight: 700;
-  color: #111827;
-  text-align: center;
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+  line-height: 1.2;
+}
+
+.name-first {
+  color: #0073e6;
+}
+
+.name-last {
+  color: #ff8c00;
 }
 
 /* Title */
@@ -199,7 +301,6 @@
   font-size: 18px;
   font-weight: 500;
   color: #6B7280;
-  text-align: center;
 }
 
 /* Tenure */
@@ -208,33 +309,29 @@
   font-size: 14px;
   font-weight: 400;
   color: #9CA3AF;
-  text-align: center;
 }
 
 /* Contact Information */
 .card-contact-info {
-  width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 12px;
   margin-top: 8px;
-  margin-bottom: 8px;
 }
 
 .contact-item {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 12px 0;
 }
 
 .contact-icon {
-  font-size: 24px;
+  font-size: 20px;
   flex-shrink: 0;
 }
 
 .contact-icon.phone-icon {
-  color: #3B82F6;
+  color: #0073e6;
 }
 
 .contact-icon.whatsapp-icon {
@@ -242,7 +339,7 @@
 }
 
 .contact-icon.email-icon {
-  color: #3B82F6;
+  color: #0073e6;
 }
 
 .contact-text {
@@ -256,14 +353,16 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   gap: 12px;
-  margin-top: 16px;
-  width: 100%;
+  padding: 40px;
+  flex-shrink: 0;
+  border-left: 1px solid #E5E7EB;
 }
 
 .card-qr-code {
-  width: 200px;
-  height: 200px;
+  width: 180px;
+  height: 180px;
   border-radius: 8px;
   border: 1px solid #E5E7EB;
   background:
@@ -290,6 +389,10 @@
     margin-left: 240px;
     padding: 24px;
   }
+
+  .business-card {
+    max-width: 100%;
+  }
 }
 
 @media (max-width: 768px) {
@@ -302,19 +405,104 @@
   }
 
   .business-card {
+    flex-direction: column;
+    max-width: 100%;
+    min-height: auto;
+  }
+
+  .card-decorative-strip {
+    width: 100%;
+    height: 80px;
+    flex-direction: row;
+  }
+
+  .strip-blue {
+    width: 100%;
+    height: 50%;
+    left: 0;
+    top: 0;
+  }
+
+  .strip-orange {
+    width: 100%;
+    height: 50%;
+    left: 0;
+    bottom: 0;
+    top: auto;
+  }
+
+  .strip-wave {
+    left: 0;
+    top: 50%;
+    width: 100%;
+    height: 2px;
+    transform: translateY(-50%);
+    background: 
+      repeating-linear-gradient(
+        90deg,
+        transparent,
+        transparent 8px,
+        rgba(255, 255, 255, 0.3) 8px,
+        rgba(255, 255, 255, 0.3) 10px
+      );
+  }
+
+  .strip-icon {
+    top: 50%;
+    left: 20px;
+    transform: translateY(-50%);
+  }
+
+  .card-content {
     padding: 32px 24px;
+  }
+
+  .card-profile-image {
+    align-self: center;
+    width: 120px;
+    height: 120px;
+  }
+
+  .card-name-section {
+    align-items: center;
+    text-align: center;
   }
 
   .card-name {
     font-size: 28px;
+    justify-content: center;
   }
 
   .card-title {
     font-size: 16px;
+    text-align: center;
+  }
+
+  .card-tenure {
+    text-align: center;
+  }
+
+  .card-contact-info {
+    align-items: center;
+  }
+
+  .card-qr-container {
+    border-left: none;
+    border-top: 1px solid #E5E7EB;
+    padding: 24px;
   }
 
   .card-qr-code {
     width: 160px;
     height: 160px;
+  }
+
+  .card-logo {
+    top: 12px;
+    right: 12px;
+  }
+
+  .rentals-logo {
+    height: 32px;
   }
 }

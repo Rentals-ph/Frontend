@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import AppSidebar from '../../../components/common/AppSidebar'
 import AgentHeader from '../../../components/agent/AgentHeader'
 import {
@@ -11,6 +12,59 @@ import {
 import './page.css'
 
 export default function AgentRentalTracker() {
+  const [currentDate, setCurrentDate] = useState(new Date())
+
+  const getDaysInMonth = (date: Date) => {
+    const year = date.getFullYear()
+    const month = date.getMonth()
+    const firstDay = new Date(year, month, 1)
+    const lastDay = new Date(year, month + 1, 0)
+    const daysInMonth = lastDay.getDate()
+    const startingDayOfWeek = firstDay.getDay()
+
+    return { daysInMonth, startingDayOfWeek, year, month }
+  }
+
+  const goToPreviousMonth = () => {
+    setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1))
+  }
+
+  const goToNextMonth = () => {
+    setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1))
+  }
+
+  const goToToday = () => {
+    setCurrentDate(new Date())
+  }
+
+  const formatMonthYear = (date: Date) => {
+    return date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
+  }
+
+  const isToday = (day: number) => {
+    const today = new Date()
+    return (
+      day === today.getDate() &&
+      currentDate.getMonth() === today.getMonth() &&
+      currentDate.getFullYear() === today.getFullYear()
+    )
+  }
+
+  const { daysInMonth, startingDayOfWeek, year, month } = getDaysInMonth(currentDate)
+  const days = []
+  
+  // Add empty cells for days before the first day of the month
+  for (let i = 0; i < startingDayOfWeek; i++) {
+    days.push(null)
+  }
+  
+  // Add all days of the month
+  for (let day = 1; day <= daysInMonth; day++) {
+    days.push(day)
+  }
+
+  const weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+
   return (
     <div className="agent-rental-tracker agent-dashboard">
       <AppSidebar/>
@@ -36,21 +90,37 @@ export default function AgentRentalTracker() {
 
             <div className="art-calendar">
               <div className="art-calendar-header">
-                <div className="art-calendar-month">January 2026</div>
+                <div className="art-calendar-month">{formatMonthYear(currentDate)}</div>
                 <div className="art-calendar-actions">
-                  <button className="art-today-btn" type="button">
+                  <button className="art-today-btn" type="button" onClick={goToToday}>
                     Today
                   </button>
-                  <button className="art-icon-btn muted" type="button" aria-label="Previous month">
+                  <button className="art-icon-btn muted" type="button" aria-label="Previous month" onClick={goToPreviousMonth}>
                     <FiChevronLeft />
                   </button>
-                  <button className="art-icon-btn primary" type="button" aria-label="Next month">
+                  <button className="art-icon-btn primary" type="button" aria-label="Next month" onClick={goToNextMonth}>
                     <FiChevronRight />
                   </button>
                 </div>
               </div>
 
-              <div className="art-calendar-body" aria-label="Calendar placeholder" />
+              <div className="art-calendar-body">
+                <div className="art-calendar-weekdays">
+                  {weekDays.map((day) => (
+                    <div key={day} className="art-calendar-weekday">{day}</div>
+                  ))}
+                </div>
+                <div className="art-calendar-days">
+                  {days.map((day, index) => (
+                    <div
+                      key={index}
+                      className={`art-calendar-day ${day === null ? 'art-calendar-day-empty' : ''} ${day !== null && isToday(day) ? 'art-calendar-day-today' : ''}`}
+                    >
+                      {day !== null && <span className="art-calendar-day-number">{day}</span>}
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
           </section>
 

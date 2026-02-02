@@ -48,10 +48,7 @@ export default function AgentRentEstimate() {
         />
 
         <section className="agent-rent-estimate-section">
-          <div className="agent-rent-estimate-heading">
-            <h2>Rent Estimate</h2>
-            <p>Get an instant rental price estimate for your property.</p>
-          </div>
+          
 
           <div className="agent-rent-estimate-card">
             <div className="agent-rent-estimate-card-header">

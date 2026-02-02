@@ -38,10 +38,7 @@ export default function AgentShareBlogs() {
         />
 
         <section className="asb-content">
-          <div className="asb-heading">
-            <h2 className="asb-title">Share Blogs</h2>
-            <p className="asb-subtitle">Share your knowledge today!</p>
-          </div>
+     
 
           <div className="asb-carousel">
             <button className="asb-arrow asb-arrow-left" type="button" aria-label="Previous">

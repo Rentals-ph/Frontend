@@ -1,8 +1,9 @@
 {
   "/_not-found/page": "app/_not-found/page.js",
-  "/properties/page": "app/properties/page.js",
+  "/page": "app/page.js",
   "/agent/page": "app/agent/page.js",
-  "/agent/tracker/page": "app/agent/tracker/page.js",
-  "/agent/rent-estimate/page": "app/agent/rent-estimate/page.js",
-  "/agent/create-listing/basic-info/page": "app/agent/create-listing/basic-info/page.js"
+  "/agent/digital-card/page": "app/agent/digital-card/page.js",
+  "/agent/inbox/page": "app/agent/inbox/page.js",
+  "/agent/blogs/page": "app/agent/blogs/page.js",
+  "/agent/downloadables/page": "app/agent/downloadables/page.js"
 }

@@ -76,7 +76,7 @@ export default function AgentRentalTracker() {
         />
 
         <div className="art-page">
-          <h2 className="art-title">Rental Tracker</h2>
+          
 
           <section className="art-card">
             <div className="art-card-topbar">

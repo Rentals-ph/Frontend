@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import Link from 'next/link'
 import AppSidebar from '../../components/common/AppSidebar'
 import AgentHeader from '../../components/agent/AgentHeader'
@@ -18,11 +19,53 @@ import {
   FiArrowRight,
   FiCheckCircle,
   FiDollarSign,
-  FiBookOpen
+  FiBookOpen,
+  FiX
 } from 'react-icons/fi'
 import './page.css'
 
+interface ListingData {
+  title: string
+  image: string
+  details: string
+  price: string
+  status: 'active' | 'pending'
+}
+
 export default function AgentDashboard() {
+  const [previewListing, setPreviewListing] = useState<ListingData | null>(null)
+
+  const listings: ListingData[] = [
+    {
+      title: 'Modern Condo in Makati CBD',
+      image: 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=400&h=300&fit=crop',
+      details: '2 Bedrooms • 1 Bathroom • 65 sqm',
+      price: '₱35,000',
+      status: 'active'
+    },
+    {
+      title: 'Cozy Studio in BGC',
+      image: 'https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?w=400&h=300&fit=crop',
+      details: 'Studio • 1 Bathroom • 28 sqm',
+      price: '₱22,000',
+      status: 'pending'
+    },
+    {
+      title: 'Family House in Quezon City',
+      image: 'https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=400&h=300&fit=crop',
+      details: '3 Bedrooms • 2 Bathrooms • 120 sqm',
+      price: '₱45,000',
+      status: 'active'
+    }
+  ]
+
+  const handleViewClick = (listing: ListingData) => {
+    setPreviewListing(listing)
+  }
+
+  const handleClosePreview = () => {
+    setPreviewListing(null)
+  }
   return (
     <div className="agent-dashboard">
       <AppSidebar/>
@@ -87,74 +130,35 @@ export default function AgentDashboard() {
                 <Link href="/agent/listings" className="view-all-link">View All</Link>
               </div>
               <div className="listings-list">
-                <div className="listing-item">
-                  <div className="listing-image">
-                    <img src="/assets/property-placeholder.jpg" alt="Modern Condo" onError={(e) => {
-                      const target = e.target as HTMLImageElement;
-                      target.style.display = 'none';
-                    }} />
+                {listings.map((listing, index) => (
+                  <div key={index} className="listing-item">
+                    <div className="listing-image">
+                      <img src={listing.image} alt={listing.title} />
+                    </div>
+                    <div className="listing-info">
+                      <h4>{listing.title}</h4>
+                      <p className="listing-details">{listing.details}</p>
+                      <p className="listing-price">{listing.price}<span className="price-period">/month</span></p>
+                    </div>
+                    <div className="listing-right">
+                      <span className={`status-badge ${listing.status}`}>
+                        {listing.status === 'active' ? 'Active' : 'Pending'}
+                      </span>
+                      <div className="listing-actions">
+                        <button className="action-btn" title="Edit">
+                          <FiEdit3 />
+                        </button>
+                        <button 
+                          className="action-btn" 
+                          title="View"
+                          onClick={() => handleViewClick(listing)}
+                        >
+                          <FiEye />
+                        </button>
+                      </div>
+                    </div>
                   </div>
-                  <div className="listing-info">
-                    <h4>Modern Condo in Makati CBD</h4>
-                    <p className="listing-details">2 Bedrooms • 1 Bathroom • 65 sqm</p>
-                    <p className="listing-price">P35,000 /month</p>
-                    <span className="status-badge active">Active</span>
-                  </div>
-                  <div className="listing-actions">
-                    <button className="action-btn" title="Edit">
-                      <FiEdit3 />
-                    </button>
-                    <button className="action-btn" title="View">
-                      <FiEye />
-                    </button>
-                  </div>
-                </div>
-
-                <div className="listing-item">
-                  <div className="listing-image">
-                    <img src="/assets/property-placeholder.jpg" alt="Cozy Studio" onError={(e) => {
-                      const target = e.target as HTMLImageElement;
-                      target.style.display = 'none';
-                    }} />
-                  </div>
-                  <div className="listing-info">
-                    <h4>Cozy Studio in BGC</h4>
-                    <p className="listing-details">Studio • 1 Bathroom • 28 sqm</p>
-                    <p className="listing-price">P22,000 /month</p>
-                    <span className="status-badge pending">Pending</span>
-                  </div>
-                  <div className="listing-actions">
-                    <button className="action-btn" title="Edit">
-                      <FiEdit3 />
-                    </button>
-                    <button className="action-btn" title="View">
-                      <FiEye />
-                    </button>
-                  </div>
-                </div>
-
-                <div className="listing-item">
-                  <div className="listing-image">
-                    <img src="/assets/property-placeholder.jpg" alt="Family House" onError={(e) => {
-                      const target = e.target as HTMLImageElement;
-                      target.style.display = 'none';
-                    }} />
-                  </div>
-                  <div className="listing-info">
-                    <h4>Family House in Quezon City</h4>
-                    <p className="listing-details">3 Bedrooms • 2 Bathrooms • 120 sqm</p>
-                    <p className="listing-price">P45,000 /month</p>
-                    <span className="status-badge active">Active</span>
-                  </div>
-                  <div className="listing-actions">
-                    <button className="action-btn" title="Edit">
-                      <FiEdit3 />
-                    </button>
-                    <button className="action-btn" title="View">
-                      <FiEye />
-                    </button>
-                  </div>
-                </div>
+                ))}
               </div>
             </div>
           </div>
@@ -180,17 +184,24 @@ export default function AgentDashboard() {
               <h2>Quick Actions</h2>
               <div className="quick-actions-list">
                 <Link href="/agent/rent-estimate" className="quick-action-item">
-                  <FiFileText className="action-icon" />
+                  <div className="action-icon-wrapper blue">
+                    <FiHome className="action-icon" />
+                    <FiDollarSign className="action-icon-overlay" />
+                  </div>
                   <span>Rent Estimate</span>
                   <FiArrowRight className="arrow-icon" />
                 </Link>
                 <Link href="/agent/downloadables" className="quick-action-item">
-                  <FiDownload className="action-icon" />
+                  <div className="action-icon-wrapper orange">
+                    <FiDownload className="action-icon" />
+                  </div>
                   <span>Downloadables</span>
                   <FiArrowRight className="arrow-icon" />
                 </Link>
                 <Link href="/agent/digital-card" className="quick-action-item">
-                  <FiCreditCard className="action-icon" />
+                  <div className="action-icon-wrapper green">
+                    <FiCreditCard className="action-icon" />
+                  </div>
                   <span>Digital Card</span>
                   <FiArrowRight className="arrow-icon" />
                 </Link>
@@ -283,6 +294,31 @@ export default function AgentDashboard() {
           </div>
         </div>
       </main>
+
+      {/* Preview Modal */}
+      {previewListing && (
+        <div className="preview-modal-overlay" onClick={handleClosePreview}>
+          <div className="preview-modal-content" onClick={(e) => e.stopPropagation()}>
+            <button className="preview-modal-close" onClick={handleClosePreview}>
+              <FiX />
+            </button>
+            <div className="preview-modal-image">
+              <img src={previewListing.image} alt={previewListing.title} />
+            </div>
+            <div className="preview-modal-info">
+              <h3>{previewListing.title}</h3>
+              <p className="preview-details">{previewListing.details}</p>
+              <p className="preview-price">
+                {previewListing.price}
+                <span className="price-period">/month</span>
+              </p>
+              <span className={`status-badge ${previewListing.status}`}>
+                {previewListing.status === 'active' ? 'Active' : 'Pending'}
+              </span>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

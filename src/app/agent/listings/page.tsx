@@ -94,7 +94,7 @@ export default function AgentMyListings() {
         />
 
         <div className="aml-page">
-          <h2 className="aml-title">My Listings</h2>
+          
 
           <div className="aml-stats">
             <div className="metric-card orange">

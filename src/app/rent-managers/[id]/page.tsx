@@ -7,8 +7,10 @@ import Navbar from '../../../components/layout/Navbar'
 import Footer from '../../../components/layout/Footer'
 import HorizontalPropertyCard from '../../../components/common/HorizontalPropertyCard'
 import VerticalPropertyCard from '../../../components/common/VerticalPropertyCard'
-import { propertiesApi } from '../../../api'
+import { propertiesApi, agentsApi } from '../../../api'
+import { getApiBaseUrl } from '../../../config/api'
 import type { Property } from '../../../types'
+import type { Agent } from '../../../api/endpoints/agents'
 import PageHeader from '../../../components/layout/PageHeader'
 import './page.css'
 
@@ -18,36 +20,64 @@ export default function RentManagerDetailsPage() {
   const managerId = Number(id)
   const [properties, setProperties] = useState<Property[]>([])
   const [loading, setLoading] = useState(true)
-  const [manager, setManager] = useState<{ id: number; name: string; role: string; listings: Property[] } | null>(null)
+  const [manager, setManager] = useState<{ id: number; name: string; role: string; listings: Property[]; image?: string | null } | null>(null)
 
   useEffect(() => {
-    const fetchProperties = async () => {
+    const fetchManagerAndProperties = async () => {
       try {
+        // First, fetch the agent directly from the agents API
+        const agents = await agentsApi.getAll()
+        const agent = agents.find(a => a.id === managerId)
+        
+        if (!agent) {
+          // Agent not found
+          setManager(null)
+          setProperties([])
+          setLoading(false)
+          return
+        }
+        
+        // Set manager info from agent
+        const agentImage = agent.image || agent.avatar || agent.profile_image
+        setManager({
+          id: agent.id,
+          name: agent.full_name,
+          role: 'Rent Manager', // All agents from backend are approved, so they're rent managers
+          listings: [],
+          image: agentImage
+        })
+        
+        // Now fetch properties and filter by agent ID
         const allProperties = await propertiesApi.getAll()
         
-        // Filter properties by rent manager ID
-        const managerProperties = allProperties.filter(p => p.rent_manager?.id === managerId)
-        
-        if (managerProperties.length > 0 && managerProperties[0].rent_manager) {
-          const rentManager = managerProperties[0].rent_manager
-          setManager({
-            id: rentManager.id,
-            name: rentManager.name,
-            role: rentManager.is_official ? 'Rent Manager' : 'Property Specialist',
-            listings: managerProperties
-          })
-        }
+        // Filter properties by agent ID - check both agent and rent_manager for backward compatibility
+        const managerProperties = allProperties.filter(p => {
+          // Check agent_id field
+          const propertyAgentId = (p as any).agent_id
+          if (propertyAgentId === managerId) return true
+          
+          // Check agent relationship
+          const propertyAgent = (p as any).agent
+          if (propertyAgent?.id === managerId) return true
+          
+          // Check rent_manager relationship (legacy)
+          if (p.rent_manager?.id === managerId) return true
+          
+          return false
+        })
         
         setProperties(managerProperties)
       } catch (error) {
-        console.error('Error fetching properties:', error)
+        console.error('Error fetching manager and properties:', error)
+        setManager(null)
+        setProperties([])
       } finally {
         setLoading(false)
       }
     }
 
     if (Number.isFinite(managerId)) {
-      fetchProperties()
+      fetchManagerAndProperties()
     }
   }, [managerId])
 
@@ -91,6 +121,35 @@ export default function RentManagerDetailsPage() {
       return `/api/${image.startsWith('/') ? image.slice(1) : image}`
     }
     return image
+  }
+
+  // Helper function to get agent image URL
+  const getAgentImageUrl = (imagePath: string | null | undefined): string | null => {
+    if (!imagePath) return null
+    
+    // If it's already a full URL, return it
+    if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
+      return imagePath
+    }
+    
+    // If it starts with /storage, it's a Laravel storage path
+    if (imagePath.startsWith('/storage') || imagePath.startsWith('storage/')) {
+      const baseUrl = getApiBaseUrl().replace('/api', '')
+      return `${baseUrl}/${imagePath.startsWith('/') ? imagePath.slice(1) : imagePath}`
+    }
+    
+    // Otherwise, assume it's a relative path from storage
+    const baseUrl = getApiBaseUrl().replace('/api', '')
+    return `${baseUrl}/storage/${imagePath}`
+  }
+
+  // Helper function to get initials for fallback avatar
+  const getInitials = (name: string): string => {
+    const parts = name.trim().split(' ')
+    if (parts.length >= 2) {
+      return `${parts[0][0]}${parts[parts.length - 1][0]}`.toUpperCase()
+    }
+    return name.substring(0, 2).toUpperCase()
   }
 
   // Filter and sort properties - must be called before any conditional returns
@@ -249,13 +308,25 @@ export default function RentManagerDetailsPage() {
             <div className="rm-profile-card">
               <div className="rm-profile-top">
                 <div className="rm-profile-photo" aria-hidden="true">
-                  <div className="rm-photo-placeholder">
-                    <svg width="100%" height="100%" viewBox="0 0 400 300" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <rect width="400" height="300" fill="#f0f0f0" />
-                      <circle cx="200" cy="120" r="50" fill="#205ED7" />
-                      <circle cx="200" cy="100" r="20" fill="white" />
-                      <path d="M150 200C150 180 170 160 200 160C230 160 250 180 250 200V220H150V200Z" fill="white" />
-                    </svg>
+                  {manager.image ? (
+                    <img 
+                      src={getAgentImageUrl(manager.image) || ''} 
+                      alt={manager.name}
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement
+                        target.style.display = 'none'
+                        const fallback = target.nextElementSibling as HTMLElement
+                        if (fallback) fallback.style.display = 'flex'
+                      }}
+                    />
+                  ) : null}
+                  <div 
+                    className="rm-photo-placeholder"
+                    style={{ display: manager.image ? 'none' : 'flex' }}
+                  >
+                    <div className="rm-photo-initials">
+                      <span>{getInitials(manager.name)}</span>
+                    </div>
                   </div>
                 </div>
 

@@ -339,13 +339,13 @@
 /* RESPONSIVE */
 @media (max-width: 1024px) {
   .featured-section {
-    padding: 200px 0 50px 0;
+    padding: 10px 0 50px 0;
   }
 }
 
 @media (max-width: 900px) {
   .featured-section {
-    padding: 200px 0 50px 0;
+    padding: 10px 0 50px 0;
   }
 
   .featured-container {
@@ -367,7 +367,7 @@
 
 @media (max-width: 768px) {
   .featured-section {
-    padding: 280px 0 40px 0;
+    padding: 10px 0 40px 0;
   }
 }
 

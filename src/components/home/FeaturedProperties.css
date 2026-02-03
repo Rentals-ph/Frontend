@@ -1,7 +1,7 @@
 /* SECTION */
 .featured-section {
   background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
-  padding: 180px 0 70px 0;
+  padding: 20px 0 70px 0;
   border-top: none;
   overflow: hidden;
   position: relative;
@@ -377,7 +377,7 @@
   }
 
   .featured-section {
-    padding: 240px 0 40px 0;
+    padding: 10px 0 40px 0;
   }
 
   .featured-section .section-header {

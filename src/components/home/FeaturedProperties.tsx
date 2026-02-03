@@ -213,73 +213,7 @@ function FeaturedProperties() {
       </div>
 
       {/* Browse Properties by Location Section */}
-      <div className="featured-container">
-        <div className="browse-properties-section">          
-          {/* Location Filter Tabs */}
-          <div className="location-filter-tabs">
-            {locations.map((location) => (
-              <button
-                key={location}
-                className={`location-tab ${selectedLocation === location ? 'active' : ''}`}
-                onClick={() => setSelectedLocation(location)}
-              >
-                {location}
-              </button>
-            ))}
-          </div>
-
-          {/* Properties Carousel */}
-          <div className="browse-carousel-wrapper">
-            <button className="carousel-nav-arrow carousel-prev" aria-label="Previous">
-              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M15 18L9 12L15 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-            </button>
-            <div className="browse-property-carousel">
-              {browseProperties.length > 0 ? (
-                browseProperties.map((property) => {
-                  const propertySize = property.area 
-                    ? `${property.area} sqft` 
-                    : `${(property.bedrooms * 15 + property.bathrooms * 5)} sqft`
-                  
-                  return (
-                    <HorizontalPropertyCard 
-                      key={`browse-${property.id}`}
-                      id={property.id}
-                      propertyType={property.type}
-                      date={formatDate(property.published_at)}
-                      price={formatPrice(property.price)}
-                      title={property.title}
-                      image={getImageUrl(property.image)}
-                      rentManagerName={property.rent_manager?.name || 'Rental.Ph Official'}
-                      rentManagerRole={getRentManagerRole(property.rent_manager?.is_official)}
-                      bedrooms={property.bedrooms}
-                      bathrooms={property.bathrooms}
-                      parking={0}
-                      propertySize={propertySize}
-                      location={property.location}
-                    />
-                  )
-                })
-              ) : (
-                <div style={{ padding: '2rem', textAlign: 'center' }}>No properties available</div>
-              )}
-            </div>
-            <button className="carousel-nav-arrow carousel-next" aria-label="Next">
-              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M9 18L15 12L9 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-            </button>
-          </div>
-
-          {/* View All Button */}
-          <div className="view-all-container">
-            <Link href={`/properties${selectedLocation !== 'All Locations' ? `?location=${encodeURIComponent(selectedLocation)}` : ''}`} className="view-all-button">
-              View all properties {selectedLocation !== 'All Locations' ? `in ${selectedLocation}` : ''}
-            </Link>
-          </div>
-        </div>
-      </div>
+      
     </section>
   )
 }

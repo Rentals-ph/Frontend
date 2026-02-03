@@ -3,7 +3,7 @@
   display: flex;
   width: 100%;
   position: absolute;
-  bottom: -90px;
+  bottom: 0;
   left: 0;
   z-index: 100;
   overflow: hidden;
@@ -157,7 +157,7 @@
 /* Responsive Design */
 @media (max-width: 1024px) {
   .hero-banner {
-    bottom: -170px;
+    bottom: 0;
     max-width: 100%;
   }
 
@@ -196,7 +196,7 @@
 @media (max-width: 768px) {
   .hero-banner {
     flex-direction: column;
-    bottom: -200px;
+    bottom: 0;
     max-width: 100%;
     left: 0;
     right: 0;
@@ -250,7 +250,7 @@
 
 @media (max-width: 480px) {
   .hero-banner {
-    bottom: -190px;
+    bottom: 0;
     max-width: 100%;
     left: 0;
     right: 0;
@@ -299,7 +299,7 @@
 
 @media (max-width: 360px) {
   .hero-banner {
-    bottom: -180px;
+    bottom: 0;
     max-width: 100%;
   }
 

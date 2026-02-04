@@ -1,5 +1,4 @@
 import { ReactNode, useEffect, useState } from 'react'
-import AgentSidebar from './AgentSidebar'
 import AgentHeader from './AgentHeader'
 import './AgentLayout.css'
 

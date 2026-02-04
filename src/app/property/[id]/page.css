@@ -128,6 +128,9 @@
 
 .property-main-image {
   grid-row: 1 / 3;
+  position: relative;
+  overflow: hidden;
+  border-radius: 8px;
 }
 
 .property-main-image img {
@@ -136,6 +139,8 @@
   object-fit: cover;
   border-radius: 8px;
   min-height: 400px;
+  display: block;
+  transition: opacity 0.3s ease;
 }
 
 .property-thumbnail-images {
@@ -146,6 +151,37 @@
 
 .property-thumbnail {
   flex: 1;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.3s ease;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.property-thumbnail::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0);
+  transition: background 0.3s ease;
+  z-index: 1;
+  border-radius: 8px;
+}
+
+.property-thumbnail:hover::before {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.property-thumbnail.active {
+  border: 3px solid #205ED7;
+  box-shadow: 0 0 0 2px rgba(32, 94, 215, 0.2);
+}
+
+.property-thumbnail.active::before {
+  background: rgba(32, 94, 215, 0.1);
 }
 
 .property-thumbnail img {
@@ -154,6 +190,12 @@
   object-fit: cover;
   border-radius: 8px;
   min-height: 194px;
+  display: block;
+  transition: transform 0.3s ease;
+}
+
+.property-thumbnail:hover img {
+  transform: scale(1.05);
 }
 
 /* Property Overview Section */

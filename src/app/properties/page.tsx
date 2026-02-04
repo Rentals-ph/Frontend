@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, Suspense } from 'react'
+import { useState, useEffect, Suspense, useMemo } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Navbar from '../../components/layout/Navbar'
 import Footer from '../../components/layout/Footer'
@@ -29,6 +29,7 @@ function PropertiesContent() {
   const [error, setError] = useState<string | null>(null)
   const [totalPages, setTotalPages] = useState(1)
   const [totalProperties, setTotalProperties] = useState(0)
+  const [allPropertiesForCount, setAllPropertiesForCount] = useState<Property[]>([])
   const itemsPerPage = 9
 
   // Initialize state from URL query parameters
@@ -71,17 +72,46 @@ function PropertiesContent() {
   const bathOptions = ['1', '2', '3', '4+']
   const bedOptions = ['1', '2', '3', '4+']
 
-  const categories = [
-    { name: 'Apartments', count: 10 },
-    { name: 'Farm Land', count: 1 },
-    { name: 'Condominium', count: 1951 },
-    { name: 'Studio', count: 720 },
-    { name: 'TownHouse', count: 94 },
-    { name: 'WareHouse', count: 225 },
-    { name: 'Dormitory', count: 7 },
-    { name: 'Commercial Spaces', count: 647 },
-    { name: 'Apartments', count: 326 },
-  ]
+  // Fetch all properties for accurate category counts
+  useEffect(() => {
+    const fetchAllPropertiesForCount = async () => {
+      try {
+        // Fetch a large number of properties for accurate counting
+        // Using per_page to get as many as possible
+        const response = await propertiesApi.getAll({ per_page: 1000 })
+        
+        // The API might return paginated response or array
+        if (Array.isArray(response)) {
+          setAllPropertiesForCount(response)
+        } else {
+          // If it's a paginated response, extract the data
+          const paginatedResponse = response as any
+          if (paginatedResponse && 'data' in paginatedResponse) {
+            setAllPropertiesForCount(paginatedResponse.data || [])
+          } else {
+            setAllPropertiesForCount([])
+          }
+        }
+      } catch (err) {
+        console.error('Error fetching properties for count:', err)
+        // Fallback to empty array
+        setAllPropertiesForCount([])
+      }
+    }
+
+    fetchAllPropertiesForCount()
+  }, [])
+
+  // Calculate categories dynamically from all properties
+  const categories = useMemo(() => {
+    // Get all property types except "All Types"
+    const typesToCount = propertyTypes.filter(type => type !== 'All Types')
+    
+    return typesToCount.map(type => {
+      const count = allPropertiesForCount.filter(property => property.type === type).length
+      return { name: type, count }
+    }).filter(category => category.count > 0) // Only show categories with properties
+  }, [allPropertiesForCount, propertyTypes])
 
   const topSearches = [
     'Condominium For Rent In Cebu',
@@ -469,8 +499,16 @@ function PropertiesContent() {
           <div className="categories-section">
             <h2 className="section-title">List by Categories</h2>
             <ul className="categories-list">
-              {categories.map((category, index) => (
-                <li key={index} className="category-item">
+              {categories.map((category) => (
+                <li 
+                  key={category.name} 
+                  className={`category-item ${selectedType === category.name ? 'active' : ''}`}
+                  onClick={() => {
+                    setSelectedType(category.name)
+                    setIsSidebarOpen(false) // Close mobile sidebar when category is clicked
+                  }}
+                  style={{ cursor: 'pointer' }}
+                >
                   <span className="category-name">{category.name}</span>
                   <span className="category-count">({category.count})</span>
                 </li>

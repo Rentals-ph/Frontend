@@ -205,7 +205,7 @@ function LoginModal({ isOpen, onClose, onRegisterClick }: LoginModalProps) {
             <div className="login-footer">
               <p>Don't have an account?</p>
               <button className="register-link" onClick={onRegisterClick}>
-                Register as Agent
+                Register
               </button>
             </div>
           </div>

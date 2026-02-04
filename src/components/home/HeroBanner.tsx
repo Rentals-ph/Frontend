@@ -8,7 +8,7 @@ function HeroBanner() {
       {/* Left Section - Blue Panel */}
       <div className="hero-banner-left">
         <div className="hero-banner-left-content">
-          <h3 className="hero-banner-left-text">Rent a properties</h3>
+          <h3 className="hero-banner-left-text">Rent a property</h3>
           <svg 
             className="hero-banner-arrow" 
             width="48" 

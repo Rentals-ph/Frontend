@@ -47,6 +47,21 @@ export interface LoginResponse {
   errors?: Record<string, string[]>
 }
 
+export interface RegisterCredentials {
+  email: string
+  password: string
+}
+
+export interface RegisterResponse {
+  success: boolean
+  message: string
+  data?: {
+    id: number
+    email: string
+  }
+  errors?: Record<string, string[]>
+}
+
 export const authApi = {
   /**
    * Login user (agent or admin)
@@ -70,6 +85,19 @@ export const authApi = {
       return response.data
     } catch (error: any) {
       console.error('Admin login API call error:', error)
+      throw error
+    }
+  },
+
+  /**
+   * Register a new user (simplified - only email and password)
+   */
+  register: async (credentials: RegisterCredentials): Promise<RegisterResponse> => {
+    try {
+      const response = await apiClient.post<RegisterResponse>('/register', credentials)
+      return response.data
+    } catch (error: any) {
+      console.error('Register API call error:', error)
       throw error
     }
   },

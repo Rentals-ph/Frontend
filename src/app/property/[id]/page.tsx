@@ -18,6 +18,7 @@ export default function PropertyDetailsPage() {
   const [property, setProperty] = useState<Property | null>(null)
   const [similarProperties, setSimilarProperties] = useState<Property[]>([])
   const [loading, setLoading] = useState(true)
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0)
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -39,6 +40,7 @@ export default function PropertyDetailsPage() {
         
         const data = await propertiesApi.getById(propertyId)
         setProperty(data)
+        setSelectedImageIndex(0) // Reset to first image when property changes
         setFormData(prev => ({
           ...prev,
           message: `I'm Interested In This Property ${data.title} And I'd Like To Know More Details.`
@@ -85,6 +87,18 @@ export default function PropertyDetailsPage() {
     return image
   }
 
+  // Generate property images array (in a real app, this would come from the API)
+  const getPropertyImages = (property: Property): string[] => {
+    const mainImage = getImageUrl(property.image)
+    // For demo purposes, we'll use the main image and create variations
+    // In production, the API should provide multiple images
+    return [
+      mainImage,
+      mainImage, // Kitchen view (using same image for now)
+      mainImage, // Bedroom view (using same image for now)
+    ]
+  }
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
     setFormData(prev => ({
@@ -126,15 +140,28 @@ export default function PropertyDetailsPage() {
               <div className="property-details-left">
                 <div className="property-images-grid">
                   <div className="property-main-image">
-                    <img src={getImageUrl(property.image)} alt={property.title} />
+                    {property && (
+                      <img 
+                        src={getPropertyImages(property)[selectedImageIndex]} 
+                        alt={property.title}
+                        key={selectedImageIndex}
+                      />
+                    )}
                   </div>
                   <div className="property-thumbnail-images">
-                    <div className="property-thumbnail">
-                      <img src={getImageUrl(property.image)} alt="Property view 1" />
-                    </div>
-                    <div className="property-thumbnail">
-                      <img src={getImageUrl(property.image)} alt="Property view 2" />
-                    </div>
+                    {property && getPropertyImages(property)
+                      .map((image, index) => ({ image, index }))
+                      .filter(({ index }) => index !== selectedImageIndex)
+                      .slice(0, 2)
+                      .map(({ image, index }) => (
+                        <div 
+                          key={index}
+                          className="property-thumbnail"
+                          onClick={() => setSelectedImageIndex(index)}
+                        >
+                          <img src={image} alt={`Property view ${index + 1}`} />
+                        </div>
+                      ))}
                   </div>
                 </div>
 

@@ -5,7 +5,7 @@ import AppSidebar from '../../../components/common/AppSidebar'
 import AgentHeader from '../../../components/agent/AgentHeader'
 import { agentsApi } from '../../../api'
 import type { Agent } from '../../../api/endpoints/agents'
-
+import { ASSETS } from '@/utils/assets'
 import {
   FiMail,
   FiPhone,
@@ -56,7 +56,7 @@ export default function AgentMyProfile() {
       : 'Unknown Agent')
   const agentEmail = agent?.email || ''
   const agentPhone = agent?.phone ? `+63 ${agent.phone}` : '+63 987654321'
-  const agentImage = agent?.image || agent?.avatar || agent?.profile_image || '/assets/profile-placeholder.png'
+  const agentImage = agent?.image || agent?.avatar || agent?.profile_image || ASSETS.PLACEHOLDER_PROFILE
   const agentInitials = agentName.split(' ').map(n => n[0]).join('').toUpperCase() || 'A'
 
   // Sample property listings data
@@ -67,7 +67,7 @@ export default function AgentMyProfile() {
       date: 'Sat 05, 2024',
       price: '$1200/Month',
       title: 'Azure Residences - 2BR Corner Suite',
-      image: '/assets/property-placeholder.jpg',
+      image: ASSETS.PLACEHOLDER_PROPERTY,
       bedrooms: 4,
       bathrooms: 2,
       area: 2
@@ -78,7 +78,7 @@ export default function AgentMyProfile() {
       date: 'Sat 05, 2024',
       price: '$1200/Month',
       title: 'Azure Residences - 2BR Corner Suite',
-      image: '/assets/property-placeholder.jpg',
+      image: ASSETS.PLACEHOLDER_PROPERTY,
       bedrooms: 4,
       bathrooms: 2,
       area: 2
@@ -199,7 +199,7 @@ export default function AgentMyProfile() {
                         </button>
                       </div>
                       <div className="rental-manager-badge">
-                        <img src="/assets/rentals-logo-hero-13c7b5.png" alt="Rentals.ph" className="badge-logo" />
+                        <img src={ASSETS.LOGO_HERO_MAIN} alt="Rentals.ph" className="badge-logo" />
                         <span>Rental.Ph Official Rent Manager</span>
                       </div>
                       <div className="property-features">

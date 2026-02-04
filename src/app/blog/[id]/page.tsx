@@ -8,6 +8,7 @@ import Footer from '../../../components/layout/Footer'
 import PageHeader from '../../../components/layout/PageHeader'
 import { blogsApi } from '../../../api'
 import type { Blog } from '../../../types'
+import { ASSETS, getAsset } from '@/utils/assets'
 import './page.css'
 
 export default function BlogDetailsPage() {
@@ -62,7 +63,7 @@ export default function BlogDetailsPage() {
   }
 
   const getImageUrl = (image: string | null): string => {
-    if (!image) return '/assets/blog-image.png'
+    if (!image) return ASSETS.BLOG_IMAGE_1
     if (image.startsWith('http://') || image.startsWith('https://')) {
       return image
     }
@@ -76,13 +77,13 @@ export default function BlogDetailsPage() {
     {
       id: 1,
       author: 'Pat M.',
-      avatar: '/assets/property-main.png',
+      avatar: ASSETS.PLACEHOLDER_PROPERTY_MAIN,
       text: 'Great article! The tip about screening tenants is especially important. I learned this the hard way in my first year of property management.'
     },
     {
       id: 2,
       author: 'Pat M.',
-      avatar: '/assets/property-main.png',
+      avatar: ASSETS.PLACEHOLDER_PROPERTY_MAIN,
       text: 'Great article! The tip about screening tenants is especially important. I learned this the hard way in my first year of property management.'
     }
   ]
@@ -170,7 +171,7 @@ export default function BlogDetailsPage() {
                     </p>
                     {index === 0 && (
                       <div className="blog-details-ad-image">
-                        <img src="/assets/blog-image2.png" alt="House-Hunting Before the New Year Rush" />
+                        <img src={ASSETS.BLOG_IMAGE_2} alt="House-Hunting Before the New Year Rush" />
                       </div>
                     )}
                   </div>

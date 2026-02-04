@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { ASSETS } from '@/utils/assets'
 import './AgentSidebar.css'
 import {
   FiMail,
@@ -77,7 +78,7 @@ function AgentSidebar() {
       <div className="sidebar-logo">
         <div className="logo-container">
           <img
-            src="/assets/rentals-logo-hero-13c7b5.png"
+            src={ASSETS.LOGO_HERO_MAIN}
             alt="Rentals.ph logo"
             className="logo-image"
           />

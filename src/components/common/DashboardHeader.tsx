@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { FiLogOut, FiChevronDown, FiUser, FiBell } from 'react-icons/fi'
+import { ASSETS } from '@/utils/assets'
 import './DashboardHeader.css'
 
 interface DashboardHeaderProps {
@@ -103,7 +104,7 @@ function DashboardHeader({
               <div className="user-profile">
                 <div className="profile-avatar">
                   <img 
-                    src={avatarImage || '/assets/profile-placeholder.png'} 
+                    src={avatarImage || ASSETS.PLACEHOLDER_PROFILE} 
                     alt={userName} 
                     onError={(e) => {
                       const target = e.target as HTMLImageElement

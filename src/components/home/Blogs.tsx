@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { blogsApi } from '../../api'
 import type { Blog } from '../../types'
+import { ASSETS } from '@/utils/assets'
 import './Blogs.css'
 
 function Blogs() {
@@ -42,7 +43,7 @@ function Blogs() {
   }
 
   const getImageUrl = (image: string | null): string => {
-    if (!image) return '/assets/blog-main.png'
+    if (!image) return ASSETS.BLOG_IMAGE_MAIN
     if (image.startsWith('http://') || image.startsWith('https://')) {
       return image
     }
@@ -55,8 +56,8 @@ function Blogs() {
   // Use first blog for small card, second blog for large card
   const smallBlog = blogs.length > 0 ? blogs[0] : null
   const largeBlog = blogs.length > 1 ? blogs[1] : blogs.length > 0 ? blogs[0] : null
-  const smallBlogImage = smallBlog ? getImageUrl(smallBlog.image) : '/assets/blog-main.png'
-  const largeBlogImage = largeBlog ? getImageUrl(largeBlog.image) : '/assets/blog-main.png'
+  const smallBlogImage = smallBlog ? getImageUrl(smallBlog.image) : ASSETS.BLOG_IMAGE_MAIN
+  const largeBlogImage = largeBlog ? getImageUrl(largeBlog.image) : ASSETS.BLOG_IMAGE_MAIN
 
   return (
     <section id="blog" className="blogs-section">

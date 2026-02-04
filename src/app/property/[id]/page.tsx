@@ -9,6 +9,7 @@ import PageHeader from '../../../components/layout/PageHeader'
 import VerticalPropertyCard from '../../../components/common/VerticalPropertyCard'
 import { propertiesApi } from '../../../api'
 import type { Property } from '../../../types'
+import { ASSETS } from '@/utils/assets'
 import './page.css'
 
 export default function PropertyDetailsPage() {
@@ -82,7 +83,7 @@ export default function PropertyDetailsPage() {
   }
 
   const getImageUrl = (image: string | null): string => {
-    if (!image) return '/assets/property-main.png'
+    if (!image) return ASSETS.PLACEHOLDER_PROPERTY_MAIN
     if (image.startsWith('http://') || image.startsWith('https://')) {
       return image
     }

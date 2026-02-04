@@ -8,6 +8,7 @@ import './page.css'
 import PageHeader from '../../components/layout/PageHeader'
 import { blogsApi } from '../../api'
 import type { Blog } from '../../types'
+import { ASSETS } from '@/utils/assets'
 
 export default function BlogPage() {
   const [currentPage, setCurrentPage] = useState(1)
@@ -44,7 +45,7 @@ export default function BlogPage() {
   }
 
   const getImageUrl = (image: string | null): string => {
-    if (!image) return '/assets/property-main.png'
+    if (!image) return ASSETS.PLACEHOLDER_PROPERTY_MAIN
     if (image.startsWith('http://') || image.startsWith('https://')) {
       return image
     }

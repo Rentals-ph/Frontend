@@ -5,6 +5,7 @@ import Link from 'next/link'
 import TestimonialCard from '../common/TestimonialCard'
 import { testimonialsApi } from '../../api'
 import type { Testimonial } from '../../types'
+import { ASSETS, getAsset } from '@/utils/assets'
 import './Testimonials.css'
 
 function Testimonials() {
@@ -49,7 +50,7 @@ function Testimonials() {
 
   // Helper function to get avatar URL
   const getAvatarUrl = (avatar: string | null): string => {
-    if (!avatar) return '/assets/testimonial-person.png'
+    if (!avatar) return ASSETS.PLACEHOLDER_TESTIMONIAL_PERSON
     if (avatar.startsWith('http://') || avatar.startsWith('https://')) {
       return avatar
     }
@@ -73,7 +74,7 @@ function Testimonials() {
             <div className="testimonials-quote-icon-large">
               <div className="testimonials-quote-circle">
                 <img 
-                  src="/assets/quote-icon-2.svg" 
+                  src={ASSETS.ICON_QUOTE_2} 
                   alt="Quote icon" 
                   className="testimonial-quote-icon-svg"
                 />

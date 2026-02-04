@@ -1,3 +1,4 @@
+import { ASSETS } from '@/utils/assets'
 import './Partners.css'
 
 function Partners() {
@@ -8,28 +9,28 @@ function Partners() {
         <div className="partners-grid">
           <div >
             <img
-              src="/assets/partner1.svg"
+              src={ASSETS.PARTNER_1}
               alt="Partner 1"
               className="partner-logo"
             />
           </div>
           <div>
             <img
-              src="/assets/partner2.svg"
+              src={ASSETS.PARTNER_2}
               alt="Partner 2"
               className="partner-logo"
             />
           </div>
           <div >
             <img
-              src="/assets/partner3.svg"
+              src={ASSETS.PARTNER_3}
               alt="Partner 3"
               className="partner-logo"
             />
           </div>
           <div >
             <img
-              src="/assets/partner1.svg"
+              src={ASSETS.PARTNER_1}
               alt="Partner 4"
               className="partner-logo"
             />
@@ -37,7 +38,7 @@ function Partners() {
         </div>
         <div className="partner5-container">
           <img
-            src="/assets/partner5.svg"
+            src={ASSETS.PARTNER_5}
             alt="Partner 5"
             className="partner5-image"
           />

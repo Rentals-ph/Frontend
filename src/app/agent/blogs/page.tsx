@@ -3,6 +3,7 @@
 import { useMemo, useState } from 'react'
 import AppSidebar from '../../../components/common/AppSidebar'
 import AgentHeader from '../../../components/agent/AgentHeader'
+import { ASSETS } from '@/utils/assets'
 import '../page.css'
 import './page.css'
 
@@ -17,12 +18,12 @@ export default function AgentShareBlogs() {
 
   const blogs: AgentBlogCard[] = useMemo(
     () => [
-      { id: 1, title: 'How Much Rent Can You Really Afford in 2026?', image: '/assets/blog-image.png' },
-      { id: 2, title: 'Post-Holiday Budget Reset', image: '/assets/blog-image2.png' },
-      { id: 3, title: 'Finding a Home Made Simple', image: '/assets/blog-main.png' },
-      { id: 4, title: 'Back-to-School Smart Living', image: '/assets/blog-image2.png' },
-      { id: 5, title: 'Why January is the Smartest Month', image: '/assets/blog-image.png' },
-      { id: 6, title: 'Small Space, Big Holiday Glow', image: '/assets/blog-main.png' }
+      { id: 1, title: 'How Much Rent Can You Really Afford in 2026?', image: ASSETS.BLOG_IMAGE_1 },
+      { id: 2, title: 'Post-Holiday Budget Reset', image: ASSETS.BLOG_IMAGE_2 },
+      { id: 3, title: 'Finding a Home Made Simple', image: ASSETS.BLOG_IMAGE_MAIN },
+      { id: 4, title: 'Back-to-School Smart Living', image: ASSETS.BLOG_IMAGE_2 },
+      { id: 5, title: 'Why January is the Smartest Month', image: ASSETS.BLOG_IMAGE_1 },
+      { id: 6, title: 'Small Space, Big Holiday Glow', image: ASSETS.BLOG_IMAGE_MAIN }
     ],
     []
   )

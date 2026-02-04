@@ -6,6 +6,7 @@ import AppSidebar from '../../../components/common/AppSidebar'
 import AgentHeader from '../../../components/agent/AgentHeader'
 import { agentsApi } from '../../../api'
 import type { Agent } from '../../../api/endpoints/agents'
+import { ASSETS } from '@/utils/assets'
 import { 
   FiSend,
   FiUser,
@@ -26,7 +27,7 @@ export default function AgentAccount() {
     email: 'johnanderson@gmail.com',
     phone: '+63 9298765432',
     role: 'Property Agent',
-    avatar: '/assets/profile-placeholder.png'
+    avatar: ASSETS.PLACEHOLDER_PROFILE
   })
 
   // Edit profile form data
@@ -68,7 +69,7 @@ export default function AgentAccount() {
           email: agentData.email || '',
           phone: agentData.phone ? `+63 ${agentData.phone}` : '',
           role: agentData.verified ? 'Rent Manager' : 'Property Agent',
-          avatar: agentData.image || agentData.avatar || agentData.profile_image || '/assets/profile-placeholder.png'
+          avatar: agentData.image || agentData.avatar || agentData.profile_image || ASSETS.PLACEHOLDER_PROFILE
         })
 
         // Update edit form data

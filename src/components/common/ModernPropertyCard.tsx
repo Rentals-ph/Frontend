@@ -1,6 +1,7 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
+import { ASSETS } from '@/utils/assets'
 import './ModernPropertyCard.css'
 
 interface ModernPropertyCardProps {
@@ -25,7 +26,7 @@ function ModernPropertyCard({
   date = 'Sat 05, 2024',
   price = '$1200/Month',
   title = 'Azure Residences - 2BR Corner Suite',
-  image = '/assets/property-main.png',
+  image = ASSETS.PLACEHOLDER_PROPERTY_MAIN,
   rentManagerName = 'Rental.Ph Official',
   rentManagerRole = 'Rent Manager',
   bedrooms = 4,
@@ -57,7 +58,7 @@ function ModernPropertyCard({
           alt={title}
           className="modern-card-image"
           onError={(e) => {
-            e.currentTarget.src = '/assets/property-main.png'
+            e.currentTarget.src = ASSETS.PLACEHOLDER_PROPERTY_MAIN
           }}
         />
         <div className="modern-card-overlay">
@@ -115,7 +116,7 @@ function ModernPropertyCard({
         <div className="modern-card-footer">
           <div className="modern-rent-manager">
             <img
-              src="/assets/rental-ph-logo.svg"
+              src={ASSETS.LOGO_ICON}
               alt="Rentals.ph Official"
               className="modern-manager-avatar"
             />

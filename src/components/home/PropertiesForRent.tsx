@@ -5,6 +5,7 @@ import VerticalPropertyCard from '../common/VerticalPropertyCard'
 import { propertiesApi } from '../../api'
 import type { Property } from '../../types'
 import type { PaginatedResponse } from '../../api/types'
+import { ASSETS } from '@/utils/assets'
 import './PropertiesForRent.css'
 
 function PropertiesForRent() {
@@ -49,7 +50,7 @@ function PropertiesForRent() {
 
   // Helper function to get image URL
   const getImageUrl = (image: string | null): string => {
-    if (!image) return '/assets/property-main.png'
+    if (!image) return ASSETS.PLACEHOLDER_PROPERTY_MAIN
     if (image.startsWith('http://') || image.startsWith('https://')) {
       return image
     }

@@ -4,6 +4,7 @@ import Navbar from '../../components/layout/Navbar'
 import Testimonials from '../../components/home/Testimonials'
 import Footer from '../../components/layout/Footer'
 import Partners from '../../components/home/Partners'
+import { ASSETS } from '@/utils/assets'
 import './page.css'
 import PageHeader from '../../components/layout/PageHeader'
 
@@ -18,12 +19,12 @@ export default function AboutPage() {
       <section className="about-hero-section">
         <div className="about-hero-container">
           <img
-            src="/assets/tropical-travel-real-estate.png"
+            src={ASSETS.ABOUT_TROPICAL_TRAVEL}
             alt="About Us background"
             className="about-hero-background"
             onError={(e) => {
               // Fallback to SVG if PNG doesn't load
-              e.currentTarget.src = '/assets/aboutusbackgroundphoto.svg'
+              e.currentTarget.src = ASSETS.ABOUT_BACKGROUND
             }}
           />
           {/* Orange bar below background */}
@@ -42,11 +43,11 @@ export default function AboutPage() {
             {/* Left - Image */}
             <div className="about-main-image-wrapper">
               <img
-                src="/assets/tropical-travel-real-estate.png"
+                src={ASSETS.ABOUT_TROPICAL_TRAVEL}
                 alt="Rentals.ph Platform"
                 className="about-main-image"
                 onError={(e) => {
-                  e.currentTarget.src = '/assets/aboutusbackgroundphoto.svg'
+                  e.currentTarget.src = ASSETS.ABOUT_BACKGROUND
                 }}
               />
             </div>
@@ -85,7 +86,7 @@ export default function AboutPage() {
                   <div className="about-main-service-item">
                     <div className="about-main-service-icon">
                       <img 
-                        src="/assets/rentph-cares.png" 
+                        src={ASSETS.ABOUT_RENTPH_CARES} 
                         alt="Rent.ph Cares" 
                         className="about-main-service-icon-img"
                         onError={(e) => { e.currentTarget.style.display = 'none' }}
@@ -97,7 +98,7 @@ export default function AboutPage() {
                   <div className="about-main-service-item">
                     <div className="about-main-service-icon">
                       <img 
-                        src="/assets/your-trusted-rental-partner.png" 
+                        src={ASSETS.ABOUT_TRUSTED_PARTNER} 
                         alt="Trusted Partner" 
                         className="about-main-service-icon-img"
                         onError={(e) => { e.currentTarget.style.display = 'none' }}
@@ -109,7 +110,7 @@ export default function AboutPage() {
                   <div className="about-main-service-item">
                     <div className="about-main-service-icon">
                       <img 
-                        src="/assets/transforming-real-estate.png" 
+                        src={ASSETS.ABOUT_TRANSFORMING} 
                         alt="Transforming Investment" 
                         className="about-main-service-icon-img"
                         onError={(e) => { e.currentTarget.style.display = 'none' }}
@@ -121,7 +122,7 @@ export default function AboutPage() {
                   <div className="about-main-service-item">
                     <div className="about-main-service-icon">
                       <img 
-                        src="/assets/comprehensive-rental-solution.png" 
+                        src={ASSETS.ABOUT_COMPREHENSIVE} 
                         alt="Nationwide Solution" 
                         className="about-main-service-icon-img"
                         onError={(e) => { e.currentTarget.style.display = 'none' }}

@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { FiUser, FiLogOut, FiChevronDown, FiHome, FiMenu, FiX } from 'react-icons/fi'
+import { ASSETS } from '@/utils/assets'
 import './Navbar.css'
 import LoginModal from '../common/LoginModal'
 import RegisterModal from '../common/RegisterModal'
@@ -141,7 +142,7 @@ function Navbar() {
         <div className="navbar-wrapper">
           <div className="navbar-logo-section">
             <img
-              src="/assets/rentals-logo-hero-13c7b5.png"
+              src={ASSETS.LOGO_HERO_MAIN}
               alt="Rentals.ph logo"
               className="navbar-logo"
             />
@@ -177,7 +178,7 @@ function Navbar() {
                   <div className="navbar-user-profile">
                     <div className="navbar-profile-avatar">
                       <img 
-                        src="/assets/profile-placeholder.png" 
+                        src={ASSETS.PLACEHOLDER_PROFILE} 
                         alt={userName}
                         onError={(e) => {
                           const target = e.target as HTMLImageElement
@@ -275,7 +276,7 @@ function Navbar() {
               <div className="navbar-mobile-user-profile">
                 <div className="navbar-profile-avatar">
                   <img 
-                    src="/assets/profile-placeholder.png" 
+                    src={ASSETS.PLACEHOLDER_PROFILE} 
                     alt={userName}
                     onError={(e) => {
                       const target = e.target as HTMLImageElement

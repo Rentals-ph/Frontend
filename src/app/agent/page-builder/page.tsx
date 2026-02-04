@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import AppSidebar from '../../../components/common/AppSidebar'
 import AgentHeader from '../../../components/agent/AgentHeader'
+import { ASSETS } from '@/utils/assets'
 import { 
   FiSettings,
   FiUpload,
@@ -222,7 +223,7 @@ export default function PageBuilder() {
                   <div className="profile-upload-section">
                     <div className="profile-image-preview">
                       <img 
-                        src="/assets/profile-placeholder.png" 
+                        src={ASSETS.PLACEHOLDER_PROFILE} 
                         alt="Profile"
                         onError={(e) => {
                           const target = e.target as HTMLImageElement;
@@ -699,7 +700,7 @@ export default function PageBuilder() {
                       <div className="preview-profile-header">
                         <div className="preview-profile-image-wrapper">
                           <img 
-                            src="/assets/profile-placeholder.png" 
+                            src={ASSETS.PLACEHOLDER_PROFILE} 
                             alt="John Anderson"
                             className="preview-profile-image"
                             onError={(e) => {

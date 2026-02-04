@@ -2,6 +2,7 @@
 
 import AppSidebar from '../../../components/common/AppSidebar'
 import AgentHeader from '../../../components/agent/AgentHeader'
+import { ASSETS } from '@/utils/assets'
 import { 
   FiMail,
   FiPhone
@@ -37,7 +38,7 @@ export default function AgentDigitalCard() {
               {/* Rentals.ph Logo in top-right */}
               <div className="card-logo">
                 <img 
-                  src="/assets/rentals-logo-hero-13c7b5.png" 
+                  src={ASSETS.LOGO_HERO_MAIN} 
                   alt="Rentals.ph"
                   className="rentals-logo"
                 />
@@ -61,7 +62,7 @@ export default function AgentDigitalCard() {
                 {/* Profile Picture */}
                 <div className="card-profile-image">
                   <img 
-                    src="/assets/profile-placeholder.png" 
+                    src={ASSETS.PLACEHOLDER_PROFILE} 
                     alt={fullName}
                     onError={(e) => {
                       const target = e.target as HTMLImageElement;

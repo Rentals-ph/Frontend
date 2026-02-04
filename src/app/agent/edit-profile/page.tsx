@@ -5,7 +5,7 @@ import AppSidebar from '../../../components/common/AppSidebar'
 import AgentHeader from '../../../components/agent/AgentHeader'
 import { agentsApi } from '../../../api'
 import type { Agent } from '../../../api/endpoints/agents'
-
+import { ASSETS } from '@/utils/assets'
 import { 
   FiSend
 } from 'react-icons/fi'
@@ -72,7 +72,7 @@ export default function AgentEditProfile() {
     (agent?.first_name && agent?.last_name 
       ? `${agent.first_name} ${agent.last_name}` 
       : 'Unknown Agent')
-  const agentImage = agent?.image || agent?.avatar || agent?.profile_image || '/assets/profile-placeholder.png'
+  const agentImage = agent?.image || agent?.avatar || agent?.profile_image || ASSETS.PLACEHOLDER_PROFILE
   const agentInitials = agentName.split(' ').map(n => n[0]).join('').toUpperCase() || 'A'
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {

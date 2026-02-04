@@ -12,6 +12,7 @@ import { getApiBaseUrl } from '../../../config/api'
 import type { Property } from '../../../types'
 import type { Agent } from '../../../api/endpoints/agents'
 import type { PaginatedResponse } from '../../../api/types'
+import { ASSETS } from '@/utils/assets'
 import PageHeader from '../../../components/layout/PageHeader'
 import './page.css'
 
@@ -124,7 +125,7 @@ export default function RentManagerDetailsPage() {
   }
 
   const getImageUrl = (image: string | null): string => {
-    if (!image) return '/assets/property-main.png'
+    if (!image) return ASSETS.PLACEHOLDER_PROPERTY_MAIN
     if (image.startsWith('http://') || image.startsWith('https://')) {
       return image
     }

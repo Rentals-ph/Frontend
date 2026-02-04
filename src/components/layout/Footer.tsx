@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { ASSETS } from '@/utils/assets'
 import './Footer.css'
 
 function Footer() {
@@ -7,7 +8,7 @@ function Footer() {
       <div className="footer-content-wrapper">
         <div className="footer-left">
           <img
-            src="/assets/rentals-logo-footer.png"
+            src={ASSETS.LOGO_FOOTER}
             alt="Rentals.ph logo"
             className="footer-logo"
           />

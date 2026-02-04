@@ -1,3 +1,4 @@
+import { ASSETS } from '@/utils/assets'
 import './TestimonialCard.css'
 
 interface TestimonialCardProps {
@@ -24,7 +25,7 @@ function TestimonialCard({
         <div className="testimonial-quote-icon-overlay">
           <div className="testimonial-quote-circle-small">
             <img 
-              src="/assets/quote-icon-1.svg" 
+              src={ASSETS.ICON_QUOTE_1} 
               alt="Quote icon" 
               className="testimonial-quote-icon-svg"
             />

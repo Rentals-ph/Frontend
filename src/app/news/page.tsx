@@ -7,6 +7,7 @@ import Footer from '../../components/layout/Footer'
 import PageHeader from '../../components/layout/PageHeader'
 import { newsApi } from '../../api'
 import type { News } from '../../api/endpoints/news'
+import { ASSETS } from '@/utils/assets'
 import './page.css'
 
 export default function NewsPage() {
@@ -57,7 +58,7 @@ export default function NewsPage() {
   }
 
   const getImageUrl = (image: string | null): string => {
-    if (!image) return '/assets/property-main.png'
+    if (!image) return ASSETS.PLACEHOLDER_PROPERTY_MAIN
     if (image.startsWith('http://') || image.startsWith('https://')) {
       return image
     }

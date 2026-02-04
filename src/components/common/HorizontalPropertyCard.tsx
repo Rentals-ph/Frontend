@@ -1,6 +1,7 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
+import { ASSETS } from '@/utils/assets'
 import './HorizontalPropertyCard.css'
 
 interface HorizontalPropertyCardProps {
@@ -25,7 +26,7 @@ function HorizontalPropertyCard({
   date = 'Sat 05, 2024',
   price = '$1200/Month',
   title = 'Azure Residences - 2BR Corner Suite',
-  image = '/assets/property-main.png',
+  image = ASSETS.PLACEHOLDER_PROPERTY_MAIN,
   rentManagerName = 'Rental.Ph Official',
   rentManagerRole = 'Rent Manager',
   bedrooms = 4,
@@ -58,7 +59,7 @@ function HorizontalPropertyCard({
         className="horizontal-property-image"
         onError={(e) => {
           // Fallback to default image if the provided image fails to load
-          e.currentTarget.src = '/assets/property-main.png'
+          e.currentTarget.src = ASSETS.PLACEHOLDER_PROPERTY_MAIN
         }}
       />
       <div className="horizontal-property-content">
@@ -107,7 +108,7 @@ function HorizontalPropertyCard({
         </h3>
         <div className="horizontal-rent-manager-badge">
           <img
-            src="/assets/rental-ph-logo.svg"
+            src={ASSETS.LOGO_ICON}
             alt="Rentals.ph Official"
             className="horizontal-rent-manager-avatar"
           />

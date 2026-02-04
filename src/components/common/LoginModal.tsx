@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { authApi } from '../../api'
+import { ASSETS } from '@/utils/assets'
 import './LoginModal.css'
 
 interface LoginModalProps {
@@ -115,7 +116,7 @@ function LoginModal({ isOpen, onClose, onRegisterClick }: LoginModalProps) {
           <div className="login-modal-left">
             <div className="login-branding">
               <img
-                src="/assets/rentals-logo-hero-13c7b5.png"
+                src={ASSETS.LOGO_HERO_MAIN}
                 alt="Rentals.ph - Philippines #1 Property Rental Website"
                 className="login-logo"
               />

@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { ASSETS } from '@/utils/assets'
 import './Hero.css'
 import HeroBanner from './HeroBanner'
 
@@ -98,7 +99,7 @@ function Hero() {
     <section id="home" className="hero-section">
       {/* Background image that matches Figma hero */}
       <img
-        src="/assets/landing-hero-bg-784ecf.png"
+        src={ASSETS.BG_HERO_LANDING}
         alt="Skyline and buildings background"
         className="hero-background"
       />

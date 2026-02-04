@@ -10,6 +10,7 @@ import './page.css'
 import PageHeader from '../../components/layout/PageHeader'
 import { propertiesApi } from '../../api/endpoints/properties'
 import type { Property } from '../../types'
+import { ASSETS } from '@/utils/assets'
 
 function PropertiesContent() {
   const searchParams = useSearchParams()
@@ -567,7 +568,7 @@ function PropertiesContent() {
                       date: formatDate(property.published_at),
                       price: formatPrice(property.price),
                       title: property.title,
-                      image: property.image || '/assets/property-main.png',
+                      image: property.image || ASSETS.PLACEHOLDER_PROPERTY_MAIN,
                       rentManagerName: property.agent?.first_name && property.agent?.last_name
                         ? `${property.agent.first_name} ${property.agent.last_name}`
                         : property.agent?.full_name

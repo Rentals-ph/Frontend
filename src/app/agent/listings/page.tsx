@@ -10,6 +10,7 @@ import {
   FiSearch,
   FiSlash
 } from 'react-icons/fi'
+import { ASSETS } from '@/utils/assets'
 import './page.css'
 
 type ListingStatus = 'active' | 'rented' | 'hidden'
@@ -32,7 +33,7 @@ export default function AgentMyListings() {
       address: 'Somewhere On Earth Street, Anywhere City',
       rating: 4,
       views: 23,
-      image: '/assets/property-main.png',
+      image: ASSETS.PLACEHOLDER_PROPERTY_MAIN,
       status: 'active'
     },
     {
@@ -41,7 +42,7 @@ export default function AgentMyListings() {
       address: 'Somewhere On Earth Street, Anywhere City',
       rating: 4,
       views: 23,
-      image: '/assets/property-main-new.png',
+      image: ASSETS.PLACEHOLDER_PROPERTY_MAIN_NEW,
       status: 'active'
     },
     {
@@ -50,7 +51,7 @@ export default function AgentMyListings() {
       address: 'Somewhere On Earth Street, Anywhere City',
       rating: 4,
       views: 23,
-      image: '/assets/property-main.png',
+      image: ASSETS.PLACEHOLDER_PROPERTY_MAIN,
       status: 'rented'
     },
     {
@@ -59,7 +60,7 @@ export default function AgentMyListings() {
       address: 'Somewhere On Earth Street, Anywhere City',
       rating: 4,
       views: 23,
-      image: '/assets/property-main-new.png',
+      image: ASSETS.PLACEHOLDER_PROPERTY_MAIN_NEW,
       status: 'hidden'
     }
   ]

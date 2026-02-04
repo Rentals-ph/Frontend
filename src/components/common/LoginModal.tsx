@@ -33,6 +33,12 @@ function LoginModal({ isOpen, onClose, onRegisterClick }: LoginModalProps) {
       })
 
       if (response.success && response.data?.token) {
+        // Clear old localStorage data first to avoid stale data
+        localStorage.removeItem('agent_name')
+        localStorage.removeItem('user_name')
+        localStorage.removeItem('agent_id')
+        localStorage.removeItem('user_email')
+        
         // Store token and proceed with login
         localStorage.setItem('auth_token', response.data.token)
         
@@ -40,19 +46,29 @@ function LoginModal({ isOpen, onClose, onRegisterClick }: LoginModalProps) {
         const isAdmin = !!response.data?.admin || response.data?.role === 'admin'
         const userData = isAdmin ? response.data?.admin : (response.data?.agent || response.data?.user)
         
+        console.log('Login response userData:', userData) // Debug log
+        
         // Store user name if available (construct from first_name and last_name)
         const userName = userData?.first_name && userData?.last_name 
           ? `${userData.first_name} ${userData.last_name}` 
-          : null
+          : (userData?.email ? userData.email.split('@')[0] : null)
         
         if (userName) {
           localStorage.setItem('agent_name', userName)
           localStorage.setItem('user_name', userName) // Also store as generic user_name
+          console.log('Stored userName:', userName) // Debug log
         }
         
         // Store agent ID if available
         if (userData?.id && !isAdmin) {
           localStorage.setItem('agent_id', userData.id.toString())
+          console.log('Stored agent_id:', userData.id) // Debug log
+        }
+        
+        // Store email for reference
+        if (userData?.email) {
+          localStorage.setItem('user_email', userData.email)
+          console.log('Stored user_email:', userData.email) // Debug log
         }
         
         // Store user role (admin or agent)

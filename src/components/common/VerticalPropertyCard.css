@@ -159,7 +159,7 @@
   position: relative;
   bottom: 102px;
   /* Use clamp to ensure icons don't get clipped on narrow cards (min 4px, max 10% - 8px) */
-  right: clamp(4px, calc(10% - 8px), 40px);
+  right: clamp(4px, calc(10% - 8px), 140px);
   gap: 8px;
   overflow: visible;
   flex-shrink: 0;

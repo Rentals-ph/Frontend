@@ -247,27 +247,8 @@ export default function AgentCreateListingOwnerReview() {
         formDataObj.append('video_url', data.videoUrl)
       }
       
-      const ownerData = {
-        owner_firstname: formData.firstname,
-        owner_lastname: formData.lastname,
-        owner_phone: formData.phone,
-        owner_email: formData.email,
-        owner_country: formData.country,
-        owner_state: formData.state,
-        owner_city: formData.city,
-        owner_street_address: formData.streetAddress,
-      }
-      
-      Object.entries(ownerData).forEach(([key, value]) => {
-        if (value) formDataObj.append(key, value)
-      })
-      
       if (compressedImage) {
         formDataObj.append('image', compressedImage)
-      }
-      
-      if (rapaFile) {
-        formDataObj.append('rapa_document', rapaFile)
       }
       
       // Upload with progress

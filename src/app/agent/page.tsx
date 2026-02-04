@@ -1,9 +1,12 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import AppSidebar from '../../components/common/AppSidebar'
 import AgentHeader from '../../components/agent/AgentHeader'
+import { propertiesApi, agentsApi } from '../../api'
+import type { Property } from '../../types'
+import { ASSETS } from '@/utils/assets'
 
 import { 
   FiHome, 
@@ -25,6 +28,7 @@ import {
 import './page.css'
 
 interface ListingData {
+  id?: number
   title: string
   image: string
   details: string
@@ -34,30 +38,47 @@ interface ListingData {
 
 export default function AgentDashboard() {
   const [previewListing, setPreviewListing] = useState<ListingData | null>(null)
+  const [listings, setListings] = useState<ListingData[]>([])
+  const [loading, setLoading] = useState(true)
 
-  const listings: ListingData[] = [
-    {
-      title: 'Modern Condo in Makati CBD',
-      image: 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=400&h=300&fit=crop',
-      details: '2 Bedrooms • 1 Bathroom • 65 sqm',
-      price: '₱35,000',
-      status: 'active'
-    },
-    {
-      title: 'Cozy Studio in BGC',
-      image: 'https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?w=400&h=300&fit=crop',
-      details: 'Studio • 1 Bathroom • 28 sqm',
-      price: '₱22,000',
-      status: 'pending'
-    },
-    {
-      title: 'Family House in Quezon City',
-      image: 'https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=400&h=300&fit=crop',
-      details: '3 Bedrooms • 2 Bathrooms • 120 sqm',
-      price: '₱45,000',
-      status: 'active'
+  useEffect(() => {
+    const fetchAgentListings = async () => {
+      try {
+        // Get current agent
+        const agent = await agentsApi.getCurrent()
+        
+        if (agent?.id) {
+          // Fetch properties for this agent
+          const properties = await propertiesApi.getByAgentId(agent.id)
+          
+          // Transform properties to ListingData format
+          const transformedListings: ListingData[] = properties.slice(0, 3).map((property: Property) => {
+            const area = property.area ? `${property.area}${property.floor_area_unit || ' sqm'}` : 'N/A'
+            const price = property.price_type 
+              ? `₱${property.price.toLocaleString()}/${property.price_type}`
+              : `₱${property.price.toLocaleString()}/month`
+            
+            return {
+              id: property.id,
+              title: property.title,
+              image: property.image || ASSETS.PLACEHOLDER_PROPERTY_MAIN,
+              details: `${property.bedrooms} Bedrooms • ${property.bathrooms} Bathroom${property.bathrooms > 1 ? 's' : ''} • ${area}`,
+              price: price,
+              status: property.published_at ? 'active' : 'pending'
+            }
+          })
+          
+          setListings(transformedListings)
+        }
+      } catch (error) {
+        console.error('Error fetching agent listings:', error)
+      } finally {
+        setLoading(false)
+      }
     }
-  ]
+
+    fetchAgentListings()
+  }, [])
 
   const handleViewClick = (listing: ListingData) => {
     setPreviewListing(listing)
@@ -130,35 +151,44 @@ export default function AgentDashboard() {
                 <Link href="/agent/listings" className="view-all-link">View All</Link>
               </div>
               <div className="listings-list">
-                {listings.map((listing, index) => (
-                  <div key={index} className="listing-item">
-                    <div className="listing-image">
-                      <img src={listing.image} alt={listing.title} />
-                    </div>
-                    <div className="listing-info">
-                      <h4>{listing.title}</h4>
-                      <p className="listing-details">{listing.details}</p>
-                      <p className="listing-price">{listing.price}<span className="price-period">/month</span></p>
-                    </div>
-                    <div className="listing-right">
-                      <span className={`status-badge ${listing.status}`}>
-                        {listing.status === 'active' ? 'Active' : 'Pending'}
-                      </span>
-                      <div className="listing-actions">
-                        <button className="action-btn" title="Edit">
-                          <FiEdit3 />
-                        </button>
-                        <button 
-                          className="action-btn" 
-                          title="View"
-                          onClick={() => handleViewClick(listing)}
-                        >
-                          <FiEye />
-                        </button>
+                {loading ? (
+                  <div style={{ padding: '2rem', textAlign: 'center' }}>Loading listings...</div>
+                ) : listings.length === 0 ? (
+                  <div style={{ padding: '2rem', textAlign: 'center' }}>No listings yet. Create your first listing!</div>
+                ) : (
+                  listings.map((listing) => (
+                    <div key={listing.id || listing.title} className="listing-item">
+                      <div className="listing-image">
+                        <img src={listing.image} alt={listing.title} onError={(e) => {
+                          const target = e.target as HTMLImageElement
+                          target.src = ASSETS.PLACEHOLDER_PROPERTY_MAIN
+                        }} />
+                      </div>
+                      <div className="listing-info">
+                        <h4>{listing.title}</h4>
+                        <p className="listing-details">{listing.details}</p>
+                        <p className="listing-price">{listing.price}</p>
+                      </div>
+                      <div className="listing-right">
+                        <span className={`status-badge ${listing.status}`}>
+                          {listing.status === 'active' ? 'Active' : 'Pending'}
+                        </span>
+                        <div className="listing-actions">
+                          <button className="action-btn" title="Edit">
+                            <FiEdit3 />
+                          </button>
+                          <button 
+                            className="action-btn" 
+                            title="View"
+                            onClick={() => handleViewClick(listing)}
+                          >
+                            <FiEye />
+                          </button>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  ))
+                )}
               </div>
             </div>
           </div>

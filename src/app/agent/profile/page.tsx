@@ -3,8 +3,9 @@
 import { useState, useEffect } from 'react'
 import AppSidebar from '../../../components/common/AppSidebar'
 import AgentHeader from '../../../components/agent/AgentHeader'
-import { agentsApi } from '../../../api'
+import { agentsApi, propertiesApi } from '../../../api'
 import type { Agent } from '../../../api/endpoints/agents'
+import type { Property } from '../../../types'
 import { ASSETS } from '@/utils/assets'
 import {
   FiMail,
@@ -31,17 +32,38 @@ export default function AgentMyProfile() {
   useEffect(() => {
     const fetchAgentData = async () => {
       try {
-        const agentId = localStorage.getItem('agent_id')
-        if (!agentId) {
-          console.error('No agent ID found in localStorage')
-          setLoading(false)
-          return
-        }
-
-        const agentData = await agentsApi.getById(parseInt(agentId))
+        // Try to get current authenticated agent first
+        const agentData = await agentsApi.getCurrent()
         setAgent(agentData)
+        
+        // Update localStorage with agent info
+        if (agentData.first_name && agentData.last_name) {
+          const fullName = `${agentData.first_name} ${agentData.last_name}`
+          localStorage.setItem('agent_name', fullName)
+          localStorage.setItem('user_name', fullName)
+        }
+        if (agentData.id) {
+          localStorage.setItem('agent_id', agentData.id.toString())
+        }
       } catch (error) {
         console.error('Error fetching agent data:', error)
+        // Fallback to using agent_id if getCurrent fails
+        try {
+          const agentId = localStorage.getItem('agent_id')
+          if (agentId) {
+            const agentData = await agentsApi.getById(parseInt(agentId))
+            setAgent(agentData)
+            
+            // Update localStorage with agent info
+            if (agentData.first_name && agentData.last_name) {
+              const fullName = `${agentData.first_name} ${agentData.last_name}`
+              localStorage.setItem('agent_name', fullName)
+              localStorage.setItem('user_name', fullName)
+            }
+          }
+        } catch (fallbackError) {
+          console.error('Error fetching agent by ID:', fallbackError)
+        }
       } finally {
         setLoading(false)
       }
@@ -53,37 +75,73 @@ export default function AgentMyProfile() {
   const agentName = agent?.full_name || 
     (agent?.first_name && agent?.last_name 
       ? `${agent.first_name} ${agent.last_name}` 
-      : 'Unknown Agent')
+      : agent?.first_name || agent?.last_name ||
+      localStorage.getItem('user_name') || 
+      localStorage.getItem('agent_name') ||
+      (agent?.email ? agent.email.split('@')[0] : 'Agent'))
   const agentEmail = agent?.email || ''
   const agentPhone = agent?.phone ? `+63 ${agent.phone}` : '+63 987654321'
   const agentImage = agent?.image || agent?.avatar || agent?.profile_image || ASSETS.PLACEHOLDER_PROFILE
   const agentInitials = agentName.split(' ').map(n => n[0]).join('').toUpperCase() || 'A'
 
-  // Sample property listings data
-  const listings = [
-    {
-      id: 1,
-      type: 'Commercial Spaces',
-      date: 'Sat 05, 2024',
-      price: '$1200/Month',
-      title: 'Azure Residences - 2BR Corner Suite',
-      image: ASSETS.PLACEHOLDER_PROPERTY,
-      bedrooms: 4,
-      bathrooms: 2,
-      area: 2
-    },
-    {
-      id: 2,
-      type: 'Commercial Spaces',
-      date: 'Sat 05, 2024',
-      price: '$1200/Month',
-      title: 'Azure Residences - 2BR Corner Suite',
-      image: ASSETS.PLACEHOLDER_PROPERTY,
-      bedrooms: 4,
-      bathrooms: 2,
-      area: 2
+  const [listings, setListings] = useState<Array<{
+    id: number
+    type: string
+    date: string
+    price: string
+    title: string
+    image: string
+    bedrooms: number
+    bathrooms: number
+    area: number | string
+  }>>([])
+  const [listingsLoading, setListingsLoading] = useState(true)
+
+  useEffect(() => {
+    const fetchAgentListings = async () => {
+      if (!agent?.id) return
+      
+      try {
+        // Fetch properties for this agent
+        const properties = await propertiesApi.getByAgentId(agent.id)
+        
+        // Transform properties to listings format
+        const transformedListings = properties.map((property: Property) => {
+          const date = property.published_at 
+            ? new Date(property.published_at).toLocaleDateString('en-US', { weekday: 'short', day: '2-digit', month: 'short', year: 'numeric' })
+            : 'Not published'
+          
+          const price = property.price_type 
+            ? `₱${property.price.toLocaleString()}/${property.price_type}`
+            : `₱${property.price.toLocaleString()}/Month`
+          
+          const area = property.area ? property.area : 0
+          
+          return {
+            id: property.id,
+            type: property.type || 'Property',
+            date: date,
+            price: price,
+            title: property.title,
+            image: property.image || ASSETS.PLACEHOLDER_PROPERTY,
+            bedrooms: property.bedrooms,
+            bathrooms: property.bathrooms,
+            area: area
+          }
+        })
+        
+        setListings(transformedListings)
+      } catch (error) {
+        console.error('Error fetching agent listings:', error)
+      } finally {
+        setListingsLoading(false)
+      }
     }
-  ]
+
+    if (agent?.id) {
+      fetchAgentListings()
+    }
+  }, [agent?.id])
 
   return (
     <div className="agent-profile-page">
@@ -167,7 +225,12 @@ export default function AgentMyProfile() {
           <div className="tab-content">
             {activeTab === 'listings' && (
               <div className="listings-grid">
-                {listings.map((listing) => (
+                {listingsLoading ? (
+                  <div style={{ padding: '2rem', textAlign: 'center', gridColumn: '1 / -1' }}>Loading listings...</div>
+                ) : listings.length === 0 ? (
+                  <div style={{ padding: '2rem', textAlign: 'center', gridColumn: '1 / -1' }}>No listings yet. Create your first listing!</div>
+                ) : (
+                  listings.map((listing) => (
                   <div key={listing.id} className="property-card">
                     <div className="property-card-header">
                       <span className="property-type">{listing.type}</span>
@@ -229,7 +292,8 @@ export default function AgentMyProfile() {
                       </div>
                     </div>
                   </div>
-                ))}
+                  ))
+                )}
               </div>
             )}
 

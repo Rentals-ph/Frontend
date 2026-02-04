@@ -454,30 +454,9 @@ export default function AgentCreateListingPublish() {
                     formData.append('video_url', data.videoUrl)
                   }
                   
-                  // Owner information (batch append)
-                  const ownerData = {
-                    owner_firstname: data.ownerFirstname,
-                    owner_lastname: data.ownerLastname,
-                    owner_phone: data.ownerPhone,
-                    owner_email: data.ownerEmail,
-                    owner_country: data.ownerCountry,
-                    owner_state: data.ownerState,
-                    owner_city: data.ownerCity,
-                    owner_street_address: data.ownerStreetAddress,
-                  }
-                  
-                  Object.entries(ownerData).forEach(([key, value]) => {
-                    if (value) formData.append(key, value)
-                  })
-                  
                   // Image upload (use compressed image)
                   if (compressedImage) {
                     formData.append('image', compressedImage)
-                  }
-                  
-                  // RAPA document
-                  if (data.rapaFile) {
-                    formData.append('rapa_document', data.rapaFile)
                   }
                   
                   // Step 3: Upload with progress tracking

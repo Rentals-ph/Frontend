@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { FiUser, FiLogOut, FiChevronDown, FiHome, FiMenu, FiX } from 'react-icons/fi'
 import { ASSETS } from '@/utils/assets'
+import { agentsApi } from '@/api'
 import './Navbar.css'
 import LoginModal from '../common/LoginModal'
 import RegisterModal from '../common/RegisterModal'
@@ -32,8 +33,9 @@ function Navbar() {
     // For admins, just check if they have auth_token and role is admin
     if (authToken && (role === 'admin' || (role === 'agent' && agentStatus))) {
       setIsUserLoggedIn(true)
-      // Try to get user name from localStorage or use default
-      const storedName = localStorage.getItem('user_name') || localStorage.getItem('agent_name') || 
+      // Try to get user name from localStorage - prioritize user_name, then agent_name
+      const storedName = localStorage.getItem('user_name') || 
+        localStorage.getItem('agent_name') || 
         (role === 'admin' ? 'Admin' : 'Agent')
       setUserName(storedName)
       setUserRole(role === 'admin' ? 'admin' : 'agent')
@@ -46,6 +48,27 @@ function Navbar() {
 
   useEffect(() => {
     checkAuthStatus()
+    
+    // If user is logged in as agent but name is missing, try to fetch it
+    const authToken = localStorage.getItem('auth_token')
+    const role = localStorage.getItem('user_role') || localStorage.getItem('agent_role')
+    const storedName = localStorage.getItem('user_name') || localStorage.getItem('agent_name')
+    
+    if (authToken && role === 'agent' && !storedName) {
+      // Fetch agent data to get the name
+      agentsApi.getCurrent()
+        .then((agent) => {
+          if (agent.first_name && agent.last_name) {
+            const fullName = `${agent.first_name} ${agent.last_name}`
+            localStorage.setItem('agent_name', fullName)
+            localStorage.setItem('user_name', fullName)
+            setUserName(fullName)
+          }
+        })
+        .catch((error) => {
+          console.error('Error fetching agent data in Navbar:', error)
+        })
+    }
     
     // Listen for storage changes (in case logout happens in another tab/window)
     const handleStorageChange = () => {

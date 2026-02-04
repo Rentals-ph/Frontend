@@ -31,15 +31,19 @@ export default function AgentEditProfile() {
   useEffect(() => {
     const fetchAgentData = async () => {
       try {
-        const agentId = localStorage.getItem('agent_id')
-        if (!agentId) {
-          console.error('No agent ID found in localStorage')
-          setLoading(false)
-          return
-        }
-
-        const agentData = await agentsApi.getById(parseInt(agentId))
+        // Try to get current authenticated agent first
+        const agentData = await agentsApi.getCurrent()
         setAgent(agentData)
+        
+        // Update localStorage with agent info
+        if (agentData.first_name && agentData.last_name) {
+          const fullName = `${agentData.first_name} ${agentData.last_name}`
+          localStorage.setItem('agent_name', fullName)
+          localStorage.setItem('user_name', fullName)
+        }
+        if (agentData.id) {
+          localStorage.setItem('agent_id', agentData.id.toString())
+        }
 
         // Update form data with agent data
         const phoneNumber = agentData.phone || ''
@@ -60,6 +64,41 @@ export default function AgentEditProfile() {
         })
       } catch (error) {
         console.error('Error fetching agent data:', error)
+        // Fallback to using agent_id if getCurrent fails
+        try {
+          const agentId = localStorage.getItem('agent_id')
+          if (agentId) {
+            const agentData = await agentsApi.getById(parseInt(agentId))
+            setAgent(agentData)
+            
+            // Update localStorage with agent info
+            if (agentData.first_name && agentData.last_name) {
+              const fullName = `${agentData.first_name} ${agentData.last_name}`
+              localStorage.setItem('agent_name', fullName)
+              localStorage.setItem('user_name', fullName)
+            }
+            
+            // Update form data with agent data
+            const phoneNumber = agentData.phone || ''
+            const phoneWithoutCode = phoneNumber.replace(/^\+?63\s?/, '')
+            
+            setFormData({
+              firstName: agentData.first_name || '',
+              lastName: agentData.last_name || '',
+              email: agentData.email || '',
+              countryCode: 'PH+63',
+              contactNumber: phoneWithoutCode,
+              aboutYourself: '',
+              addressLine1: '',
+              country: 'Philippines',
+              region: agentData.state || 'Region VII - Central Visayas',
+              province: agentData.city || 'Cebu',
+              city: agentData.city || 'Cebu City'
+            })
+          }
+        } catch (fallbackError) {
+          console.error('Error fetching agent by ID:', fallbackError)
+        }
       } finally {
         setLoading(false)
       }
@@ -71,7 +110,10 @@ export default function AgentEditProfile() {
   const agentName = agent?.full_name || 
     (agent?.first_name && agent?.last_name 
       ? `${agent.first_name} ${agent.last_name}` 
-      : 'Unknown Agent')
+      : agent?.first_name || agent?.last_name ||
+      localStorage.getItem('user_name') || 
+      localStorage.getItem('agent_name') ||
+      (agent?.email ? agent.email.split('@')[0] : 'Agent'))
   const agentImage = agent?.image || agent?.avatar || agent?.profile_image || ASSETS.PLACEHOLDER_PROFILE
   const agentInitials = agentName.split(' ').map(n => n[0]).join('').toUpperCase() || 'A'
 

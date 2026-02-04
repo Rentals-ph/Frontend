@@ -23,20 +23,20 @@ export default function AgentAccount() {
   
   // Profile data
   const [profileData, setProfileData] = useState({
-    name: 'John Anderson',
-    email: 'johnanderson@gmail.com',
-    phone: '+63 9298765432',
+    name: '',
+    email: '',
+    phone: '',
     role: 'Property Agent',
     avatar: ASSETS.PLACEHOLDER_PROFILE
   })
 
   // Edit profile form data
   const [editFormData, setEditFormData] = useState({
-    firstName: 'John',
-    lastName: 'Anderson',
-    email: 'johnanderson@gmail.com',
+    firstName: '',
+    lastName: '',
+    email: '',
     countryCode: 'PH+63',
-    contactNumber: '9298765432',
+    contactNumber: '',
     aboutYourself: '',
     addressLine1: '',
     country: 'Philippines',
@@ -48,26 +48,38 @@ export default function AgentAccount() {
   useEffect(() => {
     const fetchAgentData = async () => {
       try {
-        const agentId = localStorage.getItem('agent_id')
-        if (!agentId) {
-          console.error('No agent ID found in localStorage')
-          setLoading(false)
-          return
+        // Try to get current authenticated agent first
+        const agentData = await agentsApi.getCurrent()
+        setAgent(agentData)
+        
+        // Update localStorage with agent info
+        if (agentData.first_name && agentData.last_name) {
+          const fullName = `${agentData.first_name} ${agentData.last_name}`
+          localStorage.setItem('agent_name', fullName)
+          localStorage.setItem('user_name', fullName)
+        }
+        if (agentData.id) {
+          localStorage.setItem('agent_id', agentData.id.toString())
         }
 
-        const agentData = await agentsApi.getById(parseInt(agentId))
-        setAgent(agentData)
-
-        // Update profile data
+        // Debug log to see what data we're getting
+        console.log('Agent data from API:', agentData)
+        
+        // Update profile data - better fallback logic
         const agentName = agentData.full_name || 
           (agentData.first_name && agentData.last_name 
             ? `${agentData.first_name} ${agentData.last_name}` 
-            : 'Unknown Agent')
+            : agentData.first_name || agentData.last_name ||
+            localStorage.getItem('user_name') || 
+            localStorage.getItem('agent_name') ||
+            (agentData.email ? agentData.email.split('@')[0] : 'Agent'))
+        
+        console.log('Resolved agent name:', agentName)
         
         setProfileData({
           name: agentName,
           email: agentData.email || '',
-          phone: agentData.phone ? `+63 ${agentData.phone}` : '',
+          phone: agentData.phone ? `+63 ${agentData.phone.replace(/^\+?63\s?/, '')}` : '',
           role: agentData.verified ? 'Rent Manager' : 'Property Agent',
           avatar: agentData.image || agentData.avatar || agentData.profile_image || ASSETS.PLACEHOLDER_PROFILE
         })
@@ -91,6 +103,58 @@ export default function AgentAccount() {
         })
       } catch (error) {
         console.error('Error fetching agent data:', error)
+        // Fallback to using agent_id if getCurrent fails
+        try {
+          const agentId = localStorage.getItem('agent_id')
+          if (agentId) {
+            const agentData = await agentsApi.getById(parseInt(agentId))
+            setAgent(agentData)
+            
+            // Update localStorage with agent info
+            if (agentData.first_name && agentData.last_name) {
+              const fullName = `${agentData.first_name} ${agentData.last_name}`
+              localStorage.setItem('agent_name', fullName)
+              localStorage.setItem('user_name', fullName)
+            }
+            
+            // Update profile data - better fallback logic
+            const agentName = agentData.full_name || 
+              (agentData.first_name && agentData.last_name 
+                ? `${agentData.first_name} ${agentData.last_name}` 
+                : agentData.first_name || agentData.last_name ||
+                localStorage.getItem('user_name') || 
+                localStorage.getItem('agent_name') ||
+                (agentData.email ? agentData.email.split('@')[0] : 'Agent'))
+            
+            setProfileData({
+              name: agentName,
+              email: agentData.email || '',
+              phone: agentData.phone ? `+63 ${agentData.phone.replace(/^\+?63\s?/, '')}` : '',
+              role: agentData.verified ? 'Rent Manager' : 'Property Agent',
+              avatar: agentData.image || agentData.avatar || agentData.profile_image || ASSETS.PLACEHOLDER_PROFILE
+            })
+
+            // Update edit form data
+            const phoneNumber = agentData.phone || ''
+            const phoneWithoutCode = phoneNumber.replace(/^\+?63\s?/, '')
+            
+            setEditFormData({
+              firstName: agentData.first_name || '',
+              lastName: agentData.last_name || '',
+              email: agentData.email || '',
+              countryCode: 'PH+63',
+              contactNumber: phoneWithoutCode,
+              aboutYourself: '',
+              addressLine1: '',
+              country: 'Philippines',
+              region: agentData.state || 'Region VII - Central Visayas',
+              province: agentData.city || 'Cebu',
+              city: agentData.city || 'Cebu City'
+            })
+          }
+        } catch (fallbackError) {
+          console.error('Error fetching agent by ID:', fallbackError)
+        }
       } finally {
         setLoading(false)
       }
@@ -190,7 +254,13 @@ export default function AgentAccount() {
                         target.nextElementSibling?.classList.remove('hidden');
                       }}
                     />
-                    <div className="avatar-fallback-large hidden">JA</div>
+                    <div className="avatar-fallback-large hidden">
+                      {profileData.name && profileData.name !== 'Agent' && profileData.name !== 'Unknown Agent'
+                        ? profileData.name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) || 'A'
+                        : (profileData.email 
+                            ? profileData.email.split('@')[0].slice(0, 2).toUpperCase() 
+                            : 'A')}
+                    </div>
                   </div>
                   <div className="profile-info">
                     <h2>{profileData.name}</h2>

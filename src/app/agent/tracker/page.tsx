@@ -1,8 +1,10 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import AppSidebar from '../../../components/common/AppSidebar'
 import AgentHeader from '../../../components/agent/AgentHeader'
+import { propertiesApi, agentsApi } from '../../../api'
+import type { Property } from '../../../types'
 import {
   FiChevronLeft,
   FiChevronRight,
@@ -13,6 +15,9 @@ import './page.css'
 
 export default function AgentRentalTracker() {
   const [currentDate, setCurrentDate] = useState(new Date())
+  const [properties, setProperties] = useState<Property[]>([])
+  const [selectedPropertyId, setSelectedPropertyId] = useState<string>('')
+  const [loading, setLoading] = useState(true)
 
   const getDaysInMonth = (date: Date) => {
     const year = date.getFullYear()
@@ -64,6 +69,27 @@ export default function AgentRentalTracker() {
   }
 
   const weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+
+  useEffect(() => {
+    const fetchAgentProperties = async () => {
+      try {
+        // Get current agent
+        const agent = await agentsApi.getCurrent()
+        
+        if (agent?.id) {
+          // Fetch properties for this agent
+          const agentProperties = await propertiesApi.getByAgentId(agent.id)
+          setProperties(agentProperties)
+        }
+      } catch (error) {
+        console.error('Error fetching agent properties:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchAgentProperties()
+  }, [])
 
   return (
     <div className="agent-rental-tracker agent-dashboard">
@@ -132,12 +158,19 @@ export default function AgentRentalTracker() {
                 <label className="art-field art-field-full">
                   <span className="art-label">Select Property By Title</span>
                   <div className="art-select">
-                    <select defaultValue="">
+                    <select 
+                      value={selectedPropertyId} 
+                      onChange={(e) => setSelectedPropertyId(e.target.value)}
+                      disabled={loading}
+                    >
                       <option value="" disabled>
-                        Select...
+                        {loading ? 'Loading properties...' : 'Select...'}
                       </option>
-                      <option value="azure">Azure Residences - 2BR Corner Suite</option>
-                      <option value="bgc">BGC Studio - High Floor</option>
+                      {properties.map((property) => (
+                        <option key={property.id} value={property.id.toString()}>
+                          {property.title}
+                        </option>
+                      ))}
                     </select>
                   </div>
                 </label>

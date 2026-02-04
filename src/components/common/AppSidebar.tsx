@@ -171,9 +171,7 @@ function AppSidebar() {
         <span>Page Builder</span>
       </Link>
 
-      <div className="nav-section">
-        <h2 className="nav-section-title">Rent Management</h2>
-        <Link
+      <Link
           href="/agent/listings"
           className={`nav-item ${isActive('/agent/listings') ? 'active' : ''}`}
         >
@@ -201,7 +199,6 @@ function AppSidebar() {
           <FiBookOpen className="nav-icon" />
           <span>Share Blogs</span>
         </Link>
-      </div>
     </>
   )
 

@@ -12,6 +12,7 @@ export interface GetPropertiesParams {
   search?: string
   page?: number
   per_page?: number
+  agent_id?: number
 }
 
 export const propertiesApi = {
@@ -62,6 +63,23 @@ export const propertiesApi = {
       properties,
     })
     return response.data
+  },
+
+  /**
+   * Get properties by agent ID
+   */
+  getByAgentId: async (agentId: number): Promise<Property[]> => {
+    const response = await apiClient.get<Property[] | PaginatedResponse<Property>>('/properties', { 
+      params: { agent_id: agentId } 
+    })
+    
+    // Backend returns paginated response with data, current_page, per_page, total, last_page
+    if (Array.isArray(response.data)) {
+      return response.data
+    }
+    
+    // Return data array from paginated response
+    return (response.data as PaginatedResponse<Property>).data || []
   },
 }
 

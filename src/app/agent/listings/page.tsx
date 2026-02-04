@@ -1,7 +1,10 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import AppSidebar from '../../../components/common/AppSidebar'
 import AgentHeader from '../../../components/agent/AgentHeader'
+import { propertiesApi, agentsApi } from '../../../api'
+import type { Property } from '../../../types'
 import {
   FiCheckCircle,
   FiEye,
@@ -26,44 +29,64 @@ interface ListingCard {
 }
 
 export default function AgentMyListings() {
-  const listings: ListingCard[] = [
-    {
-      id: 1,
-      title: 'Azure Residences - 2BR Corner Suite',
-      address: 'Somewhere On Earth Street, Anywhere City',
-      rating: 4,
-      views: 23,
-      image: ASSETS.PLACEHOLDER_PROPERTY_MAIN,
-      status: 'active'
-    },
-    {
-      id: 2,
-      title: 'Azure Residences - 2BR Corner Suite',
-      address: 'Somewhere On Earth Street, Anywhere City',
-      rating: 4,
-      views: 23,
-      image: ASSETS.PLACEHOLDER_PROPERTY_MAIN_NEW,
-      status: 'active'
-    },
-    {
-      id: 3,
-      title: 'Azure Residences - 2BR Corner Suite',
-      address: 'Somewhere On Earth Street, Anywhere City',
-      rating: 4,
-      views: 23,
-      image: ASSETS.PLACEHOLDER_PROPERTY_MAIN,
-      status: 'rented'
-    },
-    {
-      id: 4,
-      title: 'Azure Residences - 2BR Corner Suite',
-      address: 'Somewhere On Earth Street, Anywhere City',
-      rating: 4,
-      views: 23,
-      image: ASSETS.PLACEHOLDER_PROPERTY_MAIN_NEW,
-      status: 'hidden'
+  const [listings, setListings] = useState<ListingCard[]>([])
+  const [loading, setLoading] = useState(true)
+  const [totalProperties, setTotalProperties] = useState(0)
+  const [activeProperties, setActiveProperties] = useState(0)
+  const [rentedProperties, setRentedProperties] = useState(0)
+  const [hiddenProperties, setHiddenProperties] = useState(0)
+
+  useEffect(() => {
+    const fetchAgentListings = async () => {
+      try {
+        // Get current agent
+        const agent = await agentsApi.getCurrent()
+        
+        if (agent?.id) {
+          // Fetch properties for this agent
+          const properties = await propertiesApi.getByAgentId(agent.id)
+          
+          // Transform properties to ListingCard format
+          const transformedListings: ListingCard[] = properties.map((property: Property) => {
+            const address = property.street_address 
+              ? `${property.street_address}, ${property.city || property.location || 'N/A'}`
+              : property.location || 'Address not available'
+            
+            // Determine status based on property data
+            let status: ListingStatus = 'active'
+            if (!property.published_at) {
+              status = 'hidden'
+            }
+            // Note: 'rented' status would need additional property field
+            
+            return {
+              id: property.id,
+              title: property.title,
+              address: address,
+              rating: 4, // Default rating, could be fetched from reviews API
+              views: 0, // Could be tracked separately
+              image: property.image || ASSETS.PLACEHOLDER_PROPERTY_MAIN,
+              status: status
+            }
+          })
+          
+          setListings(transformedListings)
+          
+          // Calculate stats
+          setTotalProperties(properties.length)
+          setActiveProperties(properties.filter(p => p.published_at).length)
+          setRentedProperties(0) // Would need additional data
+          setHiddenProperties(properties.filter(p => !p.published_at).length)
+        }
+      } catch (error) {
+        console.error('Error fetching agent listings:', error)
+      } finally {
+        setLoading(false)
+      }
     }
-  ]
+
+    fetchAgentListings()
+  }, [])
 
   const renderStars = (rating: number) => {
     return (
@@ -105,9 +128,9 @@ export default function AgentMyListings() {
               <div className="metric-content">
                 <div className="aml-stat-top">
                   <h3>Total Properties</h3>
-                  <span className="aml-stat-delta positive">+12 this month</span>
+                  <span className="aml-stat-delta positive">&nbsp;</span>
                 </div>
-                <p className="metric-value">24</p>
+                <p className="metric-value">{loading ? '...' : totalProperties}</p>
               </div>
             </div>
 
@@ -118,9 +141,9 @@ export default function AgentMyListings() {
               <div className="metric-content">
                 <div className="aml-stat-top">
                   <h3>Total Active</h3>
-                  <span className="aml-stat-delta positive">+7 this week</span>
+                  <span className="aml-stat-delta positive">&nbsp;</span>
                 </div>
-                <p className="metric-value">18</p>
+                <p className="metric-value">{loading ? '...' : activeProperties}</p>
               </div>
             </div>
 
@@ -131,9 +154,9 @@ export default function AgentMyListings() {
               <div className="metric-content">
                 <div className="aml-stat-top">
                   <h3>Total Rented</h3>
-                  <span className="aml-stat-delta muted">+11 this month</span>
+                  <span className="aml-stat-delta muted">&nbsp;</span>
                 </div>
-                <p className="metric-value">18</p>
+                <p className="metric-value">{loading ? '...' : rentedProperties}</p>
               </div>
             </div>
 
@@ -146,7 +169,7 @@ export default function AgentMyListings() {
                   <h3>Total Hide</h3>
                   <span className="aml-stat-delta muted">&nbsp;</span>
                 </div>
-                <p className="metric-value">3</p>
+                <p className="metric-value">{loading ? '...' : hiddenProperties}</p>
               </div>
             </div>
           </div>
@@ -189,8 +212,13 @@ export default function AgentMyListings() {
           </div>
 
           <div className="aml-grid">
-            {listings.map((l) => (
-              <div key={l.id} className="aml-card">
+            {loading ? (
+              <div style={{ padding: '2rem', textAlign: 'center', gridColumn: '1 / -1' }}>Loading listings...</div>
+            ) : listings.length === 0 ? (
+              <div style={{ padding: '2rem', textAlign: 'center', gridColumn: '1 / -1' }}>No listings yet. Create your first listing!</div>
+            ) : (
+              listings.map((l) => (
+                <div key={l.id} className="aml-card">
                 <div className="aml-card-media">
                   <img
                     src={l.image}
@@ -224,7 +252,8 @@ export default function AgentMyListings() {
                   </div>
                 </div>
               </div>
-            ))}
+              ))
+            )}
           </div>
         </div>
       </main>

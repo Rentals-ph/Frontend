@@ -79,7 +79,7 @@ export default function AgentMyListings() {
           setHiddenProperties(properties.filter(p => !p.published_at).length)
         }
       } catch (error) {
-        console.error('Error fetching agent listings:', error)
+        console.error('Error fetching agent listingss:', error)
       } finally {
         setLoading(false)
       }

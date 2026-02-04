@@ -39,9 +39,14 @@ export default function RentManagerDetailsPage() {
         
         // Set manager info from agent
         const agentImage = agent.image || agent.avatar || agent.profile_image
+        // Construct name from full_name, or first_name + last_name, or fallback
+        const agentName = agent.full_name || 
+          (agent.first_name || agent.last_name 
+            ? `${agent.first_name || ''} ${agent.last_name || ''}`.trim()
+            : 'Unknown Agent')
         setManager({
           id: agent.id,
-          name: agent.full_name,
+          name: agentName,
           role: 'Rent Manager', // All agents from backend are approved, so they're rent managers
           listings: [],
           image: agentImage

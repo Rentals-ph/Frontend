@@ -59,7 +59,7 @@
 /* Right Section - Orange Panel */
 .hero-banner-right {
   flex: 1;
-  background-color: rgba(254, 142, 10, 0.8);
+  background-color: rgba(254, 142, 10, 0.7);
   display: flex;
   align-items: center;
   justify-content: center;

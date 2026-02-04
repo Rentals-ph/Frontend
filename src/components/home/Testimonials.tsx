@@ -10,6 +10,8 @@ import './Testimonials.css'
 function Testimonials() {
   const [testimonials, setTestimonials] = useState<Testimonial[]>([])
   const [loading, setLoading] = useState(true)
+  const [currentPage, setCurrentPage] = useState(1)
+  const testimonialsPerPage = 3
 
   useEffect(() => {
     const fetchTestimonials = async () => {
@@ -26,9 +28,28 @@ function Testimonials() {
     fetchTestimonials()
   }, [])
 
+  // Calculate pagination
+  const totalPages = Math.ceil(testimonials.length / testimonialsPerPage)
+  const startIndex = (currentPage - 1) * testimonialsPerPage
+  const endIndex = startIndex + testimonialsPerPage
+  const currentTestimonials = testimonials.slice(startIndex, endIndex)
+
+  // Pagination handlers
+  const handlePreviousPage = () => {
+    setCurrentPage((prev) => Math.max(1, prev - 1))
+  }
+
+  const handleNextPage = () => {
+    setCurrentPage((prev) => Math.min(totalPages, prev + 1))
+  }
+
+  const handlePageClick = (page: number) => {
+    setCurrentPage(page)
+  }
+
   // Helper function to get avatar URL
   const getAvatarUrl = (avatar: string | null): string => {
-    if (!avatar) return '/assets/testimonial-elaine.png'
+    if (!avatar) return '/assets/testimonial-person.png'
     if (avatar.startsWith('http://') || avatar.startsWith('https://')) {
       return avatar
     }
@@ -40,8 +61,9 @@ function Testimonials() {
 
   return (
     <section className="testimonials-section" id="testimonials">
-      {/* Background image with blur effect */}
+      {/* Background image with overlay */}
       <div className="testimonials-background"></div>
+      <div className="testimonials-overlay"></div>
       
       {/* Main content container */}
       <div className="testimonials-container">
@@ -49,43 +71,86 @@ function Testimonials() {
           {/* Left Section - Promotional Block */}
           <div className="testimonials-left">
             <div className="testimonials-quote-icon-large">
-              <svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="40" cy="40" r="40" fill="#4A90E2"/>
-                <path d="M25 35C25 30 28 25 33 25C38 25 41 30 41 35C41 40 38 45 33 45C31 45 29 44 28 43V50H25V35Z" fill="white"/>
-                <path d="M55 35C55 30 58 25 63 25C68 25 71 30 71 35C71 40 68 45 63 45C61 45 59 44 58 43V50H55V35Z" fill="white"/>
-              </svg>
+              <div className="testimonials-quote-circle">
+                <img 
+                  src="/assets/quote-icon-2.svg" 
+                  alt="Quote icon" 
+                  className="testimonial-quote-icon-svg"
+                />
+              </div>
             </div>
-            <h2 className="testimonials-left-heading">Trusted By The Industry's Best</h2>
-            <p className="testimonials-left-text">
-              Discover Why The Most Successful Property Managers In The Philippines Rely On Rentals.Ph To Streamline Their Operations, Verify Quality Tenants, And Maximize Their Portfolio's Reach.
-            </p>
-            <Link href="/contact" className="testimonials-connect-link">
-              Connect Now
-              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M7.5 15L12.5 10L7.5 5" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-            </Link>
+            <div className="testimonials-text-content">
+              <h1 className="testimonials-main-heading">Testimonials</h1>
+              <h2 className="testimonials-left-heading">Trusted by the Industry's Best</h2>
+              <p className="testimonials-left-text">
+                Discover why the most successful property managers in the Philippines rely on Rentals.ph to streamline their operations, verify quality tenants, and maximize their portfolio's reach.
+              </p>
+              <Link href="/contact" className="testimonials-connect-link">
+                Connect Now
+              </Link>
+            </div>
           </div>
 
-          {/* Right Section - Testimonials */}
+          {/* Right Section - Testimonials Cards */}
           <div className="testimonials-right">
-            <h2 className="testimonials-right-heading">TESTIMONIALS</h2>
             {loading ? (
               <div className="testimonials-loading">
                 <p>Loading testimonials...</p>
               </div>
             ) : testimonials.length > 0 ? (
-              <div className="testimonials-cards-grid">
-                {testimonials.slice(0, 3).map((testimonial) => (
-                  <TestimonialCard
-                    key={testimonial.id}
-                    avatar={getAvatarUrl(testimonial.avatar)}
-                    text={testimonial.content}
-                    name={testimonial.name}
-                    role={testimonial.role}
-                  />
-                ))}
-              </div>
+              <>
+                <div className="testimonials-cards-grid">
+                  {currentTestimonials.map((testimonial) => (
+                    <TestimonialCard
+                      key={testimonial.id}
+                      avatar={getAvatarUrl(testimonial.avatar)}
+                      text={testimonial.content}
+                      name={testimonial.name}
+                      role={testimonial.role}
+                    />
+                  ))}
+                </div>
+                
+                {/* Pagination Controls */}
+                {totalPages > 1 && (
+                  <div className="testimonials-pagination">
+                    <button
+                      className="testimonials-pagination-button"
+                      onClick={handlePreviousPage}
+                      disabled={currentPage === 1}
+                      aria-label="Previous page"
+                    >
+                      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12.5 15L7.5 10L12.5 5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                    </button>
+                    
+                    <div className="testimonials-pagination-pages">
+                      {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                        <button
+                          key={page}
+                          className={`testimonials-pagination-page ${currentPage === page ? 'active' : ''}`}
+                          onClick={() => handlePageClick(page)}
+                          aria-label={`Go to page ${page}`}
+                        >
+                          {page}
+                        </button>
+                      ))}
+                    </div>
+                    
+                    <button
+                      className="testimonials-pagination-button"
+                      onClick={handleNextPage}
+                      disabled={currentPage === totalPages}
+                      aria-label="Next page"
+                    >
+                      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M7.5 15L12.5 10L7.5 5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                    </button>
+                  </div>
+                )}
+              </>
             ) : (
               <div className="testimonials-empty">
                 <p>No testimonials available at the moment.</p>

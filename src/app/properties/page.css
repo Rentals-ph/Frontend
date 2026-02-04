@@ -1,7 +1,6 @@
   /* Properties for Rent Page */
   .properties-for-rent-page {
     min-height: 100vh;
-    background: #ffffff;
     position: relative;
     display: flex;
     flex-direction: column;
@@ -506,7 +505,6 @@
   .properties-main-content {
     flex: 1;
     padding: 0;
-    background: #f9fafb;
     overflow-y: auto;
     overflow-x: visible;
     display: flex;
@@ -520,7 +518,7 @@
   }
 
   .properties-content-wrapper {
-    padding-top: 40px;
+    padding-top: 10px;
     flex: 1;
     background: #f9fafb;
     overflow-x: visible;

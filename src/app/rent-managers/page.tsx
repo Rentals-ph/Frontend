@@ -98,12 +98,18 @@ export default function RentManagersPage() {
           // Get image from agent (check multiple possible field names)
           const agentImage = agent.image || agent.avatar || agent.profile_image
           
+          // Construct name from full_name, or first_name + last_name, or fallback
+          const agentName = agent.full_name || 
+            (agent.first_name || agent.last_name 
+              ? `${agent.first_name || ''} ${agent.last_name || ''}`.trim()
+              : 'Unknown Agent')
+          
           return {
             id: agent.id,
-            name: agent.full_name,
+            name: agentName,
             role: 'Rent Manager', // All agents from backend are approved, so they're rent managers
             location: primaryLocation,
-            listings: agent.properties_count,
+            listings: agent.properties_count || 0,
             email: agent.email,
             phone: agent.phone,
             image: agentImage,

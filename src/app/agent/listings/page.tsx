@@ -14,6 +14,7 @@ import {
   FiSlash
 } from 'react-icons/fi'
 import { ASSETS } from '@/utils/assets'
+import { resolvePropertyImage } from '@/utils/imageResolver'
 import './page.css'
 
 type ListingStatus = 'active' | 'rented' | 'hidden'
@@ -65,7 +66,7 @@ export default function AgentMyListings() {
               address: address,
               rating: 4, // Default rating, could be fetched from reviews API
               views: 0, // Could be tracked separately
-              image: property.image || ASSETS.PLACEHOLDER_PROPERTY_MAIN,
+              image: resolvePropertyImage(property.image, property.id),
               status: status
             }
           })

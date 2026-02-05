@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation'
 import { ASSETS } from '@/utils/assets'
+import { resolvePropertyImage } from '@/utils/imageResolver'
 import './ModernPropertyCard.css'
 
 interface ModernPropertyCardProps {
@@ -54,7 +55,7 @@ function ModernPropertyCard({
     >
       <div className="modern-card-image-wrapper">
         <img
-          src={image}
+          src={resolvePropertyImage(image, id)}
           alt={title}
           className="modern-card-image"
           onError={(e) => {

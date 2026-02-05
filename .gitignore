@@ -34,3 +34,7 @@ yarn-error.log*
 # OS
 Thumbs.db
 
+# Storage - Ignore uploaded images but keep directory structure
+/public/storage/images/**/*
+!/public/storage/images/**/.gitkeep
+

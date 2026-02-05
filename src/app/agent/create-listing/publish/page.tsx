@@ -8,6 +8,7 @@ import { useCreateListing } from '../../../../contexts/CreateListingContext'
 import api from '../../../../lib/api'
 import { compressImage } from '../../../../utils/imageCompression'
 import { uploadWithProgress } from '../../../../utils/uploadProgress'
+import { uploadPropertyMainImage } from '../../../../utils/imageUpload'
 import { getApiBaseUrl } from '../../../../config/api'
 
 import {
@@ -454,37 +455,62 @@ export default function AgentCreateListingPublish() {
                     formData.append('video_url', data.videoUrl)
                   }
                   
-                  // Image upload (use compressed image)
-                  if (compressedImage) {
-                    formData.append('image', compressedImage)
-                  }
-                  
-                  // Step 3: Upload with progress tracking
+                  // Step 3: Create property first to get ID, then upload image
                   const API_BASE_URL = getApiBaseUrl()
                   const token = localStorage.getItem('auth_token')
                   
-                  const response = await uploadWithProgress(
+                  // Create property without image first
+                  const createResponse = await uploadWithProgress(
                     `${API_BASE_URL}/properties`,
                     formData,
                     token,
                     (progress) => {
-                      setUploadProgress(progress.percent)
+                      // Update progress for property creation (first 50%)
+                      setUploadProgress(Math.min(progress.percent / 2, 50))
                     }
                   )
                   
-                  const responseData = await response.json()
+                  const createResponseData = await createResponse.json()
                   
-                  if (response.ok && responseData.success) {
-                    resetData()
-                    setUploadProgress(100)
-                    setTimeout(() => {
-                      window.alert('Listing published successfully!')
-                      router.push('/agent/listings')
-                    }, 300)
-                  } else {
-                    setSubmitError(responseData.message || 'Failed to publish listing. Please try again.')
-                    setUploadProgress(0)
+                  if (!createResponse.ok || !createResponseData.success) {
+                    throw new Error(createResponseData.message || 'Failed to create property')
                   }
+                  
+                  // Get property ID from response
+                  const propertyId = createResponseData.data?.id || createResponseData.property?.id || createResponseData.id
+                  
+                  if (!propertyId) {
+                    throw new Error('Property created but no ID returned')
+                  }
+                  
+                  // Step 4: Upload image with storage path structure
+                  if (compressedImage && propertyId) {
+                    try {
+                      const imageResult = await uploadPropertyMainImage(
+                        compressedImage,
+                        propertyId,
+                        `${API_BASE_URL}/properties/${propertyId}/image`,
+                        token,
+                        (progress) => {
+                          // Update progress for image upload (last 50%)
+                          setUploadProgress(50 + (progress.percent / 2))
+                        }
+                      )
+                      
+                      // Image uploaded successfully with storage path
+                      console.log('Image uploaded to:', imageResult.path)
+                    } catch (imageError) {
+                      console.warn('Image upload failed, but property was created:', imageError)
+                      // Property is created, image upload failure is not critical
+                    }
+                  }
+                  
+                  resetData()
+                  setUploadProgress(100)
+                  setTimeout(() => {
+                    window.alert('Listing published successfully!')
+                    router.push('/agent/listings')
+                  }, 300)
                 } catch (error) {
                   console.error('Error publishing listing:', error)
                   setSubmitError(error instanceof Error ? error.message : 'An error occurred while publishing. Please try again.')

@@ -7,6 +7,7 @@ import { agentsApi, propertiesApi } from '../../../api'
 import type { Agent } from '../../../api/endpoints/agents'
 import type { Property } from '../../../types'
 import { ASSETS } from '@/utils/assets'
+import { resolveAgentAvatar, resolvePropertyImage } from '@/utils/imageResolver'
 import {
   FiMail,
   FiPhone,
@@ -81,7 +82,7 @@ export default function AgentMyProfile() {
       (agent?.email ? agent.email.split('@')[0] : 'Agent'))
   const agentEmail = agent?.email || ''
   const agentPhone = agent?.phone ? `+63 ${agent.phone}` : '+63 987654321'
-  const agentImage = agent?.image || agent?.avatar || agent?.profile_image || ASSETS.PLACEHOLDER_PROFILE
+  const agentImage = resolveAgentAvatar(agent?.image || agent?.avatar || agent?.profile_image, agent?.id)
   const agentInitials = agentName.split(' ').map(n => n[0]).join('').toUpperCase() || 'A'
 
   const [listings, setListings] = useState<Array<{
@@ -123,7 +124,7 @@ export default function AgentMyProfile() {
             date: date,
             price: price,
             title: property.title,
-            image: property.image || ASSETS.PLACEHOLDER_PROPERTY,
+            image: resolvePropertyImage(property.image, property.id),
             bedrooms: property.bedrooms,
             bathrooms: property.bathrooms,
             area: area

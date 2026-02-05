@@ -5,4 +5,7 @@
 
 export * from './imageCompression'
 export * from './uploadProgress'
+export * from './storage'
+export * from './imageUpload'
+export * from './imageResolver'
 

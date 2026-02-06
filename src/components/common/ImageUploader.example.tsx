@@ -11,11 +11,14 @@ import { useState } from 'react'
 import ImageUploader from './ImageUploader'
 import { StoragePaths, getImageUrl } from '@/utils/storage'
 import { resolvePropertyImage, resolveAvatarImage } from '@/utils/imageResolver'
+import { type ImageUploadResult } from '@/utils/imageUpload'
 
 // Example 1: Upload Property Main Image
 export function PropertyImageUploadExample({ propertyId }: { propertyId: number }) {
-  const handleUploadComplete = (result: any) => {
-    console.log('Property image uploaded:', result.path)
+  const handleUploadComplete = (result: ImageUploadResult | ImageUploadResult[]) => {
+    // Since multiple is not set, result will be a single ImageUploadResult
+    const uploadResult = Array.isArray(result) ? result[0] : result
+    console.log('Property image uploaded:', uploadResult.path)
     // The path will be: /storage/images/properties/{propertyId}/main.jpg
     // You can now save this path to your database
   }
@@ -35,7 +38,9 @@ export function PropertyImageUploadExample({ propertyId }: { propertyId: number 
 
 // Example 2: Upload Property Gallery Images
 export function PropertyGalleryUploadExample({ propertyId }: { propertyId: number }) {
-  const handleUploadComplete = (results: any[]) => {
+  const handleUploadComplete = (result: ImageUploadResult | ImageUploadResult[]) => {
+    // Since multiple={true}, result will always be an array
+    const results = Array.isArray(result) ? result : [result]
     console.log('Gallery images uploaded:', results.map(r => r.path))
     // Results will be:
     // /storage/images/properties/{propertyId}/gallery-1-{timestamp}-{random}.jpg
@@ -60,8 +65,10 @@ export function PropertyGalleryUploadExample({ propertyId }: { propertyId: numbe
 
 // Example 3: Upload User Avatar
 export function UserAvatarUploadExample({ userId, currentAvatar }: { userId: number, currentAvatar?: string }) {
-  const handleUploadComplete = (result: any) => {
-    console.log('Avatar uploaded:', result.path)
+  const handleUploadComplete = (result: ImageUploadResult | ImageUploadResult[]) => {
+    // Since multiple is not set, result will be a single ImageUploadResult
+    const uploadResult = Array.isArray(result) ? result[0] : result
+    console.log('Avatar uploaded:', uploadResult.path)
     // The path will be: /storage/images/users/{userId}/avatar.jpg
   }
 
@@ -91,8 +98,10 @@ export function AgentAvatarUploadExample({ agentId }: { agentId: number }) {
       imageType="avatar"
       apiEndpoint="/api/agents/upload-avatar"
       token={localStorage.getItem('token')}
-      onUploadComplete={(result) => {
-        console.log('Agent avatar uploaded:', result.path)
+      onUploadComplete={(result: ImageUploadResult | ImageUploadResult[]) => {
+        // Since multiple is not set, result will be a single ImageUploadResult
+        const uploadResult = Array.isArray(result) ? result[0] : result
+        console.log('Agent avatar uploaded:', uploadResult.path)
       }}
       className="avatar-uploader"
     />

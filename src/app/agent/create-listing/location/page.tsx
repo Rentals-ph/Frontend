@@ -11,6 +11,7 @@ import {
   FiArrowRight,
   FiCheck
 } from 'react-icons/fi'
+import { philippinesProvinces, getCitiesByProvince } from '../../../../data/philippinesLocations'
 import '../AgentCreateListingCategory.css'
 import './page.css'
 
@@ -74,23 +75,94 @@ export default function AgentCreateListingLocation() {
     'Publish'
   ]
 
-  const [country, setCountry] = useState(data.country)
-  const [state, setState] = useState(data.state)
-  const [city, setCity] = useState(data.city)
-  const [street, setStreet] = useState(data.street)
-  const [latitude, setLatitude] = useState(data.latitude)
-  const [longitude, setLongitude] = useState(data.longitude)
-  const [zoom, setZoom] = useState(data.zoom)
+  const [country, setCountry] = useState(data.country || 'Philippines')
+  const [state, setState] = useState(data.state || '')
+  const [city, setCity] = useState(data.city || '')
+  const [street, setStreet] = useState(data.street || '')
+  const [latitude, setLatitude] = useState(data.latitude || '')
+  const [longitude, setLongitude] = useState(data.longitude || '')
+  const [availableCities, setAvailableCities] = useState<string[]>([])
+  const [isGeocoding, setIsGeocoding] = useState(false)
 
   useEffect(() => {
-    setCountry(data.country)
-    setState(data.state)
-    setCity(data.city)
-    setStreet(data.street)
-    setLatitude(data.latitude)
-    setLongitude(data.longitude)
-    setZoom(data.zoom)
+    setCountry(data.country || 'Philippines')
+    setState(data.state || '')
+    setCity(data.city || '')
+    setStreet(data.street || '')
+    setLatitude(data.latitude || '')
+    setLongitude(data.longitude || '')
   }, [data])
+
+  // Update available cities when state changes
+  useEffect(() => {
+    if (state) {
+      const cities = getCitiesByProvince(state)
+      setAvailableCities(cities)
+      // Reset city if it's not in the new list
+      if (city && !cities.includes(city)) {
+        setCity('')
+      }
+    } else {
+      setAvailableCities([])
+      setCity('')
+    }
+  }, [state, city])
+
+  // Auto-geocode when street address is entered
+  const handleStreetChange = async (value: string) => {
+    setStreet(value)
+    
+    if (value.trim().length > 10) {
+      setIsGeocoding(true)
+      try {
+        // Use OpenStreetMap Nominatim API for geocoding (free, no API key needed)
+        const response = await fetch(
+          `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(value + ', Philippines')}&limit=1`,
+          {
+            headers: {
+              'User-Agent': 'Rental.ph Property Listing'
+            }
+          }
+        )
+        const data = await response.json()
+        
+        if (data && data.length > 0) {
+          const result = data[0]
+          const lat = parseFloat(result.lat)
+          const lon = parseFloat(result.lon)
+          
+          setLatitude(lat.toString())
+          setLongitude(lon.toString())
+          
+          // Try to extract state and city from address components
+          const address = result.display_name || ''
+          
+          // Auto-populate country
+          setCountry('Philippines')
+          
+          // Try to match province from the address
+          const provinceMatch = philippinesProvinces.find(p => 
+            address.includes(p.name)
+          )
+          if (provinceMatch) {
+            setState(provinceMatch.name)
+            // Try to match city
+            const cityMatch = provinceMatch.cities.find(c => 
+              address.includes(c)
+            )
+            if (cityMatch) {
+              setCity(cityMatch)
+            }
+          }
+        }
+      } catch (error) {
+        console.error('Geocoding error:', error)
+        // Silently fail - user can still manually enter location
+      } finally {
+        setIsGeocoding(false)
+      }
+    }
+  }
 
   return (
     <div className="agent-dashboard">
@@ -171,6 +243,11 @@ export default function AgentCreateListingLocation() {
                   onChange={(e) => setState(e.target.value)}
                 >
                   <option value="">--Select State/Province--</option>
+                  {philippinesProvinces.map((province) => (
+                    <option key={province.name} value={province.name}>
+                      {province.name}
+                    </option>
+                  ))}
                 </select>
                 <FiChevronDown className="aclc-select-caret" />
               </div>
@@ -186,8 +263,14 @@ export default function AgentCreateListingLocation() {
                   className="aclc-select"
                   value={city}
                   onChange={(e) => setCity(e.target.value)}
+                  disabled={!state}
                 >
                   <option value="">--Select City--</option>
+                  {availableCities.map((cityName) => (
+                    <option key={cityName} value={cityName}>
+                      {cityName}
+                    </option>
+                  ))}
                 </select>
                 <FiChevronDown className="aclc-select-caret" />
               </div>
@@ -201,10 +284,15 @@ export default function AgentCreateListingLocation() {
             <input
               id="street"
               className="acld-input"
-              placeholder="Enter street address, building name, etc."
+              placeholder="Enter street address, building name, etc. (Location will be auto-detected)"
               value={street}
-              onChange={(e) => setStreet(e.target.value)}
+              onChange={(e) => handleStreetChange(e.target.value)}
             />
+            {isGeocoding && (
+              <div className="acll-geocoding-indicator">
+                <span>Detecting location...</span>
+              </div>
+            )}
             <div className="acll-info-banner">
               <span className="acll-info-icon">i</span>
               <p className="acll-info-text">
@@ -215,77 +303,39 @@ export default function AgentCreateListingLocation() {
             </div>
           </div>
 
-          <div className="acll-map-coords-grid">
-            <div className="acll-map-section">
-              <div className="acll-map-header">
-                <span className="acll-map-title">Map Location</span>
-                <div className="acll-map-tabs">
-                  <button className="acll-map-tab active" type="button">
-                    Map
-                  </button>
-                  <button className="acll-map-tab" type="button">
-                    Satellite
-                  </button>
-                </div>
-              </div>
-
-              <div className="acll-map-container">
-                <div className="acll-map-placeholder">
-                  <span className="acll-map-placeholder-text">
-                    Map preview will appear here based on the selected location.
-                  </span>
-                </div>
-                <button className="acll-map-fullscreen-btn" type="button" aria-label="Full screen map">
-                  ⛶
+          <div className="acll-map-section">
+            <div className="acll-map-header">
+              <span className="acll-map-title">Map Location</span>
+              <div className="acll-map-tabs">
+                <button className="acll-map-tab active" type="button">
+                  Map
                 </button>
-                <button className="acll-map-zoom-btn" type="button" aria-label="Map controls">
-                  +
+                <button className="acll-map-tab" type="button">
+                  Satellite
                 </button>
               </div>
             </div>
 
-            <div className="acll-coords-section">
-              <h3 className="acll-coords-title">Coordinates</h3>
-              <div className="acll-grid-3 acll-coords-grid">
-                <div>
-                  <label className="aclc-label" htmlFor="latitude">
-                    Latitude
-                  </label>
-                  <input
-                    id="latitude"
-                    className="acld-input"
-                    value={latitude}
-                    onChange={(e) => setLatitude(e.target.value)}
-                  />
-                </div>
-                <div>
-                  <label className="aclc-label" htmlFor="longitude">
-                    Longitude
-                  </label>
-                  <input
-                    id="longitude"
-                    className="acld-input"
-                    value={longitude}
-                    onChange={(e) => setLongitude(e.target.value)}
-                  />
-                </div>
-                <div>
-                  <label className="aclc-label" htmlFor="zoom">
-                    Zoom Level
-                  </label>
-                  <input
-                    id="zoom"
-                    className="acld-input"
-                    value={zoom}
-                    onChange={(e) => setZoom(e.target.value)}
-                  />
-                </div>
+            <div className="acll-map-container">
+              <div className="acll-map-placeholder">
+                <span className="acll-map-placeholder-text">
+                  {latitude && longitude 
+                    ? `Map location: ${latitude}, ${longitude}` 
+                    : 'Map preview will appear here based on the selected location.'}
+                </span>
               </div>
-              <p className="acll-note">
-                The map will automatically update based on your location selection.
-              </p>
+              <button className="acll-map-fullscreen-btn" type="button" aria-label="Full screen map">
+                ⛶
+              </button>
+              <button className="acll-map-zoom-btn" type="button" aria-label="Map controls">
+                +
+              </button>
             </div>
           </div>
+          
+          {/* Hidden inputs for coordinates (auto-assigned via geocoding) */}
+          <input type="hidden" name="latitude" value={latitude} />
+          <input type="hidden" name="longitude" value={longitude} />
 
           <div className="acld-footer-actions acll-footer-actions">
             <button
@@ -301,13 +351,12 @@ export default function AgentCreateListingLocation() {
               className="aclc-next-btn"
               onClick={() => {
                 updateData({
-                  country,
+                  country: country || 'Philippines',
                   state,
                   city,
                   street,
-                  latitude,
-                  longitude,
-                  zoom,
+                  latitude: latitude || '',
+                  longitude: longitude || '',
                 })
                 router.push('/agent/create-listing/property-images')
               }}

@@ -12,6 +12,7 @@ import {
   FiCheck,
   FiUpload
 } from 'react-icons/fi'
+import { philippinesProvinces, getCitiesByProvince } from '../../../../data/philippinesLocations'
 import '../AgentCreateListingCategory.css'
 import '../details/page.css'
 import './page.css'
@@ -76,6 +77,7 @@ export default function AgentCreateListingOwnerInfo() {
   })
   const [countryCode, setCountryCode] = useState('+63')
   const [rapaFile, setRapaFile] = useState<File | null>(data.rapaFile)
+  const [availableCities, setAvailableCities] = useState<string[]>([])
 
   useEffect(() => {
     setFormData({
@@ -111,6 +113,21 @@ export default function AgentCreateListingOwnerInfo() {
       setRapaFile(e.target.files[0])
     }
   }
+
+  // Update available cities when state changes
+  useEffect(() => {
+    if (formData.state) {
+      const cities = getCitiesByProvince(formData.state)
+      setAvailableCities(cities)
+      // Reset city if it's not in the new list
+      if (formData.city && !cities.includes(formData.city)) {
+        handleInputChange('city', '')
+      }
+    } else {
+      setAvailableCities([])
+      handleInputChange('city', '')
+    }
+  }, [formData.state])
 
   return (
     <div className="agent-dashboard">
@@ -268,6 +285,26 @@ export default function AgentCreateListingOwnerInfo() {
                     <option value="Philippines">Philippines</option>
                     <option value="United States">United States</option>
                     <option value="United Kingdom">United Kingdom</option>
+                    <option value="Australia">Australia</option>
+                    <option value="Canada">Canada</option>
+                    <option value="Singapore">Singapore</option>
+                    <option value="Malaysia">Malaysia</option>
+                    <option value="Japan">Japan</option>
+                    <option value="South Korea">South Korea</option>
+                    <option value="China">China</option>
+                    <option value="Hong Kong">Hong Kong</option>
+                    <option value="Taiwan">Taiwan</option>
+                    <option value="Thailand">Thailand</option>
+                    <option value="Indonesia">Indonesia</option>
+                    <option value="Vietnam">Vietnam</option>
+                    <option value="India">India</option>
+                    <option value="United Arab Emirates">United Arab Emirates</option>
+                    <option value="Saudi Arabia">Saudi Arabia</option>
+                    <option value="Qatar">Qatar</option>
+                    <option value="Kuwait">Kuwait</option>
+                    <option value="Bahrain">Bahrain</option>
+                    <option value="Oman">Oman</option>
+                    <option value="Other">Other</option>
                   </select>
                   <div className="aclc-select-caret">▼</div>
                 </div>
@@ -285,9 +322,22 @@ export default function AgentCreateListingOwnerInfo() {
                     onChange={(e) => handleInputChange('state', e.target.value)}
                   >
                     <option value="">--Select State/Province--</option>
-                    <option value="Metro Manila">Metro Manila</option>
-                    <option value="Calabarzon">Calabarzon</option>
-                    <option value="Central Luzon">Central Luzon</option>
+                    {formData.country === 'Philippines' ? (
+                      philippinesProvinces.map((province) => (
+                        <option key={province.name} value={province.name}>
+                          {province.name}
+                        </option>
+                      ))
+                    ) : (
+                      <>
+                        <option value="California">California</option>
+                        <option value="New York">New York</option>
+                        <option value="Texas">Texas</option>
+                        <option value="Florida">Florida</option>
+                        <option value="Illinois">Illinois</option>
+                        <option value="Other">Other</option>
+                      </>
+                    )}
                   </select>
                   <div className="aclc-select-caret">▼</div>
                 </div>
@@ -303,11 +353,25 @@ export default function AgentCreateListingOwnerInfo() {
                     className="aclc-select"
                     value={formData.city}
                     onChange={(e) => handleInputChange('city', e.target.value)}
+                    disabled={!formData.state}
                   >
                     <option value="">--Select City--</option>
-                    <option value="Manila">Manila</option>
-                    <option value="Makati">Makati</option>
-                    <option value="Quezon City">Quezon City</option>
+                    {formData.country === 'Philippines' && formData.state ? (
+                      availableCities.map((cityName) => (
+                        <option key={cityName} value={cityName}>
+                          {cityName}
+                        </option>
+                      ))
+                    ) : (
+                      <>
+                        <option value="Los Angeles">Los Angeles</option>
+                        <option value="New York">New York</option>
+                        <option value="Chicago">Chicago</option>
+                        <option value="Houston">Houston</option>
+                        <option value="Miami">Miami</option>
+                        <option value="Other">Other</option>
+                      </>
+                    )}
                   </select>
                   <div className="aclc-select-caret">▼</div>
                 </div>

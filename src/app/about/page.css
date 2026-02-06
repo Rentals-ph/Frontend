@@ -339,35 +339,27 @@
   margin-top: 0;
 }
 
-/* Testimonials Pagination Override - Ensure centering */
-.about-page .testimonials-content {
-  align-items: center;
-}
-
-.about-page .testimonials-right {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100%;
-  padding-top: 146px;
-}
-
-.about-page .testimonials-cards-grid {
-  justify-content: center;
-  width: fit-content;
-  margin-left: auto;
-  margin-right: auto;
+/* Testimonials Pagination Override - Position relative to About Us page layout */
+.about-page .testimonials-section {
+  position: relative;
+  margin-bottom: 100px;
 }
 
 .about-page .testimonials-pagination {
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: -80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   gap: 12px;
   width: 100%;
-  max-width: 100%;
-  margin: 60px auto 0;
-  padding-top: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px 80px 0;
+  box-sizing: border-box;
+  z-index: 10;
 }
 
 .about-page .testimonials-pagination-pages {
@@ -463,6 +455,11 @@
     padding: 60px 40px;
   }
 
+  .about-page .testimonials-pagination {
+    max-width: 1200px;
+    padding: 20px 40px 0;
+  }
+
   .about-main-title {
     font-size: 32px;
   }
@@ -517,6 +514,11 @@
 
   .about-social-proof-container {
     padding: 50px 20px;
+  }
+
+  .about-page .testimonials-pagination {
+    max-width: 1200px;
+    padding: 20px 20px 0;
   }
 
   .about-main-title {
@@ -620,6 +622,11 @@
 
   .about-social-proof-container {
     padding: 40px 16px;
+  }
+
+  .about-page .testimonials-pagination {
+    max-width: 1200px;
+    padding: 20px 16px 0;
   }
 
   .about-main-title {

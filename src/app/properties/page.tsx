@@ -505,71 +505,165 @@ function PropertiesContent() {
 
       {/* Sticky Search Bar */}
       <div className={`sticky-search-bar-container ${showStickySearch ? 'visible' : ''}`}>
-        <div className="sticky-search-bar">
-          <button
-            className="sticky-filter-btn"
-            aria-label="Toggle Filters Menu"
-            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-          >
-            <span>Advance Search</span>
-            {activeFilterCount > 0 && (
-              <span className="filter-count-badge">{activeFilterCount}</span>
-            )}
-          </button>
-          <div className="search-input-container">
-            <svg className="search-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <circle cx="11" cy="11" r="8" stroke="#666" strokeWidth="2" />
-              <path d="m21 21-4.35-4.35" stroke="#666" strokeWidth="2" strokeLinecap="round" />
-            </svg>
-            <input
-              type="text"
-              className="main-search-input"
-              placeholder="Search here..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+        <div className="sticky-search-bar-wrapper">
+          {/* Logo on the left */}
+          <div className="sticky-search-logo">
+            <img
+              src={ASSETS.LOGO_HERO_MAIN}
+              alt="Rentals.ph logo"
+              className="sticky-logo-img"
             />
           </div>
-          <div className="top-search-bar-controls">
-            <select
-              className="sort-dropdown-btn sort-by-relevance"
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value)}
-            >
-              <option value="newest">Newest First</option>
-              <option value="oldest">Oldest First</option>
-            </select>
-            <select
-              className="sort-dropdown-btn sort-by-price"
-              value={sortByPrice}
-              onChange={(e) => setSortByPrice(e.target.value)}
-            >
-              <option value="">Sort by Price</option>
-              <option value="price-low">Price: Low to High</option>
-              <option value="price-high">Price: High to Low</option>
-            </select>
-            <button
-              className="hamburger-menu-btn"
-              aria-label="List View"
-              onClick={() => setViewMode('horizontal')}
-              style={{ backgroundColor: viewMode === 'horizontal' ? '#FE8E0A' : '#ffffff' }}
-            >
-              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M3 12H21M3 6H21M3 18H21" stroke={viewMode === 'horizontal' ? "#ffffff" : "#333"} strokeWidth="2" strokeLinecap="round" />
-              </svg>
-            </button>
-            <button
-              className="grid-view-btn"
-              aria-label="Grid View"
-              onClick={() => setViewMode('vertical')}
-              style={{ backgroundColor: viewMode === 'vertical' ? '#FE8E0A' : '#ffffff' }}
-            >
-              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <rect x="3" y="3" width="7" height="7" stroke={viewMode === 'vertical' ? "#ffffff" : "#333"} strokeWidth="2" fill="none" />
-                <rect x="14" y="3" width="7" height="7" stroke={viewMode === 'vertical' ? "#ffffff" : "#333"} strokeWidth="2" fill="none" />
-                <rect x="3" y="14" width="7" height="7" stroke={viewMode === 'vertical' ? "#ffffff" : "#333"} strokeWidth="2" fill="none" />
-                <rect x="14" y="14" width="7" height="7" stroke={viewMode === 'vertical' ? "#ffffff" : "#333"} strokeWidth="2" fill="none" />
-              </svg>
-            </button>
+          
+          {/* Search and filters content on the right */}
+          <div className="sticky-search-content">
+            <div className="sticky-search-bar">
+              <div className="search-input-container">
+                <svg className="search-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="11" cy="11" r="8" stroke="#666" strokeWidth="2" />
+                  <path d="m21 21-4.35-4.35" stroke="#666" strokeWidth="2" strokeLinecap="round" />
+                </svg>
+                <input
+                  type="text"
+                  className="main-search-input"
+                  placeholder="Search here..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+              </div>
+              <div className="top-search-bar-controls">
+                <select
+                  className="sort-dropdown-btn sort-by-relevance"
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
+                >
+                  <option value="newest">Newest First</option>
+                  <option value="oldest">Oldest First</option>
+                </select>
+                <select
+                  className="sort-dropdown-btn sort-by-price"
+                  value={sortByPrice}
+                  onChange={(e) => setSortByPrice(e.target.value)}
+                >
+                  <option value="">Sort by Price</option>
+                  <option value="price-low">Price: Low to High</option>
+                  <option value="price-high">Price: High to Low</option>
+                </select>
+                <button
+                  className="hamburger-menu-btn"
+                  aria-label="List View"
+                  onClick={() => setViewMode('horizontal')}
+                  style={{ backgroundColor: viewMode === 'horizontal' ? '#FE8E0A' : '#ffffff' }}
+                >
+                  <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M3 12H21M3 6H21M3 18H21" stroke={viewMode === 'horizontal' ? "#ffffff" : "#333"} strokeWidth="2" strokeLinecap="round" />
+                  </svg>
+                </button>
+                <button
+                  className="grid-view-btn"
+                  aria-label="Grid View"
+                  onClick={() => setViewMode('vertical')}
+                  style={{ backgroundColor: viewMode === 'vertical' ? '#FE8E0A' : '#ffffff' }}
+                >
+                  <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="3" y="3" width="7" height="7" stroke={viewMode === 'vertical' ? "#ffffff" : "#333"} strokeWidth="2" fill="none" />
+                    <rect x="14" y="3" width="7" height="7" stroke={viewMode === 'vertical' ? "#ffffff" : "#333"} strokeWidth="2" fill="none" />
+                    <rect x="3" y="14" width="7" height="7" stroke={viewMode === 'vertical' ? "#ffffff" : "#333"} strokeWidth="2" fill="none" />
+                    <rect x="14" y="14" width="7" height="7" stroke={viewMode === 'vertical' ? "#ffffff" : "#333"} strokeWidth="2" fill="none" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+            
+            {/* Advance Search Filters - Displayed below search bar */}
+            <div className="sticky-filters-section">
+              <div className="sticky-filters-grid">
+                <div className="filter-group">
+                  <select
+                    className="filter-select"
+                    value={selectedLocation}
+                    onChange={(e) => setSelectedLocation(e.target.value)}
+                  >
+                    <option value="">Location</option>
+                    {locations.map(location => (
+                      <option key={location} value={location}>{location}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="filter-group">
+                  <select
+                    className="filter-select"
+                    value={selectedType}
+                    onChange={(e) => setSelectedType(e.target.value)}
+                  >
+                    {propertyTypes.map(type => (
+                      <option key={type} value={type}>{type}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="filter-group">
+                  <select
+                    className="filter-select"
+                    value={minBaths}
+                    onChange={(e) => setMinBaths(e.target.value)}
+                  >
+                    <option value="">Min. Baths</option>
+                    {bathOptions.map(bath => (
+                      <option key={bath} value={bath}>{bath}+</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="filter-group">
+                  <select
+                    className="filter-select"
+                    value={minBeds}
+                    onChange={(e) => setMinBeds(e.target.value)}
+                  >
+                    <option value="">Min. Beds</option>
+                    {bedOptions.map(bed => (
+                      <option key={bed} value={bed}>{bed}+</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="filter-group price-range-group">
+                  <div className="price-range-inputs-container">
+                    <div className="price-range-inputs">
+                      <input
+                        type="number"
+                        className="price-input"
+                        placeholder="Min Price"
+                        value={priceMin}
+                        onChange={(e) => setPriceMin(e.target.value)}
+                        min="0"
+                      />
+                      <div className="price-range-separator">
+                        <span>To</span>
+                      </div>
+                      <input
+                        type="number"
+                        className="price-input"
+                        placeholder="Max Price"
+                        value={priceMax}
+                        onChange={(e) => setPriceMax(e.target.value)}
+                        min="0"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <button
+                  className="sticky-clear-filters-btn"
+                  onClick={clearAllFilters}
+                  aria-label="Clear all filters"
+                >
+                  Clear All
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </div>

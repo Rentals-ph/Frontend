@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, Suspense, useMemo } from 'react'
+import { useState, useEffect, Suspense, useMemo, useRef } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Navbar from '../../components/layout/Navbar'
 import Footer from '../../components/layout/Footer'
@@ -22,6 +22,8 @@ function PropertiesContent() {
   const [priceMax, setPriceMax] = useState('')
   const [searchQuery, setSearchQuery] = useState('')
   const [sortBy, setSortBy] = useState('newest')
+  const [sortByPrice, setSortByPrice] = useState('')
+  const [subCategory, setSubCategory] = useState('all')
   const [currentPage, setCurrentPage] = useState(1)
   const [viewMode, setViewMode] = useState<'horizontal' | 'vertical'>('vertical')
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
@@ -31,6 +33,10 @@ function PropertiesContent() {
   const [totalPages, setTotalPages] = useState(1)
   const [totalProperties, setTotalProperties] = useState(0)
   const [allPropertiesForCount, setAllPropertiesForCount] = useState<Property[]>([])
+  const [appliedFilters, setAppliedFilters] = useState(false)
+  const [isLoadingMore, setIsLoadingMore] = useState(false)
+  const [hasMore, setHasMore] = useState(true)
+  const [showStickySearch, setShowStickySearch] = useState(false)
   const itemsPerPage = 9
 
   // Initialize state from URL query parameters
@@ -141,7 +147,14 @@ function PropertiesContent() {
   // Fetch properties from API
   useEffect(() => {
     const fetchProperties = async () => {
-      setLoading(true)
+      // Determine if we're loading more (page > 1 for both modes)
+      const isAppending = currentPage > 1
+      
+      if (!isAppending) {
+        setLoading(true)
+      } else {
+        setIsLoadingMore(true)
+      }
       setError(null)
       
       try {
@@ -170,26 +183,43 @@ function PropertiesContent() {
         // Handle paginated response
         if (response && typeof response === 'object' && 'data' in response) {
           const paginatedResponse = response as any
-          setProperties(paginatedResponse.data || [])
+          const newProperties = paginatedResponse.data || []
+          
+          if (isAppending) {
+            setProperties(prev => [...prev, ...newProperties])
+          } else {
+            setProperties(newProperties)
+          }
+          
           setTotalPages(paginatedResponse.last_page || 1)
           setTotalProperties(paginatedResponse.total || 0)
+          setHasMore(currentPage < (paginatedResponse.last_page || 1))
         } else {
           // Handle array response
-          setProperties(Array.isArray(response) ? response : [])
+          const newProperties = Array.isArray(response) ? response : []
+          if (isAppending) {
+            setProperties(prev => [...prev, ...newProperties])
+          } else {
+            setProperties(newProperties)
+          }
           setTotalPages(1)
-          setTotalProperties(Array.isArray(response) ? response.length : 0)
+          setTotalProperties(newProperties.length)
+          setHasMore(false)
         }
       } catch (err: any) {
         console.error('Error fetching properties:', err)
         setError(err.message || 'Failed to load properties. Please try again later.')
-        setProperties([])
+        if (!isAppending) {
+          setProperties([])
+        }
       } finally {
         setLoading(false)
+        setIsLoadingMore(false)
       }
     }
 
     fetchProperties()
-  }, [selectedLocation, selectedType, searchQuery, currentPage])
+  }, [selectedLocation, selectedType, searchQuery, currentPage, viewMode])
 
   // Client-side filtering for additional filters (bathrooms, bedrooms, price range)
   // Note: These filters could also be moved to the backend API for better performance
@@ -207,13 +237,38 @@ function PropertiesContent() {
     return bathMatch && bedMatch && priceMatch
   })
 
+  // Filter by subcategory first
+  const subCategoryFiltered = filteredProperties.filter(property => {
+    if (subCategory === 'all') return true
+    if (subCategory === 'featured') {
+      // Featured: properties published in the last 7 days with verified agents
+      const isRecent = property.published_at ? 
+        (Date.now() - new Date(property.published_at).getTime()) <= 7 * 24 * 60 * 60 * 1000 : false
+      const isVerified = property.agent?.verified || property.rent_manager?.is_official
+      return isRecent && isVerified
+    }
+    if (subCategory === 'top') {
+      // Top rated - for future use, currently show all
+      return true
+    }
+    if (subCategory === 'most-viewed') {
+      // Most viewed - for future use, currently show all
+      return true
+    }
+    return true
+  })
+
   // Client-side sorting
-  const sortedProperties = [...filteredProperties].sort((a, b) => {
-    if (sortBy === 'price-low') {
+  const sortedProperties = [...subCategoryFiltered].sort((a, b) => {
+    // Price sorting takes priority if selected
+    if (sortByPrice === 'price-low') {
       return a.price - b.price
-    } else if (sortBy === 'price-high') {
+    } else if (sortByPrice === 'price-high') {
       return b.price - a.price
-    } else if (sortBy === 'newest') {
+    }
+    
+    // Relevance/Date sorting
+    if (sortBy === 'newest') {
       const dateA = a.published_at ? new Date(a.published_at).getTime() : 0
       const dateB = b.published_at ? new Date(b.published_at).getTime() : 0
       return dateB - dateA
@@ -225,13 +280,163 @@ function PropertiesContent() {
     return 0
   })
 
-  // Pagination - use API pagination if available, otherwise use client-side
+  // Properties ready for display (infinite scroll loads more as user scrolls)
   const paginatedProperties = sortedProperties
 
   // Reset to page 1 when filters change (that trigger API calls)
   useEffect(() => {
     setCurrentPage(1)
+    setHasMore(true)
+    setProperties([])
   }, [selectedLocation, selectedType, searchQuery])
+
+  // Reset when switching view modes (to start infinite scroll from beginning)
+  const prevViewMode = useRef(viewMode)
+  useEffect(() => {
+    if (prevViewMode.current !== viewMode) {
+      setCurrentPage(1)
+      setHasMore(true)
+      setProperties([])
+    }
+    prevViewMode.current = viewMode
+  }, [viewMode])
+
+  // Infinite scroll for both horizontal and vertical modes
+  useEffect(() => {
+    if (!hasMore || isLoadingMore || loading) return
+
+    let timeoutId: NodeJS.Timeout
+    const handleScroll = () => {
+      // Debounce scroll events
+      clearTimeout(timeoutId)
+      timeoutId = setTimeout(() => {
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop
+        const windowHeight = window.innerHeight
+        const documentHeight = document.documentElement.scrollHeight
+
+        // Load more when user is 300px from bottom
+        if (scrollTop + windowHeight >= documentHeight - 300) {
+          if (currentPage < totalPages && hasMore) {
+            setCurrentPage(prev => prev + 1)
+          }
+        }
+      }, 100)
+    }
+
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    return () => {
+      window.removeEventListener('scroll', handleScroll)
+      clearTimeout(timeoutId)
+    }
+  }, [hasMore, isLoadingMore, loading, currentPage, totalPages])
+
+  // Sticky search bar visibility and close filter dropdown when scrolling to top
+  useEffect(() => {
+    let timeoutId: NodeJS.Timeout
+    const handleScroll = () => {
+      clearTimeout(timeoutId)
+      timeoutId = setTimeout(() => {
+        const sidebar = document.querySelector('.properties-sidebar')
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop
+        
+        // Close filter dropdown when scrolling back to top
+        if (scrollTop <= 300 && isSidebarOpen) {
+          setIsSidebarOpen(false)
+        }
+        
+        // On mobile, sidebar might not exist, so show sticky bar after scrolling past top search bar
+        if (!sidebar) {
+          // Show sticky bar after scrolling past 200px on mobile
+          setShowStickySearch(scrollTop > 200)
+          return
+        }
+
+        const sidebarRect = sidebar.getBoundingClientRect()
+        
+        // Show sticky bar when sidebar is out of view (scrolled past)
+        // Hide when scrolling back to top (within 300px of top)
+        if (sidebarRect.bottom < 0 && scrollTop > 300) {
+          setShowStickySearch(true)
+        } else if (scrollTop <= 300) {
+          setShowStickySearch(false)
+        } else if (sidebarRect.bottom >= 0) {
+          setShowStickySearch(false)
+        }
+      }, 50)
+    }
+
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    // Check on mount
+    handleScroll()
+    return () => {
+      window.removeEventListener('scroll', handleScroll)
+      clearTimeout(timeoutId)
+    }
+  }, [isSidebarOpen])
+
+  // Calculate active filter count
+  const activeFilterCount = useMemo(() => {
+    let count = 0
+    if (selectedLocation) count++
+    if (selectedType && selectedType !== 'All Types') count++
+    if (minBaths) count++
+    if (minBeds) count++
+    if (priceMin) count++
+    if (priceMax) count++
+    return count
+  }, [selectedLocation, selectedType, minBaths, minBeds, priceMin, priceMax])
+
+  // Clear all filters
+  const clearAllFilters = () => {
+    setSelectedLocation('')
+    setSelectedType('All Types')
+    setMinBaths('')
+    setMinBeds('')
+    setPriceMin('')
+    setPriceMax('')
+    setSearchQuery('')
+    setAppliedFilters(false)
+    setCurrentPage(1)
+  }
+
+  // Apply filters (for desktop sidebar)
+  const applyFilters = () => {
+    setAppliedFilters(true)
+    setCurrentPage(1)
+  }
+
+  // Remove individual filter
+  const removeFilter = (filterType: string) => {
+    switch (filterType) {
+      case 'location':
+        setSelectedLocation('')
+        break
+      case 'type':
+        setSelectedType('All Types')
+        break
+      case 'minBaths':
+        setMinBaths('')
+        break
+      case 'minBeds':
+        setMinBeds('')
+        break
+      case 'priceMin':
+        setPriceMin('')
+        break
+      case 'priceMax':
+        setPriceMax('')
+        break
+      case 'search':
+        setSearchQuery('')
+        break
+    }
+    setCurrentPage(1)
+  }
+
+  // Calculate results range
+  const resultsStart = (currentPage - 1) * itemsPerPage + 1
+  const resultsEnd = Math.min(currentPage * itemsPerPage, paginatedProperties.length)
+  const totalFiltered = paginatedProperties.length
 
   return (
     <div className="properties-for-rent-page">
@@ -255,14 +460,21 @@ function PropertiesContent() {
               </div>
               <div className="top-search-bar-controls">
                 <select
-                  className="sort-dropdown-btn"
+                  className="sort-dropdown-btn sort-by-relevance"
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value)}
                 >
-                  <option value="price-low">Price Low to High</option>
-                  <option value="price-high">Price High to Low</option>
                   <option value="newest">Newest First</option>
                   <option value="oldest">Oldest First</option>
+                </select>
+                <select
+                  className="sort-dropdown-btn sort-by-price"
+                  value={sortByPrice}
+                  onChange={(e) => setSortByPrice(e.target.value)}
+                >
+                  <option value="">Sort by Price</option>
+                  <option value="price-low">Price: Low to High</option>
+                  <option value="price-high">Price: High to Low</option>
                 </select>
                 <button
                   className="hamburger-menu-btn"
@@ -290,15 +502,86 @@ function PropertiesContent() {
               </div>
             </div>
           </div>
+
+      {/* Sticky Search Bar */}
+      <div className={`sticky-search-bar-container ${showStickySearch ? 'visible' : ''}`}>
+        <div className="sticky-search-bar">
+          <button
+            className="sticky-filter-btn"
+            aria-label="Toggle Filters Menu"
+            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+          >
+            <span>Advance Search</span>
+            {activeFilterCount > 0 && (
+              <span className="filter-count-badge">{activeFilterCount}</span>
+            )}
+          </button>
+          <div className="search-input-container">
+            <svg className="search-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="11" cy="11" r="8" stroke="#666" strokeWidth="2" />
+              <path d="m21 21-4.35-4.35" stroke="#666" strokeWidth="2" strokeLinecap="round" />
+            </svg>
+            <input
+              type="text"
+              className="main-search-input"
+              placeholder="Search here..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </div>
+          <div className="top-search-bar-controls">
+            <select
+              className="sort-dropdown-btn sort-by-relevance"
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value)}
+            >
+              <option value="newest">Newest First</option>
+              <option value="oldest">Oldest First</option>
+            </select>
+            <select
+              className="sort-dropdown-btn sort-by-price"
+              value={sortByPrice}
+              onChange={(e) => setSortByPrice(e.target.value)}
+            >
+              <option value="">Sort by Price</option>
+              <option value="price-low">Price: Low to High</option>
+              <option value="price-high">Price: High to Low</option>
+            </select>
+            <button
+              className="hamburger-menu-btn"
+              aria-label="List View"
+              onClick={() => setViewMode('horizontal')}
+              style={{ backgroundColor: viewMode === 'horizontal' ? '#FE8E0A' : '#ffffff' }}
+            >
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M3 12H21M3 6H21M3 18H21" stroke={viewMode === 'horizontal' ? "#ffffff" : "#333"} strokeWidth="2" strokeLinecap="round" />
+              </svg>
+            </button>
+            <button
+              className="grid-view-btn"
+              aria-label="Grid View"
+              onClick={() => setViewMode('vertical')}
+              style={{ backgroundColor: viewMode === 'vertical' ? '#FE8E0A' : '#ffffff' }}
+            >
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="3" y="3" width="7" height="7" stroke={viewMode === 'vertical' ? "#ffffff" : "#333"} strokeWidth="2" fill="none" />
+                <rect x="14" y="3" width="7" height="7" stroke={viewMode === 'vertical' ? "#ffffff" : "#333"} strokeWidth="2" fill="none" />
+                <rect x="3" y="14" width="7" height="7" stroke={viewMode === 'vertical' ? "#ffffff" : "#333"} strokeWidth="2" fill="none" />
+                <rect x="14" y="14" width="7" height="7" stroke={viewMode === 'vertical' ? "#ffffff" : "#333"} strokeWidth="2" fill="none" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
       <main className="properties-main-layout">
-        {/* Dropdown Filter Menu */}
+        {/* Dropdown Filter Menu - Mobile */}
         {isSidebarOpen && (
           <>
             <div 
-              className="filter-dropdown-overlay"
+              className="filter-dropdown-overlay mobile-only"
               onClick={() => setIsSidebarOpen(false)}
             />
-            <div className={`filter-dropdown ${isSidebarOpen ? 'open' : ''}`}>
+            <div className={`filter-dropdown mobile-only ${isSidebarOpen ? 'open' : ''}`}>
               <div className="filter-dropdown-header">
                 <h2 className="filter-dropdown-title">Advance Search</h2>
                 <button 
@@ -371,39 +654,193 @@ function PropertiesContent() {
                     <div className="price-range-inputs-container">
                       <div className="price-range-inputs">
                         <input
-                          type="text"
+                          type="number"
                           className="price-input"
-                          placeholder="T"
+                          placeholder="Min"
                           value={priceMin}
                           onChange={(e) => setPriceMin(e.target.value)}
+                          min="0"
                         />
                         <div className="price-range-separator">
                           <span>To</span>
                         </div>
                         <input
-                          type="text"
+                          type="number"
                           className="price-input"
-                          placeholder="O"
+                          placeholder="Max"
                           value={priceMax}
                           onChange={(e) => setPriceMax(e.target.value)}
+                          min="0"
                         />
                       </div>
-                      <input
-                        type="range"
-                        min="0"
-                        max="200000"
-                        step="1000"
-                        value={priceMin || 0}
-                        onChange={(e) => setPriceMin(e.target.value)}
-                        className="price-range-slider"
-                      />
+                      <div className="price-range-sliders">
+                        <input
+                          type="range"
+                          min="0"
+                          max="200000"
+                          step="1000"
+                          value={priceMin || 0}
+                          onChange={(e) => setPriceMin(e.target.value)}
+                          className="price-range-slider"
+                          aria-label="Minimum price"
+                        />
+                        <input
+                          type="range"
+                          min="0"
+                          max="200000"
+                          step="1000"
+                          value={priceMax || 200000}
+                          onChange={(e) => setPriceMax(e.target.value)}
+                          className="price-range-slider"
+                          aria-label="Maximum price"
+                        />
+                      </div>
                     </div>
                   </div>
 
+                  
                 </div>
               </div>
             </div>
           </>
+        )}
+
+        {/* Desktop Floating Filter Panel - Appears from sticky search bar */}
+        {isSidebarOpen && (
+          <div className={`desktop-filter-panel ${showStickySearch ? 'visible' : ''}`}>
+            <div className="desktop-filter-panel-content">
+              <div className="desktop-filter-panel-header">
+                <button 
+                  className="desktop-filter-close-btn"
+                  onClick={() => setIsSidebarOpen(false)}
+                  aria-label="Close filters"
+                >
+                  <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
+                  </svg>
+                </button>
+                <h2 className="desktop-filter-panel-title">Advance Search</h2>
+              </div>
+              
+              <div className="desktop-filter-panel-body">
+                <div className="advance-search-section">
+                  <div className="filter-group">
+                    <select
+                      className="filter-select"
+                      value={selectedLocation}
+                      onChange={(e) => setSelectedLocation(e.target.value)}
+                    >
+                      <option value="">Location</option>
+                      {locations.map(location => (
+                        <option key={location} value={location}>{location}</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div className="filter-group">
+                    <select
+                      className="filter-select"
+                      value={selectedType}
+                      onChange={(e) => setSelectedType(e.target.value)}
+                    >
+                      {propertyTypes.map(type => (
+                        <option key={type} value={type}>{type}</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div className="filter-group">
+                    <select
+                      className="filter-select"
+                      value={minBaths}
+                      onChange={(e) => setMinBaths(e.target.value)}
+                    >
+                      <option value="">Min. Baths</option>
+                      {bathOptions.map(bath => (
+                        <option key={bath} value={bath}>{bath}+</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div className="filter-group">
+                    <select
+                      className="filter-select"
+                      value={minBeds}
+                      onChange={(e) => setMinBeds(e.target.value)}
+                    >
+                      <option value="">Min. Beds</option>
+                      {bedOptions.map(bed => (
+                        <option key={bed} value={bed}>{bed}+</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div className="filter-group price-range-group">
+                    <label className="price-range-label">Price Range</label>
+                    <div className="price-range-inputs-container">
+                      <div className="price-range-inputs">
+                        <input
+                          type="number"
+                          className="price-input"
+                          placeholder="Min"
+                          value={priceMin}
+                          onChange={(e) => setPriceMin(e.target.value)}
+                          min="0"
+                        />
+                        <div className="price-range-separator">
+                          <span>To</span>
+                        </div>
+                        <input
+                          type="number"
+                          className="price-input"
+                          placeholder="Max"
+                          value={priceMax}
+                          onChange={(e) => setPriceMax(e.target.value)}
+                          min="0"
+                        />
+                      </div>
+                      <div className="price-range-sliders">
+                        <input
+                          type="range"
+                          min="0"
+                          max="200000"
+                          step="1000"
+                          value={priceMin || 0}
+                          onChange={(e) => setPriceMin(e.target.value)}
+                          className="price-range-slider"
+                          aria-label="Minimum price"
+                        />
+                        <input
+                          type="range"
+                          min="0"
+                          max="200000"
+                          step="1000"
+                          value={priceMax || 200000}
+                          onChange={(e) => setPriceMax(e.target.value)}
+                          className="price-range-slider"
+                          aria-label="Maximum price"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  
+
+                  {activeFilterCount > 0 && (
+                    <button
+                      className="clear-filters-btn"
+                      onClick={() => {
+                        clearAllFilters()
+                        setIsSidebarOpen(false)
+                      }}
+                    >
+                      Clear All Filters
+                    </button>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
         )}
         
         {/* Desktop Sidebar - Hidden on mobile */}
@@ -466,55 +903,60 @@ function PropertiesContent() {
               <div className="price-range-inputs-container">
                 <div className="price-range-inputs">
                   <input
-                    type="text"
+                    type="number"
                     className="price-input"
-                    placeholder="T"
+                    placeholder="Min"
                     value={priceMin}
                     onChange={(e) => setPriceMin(e.target.value)}
+                    min="0"
                   />
                   <div className="price-range-separator">
                     <span>To</span>
                   </div>
                   <input
-                    type="text"
+                    type="number"
                     className="price-input"
-                    placeholder="O"
+                    placeholder="Max"
                     value={priceMax}
                     onChange={(e) => setPriceMax(e.target.value)}
+                    min="0"
                   />
                 </div>
-                <input
-                  type="range"
-                  min="0"
-                  max="200000"
-                  step="1000"
-                  value={priceMin || 0}
-                  onChange={(e) => setPriceMin(e.target.value)}
-                  className="price-range-slider"
-                />
+                <div className="price-range-sliders">
+                  <input
+                    type="range"
+                    min="0"
+                    max="200000"
+                    step="1000"
+                    value={priceMin || 0}
+                    onChange={(e) => setPriceMin(e.target.value)}
+                    className="price-range-slider"
+                    aria-label="Minimum price"
+                  />
+                  <input
+                    type="range"
+                    min="0"
+                    max="200000"
+                    step="1000"
+                    value={priceMax || 200000}
+                    onChange={(e) => setPriceMax(e.target.value)}
+                    className="price-range-slider"
+                    aria-label="Maximum price"
+                  />
+                </div>
               </div>
             </div>
-            
-          </div>
 
-          <div className="categories-section">
-            <h2 className="section-title">List by Categories</h2>
-            <ul className="categories-list">
-              {categories.map((category) => (
-                <li 
-                  key={category.name} 
-                  className={`category-item ${selectedType === category.name ? 'active' : ''}`}
-                  onClick={() => {
-                    setSelectedType(category.name)
-                    setIsSidebarOpen(false) // Close mobile sidebar when category is clicked
-                  }}
-                  style={{ cursor: 'pointer' }}
-                >
-                  <span className="category-name">{category.name}</span>
-                  <span className="category-count">({category.count})</span>
-                </li>
-              ))}
-            </ul>
+           
+
+            {activeFilterCount > 0 && (
+              <button
+                className="clear-filters-btn"
+                onClick={clearAllFilters}
+              >
+                Clear All Filters
+              </button>
+            )}
           </div>
 
           <div className="top-searches-section">
@@ -539,9 +981,122 @@ function PropertiesContent() {
               <path d="M22 6H2M22 12H2M22 18H2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
             </svg>
             <span>Filters</span>
+            {activeFilterCount > 0 && (
+              <span className="filter-count-badge">{activeFilterCount}</span>
+            )}
           </button>
 
-          
+          {/* Results Count, Categories, and Active Filters */}
+          {!loading && paginatedProperties.length > 0 && (
+            <div className="results-header">
+              <div className="results-header-top">
+                <div className="results-count">
+                  <strong>{totalProperties}</strong> properties available
+                </div>
+                <div className="subcategory-row">
+                  <button
+                    className={`subcategory-chip ${subCategory === 'all' ? 'active' : ''}`}
+                    onClick={() => {
+                      setSubCategory('all')
+                      setCurrentPage(1)
+                    }}
+                  >
+                    All
+                  </button>
+                  <button
+                    className={`subcategory-chip ${subCategory === 'featured' ? 'active' : ''}`}
+                    onClick={() => {
+                      setSubCategory('featured')
+                      setCurrentPage(1)
+                    }}
+                  >
+                    Featured
+                  </button>
+                  <button
+                    className={`subcategory-chip ${subCategory === 'top' ? 'active' : ''}`}
+                    onClick={() => {
+                      setSubCategory('top')
+                      setCurrentPage(1)
+                    }}
+                  >
+                    Top
+                  </button>
+                  <button
+                    className={`subcategory-chip ${subCategory === 'most-viewed' ? 'active' : ''}`}
+                    onClick={() => {
+                      setSubCategory('most-viewed')
+                      setCurrentPage(1)
+                    }}
+                  >
+                    Most Viewed
+                  </button>
+                </div>
+                {activeFilterCount > 0 && (
+                  <div className="active-filters">
+                    {selectedLocation && (
+                      <span className="filter-chip">
+                        Location: {selectedLocation}
+                        <button onClick={() => removeFilter('location')} aria-label="Remove location filter">×</button>
+                      </span>
+                    )}
+                    {selectedType && selectedType !== 'All Types' && (
+                      <span className="filter-chip">
+                        Type: {selectedType}
+                        <button onClick={() => removeFilter('type')} aria-label="Remove type filter">×</button>
+                      </span>
+                    )}
+                    {minBaths && (
+                      <span className="filter-chip">
+                        Min Baths: {minBaths}+
+                        <button onClick={() => removeFilter('minBaths')} aria-label="Remove baths filter">×</button>
+                      </span>
+                    )}
+                    {minBeds && (
+                      <span className="filter-chip">
+                        Min Beds: {minBeds}+
+                        <button onClick={() => removeFilter('minBeds')} aria-label="Remove beds filter">×</button>
+                      </span>
+                    )}
+                    {priceMin && (
+                      <span className="filter-chip">
+                        Min Price: ₱{parseInt(priceMin).toLocaleString()}
+                        <button onClick={() => removeFilter('priceMin')} aria-label="Remove min price filter">×</button>
+                      </span>
+                    )}
+                    {priceMax && (
+                      <span className="filter-chip">
+                        Max Price: ₱{parseInt(priceMax).toLocaleString()}
+                        <button onClick={() => removeFilter('priceMax')} aria-label="Remove max price filter">×</button>
+                      </span>
+                    )}
+                    {searchQuery && (
+                      <span className="filter-chip">
+                        Search: {searchQuery}
+                        <button onClick={() => removeFilter('search')} aria-label="Remove search filter">×</button>
+                      </span>
+                    )}
+                    <button className="clear-filters-link" onClick={clearAllFilters}>
+                      Clear All
+                    </button>
+                  </div>
+                )}
+              </div>
+              <div className="categories-row">
+                {categories.map((category) => (
+                  <button
+                    key={category.name}
+                    className={`category-chip ${selectedType === category.name ? 'active' : ''}`}
+                    onClick={() => {
+                      setSelectedType(category.name)
+                      setCurrentPage(1)
+                    }}
+                  >
+                    {category.name} ({category.count})
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
 
           <div className="properties-content-wrapper">
             {loading ? (
@@ -592,47 +1147,10 @@ function PropertiesContent() {
                   })}
                 </div>
                 
-                {/* Pagination Controls */}
-                {totalPages > 1 && (
-                  <div style={{ 
-                    display: 'flex', 
-                    justifyContent: 'center', 
-                    alignItems: 'center', 
-                    gap: '1rem',
-                    marginTop: '2rem',
-                    padding: '1rem'
-                  }}>
-                    <button
-                      onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
-                      disabled={currentPage === 1}
-                      style={{
-                        padding: '0.5rem 1rem',
-                        backgroundColor: currentPage === 1 ? '#ccc' : '#FE8E0A',
-                        color: 'white',
-                        border: 'none',
-                        borderRadius: '4px',
-                        cursor: currentPage === 1 ? 'not-allowed' : 'pointer'
-                      }}
-                    >
-                      Previous
-                    </button>
-                    <span style={{ fontSize: '1rem' }}>
-                      Page {currentPage} of {totalPages} ({totalProperties} properties)
-                    </span>
-                    <button
-                      onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
-                      disabled={currentPage === totalPages}
-                      style={{
-                        padding: '0.5rem 1rem',
-                        backgroundColor: currentPage === totalPages ? '#ccc' : '#FE8E0A',
-                        color: 'white',
-                        border: 'none',
-                        borderRadius: '4px',
-                        cursor: currentPage === totalPages ? 'not-allowed' : 'pointer'
-                      }}
-                    >
-                      Next
-                    </button>
+                {/* Loading indicator for infinite scroll - both modes */}
+                {isLoadingMore && (
+                  <div className="loading-more-indicator">
+                    <p>Loading more properties...</p>
                   </div>
                 )}
               </>

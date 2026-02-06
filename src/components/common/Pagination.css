@@ -1,0 +1,218 @@
+/* Pagination Component - Rental.Ph Theme */
+
+.pagination-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  margin-top: 40px;
+  padding-bottom: 20px;
+  width: 100%;
+}
+
+/* Pagination Info */
+.pagination-info {
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  color: #6b7280;
+  font-weight: 400;
+  text-align: center;
+}
+
+.pagination-info strong {
+  color: #111827;
+  font-weight: 600;
+}
+
+/* Pagination Container */
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* Pagination Arrow Buttons */
+.pagination-arrow {
+  width: 40px;
+  height: 40px;
+  border: 1.5px solid #e5e7eb;
+  background: #ffffff;
+  border-radius: 50%;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  color: #374151;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  padding: 0;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.pagination-arrow:hover:not(:disabled) {
+  border-color: #205ED7;
+  color: #205ED7;
+  background: #f0f7ff;
+  transform: translateY(-2px);
+  box-shadow: 0 2px 8px rgba(32, 94, 215, 0.2);
+}
+
+.pagination-arrow:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: 0 1px 4px rgba(32, 94, 215, 0.15);
+}
+
+.pagination-arrow:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  background: #f9fafb;
+}
+
+.pagination-arrow:disabled svg {
+  opacity: 0.5;
+}
+
+/* Pagination Number Buttons */
+.pagination-number {
+  width: 40px;
+  height: 40px;
+  border: 1.5px solid #e5e7eb;
+  background: #ffffff;
+  border-radius: 50%;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  color: #374151;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  padding: 0;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.pagination-number:hover:not(.active) {
+  border-color: #205ED7;
+  color: #205ED7;
+  background: #f0f7ff;
+  transform: translateY(-2px);
+  box-shadow: 0 2px 8px rgba(32, 94, 215, 0.2);
+}
+
+.pagination-number:active:not(.active) {
+  transform: translateY(0);
+  box-shadow: 0 1px 4px rgba(32, 94, 215, 0.15);
+}
+
+.pagination-number.active {
+  background: linear-gradient(135deg, #205ED7 0%, #1a4db3 100%);
+  color: #ffffff;
+  border-color: #205ED7;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(32, 94, 215, 0.3);
+  transform: scale(1.05);
+}
+
+.pagination-number.active:hover {
+  background: linear-gradient(135deg, #1a4db3 0%, #154299 100%);
+  box-shadow: 0 6px 16px rgba(32, 94, 215, 0.4);
+}
+
+/* Pagination Ellipsis */
+.pagination-ellipsis {
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  color: #9ca3af;
+  padding: 0 4px;
+  display: flex;
+  align-items: center;
+  user-select: none;
+}
+
+/* Page Info */
+.pagination-page-info {
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  color: #6b7280;
+  font-weight: 400;
+  text-align: center;
+}
+
+.pagination-page-info strong {
+  color: #111827;
+  font-weight: 600;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .pagination-wrapper {
+    margin-top: 32px;
+    padding-bottom: 16px;
+    gap: 12px;
+  }
+
+  .pagination {
+    gap: 6px;
+  }
+
+  .pagination-arrow,
+  .pagination-number {
+    width: 36px;
+    height: 36px;
+    font-size: 13px;
+  }
+
+  .pagination-arrow svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  .pagination-info,
+  .pagination-page-info {
+    font-size: 13px;
+  }
+
+  .pagination-ellipsis {
+    font-size: 13px;
+    padding: 0 2px;
+  }
+}
+
+@media (max-width: 480px) {
+  .pagination-wrapper {
+    margin-top: 24px;
+    padding-bottom: 12px;
+    gap: 10px;
+  }
+
+  .pagination {
+    gap: 4px;
+  }
+
+  .pagination-arrow,
+  .pagination-number {
+    width: 32px;
+    height: 32px;
+    font-size: 12px;
+  }
+
+  .pagination-arrow svg {
+    width: 12px;
+    height: 12px;
+  }
+
+  .pagination-info,
+  .pagination-page-info {
+    font-size: 12px;
+  }
+
+  .pagination-ellipsis {
+    font-size: 12px;
+    padding: 0 2px;
+  }
+}
+

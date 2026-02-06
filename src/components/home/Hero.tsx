@@ -1,8 +1,8 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { ASSETS } from '@/utils/assets'
+import { ASSETS, getAsset } from '@/utils/assets'
 import './Hero.css'
 import HeroBanner from './HeroBanner'
 
@@ -14,7 +14,16 @@ function Hero() {
   const [minBaths, setMinBaths] = useState('')
   const [priceMin, setPriceMin] = useState('')
   const [priceMax, setPriceMax] = useState('')
+  const [currentImageIndex, setCurrentImageIndex] = useState(0)
   const router = useRouter()
+
+  // Array of background images - add your new image path here when ready
+  const backgroundImages = [
+    ASSETS.BG_HERO_LANDING,
+    getAsset('BG_HERO_LANDING_NEW') || ASSETS.BG_HERO_LANDING,
+    // Add your new minimalist living room image path here:
+    // '/assets/backgrounds/your-new-image.png'
+  ].filter(Boolean) // Remove any undefined values
 
   // Recommended searches
   const recommendedSearches = [
@@ -95,14 +104,32 @@ function Hero() {
     router.push(`/properties?${params.toString()}`)
   }
 
+  // Auto-rotate background images with smooth transitions
+  useEffect(() => {
+    if (backgroundImages.length <= 1) return
+
+    const interval = setInterval(() => {
+      setCurrentImageIndex((prevIndex) => 
+        (prevIndex + 1) % backgroundImages.length
+      )
+    }, 5000) // Change image every 5 seconds
+
+    return () => clearInterval(interval)
+  }, [backgroundImages.length])
+
   return (
     <section id="home" className="hero-section">
-      {/* Background image that matches Figma hero */}
-      <img
-        src={ASSETS.BG_HERO_LANDING}
-        alt="Skyline and buildings background"
-        className="hero-background"
-      />
+      {/* Background images with smooth transitions */}
+      <div className="hero-background-container">
+        {backgroundImages.map((imageSrc, index) => (
+          <img
+            key={index}
+            src={imageSrc}
+            alt={`Hero background ${index + 1}`}
+            className={`hero-background ${index === currentImageIndex ? 'active' : ''}`}
+          />
+        ))}
+      </div>
 
       {/* Hero content */}
       <div className="relative z-10 flex flex-col items-center text-center px-4">

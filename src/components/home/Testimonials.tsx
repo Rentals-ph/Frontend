@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import TestimonialCard from '../common/TestimonialCard'
+import Pagination from '../common/Pagination'
 import { testimonialsApi } from '../../api'
 import type { Testimonial } from '../../types'
 import { ASSETS, getAsset } from '@/utils/assets'
@@ -35,16 +36,8 @@ function Testimonials() {
   const endIndex = startIndex + testimonialsPerPage
   const currentTestimonials = testimonials.slice(startIndex, endIndex)
 
-  // Pagination handlers
-  const handlePreviousPage = () => {
-    setCurrentPage((prev) => Math.max(1, prev - 1))
-  }
-
-  const handleNextPage = () => {
-    setCurrentPage((prev) => Math.min(totalPages, prev + 1))
-  }
-
-  const handlePageClick = (page: number) => {
+  // Pagination handler
+  const handlePageChange = (page: number) => {
     setCurrentPage(page)
   }
 
@@ -99,65 +92,34 @@ function Testimonials() {
                 <p>Loading testimonials...</p>
               </div>
             ) : testimonials.length > 0 ? (
-              <>
-                <div className="testimonials-cards-grid">
-                  {currentTestimonials.map((testimonial) => (
-                    <TestimonialCard
-                      key={testimonial.id}
-                      avatar={getAvatarUrl(testimonial.avatar)}
-                      text={testimonial.content}
-                      name={testimonial.name}
-                      role={testimonial.role}
-                    />
-                  ))}
-                </div>
-                
-                {/* Pagination Controls */}
-                {totalPages > 1 && (
-                  <div className="testimonials-pagination">
-                    <button
-                      className="testimonials-pagination-button"
-                      onClick={handlePreviousPage}
-                      disabled={currentPage === 1}
-                      aria-label="Previous page"
-                    >
-                      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M12.5 15L7.5 10L12.5 5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                      </svg>
-                    </button>
-                    
-                    <div className="testimonials-pagination-pages">
-                      {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                        <button
-                          key={page}
-                          className={`testimonials-pagination-page ${currentPage === page ? 'active' : ''}`}
-                          onClick={() => handlePageClick(page)}
-                          aria-label={`Go to page ${page}`}
-                        >
-                          {page}
-                        </button>
-                      ))}
-                    </div>
-                    
-                    <button
-                      className="testimonials-pagination-button"
-                      onClick={handleNextPage}
-                      disabled={currentPage === totalPages}
-                      aria-label="Next page"
-                    >
-                      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M7.5 15L12.5 10L7.5 5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                      </svg>
-                    </button>
-                  </div>
-                )}
-              </>
+              <div className="testimonials-cards-grid">
+                {currentTestimonials.map((testimonial) => (
+                  <TestimonialCard
+                    key={testimonial.id}
+                    avatar={getAvatarUrl(testimonial.avatar)}
+                    text={testimonial.content}
+                    name={testimonial.name}
+                    role={testimonial.role}
+                  />
+                ))}
+              </div>
             ) : (
               <div className="testimonials-empty">
                 <p>No testimonials available at the moment.</p>
               </div>
             )}
           </div>
+          
+          {/* Pagination Controls - Centered based on full layout */}
+          {!loading && testimonials.length > 0 && totalPages > 1 && (
+            <div className="testimonials-pagination-container">
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={handlePageChange}
+              />
+            </div>
+          )}
         </div>
       </div>
     </section>

@@ -17,12 +17,15 @@ export default function BlogDetailsPage() {
   const [blogPost, setBlogPost] = useState<Blog | null>(null)
   const [relatedArticles, setRelatedArticles] = useState<Blog[]>([])
   const [loading, setLoading] = useState(true)
+  const [isPortraitImage, setIsPortraitImage] = useState(false)
 
   useEffect(() => {
     const fetchBlog = async () => {
       if (!id) return
       
       try {
+        setLoading(true)
+        setIsPortraitImage(false) // Reset image orientation when loading new blog
         const blogId = parseInt(id)
         if (isNaN(blogId)) {
           console.error('Invalid blog ID')
@@ -71,6 +74,13 @@ export default function BlogDetailsPage() {
       return `/api/${image.startsWith('/') ? image.slice(1) : image}`
     }
     return image
+  }
+
+  const handleImageLoad = (e: React.SyntheticEvent<HTMLImageElement>) => {
+    const img = e.currentTarget
+    const width = img.naturalWidth
+    const height = img.naturalHeight
+    setIsPortraitImage(height > width)
   }
 
   const comments = [
@@ -124,46 +134,53 @@ export default function BlogDetailsPage() {
                 </div>
               </div>
 
-              <div className="blog-details-featured-image">
-                <img src={getImageUrl(blogPost.image)} alt={blogPost.title} />
-              </div>
-
-            <div className="blog-details-social">
-              <div className="blog-details-social-left">
-                <button className="social-btn social-like">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M20.84 4.61C20.3292 4.099 19.7228 3.69364 19.0554 3.41708C18.3879 3.14052 17.6725 2.99817 16.95 2.99817C16.2275 2.99817 15.5121 3.14052 14.8446 3.41708C14.1772 3.69364 13.5708 4.099 13.06 4.61L12 5.67L10.94 4.61C9.9083 3.57831 8.50903 2.99871 7.05 2.99871C5.59096 2.99871 4.19169 3.57831 3.16 4.61C2.1283 5.64169 1.54871 7.04097 1.54871 8.5C1.54871 9.95903 2.1283 11.3583 3.16 12.39L4.22 13.45L12 21.23L19.78 13.45L20.84 12.39C21.351 11.8792 21.7564 11.2728 22.0329 10.6054C22.3095 9.93789 22.4518 9.22248 22.4518 8.5C22.4518 7.77752 22.3095 7.0621 22.0329 6.39464C21.7564 5.72718 21.351 5.12075 20.84 4.61Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
-                  <span>{blogPost.likes || 0}</span>
-                </button>
-                <button className="social-btn social-comment">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M21 15C21 15.5304 20.7893 16.0391 20.4142 16.4142C20.0391 16.7893 19.5304 17 19 17H7L3 21V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H19C19.5304 3 20.0391 3.21071 20.4142 3.58579C20.7893 3.96086 21 4.46957 21 5V15Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
-                  <span>{blogPost.comments || 0}</span>
-                </button>
-              </div>
-              <div className="blog-details-social-right">
-                <button className="social-btn social-share">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M18 8C19.6569 8 21 6.65685 21 5C21 3.34315 19.6569 2 18 2C16.3431 2 15 3.34315 15 5C15 5.12549 15.0077 5.24919 15.0227 5.37063L8.08261 9.79866C7.54305 9.29212 6.80891 9 6 9C4.34315 9 3 10.3431 3 12C3 13.6569 4.34315 15 6 15C6.80891 15 7.54305 14.7079 8.08261 14.2013L15.0227 18.6294C15.0077 18.7508 15 18.8745 15 19C15 20.6569 16.3431 22 18 22C19.6569 22 21 20.6569 21 19C21 17.3431 19.6569 16 18 16C17.1911 16 16.457 16.2921 15.9174 16.7987L8.97727 12.3706C8.99231 12.2492 9 12.1255 9 12C9 11.8745 8.99231 11.7508 8.97727 11.6294L15.9174 7.20134C16.457 7.70788 17.1911 8 18 8Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
-                </button>
-                <button className="social-btn social-email">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M4 4H20C21.1 4 22 4.9 22 6V18C22 19.1 21.1 20 20 20H4C2.9 20 2 19.1 2 18V6C2 4.9 2.9 4 4 4Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    <path d="L22 6L12 13L2 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
-                </button>
-                <button className="social-btn social-whatsapp">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M17.472 14.382C17.292 14.208 15.168 12.458 14.668 12.208C14.168 11.958 13.918 11.958 13.668 12.208C13.418 12.458 12.418 13.458 12.168 13.708C11.918 13.958 11.668 13.958 11.418 13.708C11.168 13.458 9.41797 11.708 8.91797 11.208C8.41797 10.708 8.16797 10.458 8.41797 10.208C8.66797 9.958 9.16797 9.458 9.41797 9.208C9.66797 8.958 9.66797 8.708 9.41797 8.458C9.16797 8.208 8.66797 7.458 8.41797 7.208C8.16797 6.958 7.91797 6.958 7.66797 7.208C7.41797 7.458 6.41797 8.458 6.16797 8.708C5.91797 8.958 5.66797 9.208 5.91797 9.458C6.16797 9.708 7.16797 10.958 8.16797 12.208C9.16797 13.458 10.168 14.458 10.418 14.708C10.668 14.958 10.918 15.208 11.168 15.208C11.418 15.208 11.668 15.208 11.918 15.208C12.168 15.208 12.418 15.208 12.668 15.208C12.918 15.208 13.168 15.208 13.418 15.208C13.668 15.208 13.918 15.208 14.168 15.208C14.418 15.208 14.668 15.208 14.918 15.208C15.168 15.208 15.418 15.208 15.668 15.208C15.918 15.208 16.168 15.208 16.418 15.208C16.668 15.208 16.918 15.208 17.168 15.208C17.418 15.208 17.668 15.208 17.918 15.208C18.168 15.208 18.418 15.208 18.668 15.208C18.918 15.208 19.168 15.208 19.418 15.208C19.668 15.208 19.918 15.208 20.168 15.208C20.418 15.208 20.668 15.208 20.918 15.208" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
-                </button>
-              </div>
-            </div>
-
-              <div className="blog-details-content">
+              {isPortraitImage ? (
+                <div className="blog-details-portrait-container">
+                  <div className="blog-details-portrait-left">
+                    <div className={`blog-details-featured-image portrait-layout`}>
+                      <img 
+                        src={getImageUrl(blogPost.image)} 
+                        alt={blogPost.title}
+                        onLoad={handleImageLoad}
+                      />
+                    </div>
+                    <div className="blog-details-social portrait-social">
+                      <div className="blog-details-social-left">
+                        <button className="social-btn social-like">
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M20.84 4.61C20.3292 4.099 19.7228 3.69364 19.0554 3.41708C18.3879 3.14052 17.6725 2.99817 16.95 2.99817C16.2275 2.99817 15.5121 3.14052 14.8446 3.41708C14.1772 3.69364 13.5708 4.099 13.06 4.61L12 5.67L10.94 4.61C9.9083 3.57831 8.50903 2.99871 7.05 2.99871C5.59096 2.99871 4.19169 3.57831 3.16 4.61C2.1283 5.64169 1.54871 7.04097 1.54871 8.5C1.54871 9.95903 2.1283 11.3583 3.16 12.39L4.22 13.45L12 21.23L19.78 13.45L20.84 12.39C21.351 11.8792 21.7564 11.2728 22.0329 10.6054C22.3095 9.93789 22.4518 9.22248 22.4518 8.5C22.4518 7.77752 22.3095 7.0621 22.0329 6.39464C21.7564 5.72718 21.351 5.12075 20.84 4.61Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                          </svg>
+                          <span>{blogPost.likes || 0}</span>
+                        </button>
+                        <button className="social-btn social-comment">
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M21 15C21 15.5304 20.7893 16.0391 20.4142 16.4142C20.0391 16.7893 19.5304 17 19 17H7L3 21V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H19C19.5304 3 20.0391 3.21071 20.4142 3.58579C20.7893 3.96086 21 4.46957 21 5V15Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                          </svg>
+                          <span>{blogPost.comments || 0}</span>
+                        </button>
+                      </div>
+                      <div className="blog-details-social-right">
+                        <button className="social-btn social-share">
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M18 8C19.6569 8 21 6.65685 21 5C21 3.34315 19.6569 2 18 2C16.3431 2 15 3.34315 15 5C15 5.12549 15.0077 5.24919 15.0227 5.37063L8.08261 9.79866C7.54305 9.29212 6.80891 9 6 9C4.34315 9 3 10.3431 3 12C3 13.6569 4.34315 15 6 15C6.80891 15 7.54305 14.7079 8.08261 14.2013L15.0227 18.6294C15.0077 18.7508 15 18.8745 15 19C15 20.6569 16.3431 22 18 22C19.6569 22 21 20.6569 21 19C21 17.3431 19.6569 16 18 16C17.1911 16 16.457 16.2921 15.9174 16.7987L8.97727 12.3706C8.99231 12.2492 9 12.1255 9 12C9 11.8745 8.99231 11.7508 8.97727 11.6294L15.9174 7.20134C16.457 7.70788 17.1911 8 18 8Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                          </svg>
+                        </button>
+                        <button className="social-btn social-email">
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M4 4H20C21.1 4 22 4.9 22 6V18C22 19.1 21.1 20 20 20H4C2.9 20 2 19.1 2 18V6C2 4.9 2.9 4 4 4Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                            <path d="L22 6L12 13L2 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                          </svg>
+                        </button>
+                        <button className="social-btn social-whatsapp">
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M17.472 14.382C17.292 14.208 15.168 12.458 14.668 12.208C14.168 11.958 13.918 11.958 13.668 12.208C13.418 12.458 12.418 13.458 12.168 13.708C11.918 13.958 11.668 13.958 11.418 13.708C11.168 13.458 9.41797 11.708 8.91797 11.208C8.41797 10.708 8.16797 10.458 8.41797 10.208C8.66797 9.958 9.16797 9.458 9.41797 9.208C9.66797 8.958 9.66797 8.708 9.41797 8.458C9.16797 8.208 8.66797 7.458 8.41797 7.208C8.16797 6.958 7.91797 6.958 7.66797 7.208C7.41797 7.458 6.41797 8.458 6.16797 8.708C5.91797 8.958 5.66797 9.208 5.91797 9.458C6.16797 9.708 7.16797 10.958 8.16797 12.208C9.16797 13.458 10.168 14.458 10.418 14.708C10.668 14.958 10.918 15.208 11.168 15.208C11.418 15.208 11.668 15.208 11.918 15.208C12.168 15.208 12.418 15.208 12.668 15.208C12.918 15.208 13.168 15.208 13.418 15.208C13.668 15.208 13.918 15.208 14.168 15.208C14.418 15.208 14.668 15.208 14.918 15.208C15.168 15.208 15.418 15.208 15.668 15.208C15.918 15.208 16.168 15.208 16.418 15.208C16.668 15.208 16.918 15.208 17.168 15.208C17.418 15.208 17.668 15.208 17.918 15.208C18.168 15.208 18.418 15.208 18.668 15.208C18.918 15.208 19.168 15.208 19.418 15.208C19.668 15.208 19.918 15.208 20.168 15.208C20.418 15.208 20.668 15.208 20.918 15.208" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                          </svg>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="blog-details-portrait-right">
+                    <div className="blog-details-content portrait-content">
                 {blogPost.content.split('\n\n').map((paragraph, index) => (
                   <div key={index}>
                     <p className="blog-details-paragraph">
@@ -176,7 +193,68 @@ export default function BlogDetailsPage() {
                     )}
                   </div>
                 ))}
-              </div>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <>
+                  <div className={`blog-details-featured-image landscape-layout`}>
+                    <img 
+                      src={getImageUrl(blogPost.image)} 
+                      alt={blogPost.title}
+                      onLoad={handleImageLoad}
+                    />
+                  </div>
+                  <div className="blog-details-social">
+                    <div className="blog-details-social-left">
+                      <button className="social-btn social-like">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M20.84 4.61C20.3292 4.099 19.7228 3.69364 19.0554 3.41708C18.3879 3.14052 17.6725 2.99817 16.95 2.99817C16.2275 2.99817 15.5121 3.14052 14.8446 3.41708C14.1772 3.69364 13.5708 4.099 13.06 4.61L12 5.67L10.94 4.61C9.9083 3.57831 8.50903 2.99871 7.05 2.99871C5.59096 2.99871 4.19169 3.57831 3.16 4.61C2.1283 5.64169 1.54871 7.04097 1.54871 8.5C1.54871 9.95903 2.1283 11.3583 3.16 12.39L4.22 13.45L12 21.23L19.78 13.45L20.84 12.39C21.351 11.8792 21.7564 11.2728 22.0329 10.6054C22.3095 9.93789 22.4518 9.22248 22.4518 8.5C22.4518 7.77752 22.3095 7.0621 22.0329 6.39464C21.7564 5.72718 21.351 5.12075 20.84 4.61Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                        <span>{blogPost.likes || 0}</span>
+                      </button>
+                      <button className="social-btn social-comment">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M21 15C21 15.5304 20.7893 16.0391 20.4142 16.4142C20.0391 16.7893 19.5304 17 19 17H7L3 21V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H19C19.5304 3 20.0391 3.21071 20.4142 3.58579C20.7893 3.96086 21 4.46957 21 5V15Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                        <span>{blogPost.comments || 0}</span>
+                      </button>
+                    </div>
+                    <div className="blog-details-social-right">
+                      <button className="social-btn social-share">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M18 8C19.6569 8 21 6.65685 21 5C21 3.34315 19.6569 2 18 2C16.3431 2 15 3.34315 15 5C15 5.12549 15.0077 5.24919 15.0227 5.37063L8.08261 9.79866C7.54305 9.29212 6.80891 9 6 9C4.34315 9 3 10.3431 3 12C3 13.6569 4.34315 15 6 15C6.80891 15 7.54305 14.7079 8.08261 14.2013L15.0227 18.6294C15.0077 18.7508 15 18.8745 15 19C15 20.6569 16.3431 22 18 22C19.6569 22 21 20.6569 21 19C21 17.3431 19.6569 16 18 16C17.1911 16 16.457 16.2921 15.9174 16.7987L8.97727 12.3706C8.99231 12.2492 9 12.1255 9 12C9 11.8745 8.99231 11.7508 8.97727 11.6294L15.9174 7.20134C16.457 7.70788 17.1911 8 18 8Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                      </button>
+                      <button className="social-btn social-email">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M4 4H20C21.1 4 22 4.9 22 6V18C22 19.1 21.1 20 20 20H4C2.9 20 2 19.1 2 18V6C2 4.9 2.9 4 4 4Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                          <path d="L22 6L12 13L2 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                      </button>
+                      <button className="social-btn social-whatsapp">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M17.472 14.382C17.292 14.208 15.168 12.458 14.668 12.208C14.168 11.958 13.918 11.958 13.668 12.208C13.418 12.458 12.418 13.458 12.168 13.708C11.918 13.958 11.668 13.958 11.418 13.708C11.168 13.458 9.41797 11.708 8.91797 11.208C8.41797 10.708 8.16797 10.458 8.41797 10.208C8.66797 9.958 9.16797 9.458 9.41797 9.208C9.66797 8.958 9.66797 8.708 9.41797 8.458C9.16797 8.208 8.66797 7.458 8.41797 7.208C8.16797 6.958 7.91797 6.958 7.66797 7.208C7.41797 7.458 6.41797 8.458 6.16797 8.708C5.91797 8.958 5.66797 9.208 5.91797 9.458C6.16797 9.708 7.16797 10.958 8.16797 12.208C9.16797 13.458 10.168 14.458 10.418 14.708C10.668 14.958 10.918 15.208 11.168 15.208C11.418 15.208 11.668 15.208 11.918 15.208C12.168 15.208 12.418 15.208 12.668 15.208C12.918 15.208 13.168 15.208 13.418 15.208C13.668 15.208 13.918 15.208 14.168 15.208C14.418 15.208 14.668 15.208 14.918 15.208C15.168 15.208 15.418 15.208 15.668 15.208C15.918 15.208 16.168 15.208 16.418 15.208C16.668 15.208 16.918 15.208 17.168 15.208C17.418 15.208 17.668 15.208 17.918 15.208C18.168 15.208 18.418 15.208 18.668 15.208C18.918 15.208 19.168 15.208 19.418 15.208C19.668 15.208 19.918 15.208 20.168 15.208C20.418 15.208 20.668 15.208 20.918 15.208" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+                  <div className="blog-details-content">
+                    {blogPost.content.split('\n\n').map((paragraph, index) => (
+                      <div key={index}>
+                        <p className="blog-details-paragraph">
+                          {paragraph}
+                        </p>
+                        {index === 0 && (
+                          <div className="blog-details-ad-image">
+                            <img src={ASSETS.BLOG_IMAGE_2} alt="House-Hunting Before the New Year Rush" />
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </>
+              )}
 
             <div className="blog-details-comments">
               <h2 className="blog-details-comments-title">Comments</h2>

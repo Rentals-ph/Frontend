@@ -19,6 +19,7 @@ export {
 export {
     VerticalPropertyCard,
     HorizontalPropertyCard,
+    Pagination,
     TestimonialCard,
     BlogCard,
     LoginModal,

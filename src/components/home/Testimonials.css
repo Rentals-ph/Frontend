@@ -7,6 +7,7 @@
   align-items: center;
   justify-content: center;
   overflow: visible;
+  margin-bottom: 0;
 }
 
 /* Background image */
@@ -53,7 +54,7 @@
   z-index: 3;
   width: 100%;
   max-width: 1442px;
-  margin-top: 65px;
+  margin: 65px auto 0;
   padding: 0 20px;
 }
 
@@ -205,75 +206,21 @@
   font-size: 16px;
 }
 
-/* Pagination */
-.testimonials-pagination {
+/* Pagination Container - Spans full grid width and centered */
+.testimonials-pagination-container {
+  grid-column: 1 / -1;
   display: flex;
-  align-items: center;
   justify-content: center;
-  gap: 12px;
-  margin-top: 60px;
-  padding-top: 20px;
-}
-
-.testimonials-pagination-button {
-  display: flex;
   align-items: center;
-  justify-content: center;
-  width: 40px;
-  height: 40px;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 8px;
-  color: rgb(32, 94, 215, 0.8);;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  padding: 0;
+  width: 100%;
+  max-width: 1400px;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 0 40px;
+  box-sizing: border-box;
+  justify-self: center;
 }
 
-.testimonials-pagination-button:hover:not(:disabled) {
-  background: rgba(255, 255, 255, 0.2);
-  border-color: rgba(255, 255, 255, 0.5);
-}
-
-.testimonials-pagination-button:disabled {
-  opacity: 0.3;
-  cursor: not-allowed;
-}
-
-.testimonials-pagination-pages {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.testimonials-pagination-page {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 40px;
-  height: 40px;
-  padding: 0 12px;
-  border: 2px solid rgb(32, 94, 215, 0.8);
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 8px;
-  color: rgb(32, 94, 215, 0.8);
-  font-family: 'Inter', sans-serif;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.testimonials-pagination-page:hover {
-  background: rgba(255, 255, 255, 0.2);
-  border-color: rgba(255, 255, 255, 0.5);
-}
-
-.testimonials-pagination-page.active {
-  background: #205ED7;
-  border-color: #205ED7;
-  color: #FFFFFF;
-}
 
 /* RESPONSIVE */
 @media (max-width: 1440px) {
@@ -315,6 +262,10 @@
   .testimonials-left-heading {
     font-size: 18px;
   }
+
+  .testimonials-pagination-container {
+    padding: 0 32px;
+  }
 }
 
 @media (max-width: 1024px) {
@@ -349,6 +300,10 @@
     margin-left: 0;
     align-items: flex-start;
   }
+
+  .testimonials-pagination-container {
+    padding: 0 24px;
+  }
 }
 
 @media (max-width: 900px) {
@@ -369,6 +324,10 @@
     gap: 20px;
     max-width: 400px;
     margin: 0 auto;
+  }
+
+  .testimonials-pagination-container {
+    padding: 0 30px;
   }
 }
 
@@ -440,20 +399,8 @@
     max-width: 100%;
   }
 
-  .testimonials-pagination {
+  .testimonials-pagination-container {
     margin-top: 30px;
-    gap: 8px;
-  }
-
-  .testimonials-pagination-button,
-  .testimonials-pagination-page {
-    width: 36px;
-    height: 36px;
-    min-width: 36px;
-    font-size: 14px;
-  }
-
-  .testimonials-pagination-pages {
-    gap: 6px;
+    padding: 0 20px;
   }
 }

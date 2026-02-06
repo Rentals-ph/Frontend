@@ -472,76 +472,76 @@
       "blog": {
         "BLOG_IMAGE_MAIN": {
           "id": "BLOG_IMAGE_MAIN",
-          "path": "/assets/images/blog/blog-main.png",
+          "path": "/storage/images/posts/1/featured.png",
           "category": "images",
           "subcategory": "blog",
-          "description": "Main blog image",
+          "description": "Main blog image (migrated to storage)",
           "originalName": "blog-main.png"
         },
         "BLOG_IMAGE_1": {
           "id": "BLOG_IMAGE_1",
-          "path": "/assets/images/blog/blog-image.png",
+          "path": "/storage/images/posts/2/featured.png",
           "category": "images",
           "subcategory": "blog",
-          "description": "Blog image 1",
+          "description": "Blog image 1 (migrated to storage)",
           "originalName": "blog-image.png"
         },
         "BLOG_IMAGE_2": {
           "id": "BLOG_IMAGE_2",
-          "path": "/assets/images/blog/blog-image2.png",
+          "path": "/storage/images/posts/3/featured.png",
           "category": "images",
           "subcategory": "blog",
-          "description": "Blog image 2",
+          "description": "Blog image 2 (migrated to storage)",
           "originalName": "blog-image2.png"
         }
       },
       "testimonials": {
         "TESTIMONIAL_ELAINE": {
           "id": "TESTIMONIAL_ELAINE",
-          "path": "/assets/images/testimonials/testimonial-elaine.png",
+          "path": "/storage/images/testimonials/1/avatar.png",
           "category": "images",
           "subcategory": "testimonials",
-          "description": "Testimonial photo - Elaine",
+          "description": "Testimonial photo - Elaine (migrated to storage)",
           "originalName": "testimonial-elaine.png"
         },
         "TESTIMONIAL_JAVIE": {
           "id": "TESTIMONIAL_JAVIE",
-          "path": "/assets/images/testimonials/testimonial-javie.png",
+          "path": "/storage/images/testimonials/2/avatar.png",
           "category": "images",
           "subcategory": "testimonials",
-          "description": "Testimonial photo - Javie",
+          "description": "Testimonial photo - Javie (migrated to storage)",
           "originalName": "testimonial-javie.png"
         },
         "TESTIMONIAL_RICA": {
           "id": "TESTIMONIAL_RICA",
-          "path": "/assets/images/testimonials/testimonial-rica.png",
+          "path": "/storage/images/testimonials/3/avatar.png",
           "category": "images",
           "subcategory": "testimonials",
-          "description": "Testimonial photo - Rica",
+          "description": "Testimonial photo - Rica (migrated to storage)",
           "originalName": "testimonial-rica.png"
         },
         "TESTIMONIAL_ELAINE_10": {
           "id": "TESTIMONIAL_ELAINE_10",
-          "path": "/assets/images/testimonials/elaine-10.png",
+          "path": "/storage/images/testimonials/1/avatar-10.png",
           "category": "images",
           "subcategory": "testimonials",
-          "description": "Elaine testimonial variant 10",
+          "description": "Elaine testimonial variant 10 (migrated to storage)",
           "originalName": "elaine-10.png"
         },
         "TESTIMONIAL_JAVIE_10": {
           "id": "TESTIMONIAL_JAVIE_10",
-          "path": "/assets/images/testimonials/javie-10.png",
+          "path": "/storage/images/testimonials/2/avatar-10.png",
           "category": "images",
           "subcategory": "testimonials",
-          "description": "Javie testimonial variant 10",
+          "description": "Javie testimonial variant 10 (migrated to storage)",
           "originalName": "javie-10.png"
         },
         "TESTIMONIAL_RICA_10": {
           "id": "TESTIMONIAL_RICA_10",
-          "path": "/assets/images/testimonials/rica-10.png",
+          "path": "/storage/images/testimonials/3/avatar-10.png",
           "category": "images",
           "subcategory": "testimonials",
-          "description": "Rica testimonial variant 10",
+          "description": "Rica testimonial variant 10 (migrated to storage)",
           "originalName": "rica-10.png"
         }
       },

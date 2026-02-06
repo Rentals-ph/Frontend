@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import Pagination from '../common/Pagination'
 import { blogsApi } from '../../api'
 import type { Blog } from '../../types'
 import { ASSETS } from '@/utils/assets'
@@ -10,6 +11,7 @@ import './Blogs.css'
 function Blogs() {
   const [blogs, setBlogs] = useState<Blog[]>([])
   const [loading, setLoading] = useState(true)
+  const [currentIndex, setCurrentIndex] = useState(1) // Index of the large blog (start at 1 to show blog[0] as small)
 
   useEffect(() => {
     const fetchBlogs = async () => {
@@ -27,6 +29,40 @@ function Blogs() {
 
     fetchBlogs()
   }, [])
+
+  // Calculate pagination - each "page" shows 2 blogs (small + large)
+  // But we track by index of the large blog
+  const totalPages = blogs.length > 1 ? blogs.length - 1 : 1
+  
+  // Get current blogs to display
+  const getCurrentBlogs = (index: number) => {
+    if (blogs.length === 0) {
+      return { small: null, large: null }
+    }
+    
+    // Small blog: previous index (or first blog if at start)
+    const smallIndex = index > 0 ? index - 1 : 0
+    const smallBlog = blogs[smallIndex] || null
+    
+    // Large blog: current index
+    const largeBlog = blogs[index] || null
+    
+    return { small: smallBlog, large: largeBlog }
+  }
+
+  const { small: smallBlog, large: largeBlog } = getCurrentBlogs(currentIndex)
+
+  // Handle page change
+  const handlePageChange = (newPage: number) => {
+    if (blogs.length === 0) return
+    
+    // Convert page number to index (page 1 = index 1, page 2 = index 2, etc.)
+    const newIndex = newPage - 1
+    
+    if (newIndex === currentIndex) return
+    
+    setCurrentIndex(newIndex)
+  }
 
   const formatDate = (dateString: string | null): string => {
     if (!dateString) return ''
@@ -53,11 +89,6 @@ function Blogs() {
     return image
   }
 
-  // Use first blog for small card, second blog for large card
-  const smallBlog = blogs.length > 0 ? blogs[0] : null
-  const largeBlog = blogs.length > 1 ? blogs[1] : blogs.length > 0 ? blogs[0] : null
-  const smallBlogImage = smallBlog ? getImageUrl(smallBlog.image) : ASSETS.BLOG_IMAGE_MAIN
-  const largeBlogImage = largeBlog ? getImageUrl(largeBlog.image) : ASSETS.BLOG_IMAGE_MAIN
 
   return (
     <section id="blog" className="blogs-section">
@@ -81,12 +112,16 @@ function Blogs() {
           </div>
         ) : smallBlog ? (
           <div className="blogs-grid">
+            {/* Small Blog Card */}
             {smallBlog && (
-              <div className="blog-card-wrapper blog-card-small-wrapper">
+              <div 
+                key={`small-${smallBlog.id}`}
+                className="blog-card-wrapper blog-card-small-wrapper"
+              >
                 <Link href={`/blog/${smallBlog.id}`} className="blog-card-link">
                   <article className="blog-card blog-card-small">
                     <img
-                      src={smallBlogImage}
+                      src={getImageUrl(smallBlog.image)}
                       alt={smallBlog.title}
                       className="blog-image"
                     />
@@ -125,12 +160,17 @@ function Blogs() {
                 </Link>
               </div>
             )}
+            
+            {/* Large Blog Card */}
             {largeBlog && (
-              <div className="blog-card-wrapper blog-card-large-wrapper">
+              <div 
+                key={`large-${largeBlog.id}`}
+                className="blog-card-wrapper blog-card-large-wrapper"
+              >
                 <Link href={`/blog/${largeBlog.id}`} className="blog-card-link">
                   <article className="blog-card blog-card-large">
                     <img
-                      src={largeBlogImage}
+                      src={getImageUrl(largeBlog.image)}
                       alt={largeBlog.title}
                       className="blog-image blog-image-large"
                     />
@@ -176,13 +216,17 @@ function Blogs() {
           </div>
         )}
         
-        <div className="blogs-pagination">
-          <span className="pagination-dot pagination-dot-active"></span>
-          <span className="pagination-dot"></span>
-          <span className="pagination-dot"></span>
-          <span className="pagination-dot"></span>
-          <span className="pagination-dot"></span>
-        </div>
+        {/* Pagination */}
+        {totalPages > 1 && blogs.length > 1 && (
+          <div className="blogs-pagination-wrapper">
+            <Pagination
+              currentPage={currentIndex + 1}
+              totalPages={totalPages}
+              onPageChange={handlePageChange}
+              className="blogs-pagination"
+            />
+          </div>
+        )}
       </div>
     </section>
   )

@@ -26,11 +26,9 @@
 .partners-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 20px;
   align-items: center;
   justify-items: center;
   max-width: 1600px;
-  margin: 0 auto 10px;
 }
 
 .partner-card {

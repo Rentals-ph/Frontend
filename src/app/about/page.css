@@ -309,7 +309,7 @@
 .about-social-proof-container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 80px 80px;
+  padding: 0px 80px;
 }
 
 .about-partners-compact {
@@ -342,7 +342,7 @@
 /* Testimonials Pagination Override - Position relative to About Us page layout */
 .about-page .testimonials-section {
   position: relative;
-  margin-bottom: 100px;
+  margin-bottom: 10px;
 }
 
 .about-page .testimonials-pagination {

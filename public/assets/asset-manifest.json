@@ -660,6 +660,13 @@
         "description": "Hero landing page background",
         "originalName": "landing-hero-bg-784ecf.png"
       },
+      "BG_HERO_LANDING_2": {
+        "id": "BG_HERO_LANDING_2",
+        "path": "/assets/backgrounds/landing-hero-bg-2-784ecf.png",
+        "category": "backgrounds",
+        "description": "Hero landing page background",
+        "originalName": "landing-hero-bg-784ecf.png"
+      },
       "BG_HERO_LANDING_NEW": {
         "id": "BG_HERO_LANDING_NEW",
         "path": "/assets/backgrounds/landing-hero-bg-new-784ecf.png",

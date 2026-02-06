@@ -17,12 +17,11 @@ function Hero() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
   const router = useRouter()
 
-  // Array of background images - add your new image path here when ready
+  // Array of background images - all three backgrounds for rotation
   const backgroundImages = [
     ASSETS.BG_HERO_LANDING,
+    getAsset('BG_HERO_LANDING_2') || ASSETS.BG_HERO_LANDING,
     getAsset('BG_HERO_LANDING_NEW') || ASSETS.BG_HERO_LANDING,
-    // Add your new minimalist living room image path here:
-    // '/assets/backgrounds/your-new-image.png'
   ].filter(Boolean) // Remove any undefined values
 
   // Recommended searches

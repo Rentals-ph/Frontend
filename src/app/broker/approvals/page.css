@@ -1,0 +1,192 @@
+@import '../broker-shared.css';
+
+/* ===================== */
+/* Approvals Table Card  */
+/* ===================== */
+
+.ba-table-card {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+  padding: 28px 32px 20px 32px;
+  margin-top: 8px;
+}
+
+.ba-table-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.ba-table-title {
+  font-size: 1.18rem;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.ba-filter-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #f8f9fb;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 8px 18px;
+  font-size: 0.95rem;
+  color: #64748b;
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+
+.ba-filter-btn:hover {
+  border-color: #bfc7d1;
+}
+
+/* Table */
+.ba-table-wrapper {
+  overflow-x: auto;
+}
+
+.ba-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 900px;
+}
+
+.ba-table thead th {
+  text-align: left;
+  padding: 12px 14px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  border-bottom: 1.5px solid #f1f5f9;
+  white-space: nowrap;
+}
+
+.ba-table tbody td {
+  padding: 14px 14px;
+  font-size: 0.97rem;
+  color: #334155;
+  border-bottom: 1px solid #f1f5f9;
+  vertical-align: middle;
+}
+
+.ba-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.ba-table tbody tr:hover {
+  background: #f8fafc;
+}
+
+/* Checkbox */
+.ba-th-check,
+.ba-td-check {
+  width: 44px;
+  text-align: center;
+}
+
+.ba-checkbox {
+  width: 18px;
+  height: 18px;
+  accent-color: #3b82f6;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+/* Column-specific */
+.ba-td-name {
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.ba-td-role {
+  color: #475569;
+}
+
+.ba-td-manager {
+  color: #475569;
+}
+
+.ba-dash {
+  color: #cbd5e1;
+  font-weight: 500;
+}
+
+.ba-td-completion {
+  font-weight: 500;
+  color: #334155;
+}
+
+.ba-td-theme {
+  color: #64748b;
+}
+
+/* Action Buttons */
+.ba-td-actions {
+  width: 180px;
+}
+
+.ba-actions-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ba-action-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-size: 1.05rem;
+  transition: opacity 0.15s, transform 0.12s;
+}
+
+.ba-action-btn:hover {
+  opacity: 0.85;
+  transform: scale(1.08);
+}
+
+.ba-action-btn.preview {
+  background: #dbeafe;
+  color: #3b82f6;
+}
+
+.ba-action-btn.approve {
+  background: #d1fae5;
+  color: #059669;
+}
+
+.ba-action-btn.warn {
+  background: #fef3c7;
+  color: #d97706;
+}
+
+.ba-action-btn.settings {
+  background: #f1f5f9;
+  color: #64748b;
+}
+
+/* ===================== */
+/* Responsive            */
+/* ===================== */
+
+@media (max-width: 900px) {
+  .ba-table-card {
+    padding: 18px 12px;
+  }
+}
+
+@media (max-width: 768px) {
+  .ba-table-card {
+    border-radius: 10px;
+    padding: 14px 6px;
+  }
+}

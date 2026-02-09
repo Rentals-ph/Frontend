@@ -11,8 +11,10 @@ import {
   FiArrowRight,
   FiCheck
 } from 'react-icons/fi'
+import { generatePropertyDescription, getFallbackDescription } from '../../../../utils/aiDescription'
 import '../AgentCreateListingCategory.css'
 import './page.css'
+import '../ai-generate.css'
 
 function ProgressRing({ percent }: { percent: number }) {
   const { radius, stroke, normalizedRadius, circumference, strokeDashoffset } = useMemo(() => {
@@ -85,6 +87,21 @@ export default function AgentCreateListingDetails() {
     setLotArea(data.lotArea)
   }, [data])
 
+  const [isGenerating, setIsGenerating] = useState(false)
+
+  const handleAiGenerate = async () => {
+    if (!data.category || !title) return
+    setIsGenerating(true)
+    try {
+      const result = await generatePropertyDescription(data.category, title)
+      setDescription(result)
+    } catch {
+      setDescription(getFallbackDescription(data.category, title))
+    } finally {
+      setIsGenerating(false)
+    }
+  }
+
   return (
     <div className="agent-dashboard">
       <AppSidebar/>
@@ -149,9 +166,21 @@ export default function AgentCreateListingDetails() {
           />
             </div>
             <div>
-          <label className="aclc-label" htmlFor="propertyDescription">
-            Property Description
-          </label>
+          <div className="ai-generate-row">
+            <label className="aclc-label" htmlFor="propertyDescription" style={{ marginBottom: 0 }}>
+              Property Description
+            </label>
+            <button
+              type="button"
+              className="ai-generate-btn"
+              disabled={!data.category || !title || isGenerating}
+              onClick={handleAiGenerate}
+              title={!data.category || !title ? 'Select a category and enter a title first' : 'Generate description with AI'}
+            >
+              {isGenerating ? <span className="ai-spinner" /> : <span className="ai-sparkle">✨</span>}
+              {isGenerating ? 'Generating...' : 'AI Generate'}
+            </button>
+          </div>
           <div className="acld-editor">
             <div className="acld-editor-toolbar" aria-hidden="true">
               <button className="acld-tool-btn" type="button">

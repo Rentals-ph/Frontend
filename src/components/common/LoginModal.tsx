@@ -99,6 +99,8 @@ function LoginModal({ isOpen, onClose, onRegisterClick }: LoginModalProps) {
         // Redirect based on role
         if (userRole === 'admin') {
           window.location.href = '/admin'
+        } else if (userRole === 'broker') {
+          window.location.href = '/broker'
         } else {
           window.location.href = '/agent'
         }

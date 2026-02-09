@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 
 interface ProtectedRouteProps {
   children: React.ReactNode
-  requiredRole: 'admin' | 'agent'
+  requiredRole: 'admin' | 'agent' | 'broker'
 }
 
 /**

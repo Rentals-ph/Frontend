@@ -252,110 +252,20 @@
   border-radius: 8px;
   overflow: hidden;
   position: relative;
+  border: 1px solid #E5E7EB;
 }
 
-.map-placeholder {
+.property-location-label {
+  font-family: 'Inter', sans-serif;
+  font-size: 15px;
+  color: #6b7280;
+  margin: 0 0 16px 0;
+}
+
+.property-map-iframe {
   width: 100%;
   height: 100%;
-  background: #e5e7eb;
-  position: relative;
-  background-image:
-    linear-gradient(90deg, #d1d5db 1px, transparent 1px),
-    linear-gradient(#d1d5db 1px, transparent 1px);
-  background-size: 20px 20px;
-}
-
-.map-markers {
-  position: relative;
-  width: 100%;
-  height: 100%;
-}
-
-.map-marker {
-  position: absolute;
-  transform: translate(-50%, -50%);
-}
-
-.marker-dot {
-  width: 12px;
-  height: 12px;
-  background: #205ED7;
-  border-radius: 50%;
-  border: 2px solid #ffffff;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  margin: 0 auto 4px;
-}
-
-.marker-label {
-  font-family: 'Inter', sans-serif;
-  font-size: 12px;
-  color: #111827;
-  background: #ffffff;
-  padding: 4px 8px;
-  border-radius: 4px;
-  white-space: nowrap;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.show-on-map-btn {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background: #205ED7;
-  color: #ffffff;
-  border: none;
-  padding: 12px 24px;
-  border-radius: 8px;
-  font-family: 'Inter', sans-serif;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  box-shadow: 0 4px 12px rgba(32, 94, 215, 0.3);
-  transition: all 0.3s ease;
-  z-index: 10;
-}
-
-.show-on-map-btn:hover {
-  background: #1a4db3;
-  transform: translate(-50%, -50%) translateY(-2px);
-  box-shadow: 0 6px 16px rgba(32, 94, 215, 0.4);
-}
-
-.map-controls {
-  position: absolute;
-  right: 12px;
-  top: 12px;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  z-index: 10;
-}
-
-.map-zoom-in,
-.map-zoom-out {
-  width: 32px;
-  height: 32px;
-  background: #ffffff;
-  border: 1px solid #e5e7eb;
-  border-radius: 4px;
-  font-family: 'Inter', sans-serif;
-  font-size: 18px;
-  font-weight: 600;
-  color: #374151;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  transition: all 0.2s ease;
-}
-
-.map-zoom-in:hover,
-.map-zoom-out:hover {
-  background: #f3f4f6;
-  border-color: #205ED7;
-  color: #205ED7;
+  border: 0;
 }
 
 /* Right Column */

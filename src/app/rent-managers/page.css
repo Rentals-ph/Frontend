@@ -294,6 +294,17 @@
   box-sizing: border-box;
 }
 
+.sticky-logo-link {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.sticky-logo {
+  height: 40px;
+  width: auto;
+}
+
 .sticky-search-filters .search-input-wrapper {
   position: relative;
   display: flex;
@@ -1003,6 +1014,10 @@
   .sticky-search-filters {
     flex-direction: column;
     gap: 12px;
+  }
+
+  .sticky-logo-link {
+    display: none;
   }
 
   .sticky-search-filters .search-input-wrapper {

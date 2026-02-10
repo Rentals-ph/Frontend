@@ -10,6 +10,7 @@
 
 import { getImageUrl, isStoragePath, StoragePaths } from './storage'
 import { ASSETS } from './assets'
+import { getApiBaseUrl } from '../config/api'
 
 export interface ImageResolverOptions {
   baseUrl?: string
@@ -44,7 +45,7 @@ export function resolveImageUrl(
     return imagePath
   }
 
-  // If it's a storage path, use getImageUrl
+  // If it's a storage path, use getImageUrl (which will use backend URL)
   if (isStoragePath(imagePath)) {
     return getImageUrl(imagePath, baseUrl)
   }
@@ -52,6 +53,25 @@ export function resolveImageUrl(
   // If it starts with /, it's a public path
   if (imagePath.startsWith('/')) {
     return baseUrl ? `${baseUrl}${imagePath}` : imagePath
+  }
+
+  // If it looks like a Laravel storage path (images/products/..., images/posts/..., etc.)
+  // but doesn't start with /storage/, prepend /storage/ and use backend URL
+  if (imagePath.match(/^images\/(products|posts|users|properties|agents|testimonials)\//)) {
+    const storagePath = `/storage/${imagePath}`
+    // For storage images, use backend URL (remove /api suffix if present)
+    const backendBaseUrl = typeof window !== 'undefined' 
+      ? getApiBaseUrl().replace('/api', '') 
+      : (baseUrl || 'http://localhost:8000')
+    return `${backendBaseUrl}${storagePath}`
+  }
+  
+  // If it's a /storage/ path, also use backend URL
+  if (imagePath.startsWith('/storage/')) {
+    const backendBaseUrl = typeof window !== 'undefined' 
+      ? getApiBaseUrl().replace('/api', '') 
+      : (baseUrl || 'http://localhost:8000')
+    return `${backendBaseUrl}${imagePath}`
   }
 
   // Otherwise, assume it's a relative path and prepend /

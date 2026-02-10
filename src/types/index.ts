@@ -15,6 +15,8 @@ export interface Property {
   amenities?: string[] | null
   furnishing?: string | null
   image: string | null
+  image_path?: string | null // Storage path for the image
+  image_url?: string | null // Full URL to the image (computed by backend)
   images?: string[] | null // Gallery images (array of storage paths)
   video_url?: string | null
   latitude?: string | null

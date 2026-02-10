@@ -4,7 +4,8 @@ import { useState, useRef, useEffect } from 'react'
 import AppSidebar from '../../../components/common/AppSidebar'
 import AgentHeader from '../../../components/agent/AgentHeader'
 import { ASSETS } from '@/utils/assets'
-import { pageBuilderApi } from '@/api'
+import { pageBuilderApi, propertiesApi, testimonialsApi } from '@/api'
+import type { Property, Testimonial } from '@/types'
 import { 
   FiSettings,
   FiUpload,
@@ -36,7 +37,7 @@ export default function PageBuilder() {
   const [showExperienceStats, setShowExperienceStats] = useState(false)
   const [showFeaturedListings, setShowFeaturedListings] = useState(true)
   const [showTestimonials, setShowTestimonials] = useState(true)
-  const [bio, setBio] = useState('This is my bio...')
+  const [bio, setBio] = useState('')
   const [activeTab, setActiveTab] = useState('profile')
   const [leftSidebarTab, setLeftSidebarTab] = useState('content')
   const [showFullPreview, setShowFullPreview] = useState(false)
@@ -56,11 +57,7 @@ export default function PageBuilder() {
   const [editingContactType, setEditingContactType] = useState<string | null>(null)
   
   // Experience stats state
-  const [experienceStats, setExperienceStats] = useState([
-    { label: 'Years of Experience', value: '5' },
-    { label: 'Properties Sold', value: '120' },
-    { label: 'Happy Clients', value: '98' }
-  ])
+  const [experienceStats, setExperienceStats] = useState<Array<{ label: string; value: string }>>([])
   const [showExperienceModal, setShowExperienceModal] = useState(false)
   const [editingStatIndex, setEditingStatIndex] = useState<number | null>(null)
   
@@ -81,25 +78,19 @@ export default function PageBuilder() {
   const [draggedSectionIndex, setDraggedSectionIndex] = useState<number | null>(null)
   
   // Property mode states
-  const [heroImage, setHeroImage] = useState('https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&h=600&fit=crop')
-  const [mainHeading, setMainHeading] = useState('Azure Residences')
-  const [tagline, setTagline] = useState('Luxury living redefined with stunning city views.')
+  const [heroImage, setHeroImage] = useState('')
+  const [mainHeading, setMainHeading] = useState('')
+  const [tagline, setTagline] = useState('')
   const [overallDarkness, setOverallDarkness] = useState(30)
-  const [propertyDescription, setPropertyDescription] = useState('Experience luxury living in the heart of the city. This stunning loft features floor-to-ceiling windows, premium appliances, and breathtaking views.')
-  const [propertyImages, setPropertyImages] = useState([
-    'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=400&h=300&fit=crop',
-    'https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?w=400&h=300&fit=crop',
-    'https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=400&h=300&fit=crop'
-  ])
-  const [profileCardName, setProfileCardName] = useState('John Anderson')
-  const [profileCardRole, setProfileCardRole] = useState('Property Agent')
-  const [profileCardBio, setProfileCardBio] = useState('Dedicated to bridging the gap between luxury and comfort, Angelo J. De Leon specializes in finding the perfect residential townhouses for families across Quezon City and Pasig.')
-  const [profileCardImage, setProfileCardImage] = useState('https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop')
+  const [propertyDescription, setPropertyDescription] = useState('')
+  const [propertyImages, setPropertyImages] = useState<string[]>([])
+  const [profileCardName, setProfileCardName] = useState('')
+  const [profileCardRole, setProfileCardRole] = useState('')
+  const [profileCardBio, setProfileCardBio] = useState('')
+  const [profileCardImage, setProfileCardImage] = useState('')
   
   // Additional property preview states
-  const [propertyPrice, setPropertyPrice] = useState('P1,200')
-  const [contactPhone, setContactPhone] = useState('+63 9988776655')
-  const [contactEmail, setContactEmail] = useState('john.anderson12@gmail.com')
+  const [propertyPrice, setPropertyPrice] = useState('')
   const [contactFormName, setContactFormName] = useState('')
   const [contactFormEmail, setContactFormEmail] = useState('')
   const [contactFormMessage, setContactFormMessage] = useState('')
@@ -128,6 +119,45 @@ export default function PageBuilder() {
   const [pageBuilderId, setPageBuilderId] = useState<number | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
+  const [isPublishing, setIsPublishing] = useState(false)
+  const [isPublished, setIsPublished] = useState(false)
+  const [pageUrl, setPageUrl] = useState<string | null>(null)
+  const [pageSlug, setPageSlug] = useState<string | null>(null)
+  const [showPageUrlModal, setShowPageUrlModal] = useState(false)
+  
+  // Featured listings and testimonials state
+  const [featuredListings, setFeaturedListings] = useState<Property[]>([])
+  const [availableProperties, setAvailableProperties] = useState<Property[]>([])
+  const [testimonials, setTestimonials] = useState<Testimonial[]>([])
+  const [availableTestimonials, setAvailableTestimonials] = useState<Testimonial[]>([])
+  const [loadingProperties, setLoadingProperties] = useState(false)
+  const [loadingTestimonials, setLoadingTestimonials] = useState(false)
+  
+  // Load available properties and testimonials
+  useEffect(() => {
+    const loadAvailableData = async () => {
+      try {
+        setLoadingProperties(true)
+        setLoadingTestimonials(true)
+        
+        // Get current user ID from auth (you may need to adjust this based on your auth setup)
+        // For now, we'll get all properties and filter client-side
+        const properties = await propertiesApi.getAll()
+        const propertiesArray = Array.isArray(properties) ? properties : (properties as any).data || []
+        setAvailableProperties(propertiesArray)
+        
+        const testimonialsData = await testimonialsApi.getAll()
+        setAvailableTestimonials(testimonialsData)
+      } catch (error) {
+        console.error('Error loading available data:', error)
+      } finally {
+        setLoadingProperties(false)
+        setLoadingTestimonials(false)
+      }
+    }
+    
+    loadAvailableData()
+  }, [])
   
   // Load page builder data on mount
   useEffect(() => {
@@ -136,9 +166,16 @@ export default function PageBuilder() {
         setIsLoading(true)
         const pageBuilders = await pageBuilderApi.getAll('agent', activeTab as 'profile' | 'property')
         
+        // Also load profile page builder data to sync with property page
+        const profilePageBuilders = await pageBuilderApi.getAll('agent', 'profile')
+        const profilePageData = profilePageBuilders.length > 0 ? profilePageBuilders[0] : null
+        
         if (pageBuilders.length > 0) {
           const pageData = pageBuilders[0]
           setPageBuilderId(pageData.id || null)
+          setIsPublished(pageData.is_published || false)
+          setPageUrl(pageData.page_url || null)
+          setPageSlug(pageData.page_slug || null)
           
           // Load profile data
           if (activeTab === 'profile' && pageData.page_type === 'profile') {
@@ -150,8 +187,22 @@ export default function PageBuilder() {
             if (pageData.show_featured_listings !== undefined) setShowFeaturedListings(pageData.show_featured_listings)
             if (pageData.show_testimonials !== undefined) setShowTestimonials(pageData.show_testimonials)
             if (pageData.profile_image) setProfileImage(pageData.profile_image)
-            if (pageData.contact_info) setContactInfo(pageData.contact_info)
+            if (pageData.contact_info) {
+              setContactInfo({
+                email: pageData.contact_info.email || '',
+                phone: pageData.contact_info.phone || '',
+                message: pageData.contact_info.message || '',
+                website: pageData.contact_info.website || ''
+              })
+            }
             if (pageData.experience_stats) setExperienceStats(pageData.experience_stats)
+            if (pageData.featured_listings) setFeaturedListings(pageData.featured_listings as Property[])
+            if (pageData.testimonials) setTestimonials(pageData.testimonials as Testimonial[])
+            // Load profile card fields - always load if they exist, even if empty
+            if (pageData.profile_card_name !== undefined) setProfileCardName(pageData.profile_card_name || '')
+            if (pageData.profile_card_role !== undefined) setProfileCardRole(pageData.profile_card_role || '')
+            if (pageData.profile_card_bio !== undefined) setProfileCardBio(pageData.profile_card_bio || '')
+            if (pageData.profile_card_image !== undefined) setProfileCardImage(pageData.profile_card_image || '')
           }
           
           // Load property data
@@ -163,16 +214,61 @@ export default function PageBuilder() {
             if (pageData.property_description) setPropertyDescription(pageData.property_description)
             if (pageData.property_images) setPropertyImages(pageData.property_images)
             if (pageData.property_price) setPropertyPrice(pageData.property_price)
-            if (pageData.contact_phone) setContactPhone(pageData.contact_phone)
-            if (pageData.contact_email) setContactEmail(pageData.contact_email)
-            if (pageData.profile_card_name) setProfileCardName(pageData.profile_card_name)
-            if (pageData.profile_card_role) setProfileCardRole(pageData.profile_card_role)
-            if (pageData.profile_card_bio) setProfileCardBio(pageData.profile_card_bio)
-            if (pageData.profile_card_image) setProfileCardImage(pageData.profile_card_image)
-            if (pageData.section_visibility) setSectionVisibility(pageData.section_visibility)
+            // Contact info is loaded from contact_info object above
+            if (pageData.section_visibility) {
+              setSectionVisibility({
+                hero: pageData.section_visibility.hero ?? false,
+                propertyDescription: pageData.section_visibility.propertyDescription ?? true,
+                propertyImages: pageData.section_visibility.propertyImages ?? true,
+                profileCard: pageData.section_visibility.profileCard ?? true
+              })
+            }
             if (pageData.layout_sections) setLayoutSections(pageData.layout_sections)
             if (pageData.selected_brand_color) setSelectedBrandColor(pageData.selected_brand_color)
             if (pageData.selected_corner_radius) setSelectedCornerRadius(pageData.selected_corner_radius)
+            
+            // Sync profile card with profile page builder data
+            if (profilePageData) {
+              // Use profile image for profile card image
+              if (profilePageData.profile_image) {
+                setProfileCardImage(profilePageData.profile_image)
+              }
+              // Use bio for profile card bio
+              if (profilePageData.bio) {
+                setProfileCardBio(profilePageData.bio)
+              }
+              // Use contact info for profile card
+              if (profilePageData.contact_info) {
+                setContactInfo(prev => ({ 
+                  ...prev, 
+                  email: profilePageData.contact_info.email || prev.email,
+                  phone: profilePageData.contact_info.phone || prev.phone
+                }))
+              }
+            } else {
+              // Fallback to property page data if profile page doesn't exist
+              if (pageData.profile_card_name !== undefined) setProfileCardName(pageData.profile_card_name || '')
+              if (pageData.profile_card_role !== undefined) setProfileCardRole(pageData.profile_card_role || '')
+              if (pageData.profile_card_bio !== undefined) setProfileCardBio(pageData.profile_card_bio || '')
+              if (pageData.profile_card_image !== undefined) setProfileCardImage(pageData.profile_card_image || '')
+            }
+          }
+        } else {
+          // If no property page exists, still load profile data for profile card
+          if (activeTab === 'property' && profilePageData) {
+            if (profilePageData.profile_image) {
+              setProfileCardImage(profilePageData.profile_image)
+            }
+            if (profilePageData.bio) {
+              setProfileCardBio(profilePageData.bio)
+            }
+            if (profilePageData.contact_info) {
+              setContactInfo(prev => ({ 
+                ...prev, 
+                email: profilePageData.contact_info.email || prev.email,
+                phone: profilePageData.contact_info.phone || prev.phone
+              }))
+            }
           }
         }
       } catch (error) {
@@ -294,27 +390,87 @@ export default function PageBuilder() {
   }
   
   // Featured listings management
+  const handleAddFeaturedListing = () => {
+    setEditingListingIndex(null)
+    setShowFeaturedListingsModal(true)
+  }
+  
   const handleEditFeaturedListing = (index: number) => {
     setEditingListingIndex(index)
     setShowFeaturedListingsModal(true)
   }
   
-  const handleSaveFeaturedListing = (listing: typeof featuredListings[0]) => {
-    // In a real app, this would update the featuredListings state
+  const handleSelectFeaturedListing = (property: Property) => {
+    if (editingListingIndex !== null) {
+      const updated = [...featuredListings]
+      updated[editingListingIndex] = property
+      setFeaturedListings(updated)
+    } else {
+      setFeaturedListings([...featuredListings, property])
+    }
     setShowFeaturedListingsModal(false)
     setEditingListingIndex(null)
   }
   
+  const handleRemoveFeaturedListing = (index: number) => {
+    setFeaturedListings(prev => prev.filter((_, i) => i !== index))
+  }
+  
   // Testimonials management
+  const handleAddTestimonial = () => {
+    setEditingTestimonialIndex(null)
+    setShowTestimonialsModal(true)
+  }
+  
   const handleEditTestimonial = (index: number) => {
     setEditingTestimonialIndex(index)
     setShowTestimonialsModal(true)
   }
   
-  const handleSaveTestimonial = (testimonial: typeof testimonials[0]) => {
-    // In a real app, this would update the testimonials state
+  const handleSaveTestimonial = (testimonial: Testimonial) => {
+    if (editingTestimonialIndex !== null) {
+      const updated = [...testimonials]
+      updated[editingTestimonialIndex] = testimonial
+      setTestimonials(updated)
+    } else {
+      setTestimonials([...testimonials, testimonial])
+    }
     setShowTestimonialsModal(false)
     setEditingTestimonialIndex(null)
+  }
+  
+  const handleDeleteTestimonial = (index: number) => {
+    setTestimonials(prev => prev.filter((_, i) => i !== index))
+  }
+  
+  // Contact form submission
+  const handleContactFormSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    try {
+      // In a real app, this would send to a contact/inquiry API
+      // For now, we'll just show an alert
+      if (!contactFormName || !contactFormEmail || !contactFormMessage) {
+        alert('Please fill in all fields')
+        return
+      }
+      
+      // TODO: Implement actual API call to submit inquiry
+      console.log('Contact form submission:', {
+        name: contactFormName,
+        email: contactFormEmail,
+        message: contactFormMessage,
+        pageId: pageBuilderId,
+        pageType: activeTab
+      })
+      
+      alert('Thank you for your inquiry! We will get back to you soon.')
+      setContactFormName('')
+      setContactFormEmail('')
+      setContactFormMessage('')
+    } catch (error) {
+      console.error('Error submitting contact form:', error)
+      alert('Failed to send inquiry. Please try again.')
+    }
   }
   
   // Remove property image
@@ -341,14 +497,14 @@ export default function PageBuilder() {
     setDraggedSectionIndex(null)
   }
   
-  // Save changes handler
+  // Save changes handler - sends all page customization as a single page_data object
   const handleSaveChanges = async () => {
     try {
       setIsSaving(true)
       
+      // Collect all page customization data into a single object
       const pageData = {
-        user_type: 'agent' as const,
-        page_type: activeTab as 'profile' | 'property',
+        // Profile mode fields
         selected_theme: selectedTheme,
         bio: bio,
         show_bio: showBio,
@@ -359,6 +515,10 @@ export default function PageBuilder() {
         profile_image: profileImage,
         contact_info: contactInfo,
         experience_stats: experienceStats,
+        featured_listings: featuredListings,
+        testimonials: testimonials,
+        
+        // Property mode fields
         hero_image: heroImage,
         main_heading: mainHeading,
         tagline: tagline,
@@ -366,35 +526,93 @@ export default function PageBuilder() {
         property_description: propertyDescription,
         property_images: propertyImages,
         property_price: propertyPrice,
-        contact_phone: contactPhone,
-        contact_email: contactEmail,
+        contact_phone: contactInfo.phone,
+        contact_email: contactInfo.email,
+        
+        // Profile card fields - always save the actual values from state
         profile_card_name: profileCardName,
         profile_card_role: profileCardRole,
         profile_card_bio: profileCardBio,
         profile_card_image: profileCardImage,
+        
+        // Layout and design fields
         section_visibility: sectionVisibility,
         layout_sections: layoutSections,
         selected_brand_color: selectedBrandColor,
         selected_corner_radius: selectedCornerRadius,
       }
       
+      // Send to backend with page_data structure
+      const savePayload = {
+        user_type: 'agent' as const,
+        page_type: activeTab as 'profile' | 'property',
+        page_data: pageData,
+      }
+      
       let savedData
       if (pageBuilderId) {
-        savedData = await pageBuilderApi.update(pageBuilderId, pageData)
+        savedData = await pageBuilderApi.update(pageBuilderId, savePayload)
       } else {
-        savedData = await pageBuilderApi.save(pageData)
+        savedData = await pageBuilderApi.save(savePayload)
         setPageBuilderId(savedData.id || null)
       }
       
-      alert('Changes saved successfully!')
+      // Update page URL and slug if available
       if (savedData.page_url) {
-        console.log('Page URL:', savedData.page_url)
+        setPageUrl(savedData.page_url)
       }
+      if (savedData.page_slug) {
+        setPageSlug(savedData.page_slug)
+      }
+      setIsPublished(savedData.is_published || false)
+      
+      alert('Changes saved successfully!')
     } catch (error: any) {
       console.error('Error saving page builder:', error)
       alert('Failed to save changes: ' + (error.response?.data?.message || error.message))
     } finally {
       setIsSaving(false)
+    }
+  }
+  
+  // Publish handler
+  const handlePublish = async () => {
+    if (!pageBuilderId) {
+      alert('Please save your page first before publishing.')
+      return
+    }
+    
+    try {
+      setIsPublishing(true)
+      const publishedData = await pageBuilderApi.publish(pageBuilderId, !isPublished)
+      
+      setIsPublished(publishedData.is_published || false)
+      if (publishedData.page_url) {
+        setPageUrl(publishedData.page_url)
+      }
+      if (publishedData.page_slug) {
+        setPageSlug(publishedData.page_slug)
+      }
+      
+      if (publishedData.is_published) {
+        setShowPageUrlModal(true)
+        alert('Page published successfully! Your page is now live and shareable.')
+      } else {
+        alert('Page unpublished successfully.')
+      }
+    } catch (error: any) {
+      console.error('Error publishing page:', error)
+      alert('Failed to publish page: ' + (error.response?.data?.message || error.message))
+    } finally {
+      setIsPublishing(false)
+    }
+  }
+  
+  // Copy page URL to clipboard
+  const handleCopyUrl = () => {
+    if (pageUrl) {
+      navigator.clipboard.writeText(pageUrl)
+      alert('Page URL copied to clipboard!')
     }
   }
   
@@ -419,49 +637,19 @@ export default function PageBuilder() {
     { id: 'blue', name: 'Blue', color: '#3B82F6' }
   ]
 
-  const featuredListings = [
-    {
-      id: 1,
-      image: 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=400&h=300&fit=crop',
-      price: '$1200',
-      title: 'Azure Residences - 2BR Corner S...',
-      category: 'Commercial Spaces',
-      date: 'Sat 05, 2024'
-    },
-    {
-      id: 2,
-      image: 'https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?w=400&h=300&fit=crop',
-      price: '$1500',
-      title: 'Modern Condo in Makati CBD',
-      category: 'Residential',
-      date: 'Sat 12, 2024'
-    },
-    {
-      id: 3,
-      image: 'https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=400&h=300&fit=crop',
-      price: '$1800',
-      title: 'Family House in Quezon City',
-      category: 'Residential',
-      date: 'Sat 19, 2024'
+  // Helper function to format property price
+  const formatPropertyPrice = (property: Property) => {
+    return `₱${property.price.toLocaleString()}${property.price_type ? `/${property.price_type}` : '/mo'}`
+  }
+  
+  // Helper function to format property date
+  const formatPropertyDate = (property: Property) => {
+    if (property.published_at) {
+      const date = new Date(property.published_at)
+      return date.toLocaleDateString('en-US', { weekday: 'short', day: '2-digit', month: 'short', year: 'numeric' })
     }
-  ]
-
-  const testimonials = [
-    {
-      id: 1,
-      name: 'Angelo J. De Leon',
-      avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop',
-      quote: 'Rental.ph is such a wonderful partner for helping me publish my properties online.',
-      rating: 5
-    },
-    {
-      id: 2,
-      name: 'Maria Santos',
-      avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop',
-      quote: 'Excellent service and great support throughout the rental process.',
-      rating: 5
-    }
-  ]
+    return 'Recently'
+  }
 
   return (
     <div className="agent-dashboard">
@@ -525,7 +713,7 @@ export default function PageBuilder() {
                   <div className="profile-upload-section">
                     <div className="profile-image-preview">
                       <img 
-                        src={ASSETS.PLACEHOLDER_PROFILE} 
+                        src={profileImage || ASSETS.PLACEHOLDER_PROFILE} 
                         alt="Profile"
                         onError={(e) => {
                           const target = e.target as HTMLImageElement;
@@ -553,6 +741,74 @@ export default function PageBuilder() {
                       placeholder="This is my bio..."
                       value={bio}
                       onChange={(e) => setBio(e.target.value)}
+                    />
+                  </div>
+                </div>
+
+                {/* Profile Card Section */}
+                <div className="builder-section">
+                  <h3 className="section-label">Profile Card</h3>
+                  <div style={{ 
+                    padding: '12px', 
+                    background: '#F0F9FF', 
+                    borderRadius: '8px', 
+                    marginBottom: '16px',
+                    fontSize: '14px',
+                    color: '#0369A1'
+                  }}>
+                    <strong>ℹ️ Note:</strong> Profile card uses the same image and bio from Profile section above. 
+                    You can customize the name and role separately.
+                  </div>
+                  <div className="profile-card-edit">
+                    <div className="profile-card-image-wrapper">
+                      <img 
+                        src={profileCardImage || profileImage || ASSETS.PLACEHOLDER_PROFILE} 
+                        alt="Profile Card" 
+                        className="profile-card-image"
+                        onError={(e) => {
+                          const target = e.target as HTMLImageElement;
+                          target.style.display = 'none';
+                        }}
+                      />
+                      <div className="profile-card-upload-overlay">
+                        <input
+                          type="file"
+                          ref={profileCardImageInputRef}
+                          accept="image/*"
+                          style={{ display: 'none' }}
+                          onChange={(e) => handleImageInputChange(e, 'profileCard')}
+                        />
+                        <button 
+                          className="profile-card-upload-btn"
+                          onClick={() => profileCardImageInputRef.current?.click()}
+                        >
+                          <FiUpload />
+                        </button>
+                      </div>
+                    </div>
+                    <div className="profile-card-info">
+                      <input
+                        type="text"
+                        className="profile-card-name-input"
+                        placeholder="Your name"
+                        value={profileCardName}
+                        onChange={(e) => setProfileCardName(e.target.value)}
+                      />
+                      <input
+                        type="text"
+                        className="profile-card-role-input"
+                        placeholder="Property Agent"
+                        value={profileCardRole}
+                        onChange={(e) => setProfileCardRole(e.target.value)}
+                        style={{ marginTop: '8px' }}
+                      />
+                    </div>
+                    <textarea
+                      className="profile-card-bio-textarea"
+                      placeholder="Your bio (uses Profile bio if empty)..."
+                      value={profileCardBio}
+                      onChange={(e) => setProfileCardBio(e.target.value)}
+                      style={{ marginTop: '8px', minHeight: '80px' }}
                     />
                   </div>
                 </div>
@@ -662,57 +918,59 @@ export default function PageBuilder() {
                       </label>
                     </div>
 
-                    <div className="toggle-item">
-                      <div className="toggle-label-group">
-                        <span className="toggle-label">Featured Listings</span>
-                        <span 
-                          className="toggle-action"
-                          onClick={() => setShowFeaturedListingsModal(true)}
-                          style={{ cursor: 'pointer' }}
-                        >
-                          Edit
-                        </span>
+                      <div className="toggle-item">
+                        <div className="toggle-label-group">
+                          <span className="toggle-label">Featured Listings</span>
+                          <span 
+                            className="toggle-action"
+                            onClick={handleAddFeaturedListing}
+                            style={{ cursor: 'pointer' }}
+                          >
+                            {featuredListings.length > 0 ? 'Edit' : 'Add'}
+                          </span>
+                        </div>
+                        <label className="toggle-switch">
+                          <input
+                            type="checkbox"
+                            checked={showFeaturedListings}
+                            onChange={(e) => setShowFeaturedListings(e.target.checked)}
+                          />
+                          <span className="toggle-slider"></span>
+                        </label>
+                        {featuredListings.length > 0 && (
+                          <div style={{ marginTop: '8px', fontSize: '12px', color: '#6B7280' }}>
+                            {featuredListings.length} listing{featuredListings.length !== 1 ? 's' : ''} selected
+                          </div>
+                        )}
                       </div>
-                      <label className="toggle-switch">
-                        <input
-                          type="checkbox"
-                          checked={showFeaturedListings}
-                          onChange={(e) => setShowFeaturedListings(e.target.checked)}
-                        />
-                        <span className="toggle-slider"></span>
-                      </label>
-                    </div>
 
-                    <div className="toggle-item">
-                      <div className="toggle-label-group">
-                        <span className="toggle-label">Client Testimonials</span>
-                        <span 
-                          className="toggle-action"
-                          onClick={() => setShowTestimonialsModal(true)}
-                          style={{ cursor: 'pointer' }}
-                        >
-                          Edit
-                        </span>
+                      <div className="toggle-item">
+                        <div className="toggle-label-group">
+                          <span className="toggle-label">Client Testimonials</span>
+                          <span 
+                            className="toggle-action"
+                            onClick={handleAddTestimonial}
+                            style={{ cursor: 'pointer' }}
+                          >
+                            {testimonials.length > 0 ? 'Edit' : 'Add'}
+                          </span>
+                        </div>
+                        <label className="toggle-switch">
+                          <input
+                            type="checkbox"
+                            checked={showTestimonials}
+                            onChange={(e) => setShowTestimonials(e.target.checked)}
+                          />
+                          <span className="toggle-slider"></span>
+                        </label>
+                        {testimonials.length > 0 && (
+                          <div style={{ marginTop: '8px', fontSize: '12px', color: '#6B7280' }}>
+                            {testimonials.length} testimonial{testimonials.length !== 1 ? 's' : ''} added
+                          </div>
+                        )}
                       </div>
-                      <label className="toggle-switch">
-                        <input
-                          type="checkbox"
-                          checked={showTestimonials}
-                          onChange={(e) => setShowTestimonials(e.target.checked)}
-                        />
-                        <span className="toggle-slider"></span>
-                      </label>
-                    </div>
                   </div>
                 </div>
-
-                <button 
-                  className="save-changes-button" 
-                  onClick={handleSaveChanges}
-                  disabled={isSaving || isLoading}
-                >
-                  {isSaving ? 'Saving...' : 'Save Changes'}
-                </button>
               </>
             ) : (
               <>
@@ -774,17 +1032,29 @@ export default function PageBuilder() {
                           Upload Custom Photo
                         </button>
                       </div>
-                      <div className="hero-input-group">
-                        <label className="hero-input-label">Main Heading</label>
-                        <input
-                          type="text"
-                          className="hero-input"
-                          placeholder="Azure Residences"
-                          value={mainHeading}
-                          onChange={(e) => setMainHeading(e.target.value)}
-                        />
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '16px' }}>
+                        <div className="hero-input-group" style={{ marginBottom: 0 }}>
+                          <label className="hero-input-label">Main Heading</label>
+                          <input
+                            type="text"
+                            className="hero-input"
+                            placeholder="Azure Residences"
+                            value={mainHeading}
+                            onChange={(e) => setMainHeading(e.target.value)}
+                          />
+                        </div>
+                        <div className="hero-input-group" style={{ marginBottom: 0 }}>
+                          <label className="hero-input-label">Price</label>
+                          <input
+                            type="text"
+                            className="hero-input"
+                            placeholder="P1,200"
+                            value={propertyPrice}
+                            onChange={(e) => setPropertyPrice(e.target.value)}
+                          />
+                        </div>
                       </div>
-                      <div className="hero-input-group">
+                      <div className="hero-input-group" style={{ marginBottom: '16px' }}>
                         <label className="hero-input-label">Tagline</label>
                         <input
                           type="text"
@@ -794,7 +1064,7 @@ export default function PageBuilder() {
                           onChange={(e) => setTagline(e.target.value)}
                         />
                       </div>
-                      <div className="hero-input-group">
+                      <div className="hero-input-group" style={{ marginBottom: 0 }}>
                         <label className="hero-input-label">Overall Darkness</label>
                         <div className="darkness-slider-container">
                           <input
@@ -807,16 +1077,6 @@ export default function PageBuilder() {
                           />
                           <span className="darkness-value">{overallDarkness}%</span>
                         </div>
-                      </div>
-                      <div className="hero-input-group">
-                        <label className="hero-input-label">Price</label>
-                        <input
-                          type="text"
-                          className="hero-input"
-                          placeholder="P1,200"
-                          value={propertyPrice}
-                          onChange={(e) => setPropertyPrice(e.target.value)}
-                        />
                       </div>
                     </div>
 
@@ -911,29 +1171,48 @@ export default function PageBuilder() {
                       <div className="property-section-header">
                         <h3 className="property-section-title">Contact Information</h3>
                       </div>
-                      <div className="hero-input-group">
-                        <label className="hero-input-label">Phone Number</label>
-                        <input
-                          type="text"
-                          className="hero-input"
-                          placeholder="+63 9988776655"
-                          value={contactPhone}
-                          onChange={(e) => setContactPhone(e.target.value)}
-                        />
+                      <div style={{ 
+                        padding: '12px', 
+                        background: '#F0F9FF', 
+                        borderRadius: '8px', 
+                        marginBottom: '16px',
+                        fontSize: '14px',
+                        color: '#0369A1'
+                      }}>
+                        <strong>ℹ️ Note:</strong> Contact information is synced with your Profile page builder. 
+                        Update your contact details in the Profile tab.
                       </div>
-                      <div className="hero-input-group">
-                        <label className="hero-input-label">Email Address</label>
-                        <input
-                          type="email"
-                          className="hero-input"
-                          placeholder="john.anderson12@gmail.com"
-                          value={contactEmail}
-                          onChange={(e) => setContactEmail(e.target.value)}
-                        />
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                        <div className="hero-input-group" style={{ marginBottom: 0 }}>
+                          <label className="hero-input-label">Phone Number</label>
+                          <div style={{ 
+                            padding: '10px 12px', 
+                            border: '1px solid #E5E7EB', 
+                            borderRadius: '8px',
+                            background: '#F9FAFB',
+                            color: '#6B7280',
+                            fontSize: '14px'
+                          }}>
+                            {contactInfo.phone || 'Not set - Edit in Profile tab'}
+                          </div>
+                        </div>
+                        <div className="hero-input-group" style={{ marginBottom: 0 }}>
+                          <label className="hero-input-label">Email Address</label>
+                          <div style={{ 
+                            padding: '10px 12px', 
+                            border: '1px solid #E5E7EB', 
+                            borderRadius: '8px',
+                            background: '#F9FAFB',
+                            color: '#6B7280',
+                            fontSize: '14px'
+                          }}>
+                            {contactInfo.email || 'Not set - Edit in Profile tab'}
+                          </div>
+                        </div>
                       </div>
                     </div>
 
-                    {/* Profile Card */}
+                    {/* Profile Card - Synced with Profile Page Builder */}
                     <div className="property-section">
                       <div className="property-section-header">
                         <h3 className="property-section-title">Profile Card</h3>
@@ -949,43 +1228,56 @@ export default function PageBuilder() {
                           )}
                         </button>
                       </div>
+                      <div style={{ 
+                        padding: '12px', 
+                        background: '#F0F9FF', 
+                        borderRadius: '8px', 
+                        marginBottom: '16px',
+                        fontSize: '14px',
+                        color: '#0369A1'
+                      }}>
+                        <strong>ℹ️ Note:</strong> Profile card automatically syncs with your Profile page builder. 
+                        Update your profile image, bio, and contact info in the Profile tab to see changes here.
+                      </div>
                       <div className="profile-card-edit">
                         <div className="profile-card-image-wrapper">
-                          <img src={profileCardImage} alt="Profile" className="profile-card-image" />
-                          <input
-                            type="file"
-                            ref={profileCardImageInputRef}
-                            accept="image/*"
-                            style={{ display: 'none' }}
-                            onChange={(e) => handleImageInputChange(e, 'profileCard')}
-                          />
-                          <button 
-                            className="profile-card-upload-overlay"
-                            onClick={() => profileCardImageInputRef.current?.click()}
-                          >
-                            <FiUpload />
-                          </button>
+                          <img src={profileImage || profileCardImage} alt="Profile" className="profile-card-image" />
                         </div>
                         <div className="profile-card-info">
-                          <input
-                            type="text"
-                            className="profile-card-name-input"
-                            value={profileCardName}
-                            onChange={(e) => setProfileCardName(e.target.value)}
-                          />
-                          <input
-                            type="text"
-                            className="profile-card-role-input"
-                            value={profileCardRole}
-                            onChange={(e) => setProfileCardRole(e.target.value)}
-                          />
+                          <div className="profile-card-name-input" style={{ 
+                            padding: '12px', 
+                            border: '1px solid #E5E7EB', 
+                            borderRadius: '6px',
+                            background: '#F9FAFB',
+                            color: '#6B7280',
+                            cursor: 'not-allowed'
+                          }}>
+                            {profileCardName || 'Your name from Profile page'}
+                          </div>
+                          <div className="profile-card-role-input" style={{ 
+                            padding: '12px', 
+                            border: '1px solid #E5E7EB', 
+                            borderRadius: '6px',
+                            background: '#F9FAFB',
+                            color: '#6B7280',
+                            cursor: 'not-allowed',
+                            marginTop: '8px'
+                          }}>
+                            {profileCardRole || 'Property Agent'}
+                          </div>
                         </div>
-                        <textarea
-                          className="profile-card-bio-textarea"
-                          value={profileCardBio}
-                          onChange={(e) => setProfileCardBio(e.target.value)}
-                          rows={3}
-                        />
+                        <div className="profile-card-bio-textarea" style={{ 
+                          padding: '12px', 
+                          border: '1px solid #E5E7EB', 
+                          borderRadius: '6px',
+                          background: '#F9FAFB',
+                          color: '#6B7280',
+                          cursor: 'not-allowed',
+                          marginTop: '8px',
+                          minHeight: '80px'
+                        }}>
+                          {bio || profileCardBio || 'Your bio from Profile page'}
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -1101,6 +1393,79 @@ export default function PageBuilder() {
                     </div>
                   </div>
                 )}
+                
+                {/* Save and Publish Buttons for Property Mode */}
+                <div style={{ marginTop: '24px', display: 'flex', flexDirection: 'column', gap: '12px', padding: '20px', borderTop: '1px solid #E5E7EB' }}>
+                  <button 
+                    className="save-changes-button" 
+                    onClick={handleSaveChanges}
+                    disabled={isSaving || isLoading}
+                  >
+                    {isSaving ? 'Saving...' : 'Save Changes'}
+                  </button>
+                  
+                  {pageBuilderId && (
+                    <>
+                      <button 
+                        className="save-changes-button" 
+                        onClick={handlePublish}
+                        disabled={isPublishing || isLoading}
+                        style={{ 
+                          background: isPublished ? '#10B981' : '#3B82F6',
+                          opacity: (isPublishing || isLoading) ? 0.6 : 1
+                        }}
+                      >
+                        {isPublishing ? 'Publishing...' : isPublished ? 'Unpublish Page' : 'Publish Page'}
+                      </button>
+                      
+                      {isPublished && pageUrl && (
+                        <div style={{ 
+                          padding: '12px', 
+                          background: '#F3F4F6', 
+                          borderRadius: '8px',
+                          fontSize: '14px'
+                        }}>
+                          <div style={{ marginBottom: '8px', fontWeight: '600', color: '#111827' }}>
+                            Your Page URL:
+                          </div>
+                          <div style={{ 
+                            display: 'flex', 
+                            gap: '8px', 
+                            alignItems: 'center',
+                            wordBreak: 'break-all'
+                          }}>
+                            <a 
+                              href={pageUrl} 
+                              target="_blank" 
+                              rel="noopener noreferrer"
+                              style={{ 
+                                color: '#3B82F6', 
+                                textDecoration: 'none',
+                                flex: 1
+                              }}
+                            >
+                              {pageUrl}
+                            </a>
+                            <button
+                              onClick={handleCopyUrl}
+                              style={{
+                                padding: '6px 12px',
+                                background: '#3B82F6',
+                                color: 'white',
+                                border: 'none',
+                                borderRadius: '6px',
+                                cursor: 'pointer',
+                                fontSize: '12px'
+                              }}
+                            >
+                              Copy
+                            </button>
+                          </div>
+                        </div>
+                      )}
+                    </>
+                  )}
+                </div>
               </>
             )}
           </div>
@@ -1133,7 +1498,7 @@ export default function PageBuilder() {
                         <div className="preview-profile-image-wrapper">
                           <img 
                             src={profileImage || ASSETS.PLACEHOLDER_PROFILE} 
-                            alt="John Anderson"
+                            alt={profileCardName || 'Profile'}
                             className="preview-profile-image"
                             onError={(e) => {
                               const target = e.target as HTMLImageElement;
@@ -1143,8 +1508,8 @@ export default function PageBuilder() {
                           <div className="preview-profile-fallback">JA</div>
                         </div>
                         <div className="preview-profile-info">
-                          <h2 className="preview-name">John Anderson</h2>
-                          {showBio && <p className="preview-tagline">{bio}</p>}
+                          <h2 className="preview-name">{profileCardName || 'Your Name'}</h2>
+                          {showBio && <p className="preview-tagline">{bio || 'Your bio will appear here...'}</p>}
                           {showContactNumber && (
                             <div className="preview-contact-icons">
                               {contactInfo.email && (
@@ -1183,7 +1548,7 @@ export default function PageBuilder() {
                       </div>
                     </div>
 
-                    {showFeaturedListings && (
+                    {showFeaturedListings && featuredListings.length > 0 && (
                       <div className="preview-featured-section">
                         <h3 className="preview-section-title">Featured Listings</h3>
                         <div className="preview-listings-scroll">
@@ -1194,19 +1559,19 @@ export default function PageBuilder() {
                                 <span>Featured</span>
                               </div>
                               <div className="listing-image-wrapper">
-                                <img src={listing.image} alt={listing.title} />
+                                <img src={listing.image || ASSETS.PLACEHOLDER_PROPERTY} alt={listing.title} />
                               </div>
                               <div className="listing-info">
                                 <div className="listing-info-header">
-                                  <div className="listing-price">{listing.price}/Month</div>
+                                  <div className="listing-price">{formatPropertyPrice(listing)}</div>
                                   <button className="listing-heart" aria-label="Favorite">
                                     <FiHeart />
                                   </button>
                                 </div>
                                 <div className="listing-title">{listing.title}</div>
-                                <div className="listing-category">{listing.category}</div>
+                                <div className="listing-category">{listing.type}</div>
                                 <div className="listing-info-footer">
-                                  <div className="listing-date">{listing.date}</div>
+                                  <div className="listing-date">{formatPropertyDate(listing)}</div>
                                   <div className="listing-view-count">
                                     <span>1</span>
                                   </div>
@@ -1218,7 +1583,7 @@ export default function PageBuilder() {
                       </div>
                     )}
 
-                    {showTestimonials && (
+                    {showTestimonials && testimonials.length > 0 && (
                       <div className="preview-testimonials-section">
                         <h3 className="preview-section-title">Client Testimonials</h3>
                         <div className="testimonials-grid">
@@ -1226,7 +1591,7 @@ export default function PageBuilder() {
                             <div key={testimonial.id} className="testimonial-card">
                               <div className="testimonial-header">
                                 <img 
-                                  src={testimonial.avatar} 
+                                  src={testimonial.avatar || ASSETS.PLACEHOLDER_PROFILE} 
                                   alt={testimonial.name}
                                   className="testimonial-avatar"
                                   onError={(e) => {
@@ -1239,12 +1604,12 @@ export default function PageBuilder() {
                                 </div>
                                 <div className="testimonial-name">{testimonial.name}</div>
                               </div>
-                              <p className="testimonial-quote">"{testimonial.quote}"</p>
-                              <div className="testimonial-rating">
-                                {[...Array(testimonial.rating)].map((_, i) => (
-                                  <FiStar key={i} className="rating-star" />
-                                ))}
-                              </div>
+                              <p className="testimonial-quote">"{testimonial.content}"</p>
+                              {testimonial.role && (
+                                <div style={{ fontSize: '12px', color: '#6B7280', marginTop: '8px' }}>
+                                  {testimonial.role}
+                                </div>
+                              )}
                             </div>
                           ))}
                         </div>
@@ -1266,7 +1631,8 @@ export default function PageBuilder() {
                               <div 
                                 className="property-hero-image"
                                 style={{
-                                  backgroundImage: `url(${heroImage})`,
+                                  backgroundImage: heroImage ? `url(${heroImage})` : 'none',
+                                  backgroundColor: heroImage ? 'transparent' : '#E5E7EB',
                                   backgroundSize: 'cover',
                                   backgroundPosition: 'center',
                                   position: 'relative',
@@ -1274,10 +1640,10 @@ export default function PageBuilder() {
                                 }}
                               >
                                 <div className="property-hero-overlay">
-                                  <h1 className="property-hero-title">{mainHeading}</h1>
-                                  <p className="property-hero-tagline">{tagline}</p>
+                                  <h1 className="property-hero-title">{mainHeading || 'Property Title'}</h1>
+                                  <p className="property-hero-tagline">{tagline || 'Property tagline will appear here...'}</p>
                                   <button className="property-hero-price-btn">
-                                    Starts at {propertyPrice} /mo
+                                    Starts at {propertyPrice || 'Price'} /mo
                                   </button>
                                 </div>
                               </div>
@@ -1288,7 +1654,7 @@ export default function PageBuilder() {
                           return (
                             <div key={section.id} className="property-about-section">
                               <h2 className="property-section-heading">About</h2>
-                              <p className="property-about-text">{propertyDescription}</p>
+                              <p className="property-about-text">{propertyDescription || 'Property description will appear here...'}</p>
                             </div>
                           )
                         
@@ -1297,15 +1663,19 @@ export default function PageBuilder() {
                             <div key={section.id} className="property-inside-section">
                               <h2 className="property-section-heading">What's Inside?</h2>
                               <div className="property-inside-images">
-                                {propertyImages.map((image, index) => (
-                                  <div 
-                                    key={index} 
-                                    className="property-inside-image-item"
-                                    style={{ borderRadius: getCornerRadiusClass() }}
-                                  >
-                                    <img src={image} alt={`Interior ${index + 1}`} />
-                                  </div>
-                                ))}
+                                {propertyImages.length > 0 ? (
+                                  propertyImages.map((image, index) => (
+                                    <div 
+                                      key={index} 
+                                      className="property-inside-image-item"
+                                      style={{ borderRadius: getCornerRadiusClass() }}
+                                    >
+                                      <img src={image} alt={`Interior ${index + 1}`} />
+                                    </div>
+                                  ))
+                                ) : (
+                                  <p style={{ color: '#6B7280', fontStyle: 'italic' }}>Property images will appear here...</p>
+                                )}
                               </div>
                             </div>
                           )
@@ -1325,25 +1695,33 @@ export default function PageBuilder() {
                             >
                               <div className="property-agent-content">
                                 <div className="property-agent-image-wrapper">
-                                  <img src={profileCardImage} alt={profileCardName} className="property-agent-image" />
+                                  <img src={profileImage || profileCardImage} alt={profileCardName || 'Agent'} className="property-agent-image" />
                                 </div>
                                 <div className="property-agent-info">
-                                  <h3 className="property-agent-name">{profileCardName}</h3>
-                                  <p className="property-agent-role">{profileCardRole}</p>
-                                  <p className="property-agent-quote">{profileCardBio}</p>
+                                  <h3 className="property-agent-name">{profileCardName || 'Your Name'}</h3>
+                                  <p className="property-agent-role">{profileCardRole || 'Property Agent'}</p>
+                                  <p className="property-agent-quote">{bio || profileCardBio || 'Your bio from Profile page'}</p>
                                   <div className="property-agent-icons">
-                                    <button className="property-agent-icon">
-                                      <FiMail />
-                                    </button>
-                                    <button className="property-agent-icon">
-                                      <FiPhone />
-                                    </button>
-                                    <button className="property-agent-icon">
-                                      <FiMessageCircle />
-                                    </button>
-                                    <button className="property-agent-icon">
-                                      <FiGlobe />
-                                    </button>
+                                    {contactInfo.email && (
+                                      <a href={`mailto:${contactInfo.email}`} className="property-agent-icon">
+                                        <FiMail />
+                                      </a>
+                                    )}
+                                    {contactInfo.phone && (
+                                      <a href={`tel:${contactInfo.phone}`} className="property-agent-icon">
+                                        <FiPhone />
+                                      </a>
+                                    )}
+                                    {contactInfo.message && (
+                                      <a href={contactInfo.message} className="property-agent-icon" target="_blank" rel="noopener noreferrer">
+                                        <FiMessageCircle />
+                                      </a>
+                                    )}
+                                    {contactInfo.website && (
+                                      <a href={contactInfo.website} className="property-agent-icon" target="_blank" rel="noopener noreferrer">
+                                        <FiGlobe />
+                                      </a>
+                                    )}
                                   </div>
                                 </div>
                               </div>
@@ -1363,16 +1741,16 @@ export default function PageBuilder() {
                         <div className="property-contact-info">
                           <div className="property-contact-item">
                             <FiPhone className="property-contact-icon" />
-                            <span>{contactPhone}</span>
+                            <span>{contactInfo.phone || 'Phone number'}</span>
                           </div>
                           <div className="property-contact-item">
                             <FiMail className="property-contact-icon" />
-                            <span>{contactEmail}</span>
+                            <span>{contactInfo.email || 'Email address'}</span>
                           </div>
                         </div>
                       </div>
                       <div className="property-contact-form">
-                        <h3 className="property-form-title">Contact {profileCardName}</h3>
+                        <h3 className="property-form-title">Contact {profileCardName || 'Agent'}</h3>
                         <input
                           type="text"
                           className="property-form-input"
@@ -1394,7 +1772,11 @@ export default function PageBuilder() {
                           onChange={(e) => setContactFormMessage(e.target.value)}
                           rows={4}
                         />
-                        <button className="property-form-submit-btn">
+                        <button 
+                          className="property-form-submit-btn"
+                          onClick={handleContactFormSubmit}
+                          type="submit"
+                        >
                           <span>Send Inquiry</span>
                           <FiMessageCircle />
                         </button>
@@ -1462,24 +1844,112 @@ export default function PageBuilder() {
       {/* Featured Listings Modal */}
       {showFeaturedListingsModal && (
         <div className="modal-overlay" onClick={() => setShowFeaturedListingsModal(false)}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '600px' }}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '800px', maxHeight: '80vh', overflow: 'auto' }}>
             <div className="modal-header">
-              <h3>Edit Featured Listings</h3>
+              <h3>{editingListingIndex !== null ? 'Edit' : 'Add'} Featured Listing</h3>
               <button className="modal-close" onClick={() => setShowFeaturedListingsModal(false)}>
                 <FiX />
               </button>
             </div>
             <div className="modal-body">
-              <p style={{ color: '#6B7280', marginBottom: '16px' }}>
-                Featured listings management will be available in the full version.
-              </p>
-              <button 
-                className="save-changes-button"
-                onClick={() => setShowFeaturedListingsModal(false)}
-                style={{ width: '100%' }}
-              >
-                Close
-              </button>
+              {loadingProperties ? (
+                <p style={{ color: '#6B7280', textAlign: 'center', padding: '20px' }}>Loading properties...</p>
+              ) : availableProperties.length === 0 ? (
+                <p style={{ color: '#6B7280', textAlign: 'center', padding: '20px' }}>No properties available. Please create properties first.</p>
+              ) : (
+                <>
+                  <p style={{ color: '#6B7280', marginBottom: '16px' }}>
+                    Select a property to feature on your page:
+                  </p>
+                  <div style={{ display: 'grid', gap: '12px', maxHeight: '400px', overflowY: 'auto' }}>
+                    {availableProperties.map((property) => (
+                      <div
+                        key={property.id}
+                        onClick={() => handleSelectFeaturedListing(property)}
+                        style={{
+                          padding: '12px',
+                          border: '1px solid #E5E7EB',
+                          borderRadius: '8px',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          gap: '12px',
+                          alignItems: 'center',
+                          transition: 'all 0.2s'
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.borderColor = '#3B82F6'
+                          e.currentTarget.style.background = '#F3F4F6'
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.borderColor = '#E5E7EB'
+                          e.currentTarget.style.background = 'white'
+                        }}
+                      >
+                        <img 
+                          src={property.image || ASSETS.PLACEHOLDER_PROPERTY} 
+                          alt={property.title}
+                          style={{ width: '80px', height: '80px', objectFit: 'cover', borderRadius: '6px' }}
+                        />
+                        <div style={{ flex: 1 }}>
+                          <div style={{ fontWeight: '600', marginBottom: '4px' }}>{property.title}</div>
+                          <div style={{ fontSize: '14px', color: '#6B7280' }}>{property.location}</div>
+                          <div style={{ fontSize: '14px', color: '#3B82F6', marginTop: '4px' }}>
+                            ₱{property.price.toLocaleString()}{property.price_type ? `/${property.price_type}` : '/mo'}
+                          </div>
+                        </div>
+                        {featuredListings.some(l => l.id === property.id) && (
+                          <FiCheck style={{ color: '#10B981', fontSize: '20px' }} />
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                  {featuredListings.length > 0 && (
+                    <div style={{ marginTop: '20px', paddingTop: '20px', borderTop: '1px solid #E5E7EB' }}>
+                      <h4 style={{ marginBottom: '12px', fontSize: '16px', fontWeight: '600' }}>Selected Listings:</h4>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                        {featuredListings.map((listing, index) => (
+                          <div
+                            key={listing.id}
+                            style={{
+                              padding: '10px',
+                              background: '#F3F4F6',
+                              borderRadius: '6px',
+                              display: 'flex',
+                              justifyContent: 'space-between',
+                              alignItems: 'center'
+                            }}
+                          >
+                            <span style={{ fontSize: '14px' }}>{listing.title}</span>
+                            <button
+                              onClick={() => handleRemoveFeaturedListing(index)}
+                              style={{
+                                padding: '4px 8px',
+                                background: '#EF4444',
+                                color: 'white',
+                                border: 'none',
+                                borderRadius: '4px',
+                                cursor: 'pointer',
+                                fontSize: '12px'
+                              }}
+                            >
+                              Remove
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  <div style={{ display: 'flex', gap: '12px', marginTop: '20px' }}>
+                    <button 
+                      className="save-changes-button"
+                      onClick={() => setShowFeaturedListingsModal(false)}
+                      style={{ flex: 1 }}
+                    >
+                      Done
+                    </button>
+                  </div>
+                </>
+              )}
             </div>
           </div>
         </div>
@@ -1488,24 +1958,167 @@ export default function PageBuilder() {
       {/* Testimonials Modal */}
       {showTestimonialsModal && (
         <div className="modal-overlay" onClick={() => setShowTestimonialsModal(false)}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '600px' }}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '700px' }}>
             <div className="modal-header">
-              <h3>Edit Testimonials</h3>
+              <h3>{editingTestimonialIndex !== null ? 'Edit' : 'Add'} Testimonial</h3>
               <button className="modal-close" onClick={() => setShowTestimonialsModal(false)}>
                 <FiX />
               </button>
             </div>
             <div className="modal-body">
-              <p style={{ color: '#6B7280', marginBottom: '16px' }}>
-                Testimonials management will be available in the full version.
-              </p>
-              <button 
-                className="save-changes-button"
-                onClick={() => setShowTestimonialsModal(false)}
-                style={{ width: '100%' }}
-              >
-                Close
+              {testimonials.length > 0 && (
+                <div style={{ marginBottom: '20px', paddingBottom: '20px', borderBottom: '1px solid #E5E7EB' }}>
+                  <h4 style={{ marginBottom: '12px', fontSize: '16px', fontWeight: '600' }}>Current Testimonials:</h4>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    {testimonials.map((testimonial, index) => (
+                      <div
+                        key={testimonial.id}
+                        style={{
+                          padding: '12px',
+                          background: '#F3F4F6',
+                          borderRadius: '6px',
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'center'
+                        }}
+                      >
+                        <div style={{ flex: 1 }}>
+                          <div style={{ fontWeight: '600', marginBottom: '4px' }}>{testimonial.name}</div>
+                          <div style={{ fontSize: '12px', color: '#6B7280' }}>{testimonial.role}</div>
+                          <div style={{ fontSize: '12px', fontStyle: 'italic', marginTop: '4px' }}>
+                            "{testimonial.content.substring(0, 50)}..."
+                          </div>
+                        </div>
+                        <div style={{ display: 'flex', gap: '8px' }}>
+                          <button
+                            onClick={() => {
+                              setEditingTestimonialIndex(index)
+                            }}
+                            style={{
+                              padding: '6px 12px',
+                              background: '#3B82F6',
+                              color: 'white',
+                              border: 'none',
+                              borderRadius: '4px',
+                              cursor: 'pointer',
+                              fontSize: '12px'
+                            }}
+                          >
+                            Edit
+                          </button>
+                          <button
+                            onClick={() => handleDeleteTestimonial(index)}
+                            style={{
+                              padding: '6px 12px',
+                              background: '#EF4444',
+                              color: 'white',
+                              border: 'none',
+                              borderRadius: '4px',
+                              cursor: 'pointer',
+                              fontSize: '12px'
+                            }}
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+              <TestimonialForm
+                testimonial={editingTestimonialIndex !== null ? testimonials[editingTestimonialIndex] : null}
+                availableTestimonials={availableTestimonials}
+                onSave={handleSaveTestimonial}
+                onCancel={() => {
+                  setShowTestimonialsModal(false)
+                  setEditingTestimonialIndex(null)
+                }}
+              />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Page URL Modal */}
+      {showPageUrlModal && pageUrl && (
+        <div className="modal-overlay" onClick={() => setShowPageUrlModal(false)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '600px' }}>
+            <div className="modal-header">
+              <h3>Your Page is Live! 🎉</h3>
+              <button className="modal-close" onClick={() => setShowPageUrlModal(false)}>
+                <FiX />
               </button>
+            </div>
+            <div className="modal-body">
+              <p style={{ color: '#6B7280', marginBottom: '16px' }}>
+                Your page has been published and is now accessible via the link below. Share it across multiple platforms!
+              </p>
+              <div style={{ 
+                padding: '16px', 
+                background: '#F3F4F6', 
+                borderRadius: '8px',
+                marginBottom: '16px'
+              }}>
+                <div style={{ marginBottom: '8px', fontWeight: '600', color: '#111827', fontSize: '14px' }}>
+                  Page URL:
+                </div>
+                <div style={{ 
+                  display: 'flex', 
+                  gap: '8px', 
+                  alignItems: 'center',
+                  wordBreak: 'break-all'
+                }}>
+                  <a 
+                    href={pageUrl} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    style={{ 
+                      color: '#3B82F6', 
+                      textDecoration: 'none',
+                      flex: 1,
+                      fontSize: '14px'
+                    }}
+                  >
+                    {pageUrl}
+                  </a>
+                  <button
+                    onClick={handleCopyUrl}
+                    style={{
+                      padding: '8px 16px',
+                      background: '#3B82F6',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '6px',
+                      cursor: 'pointer',
+                      fontSize: '14px',
+                      whiteSpace: 'nowrap'
+                    }}
+                  >
+                    Copy Link
+                  </button>
+                </div>
+              </div>
+              <div style={{ display: 'flex', gap: '12px' }}>
+                <button 
+                  className="save-changes-button"
+                  onClick={() => {
+                    setShowPageUrlModal(false)
+                    window.open(pageUrl, '_blank')
+                  }}
+                  style={{ flex: 1 }}
+                >
+                  <FiExternalLink style={{ marginRight: '8px' }} />
+                  Open Page
+                </button>
+                <button 
+                  className="save-changes-button"
+                  onClick={() => setShowPageUrlModal(false)}
+                  style={{ flex: 1, background: '#F3F4F6', color: '#111827' }}
+                >
+                  Close
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -1546,8 +2159,8 @@ export default function PageBuilder() {
                         <div className="full-preview-profile-fallback">JA</div>
                       </div>
                       <div className="full-preview-profile-info">
-                        <h2 className="full-preview-name">John Anderson</h2>
-                        {showBio && <p className="full-preview-tagline">{bio}</p>}
+                        <h2 className="full-preview-name">{profileCardName || 'Your Name'}</h2>
+                        {showBio && <p className="full-preview-tagline">{bio || 'Your bio will appear here...'}</p>}
                         {showContactNumber && (
                           <div className="full-preview-contact-icons">
                             {contactInfo.email && (
@@ -1586,7 +2199,7 @@ export default function PageBuilder() {
                     </div>
                   </div>
 
-                  {showFeaturedListings && (
+                  {showFeaturedListings && featuredListings.length > 0 && (
                     <div className="full-preview-featured-section">
                       <h3 className="full-preview-section-title">Featured Listings</h3>
                       <div className="full-preview-listings-grid">
@@ -1597,19 +2210,19 @@ export default function PageBuilder() {
                               <span>Featured</span>
                             </div>
                             <div className="full-preview-listing-image-wrapper">
-                              <img src={listing.image} alt={listing.title} />
+                              <img src={listing.image || ASSETS.PLACEHOLDER_PROPERTY} alt={listing.title} />
                             </div>
                             <div className="full-preview-listing-info">
                               <div className="full-preview-listing-info-header">
-                                <div className="full-preview-listing-price">{listing.price}/Month</div>
+                                <div className="full-preview-listing-price">{formatPropertyPrice(listing)}</div>
                                 <button className="full-preview-listing-heart" aria-label="Favorite">
                                   <FiHeart />
                                 </button>
                               </div>
                               <div className="full-preview-listing-title">{listing.title}</div>
-                              <div className="full-preview-listing-category">{listing.category}</div>
+                              <div className="full-preview-listing-category">{listing.type}</div>
                               <div className="full-preview-listing-info-footer">
-                                <div className="full-preview-listing-date">{listing.date}</div>
+                                <div className="full-preview-listing-date">{formatPropertyDate(listing)}</div>
                                 <div className="full-preview-listing-view-count">
                                   <span>1</span>
                                 </div>
@@ -1621,7 +2234,7 @@ export default function PageBuilder() {
                     </div>
                   )}
 
-                  {showTestimonials && (
+                  {showTestimonials && testimonials.length > 0 && (
                     <div className="full-preview-testimonials-section">
                       <h3 className="full-preview-section-title">Client Testimonials</h3>
                       <div className="full-preview-testimonials-grid">
@@ -1629,7 +2242,7 @@ export default function PageBuilder() {
                           <div key={testimonial.id} className="full-preview-testimonial-card">
                             <div className="full-preview-testimonial-header">
                               <img 
-                                src={testimonial.avatar} 
+                                src={testimonial.avatar || ASSETS.PLACEHOLDER_PROFILE} 
                                 alt={testimonial.name}
                                 className="full-preview-testimonial-avatar"
                                 onError={(e) => {
@@ -1642,12 +2255,12 @@ export default function PageBuilder() {
                               </div>
                               <div className="full-preview-testimonial-name">{testimonial.name}</div>
                             </div>
-                            <p className="full-preview-testimonial-quote">"{testimonial.quote}"</p>
-                            <div className="full-preview-testimonial-rating">
-                              {[...Array(testimonial.rating)].map((_, i) => (
-                                <FiStar key={i} className="full-preview-rating-star" />
-                              ))}
-                            </div>
+                            <p className="full-preview-testimonial-quote">"{testimonial.content}"</p>
+                            {testimonial.role && (
+                              <div style={{ fontSize: '12px', color: '#6B7280', marginTop: '8px' }}>
+                                {testimonial.role}
+                              </div>
+                            )}
                           </div>
                         ))}
                       </div>
@@ -1667,7 +2280,8 @@ export default function PageBuilder() {
                             <div 
                               className="full-preview-property-hero-image"
                               style={{
-                                backgroundImage: `url(${heroImage})`,
+                                backgroundImage: heroImage ? `url(${heroImage})` : 'none',
+                                backgroundColor: heroImage ? 'transparent' : '#E5E7EB',
                                 backgroundSize: 'cover',
                                 backgroundPosition: 'center',
                                 position: 'relative',
@@ -1675,10 +2289,10 @@ export default function PageBuilder() {
                               }}
                             >
                               <div className="full-preview-property-hero-overlay">
-                                <h1 className="full-preview-property-hero-title">{mainHeading}</h1>
-                                <p className="full-preview-property-hero-tagline">{tagline}</p>
+                                <h1 className="full-preview-property-hero-title">{mainHeading || 'Property Title'}</h1>
+                                <p className="full-preview-property-hero-tagline">{tagline || 'Property tagline will appear here...'}</p>
                                 <button className="full-preview-property-hero-price-btn">
-                                  Starts at {propertyPrice} /mo
+                                  Starts at {propertyPrice || 'Price'} /mo
                                 </button>
                               </div>
                             </div>
@@ -1689,7 +2303,7 @@ export default function PageBuilder() {
                         return (
                           <div key={section.id} className="full-preview-property-about-section">
                             <h2 className="full-preview-property-section-heading">About</h2>
-                            <p className="full-preview-property-about-text">{propertyDescription}</p>
+                            <p className="full-preview-property-about-text">{propertyDescription || 'Property description will appear here...'}</p>
                           </div>
                         )
                       
@@ -1698,15 +2312,19 @@ export default function PageBuilder() {
                           <div key={section.id} className="full-preview-property-inside-section">
                             <h2 className="full-preview-property-section-heading">What's Inside?</h2>
                             <div className="full-preview-property-inside-images">
-                              {propertyImages.map((image, index) => (
-                                <div 
-                                  key={index} 
-                                  className="full-preview-property-inside-image-item"
-                                  style={{ borderRadius: getCornerRadiusClass() }}
-                                >
-                                  <img src={image} alt={`Interior ${index + 1}`} />
-                                </div>
-                              ))}
+                              {propertyImages.length > 0 ? (
+                                propertyImages.map((image, index) => (
+                                  <div 
+                                    key={index} 
+                                    className="full-preview-property-inside-image-item"
+                                    style={{ borderRadius: getCornerRadiusClass() }}
+                                  >
+                                    <img src={image} alt={`Interior ${index + 1}`} />
+                                  </div>
+                                ))
+                              ) : (
+                                <p style={{ color: '#6B7280', fontStyle: 'italic' }}>Property images will appear here...</p>
+                              )}
                             </div>
                           </div>
                         )
@@ -1726,25 +2344,33 @@ export default function PageBuilder() {
                           >
                             <div className="full-preview-property-agent-content">
                               <div className="full-preview-property-agent-image-wrapper">
-                                <img src={profileCardImage} alt={profileCardName} className="full-preview-property-agent-image" />
+                                <img src={profileImage || profileCardImage} alt={profileCardName || 'Agent'} className="full-preview-property-agent-image" />
                               </div>
                               <div className="full-preview-property-agent-info">
-                                <h3 className="full-preview-property-agent-name">{profileCardName}</h3>
-                                <p className="full-preview-property-agent-role">{profileCardRole}</p>
-                                <p className="full-preview-property-agent-quote">{profileCardBio}</p>
+                                <h3 className="full-preview-property-agent-name">{profileCardName || 'Your Name'}</h3>
+                                <p className="full-preview-property-agent-role">{profileCardRole || 'Property Agent'}</p>
+                                <p className="full-preview-property-agent-quote">{bio || profileCardBio || 'Your bio from Profile page'}</p>
                                 <div className="full-preview-property-agent-icons">
-                                  <button className="full-preview-property-agent-icon">
-                                    <FiMail />
-                                  </button>
-                                  <button className="full-preview-property-agent-icon">
-                                    <FiPhone />
-                                  </button>
-                                  <button className="full-preview-property-agent-icon">
-                                    <FiMessageCircle />
-                                  </button>
-                                  <button className="full-preview-property-agent-icon">
-                                    <FiGlobe />
-                                  </button>
+                                  {contactInfo.email && (
+                                    <a href={`mailto:${contactInfo.email}`} className="full-preview-property-agent-icon">
+                                      <FiMail />
+                                    </a>
+                                  )}
+                                  {contactInfo.phone && (
+                                    <a href={`tel:${contactInfo.phone}`} className="full-preview-property-agent-icon">
+                                      <FiPhone />
+                                    </a>
+                                  )}
+                                  {contactInfo.message && (
+                                    <a href={contactInfo.message} className="full-preview-property-agent-icon" target="_blank" rel="noopener noreferrer">
+                                      <FiMessageCircle />
+                                    </a>
+                                  )}
+                                  {contactInfo.website && (
+                                    <a href={contactInfo.website} className="full-preview-property-agent-icon" target="_blank" rel="noopener noreferrer">
+                                      <FiGlobe />
+                                    </a>
+                                  )}
                                 </div>
                               </div>
                             </div>
@@ -1764,16 +2390,16 @@ export default function PageBuilder() {
                       <div className="full-preview-property-contact-info">
                         <div className="full-preview-property-contact-item">
                           <FiPhone className="full-preview-property-contact-icon" />
-                          <span>{contactPhone}</span>
+                          <span>{contactInfo.phone || 'Phone number'}</span>
                         </div>
                         <div className="full-preview-property-contact-item">
                           <FiMail className="full-preview-property-contact-icon" />
-                          <span>{contactEmail}</span>
+                          <span>{contactInfo.email || 'Email address'}</span>
                         </div>
                       </div>
                     </div>
                     <div className="full-preview-property-contact-form">
-                      <h3 className="full-preview-property-form-title">Contact {profileCardName}</h3>
+                      <h3 className="full-preview-property-form-title">Contact {profileCardName || 'Agent'}</h3>
                       <input
                         type="text"
                         className="full-preview-property-form-input"
@@ -1795,7 +2421,11 @@ export default function PageBuilder() {
                         onChange={(e) => setContactFormMessage(e.target.value)}
                         rows={4}
                       />
-                      <button className="full-preview-property-form-submit-btn">
+                      <button 
+                        className="full-preview-property-form-submit-btn"
+                        onClick={handleContactFormSubmit}
+                        type="submit"
+                      >
                         <span>Send Inquiry</span>
                         <FiMessageCircle />
                       </button>
@@ -1808,6 +2438,166 @@ export default function PageBuilder() {
         </div>
       )}
     </div>
+  )
+}
+
+// Testimonial Form Component
+function TestimonialForm({ 
+  testimonial, 
+  availableTestimonials,
+  onSave, 
+  onCancel 
+}: { 
+  testimonial: Testimonial | null
+  availableTestimonials: Testimonial[]
+  onSave: (testimonial: Testimonial) => void
+  onCancel: () => void
+}) {
+  const [name, setName] = useState(testimonial?.name || '')
+  const [role, setRole] = useState(testimonial?.role || '')
+  const [content, setContent] = useState(testimonial?.content || '')
+  const [avatar, setAvatar] = useState(testimonial?.avatar || '')
+  const [useExisting, setUseExisting] = useState(false)
+  const [selectedTestimonialId, setSelectedTestimonialId] = useState<number | null>(null)
+  
+  const handleUseExisting = () => {
+    if (selectedTestimonialId) {
+      const selected = availableTestimonials.find(t => t.id === selectedTestimonialId)
+      if (selected) {
+        onSave(selected)
+      }
+    }
+  }
+  
+  const handleSaveCustom = () => {
+    if (!name || !content) {
+      alert('Please fill in name and content')
+      return
+    }
+    
+    const newTestimonial: Testimonial = {
+      id: testimonial?.id || Date.now(),
+      name,
+      role: role || '',
+      content,
+      avatar: avatar || null
+    }
+    onSave(newTestimonial)
+  }
+  
+  return (
+    <>
+      <div style={{ marginBottom: '16px' }}>
+        <label style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
+          <input
+            type="checkbox"
+            checked={useExisting}
+            onChange={(e) => setUseExisting(e.target.checked)}
+          />
+          <span>Use existing testimonial</span>
+        </label>
+      </div>
+      
+      {useExisting ? (
+        <>
+          <select
+            value={selectedTestimonialId || ''}
+            onChange={(e) => setSelectedTestimonialId(Number(e.target.value))}
+            style={{ 
+              width: '100%', 
+              padding: '12px', 
+              border: '1px solid #E5E7EB', 
+              borderRadius: '8px', 
+              marginBottom: '16px' 
+            }}
+          >
+            <option value="">Select a testimonial</option>
+            {availableTestimonials.map((t) => (
+              <option key={t.id} value={t.id}>
+                {t.name} - {t.role}
+              </option>
+            ))}
+          </select>
+          {selectedTestimonialId && (
+            <div style={{ 
+              padding: '12px', 
+              background: '#F3F4F6', 
+              borderRadius: '8px', 
+              marginBottom: '16px' 
+            }}>
+              {(() => {
+                const selected = availableTestimonials.find(t => t.id === selectedTestimonialId)
+                return selected ? (
+                  <>
+                    <div style={{ fontWeight: '600', marginBottom: '4px' }}>{selected.name}</div>
+                    <div style={{ fontSize: '14px', color: '#6B7280', marginBottom: '8px' }}>{selected.role}</div>
+                    <div style={{ fontSize: '14px', fontStyle: 'italic' }}>"{selected.content}"</div>
+                  </>
+                ) : null
+              })()}
+            </div>
+          )}
+        </>
+      ) : (
+        <>
+          <input
+            type="text"
+            placeholder="Client Name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            style={{ width: '100%', padding: '12px', border: '1px solid #E5E7EB', borderRadius: '8px', marginBottom: '12px' }}
+          />
+          <input
+            type="text"
+            placeholder="Client Role (e.g., Lessee, Property Owner)"
+            value={role}
+            onChange={(e) => setRole(e.target.value)}
+            style={{ width: '100%', padding: '12px', border: '1px solid #E5E7EB', borderRadius: '8px', marginBottom: '12px' }}
+          />
+          <textarea
+            placeholder="Testimonial content"
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            rows={4}
+            style={{ width: '100%', padding: '12px', border: '1px solid #E5E7EB', borderRadius: '8px', marginBottom: '12px' }}
+          />
+          <input
+            type="text"
+            placeholder="Avatar URL (optional)"
+            value={avatar}
+            onChange={(e) => setAvatar(e.target.value)}
+            style={{ width: '100%', padding: '12px', border: '1px solid #E5E7EB', borderRadius: '8px', marginBottom: '16px' }}
+          />
+        </>
+      )}
+      
+      <div style={{ display: 'flex', gap: '12px' }}>
+        <button 
+          className="save-changes-button"
+          onClick={useExisting ? handleUseExisting : handleSaveCustom}
+          style={{ flex: 1 }}
+          disabled={useExisting ? !selectedTestimonialId : (!name || !content)}
+        >
+          Save
+        </button>
+        <button 
+          onClick={onCancel}
+          style={{ 
+            flex: 1, 
+            padding: '14px 32px', 
+            background: '#F3F4F6', 
+            color: '#111827', 
+            border: 'none', 
+            borderRadius: '8px', 
+            fontSize: '15px', 
+            fontWeight: '600', 
+            cursor: 'pointer' 
+          }}
+        >
+          Cancel
+        </button>
+      </div>
+    </>
   )
 }
 

@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation'
 import AppSidebar from '../../../../components/common/AppSidebar'
 import AgentHeader from '../../../../components/agent/AgentHeader'
 import { useCreateListing } from '../../../../contexts/CreateListingContext'
-import api from '../../../../lib/api'
 import { compressImage } from '../../../../utils/imageCompression'
 import { uploadWithProgress } from '../../../../utils/uploadProgress'
 import { getApiBaseUrl } from '../../../../config/api'
@@ -14,11 +13,14 @@ import {
   FiCheck,
   FiEdit,
   FiArrowLeft,
-  FiUpload
+  FiArrowRight,
+  FiUpload,
+  FiDollarSign
 } from 'react-icons/fi'
 import '../AgentCreateListingCategory.css'
 import '../publish/page.css'
 import '../owner-info/page.css'
+import '../pricing/page.css'
 
 function ProgressRing({ percent }: { percent: number }) {
   const { radius, stroke, normalizedRadius, circumference, strokeDashoffset } = useMemo(() => {
@@ -69,11 +71,10 @@ export default function AgentCreateListingOwnerReview() {
   const router = useRouter()
   const { data, updateData, resetData } = useCreateListing()
   
-  // Streamlined 4-step flow
+  // Streamlined 3-step flow (pricing merged into this step)
   const stepLabels = [
     'Basic Information',
     'Visuals & Features',
-    'Pricing',
     'Owner Info & Review'
   ]
 
@@ -91,12 +92,16 @@ export default function AgentCreateListingOwnerReview() {
   const [countryCode, setCountryCode] = useState('+63')
   const [rapaFile, setRapaFile] = useState<File | null>(data.rapaFile)
 
-  // Submission state
+  // Pricing state
+  const [price, setPrice] = useState(data.price)
+  const [priceType, setPriceType] = useState<'Monthly' | 'Weekly' | 'Daily' | 'Yearly'>(data.priceType)
+
+  // Processing state
   const [isProcessing, setIsProcessing] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isCompressing, setIsCompressing] = useState(false)
   const [submitError, setSubmitError] = useState<string | null>(null)
   const [uploadProgress, setUploadProgress] = useState(0)
-  const [isCompressing, setIsCompressing] = useState(false)
 
   useEffect(() => {
     setFormData({
@@ -110,6 +115,8 @@ export default function AgentCreateListingOwnerReview() {
       streetAddress: data.ownerStreetAddress
     })
     setRapaFile(data.rapaFile)
+    setPrice(data.price)
+    setPriceType(data.priceType)
     
     // Check if agent account is processing
     const registrationStatus = localStorage.getItem('agent_registration_status')
@@ -136,8 +143,8 @@ export default function AgentCreateListingOwnerReview() {
   const propertyData = {
     category: data.category || 'Not Set',
     title: data.title || 'Not Set',
-    price: data.price ? `₱${data.price}` : 'Not Set',
-    priceType: data.priceType || 'Monthly',
+    price: price ? `₱${price}` : 'Not Set',
+    priceType: priceType || 'Monthly',
     location: data.street 
       ? `${data.street}, ${data.city || ''}, ${data.state || ''}`.trim()
       : data.city || data.state || 'Not Set',
@@ -150,7 +157,7 @@ export default function AgentCreateListingOwnerReview() {
     const stepMap: Record<string, string> = {
       category: '/agent/create-listing/basic-info',
       title: '/agent/create-listing/basic-info',
-      price: '/agent/create-listing/pricing',
+      price: '/agent/create-listing/owner-review',
       location: '/agent/create-listing/basic-info',
       bedrooms: '/agent/create-listing/basic-info',
       bathrooms: '/agent/create-listing/basic-info',
@@ -169,7 +176,7 @@ export default function AgentCreateListingOwnerReview() {
     setUploadProgress(0)
 
     try {
-      // Update owner info first
+      // Update owner info and pricing
       updateData({
         ownerFirstname: formData.firstname,
         ownerLastname: formData.lastname,
@@ -180,6 +187,8 @@ export default function AgentCreateListingOwnerReview() {
         ownerCity: formData.city,
         ownerStreetAddress: formData.streetAddress,
         rapaFile,
+        price,
+        priceType,
       })
 
       // Compress images
@@ -207,8 +216,8 @@ export default function AgentCreateListingOwnerReview() {
         description: data.description,
         type: data.category,
         location: data.street || data.city || data.state || data.country,
-        price: data.price,
-        price_type: data.priceType,
+        price: price,
+        price_type: priceType,
         bedrooms: data.bedrooms.toString(),
         bathrooms: data.bathrooms.toString(),
         garage: data.garage.toString(),
@@ -225,14 +234,9 @@ export default function AgentCreateListingOwnerReview() {
         formDataObj.append('amenities', JSON.stringify(data.amenities))
       }
       
-      if (data.furnishing) {
-        formDataObj.append('furnishing', data.furnishing)
-      }
-      
       const locationData = {
         latitude: data.latitude,
         longitude: data.longitude,
-        zoom_level: data.zoom,
         country: data.country,
         state_province: data.state,
         city: data.city,
@@ -286,6 +290,7 @@ export default function AgentCreateListingOwnerReview() {
     }
   }
 
+
   return (
     <div className="agent-dashboard">
       <AppSidebar/>
@@ -312,8 +317,8 @@ export default function AgentCreateListingOwnerReview() {
           <div className="aclc-steps">
             {stepLabels.map((label, idx) => {
               const step = idx + 1
-              const isActive = step === 4
-              const isDone = step < 4
+              const isActive = step === 3
+              const isDone = step < 3
               return (
                 <div className="aclc-step" key={label}>
                   <div className="aclc-step-top">
@@ -321,7 +326,7 @@ export default function AgentCreateListingOwnerReview() {
                       {isDone ? <FiCheck /> : step}
                     </div>
                     {step !== stepLabels.length && (
-                      <div className={`aclc-step-line ${step < 4 ? 'done' : ''}`} />
+                      <div className={`aclc-step-line ${step < 3 ? 'done' : ''}`} />
                     )}
                   </div>
                   <div className={`aclc-step-label ${isActive ? 'active' : ''}`}>{label}</div>
@@ -333,53 +338,6 @@ export default function AgentCreateListingOwnerReview() {
 
         <div className="section-card aclc-form-card">
           <h2 className="aclc-form-title">Owner Information & Review</h2>
-          
-          {submitError && (
-            <div style={{
-              padding: '1rem',
-              marginBottom: '1rem',
-              backgroundColor: '#FEE2E2',
-              border: '1px solid #FCA5A5',
-              borderRadius: '8px',
-              color: '#991B1B'
-            }}>
-              {submitError}
-            </div>
-          )}
-
-          {(isSubmitting || isCompressing) && (
-            <div style={{
-              marginBottom: '1rem',
-              padding: '1rem',
-              backgroundColor: '#F3F4F6',
-              borderRadius: '8px',
-            }}>
-              <div style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                marginBottom: '0.5rem',
-                fontSize: '0.875rem',
-                color: '#6B7280'
-              }}>
-                <span>{isCompressing ? 'Compressing images...' : 'Uploading listing...'}</span>
-                <span>{uploadProgress}%</span>
-              </div>
-              <div style={{
-                width: '100%',
-                height: '8px',
-                backgroundColor: '#E5E7EB',
-                borderRadius: '4px',
-                overflow: 'hidden'
-              }}>
-                <div style={{
-                  width: `${uploadProgress}%`,
-                  height: '100%',
-                  backgroundColor: '#2563EB',
-                  transition: 'width 0.3s ease',
-                }} />
-              </div>
-            </div>
-          )}
           
           {isProcessing && (
             <div className="acpu-processing-notice">
@@ -393,201 +351,279 @@ export default function AgentCreateListingOwnerReview() {
             </div>
           )}
 
-          {/* Owner Info Section */}
-          <div style={{ marginBottom: '2rem' }}>
-            <h3 style={{ fontSize: '1.125rem', fontWeight: 600, marginBottom: '1rem', color: '#111827' }}>Property Owner Information</h3>
-            
-            <div className="acoi-section">
-              <h3 className="acoi-section-title">RAPA Upload</h3>
-              <div className="acoi-file-upload">
-                <input
-                  type="file"
-                  id="rapa-upload"
-                  className="acoi-file-input"
-                  onChange={handleFileChange}
-                  accept=".pdf,.doc,.docx"
-                />
-                <label htmlFor="rapa-upload" className="acoi-file-label">
-                  <FiUpload className="acoi-file-icon" />
-                  <span>Choose File</span>
-                </label>
-                <span className="acoi-file-name">
-                  {rapaFile ? rapaFile.name : 'No file chosen'}
-                </span>
+          {/* Two Column Layout: Owner Info (Left) and Property Summary (Right) */}
+          <div className="owner-review-two-column">
+            {/* Left Column: Property Owner Information */}
+            <div>
+              <h3 style={{ fontSize: '1.125rem', fontWeight: 600, marginBottom: '1rem', color: '#111827' }}>Property Owner Information</h3>
+              
+              <div className="acoi-section" style={{ marginBottom: '1.5rem' }}>
+                <h3 className="acoi-section-title">RAPA Upload</h3>
+                <div className="acoi-file-upload">
+                  <input
+                    type="file"
+                    id="rapa-upload"
+                    className="acoi-file-input"
+                    onChange={handleFileChange}
+                    accept=".pdf,.doc,.docx"
+                  />
+                  <label htmlFor="rapa-upload" className="acoi-file-label">
+                    <FiUpload className="acoi-file-icon" />
+                    <span>Choose File</span>
+                  </label>
+                  <span className="acoi-file-name">
+                    {rapaFile ? rapaFile.name : 'No file chosen'}
+                  </span>
+                </div>
               </div>
-            </div>
 
-            <div className="acoi-section">
-              <h3 className="acoi-section-title">Lessor/Property Owner Info</h3>
-              <div className="acoi-form-grid">
-                <div className="acoi-form-group">
-                  <label className="aclc-label" htmlFor="firstname">Firstname</label>
-                  <input
-                    id="firstname"
-                    type="text"
-                    className="acld-input"
-                    placeholder="Enter First Name"
-                    value={formData.firstname}
-                    onChange={(e) => handleInputChange('firstname', e.target.value)}
-                  />
-                </div>
-                <div className="acoi-form-group">
-                  <label className="aclc-label" htmlFor="lastname">Lastname</label>
-                  <input
-                    id="lastname"
-                    type="text"
-                    className="acld-input"
-                    placeholder="Enter Last Name"
-                    value={formData.lastname}
-                    onChange={(e) => handleInputChange('lastname', e.target.value)}
-                  />
-                </div>
-                <div className="acoi-form-group">
-                  <label className="aclc-label" htmlFor="phone">Phone</label>
-                  <div className="acoi-phone-input">
-                    <div className="aclc-select-wrap acoi-country-code">
+              <div className="acoi-section">
+                <h3 className="acoi-section-title">Lessor/Property Owner Info</h3>
+                <div className="acoi-form-grid">
+                  <div className="acoi-form-group">
+                    <label className="aclc-label" htmlFor="firstname">Firstname</label>
+                    <input
+                      id="firstname"
+                      type="text"
+                      className="acld-input"
+                      placeholder="Enter First Name"
+                      value={formData.firstname}
+                      onChange={(e) => handleInputChange('firstname', e.target.value)}
+                    />
+                  </div>
+                  <div className="acoi-form-group">
+                    <label className="aclc-label" htmlFor="lastname">Lastname</label>
+                    <input
+                      id="lastname"
+                      type="text"
+                      className="acld-input"
+                      placeholder="Enter Last Name"
+                      value={formData.lastname}
+                      onChange={(e) => handleInputChange('lastname', e.target.value)}
+                    />
+                  </div>
+                  <div className="acoi-form-group">
+                    <label className="aclc-label" htmlFor="phone">Phone</label>
+                    <div className="acoi-phone-input">
+                      <div className="aclc-select-wrap acoi-country-code">
+                        <select
+                          className="aclc-select"
+                          value={countryCode}
+                          onChange={(e) => setCountryCode(e.target.value)}
+                        >
+                          <option value="+63">(+63) Philippines</option>
+                          <option value="+1">(+1) United States</option>
+                          <option value="+44">(+44) United Kingdom</option>
+                        </select>
+                        <div className="aclc-select-caret">▼</div>
+                      </div>
+                      <input
+                        id="phone"
+                        type="tel"
+                        className="acld-input acoi-phone-number"
+                        placeholder="Enter Phone Number"
+                        value={formData.phone}
+                        onChange={(e) => handleInputChange('phone', e.target.value)}
+                      />
+                    </div>
+                  </div>
+                  <div className="acoi-form-group">
+                    <label className="aclc-label" htmlFor="email">Email</label>
+                    <input
+                      id="email"
+                      type="email"
+                      className="acld-input"
+                      placeholder="Enter Email"
+                      value={formData.email}
+                      onChange={(e) => handleInputChange('email', e.target.value)}
+                    />
+                  </div>
+                  <div className="acoi-form-group">
+                    <label className="aclc-label" htmlFor="ownerCountry">Country</label>
+                    <div className="aclc-select-wrap">
                       <select
+                        id="ownerCountry"
                         className="aclc-select"
-                        value={countryCode}
-                        onChange={(e) => setCountryCode(e.target.value)}
+                        value={formData.country}
+                        onChange={(e) => handleInputChange('country', e.target.value)}
                       >
-                        <option value="+63">(+63) Philippines</option>
-                        <option value="+1">(+1) United States</option>
-                        <option value="+44">(+44) United Kingdom</option>
+                        <option value="Philippines">Philippines</option>
+                        <option value="United States">United States</option>
+                        <option value="United Kingdom">United Kingdom</option>
                       </select>
                       <div className="aclc-select-caret">▼</div>
                     </div>
+                  </div>
+                  <div className="acoi-form-group">
+                    <label className="aclc-label" htmlFor="ownerState">State/Province</label>
+                    <div className="aclc-select-wrap">
+                      <select
+                        id="ownerState"
+                        className="aclc-select"
+                        value={formData.state}
+                        onChange={(e) => handleInputChange('state', e.target.value)}
+                      >
+                        <option value="">--Select State/Province--</option>
+                        <option value="Metro Manila">Metro Manila</option>
+                        <option value="Calabarzon">Calabarzon</option>
+                        <option value="Central Luzon">Central Luzon</option>
+                      </select>
+                      <div className="aclc-select-caret">▼</div>
+                    </div>
+                  </div>
+                  <div className="acoi-form-group">
+                    <label className="aclc-label" htmlFor="ownerCity">City</label>
+                    <div className="aclc-select-wrap">
+                      <select
+                        id="ownerCity"
+                        className="aclc-select"
+                        value={formData.city}
+                        onChange={(e) => handleInputChange('city', e.target.value)}
+                      >
+                        <option value="">--Select City--</option>
+                        <option value="Manila">Manila</option>
+                        <option value="Makati">Makati</option>
+                        <option value="Quezon City">Quezon City</option>
+                      </select>
+                      <div className="aclc-select-caret">▼</div>
+                    </div>
+                  </div>
+                  <div className="acoi-form-group acoi-full-width">
+                    <label className="aclc-label" htmlFor="streetAddress">Street Address</label>
                     <input
-                      id="phone"
-                      type="tel"
-                      className="acld-input acoi-phone-number"
-                      placeholder="Enter Phone Number"
-                      value={formData.phone}
-                      onChange={(e) => handleInputChange('phone', e.target.value)}
+                      id="streetAddress"
+                      type="text"
+                      className="acld-input"
+                      placeholder="Enter Street Address"
+                      value={formData.streetAddress}
+                      onChange={(e) => handleInputChange('streetAddress', e.target.value)}
                     />
                   </div>
                 </div>
-                <div className="acoi-form-group">
-                  <label className="aclc-label" htmlFor="email">Email</label>
-                  <input
-                    id="email"
-                    type="email"
-                    className="acld-input"
-                    placeholder="Enter Email"
-                    value={formData.email}
-                    onChange={(e) => handleInputChange('email', e.target.value)}
-                  />
-                </div>
-                <div className="acoi-form-group">
-                  <label className="aclc-label" htmlFor="ownerCountry">Country</label>
-                  <div className="aclc-select-wrap">
-                    <select
-                      id="ownerCountry"
-                      className="aclc-select"
-                      value={formData.country}
-                      onChange={(e) => handleInputChange('country', e.target.value)}
-                    >
-                      <option value="Philippines">Philippines</option>
-                      <option value="United States">United States</option>
-                      <option value="United Kingdom">United Kingdom</option>
-                    </select>
-                    <div className="aclc-select-caret">▼</div>
+              </div>
+
+              {/* Pricing Section */}
+              <div className="acoi-section">
+                <h3 className="acoi-section-title">Pricing</h3>
+                <div className="acpr-row" style={{ marginTop: '12px' }}>
+                  <div className="acpr-column">
+                    <div className="acpr-column-label">Price *</div>
+                    <div className="acpr-form-group">
+                      <div className="acpr-price-input-wrapper">
+                        <div className="acpr-price-icon">
+                          <FiDollarSign />
+                        </div>
+                        <input
+                          id="price"
+                          type="text"
+                          className="acpr-price-input"
+                          placeholder="Price"
+                          value={price}
+                          onChange={(e) => setPrice(e.target.value)}
+                        />
+                      </div>
+                    </div>
                   </div>
-                </div>
-                <div className="acoi-form-group">
-                  <label className="aclc-label" htmlFor="ownerState">State/Province</label>
-                  <div className="aclc-select-wrap">
-                    <select
-                      id="ownerState"
-                      className="aclc-select"
-                      value={formData.state}
-                      onChange={(e) => handleInputChange('state', e.target.value)}
-                    >
-                      <option value="">--Select State/Province--</option>
-                      <option value="Metro Manila">Metro Manila</option>
-                      <option value="Calabarzon">Calabarzon</option>
-                      <option value="Central Luzon">Central Luzon</option>
-                    </select>
-                    <div className="aclc-select-caret">▼</div>
+
+                  <div className="acpr-column">
+                    <div className="acpr-column-label">Price Type *</div>
+                    <div className="acpr-form-group">
+                      <div className="aclc-select-wrap">
+                        <select
+                          id="price-type"
+                          className="aclc-select"
+                          value={priceType}
+                          onChange={(e) => setPriceType(e.target.value as 'Monthly' | 'Weekly' | 'Daily' | 'Yearly')}
+                        >
+                          <option value="Monthly">Monthly</option>
+                          <option value="Weekly">Weekly</option>
+                          <option value="Daily">Daily</option>
+                          <option value="Yearly">Yearly</option>
+                        </select>
+                        <div className="aclc-select-caret">▼</div>
+                      </div>
+                    </div>
                   </div>
-                </div>
-                <div className="acoi-form-group">
-                  <label className="aclc-label" htmlFor="ownerCity">City</label>
-                  <div className="aclc-select-wrap">
-                    <select
-                      id="ownerCity"
-                      className="aclc-select"
-                      value={formData.city}
-                      onChange={(e) => handleInputChange('city', e.target.value)}
-                    >
-                      <option value="">--Select City--</option>
-                      <option value="Manila">Manila</option>
-                      <option value="Makati">Makati</option>
-                      <option value="Quezon City">Quezon City</option>
-                    </select>
-                    <div className="aclc-select-caret">▼</div>
-                  </div>
-                </div>
-                <div className="acoi-form-group acoi-full-width">
-                  <label className="aclc-label" htmlFor="streetAddress">Street Address</label>
-                  <input
-                    id="streetAddress"
-                    type="text"
-                    className="acld-input"
-                    placeholder="Enter Street Address"
-                    value={formData.streetAddress}
-                    onChange={(e) => handleInputChange('streetAddress', e.target.value)}
-                  />
                 </div>
               </div>
             </div>
-          </div>
 
-          {/* Review Section */}
-          <div className="acpu-summary-section" style={{ borderTop: '1px solid #E5E7EB', paddingTop: '2rem' }}>
-            <div className="acpu-summary-header">
-              <h3 className="acpu-summary-title">Property Summary</h3>
-            </div>
-
-            <div className="acpu-summary-content">
-              <div className="acpu-summary-row">
-                <div className="acpu-summary-label">Category</div>
-                <div className="acpu-summary-value-group">
-                  <div className="acpu-summary-value">{propertyData.category}</div>
-                  <button className="acpu-edit-btn" onClick={() => handleEdit('category')} type="button">
-                    <FiEdit className="acpu-edit-icon" />
-                    <span>Edit</span>
-                  </button>
-                </div>
-              </div>
-              <div className="acpu-summary-row">
-                <div className="acpu-summary-label">Title</div>
-                <div className="acpu-summary-value-group">
-                  <div className="acpu-summary-value">{propertyData.title}</div>
-                  <button className="acpu-edit-btn" onClick={() => handleEdit('title')} type="button">
-                    <FiEdit className="acpu-edit-icon" />
-                    <span>Edit</span>
-                  </button>
-                </div>
-              </div>
-              <div className="acpu-summary-row">
-                <div className="acpu-summary-label">Price</div>
-                <div className="acpu-summary-value-group">
-                  <div className="acpu-summary-value">{propertyData.price} ({propertyData.priceType})</div>
-                  <button className="acpu-edit-btn" onClick={() => handleEdit('price')} type="button">
-                    <FiEdit className="acpu-edit-icon" />
-                    <span>Edit</span>
-                  </button>
-                </div>
-              </div>
-              <div className="acpu-summary-row">
-                <div className="acpu-summary-label">Location</div>
-                <div className="acpu-summary-value-group">
-                  <div className="acpu-summary-value">{propertyData.location}</div>
-                  <button className="acpu-edit-btn" onClick={() => handleEdit('location')} type="button">
-                    <FiEdit className="acpu-edit-icon" />
-                    <span>Edit</span>
-                  </button>
+            {/* Right Column: Property Summary */}
+            <div>
+              <h3 style={{ fontSize: '1.125rem', fontWeight: 600, marginBottom: '1rem', color: '#111827' }}>Property Summary</h3>
+              
+              <div className="acpu-summary-section" style={{ border: '1px solid #E5E7EB', borderRadius: '8px', padding: '1.5rem', backgroundColor: '#F9FAFB' }}>
+                <div className="acpu-summary-content">
+                  <div className="acpu-summary-row">
+                    <div className="acpu-summary-label">Category</div>
+                    <div className="acpu-summary-value-group">
+                      <div className="acpu-summary-value">{propertyData.category}</div>
+                      <button className="acpu-edit-btn" onClick={() => handleEdit('category')} type="button">
+                        <FiEdit className="acpu-edit-icon" />
+                        <span>Edit</span>
+                      </button>
+                    </div>
+                  </div>
+                  <div className="acpu-summary-row">
+                    <div className="acpu-summary-label">Title</div>
+                    <div className="acpu-summary-value-group">
+                      <div className="acpu-summary-value">{propertyData.title}</div>
+                      <button className="acpu-edit-btn" onClick={() => handleEdit('title')} type="button">
+                        <FiEdit className="acpu-edit-icon" />
+                        <span>Edit</span>
+                      </button>
+                    </div>
+                  </div>
+                  <div className="acpu-summary-row">
+                    <div className="acpu-summary-label">Price</div>
+                    <div className="acpu-summary-value-group">
+                      <div className="acpu-summary-value">{propertyData.price} ({propertyData.priceType})</div>
+                      <button className="acpu-edit-btn" onClick={() => handleEdit('price')} type="button">
+                        <FiEdit className="acpu-edit-icon" />
+                        <span>Edit</span>
+                      </button>
+                    </div>
+                  </div>
+                  <div className="acpu-summary-row">
+                    <div className="acpu-summary-label">Location</div>
+                    <div className="acpu-summary-value-group">
+                      <div className="acpu-summary-value">{propertyData.location}</div>
+                      <button className="acpu-edit-btn" onClick={() => handleEdit('location')} type="button">
+                        <FiEdit className="acpu-edit-icon" />
+                        <span>Edit</span>
+                      </button>
+                    </div>
+                  </div>
+                  <div className="acpu-summary-row">
+                    <div className="acpu-summary-label">Bedrooms</div>
+                    <div className="acpu-summary-value-group">
+                      <div className="acpu-summary-value">{propertyData.bedrooms}</div>
+                      <button className="acpu-edit-btn" onClick={() => handleEdit('bedrooms')} type="button">
+                        <FiEdit className="acpu-edit-icon" />
+                        <span>Edit</span>
+                      </button>
+                    </div>
+                  </div>
+                  <div className="acpu-summary-row">
+                    <div className="acpu-summary-label">Bathrooms</div>
+                    <div className="acpu-summary-value-group">
+                      <div className="acpu-summary-value">{propertyData.bathrooms}</div>
+                      <button className="acpu-edit-btn" onClick={() => handleEdit('bathrooms')} type="button">
+                        <FiEdit className="acpu-edit-icon" />
+                        <span>Edit</span>
+                      </button>
+                    </div>
+                  </div>
+                  <div className="acpu-summary-row">
+                    <div className="acpu-summary-label">Floor Area</div>
+                    <div className="acpu-summary-value-group">
+                      <div className="acpu-summary-value">{propertyData.floorArea}</div>
+                      <button className="acpu-edit-btn" onClick={() => handleEdit('floorArea')} type="button">
+                        <FiEdit className="acpu-edit-icon" />
+                        <span>Edit</span>
+                      </button>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -596,18 +632,17 @@ export default function AgentCreateListingOwnerReview() {
           <div className="acpu-footer-actions" style={{ marginTop: '2rem' }}>
             <button
               className="acld-prev-btn"
-              onClick={() => router.push('/agent/create-listing/pricing')}
+              onClick={() => router.push('/agent/create-listing/visuals-features')}
               type="button"
-              disabled={isSubmitting}
             >
               <FiArrowLeft />
               <span>Previous</span>
             </button>
             <button
-              className="acpu-publish-btn"
+              className="aclc-next-btn"
               onClick={handlePublish}
               type="button"
-              disabled={isSubmitting || isCompressing}
+              disabled={isSubmitting || isCompressing || !price}
             >
               <span>
                 {isCompressing 
@@ -616,6 +651,7 @@ export default function AgentCreateListingOwnerReview() {
                     ? `Publishing... ${uploadProgress > 0 ? `${uploadProgress}%` : ''}` 
                     : 'Publish Listing'}
               </span>
+              <FiArrowRight />
             </button>
           </div>
         </div>

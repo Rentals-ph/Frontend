@@ -142,8 +142,9 @@ export const pageBuilderApi = {
 
   /**
    * Create or update a page builder
+   * Now accepts page_data structure: { user_type, page_type, page_data }
    */
-  save: async (data: PageBuilderData): Promise<PageBuilderData> => {
+  save: async (data: { user_type: 'agent' | 'broker', page_type: 'profile' | 'property', page_data: Partial<PageBuilderData>, page_slug?: string }): Promise<PageBuilderData> => {
     try {
       const response = await apiClient.post<PageBuilderResponse>('/page-builder', data)
       if (!response.data.data) {
@@ -158,8 +159,9 @@ export const pageBuilderApi = {
 
   /**
    * Update a page builder
+   * Now accepts page_data structure: { page_data, page_slug? }
    */
-  update: async (id: number, data: Partial<PageBuilderData>): Promise<PageBuilderData> => {
+  update: async (id: number, data: { page_data: Partial<PageBuilderData>, page_slug?: string }): Promise<PageBuilderData> => {
     try {
       const response = await apiClient.put<PageBuilderResponse>(`/page-builder/${id}`, data)
       if (!response.data.data) {

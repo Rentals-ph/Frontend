@@ -82,10 +82,13 @@ export default function AgentDashboard() {
             ? `₱${property.price.toLocaleString()}/${property.price_type}`
             : `₱${property.price.toLocaleString()}/month`
           
+          // Use image_url if available (from backend), otherwise fall back to image or placeholder
+          const imageUrl = property.image_url || property.image || ASSETS.PLACEHOLDER_PROPERTY_MAIN
+          
           return {
             id: property.id,
             title: property.title,
-            image: property.image || ASSETS.PLACEHOLDER_PROPERTY_MAIN,
+            image: imageUrl,
             details: `${property.bedrooms} Bedrooms • ${property.bathrooms} Bathroom${property.bathrooms > 1 ? 's' : ''} • ${area}`,
             price: price,
             status: property.published_at ? 'active' : 'pending'
@@ -261,7 +264,7 @@ export default function AgentDashboard() {
               </div>
             </div>
 
-            <div className="section-card">
+            {/*<div className="section-card">
               <h2>Quick Actions</h2>
               <div className="quick-actions-list">
                 <Link href="/agent/rent-estimate" className="quick-action-item">
@@ -287,7 +290,7 @@ export default function AgentDashboard() {
                   <FiArrowRight className="arrow-icon" />
                 </Link>
               </div>
-            </div>
+            </div>*/}
 
             <div className="section-card">
               <div className="section-header">
@@ -307,7 +310,7 @@ export default function AgentDashboard() {
               </div>
             </div>
 
-            <div className="section-card share-story">
+            {/*<div className="section-card share-story">
               <div className="share-story-content">
                 <FiBookOpen className="story-icon" />
                 <h2>Share Your Story</h2>
@@ -316,7 +319,7 @@ export default function AgentDashboard() {
                   Create Blog Post
                 </Link>
               </div>
-            </div>
+            </div>*/}
           </div>
         </div>
 
@@ -333,7 +336,7 @@ export default function AgentDashboard() {
               <h3>My Listings</h3>
               <p>Manage properties</p>
             </Link>
-            <Link href="/agent/tracker" className="tool-card light-green">
+            {/*<Link href="/agent/tracker" className="tool-card light-green">
               <FiBarChart2 className="tool-icon" />
               <h3>Rental Tracker</h3>
               <p>Track performance</p>
@@ -342,7 +345,7 @@ export default function AgentDashboard() {
               <FiFileText className="tool-icon" />
               <h3>Rent Estimate</h3>
               <p>Calculate value</p>
-            </Link>
+            </Link>*/}
           </div>
         </div>
       </main>

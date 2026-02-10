@@ -239,3 +239,28 @@ select:focus {
   }
 }
 
+/* Two-column layout for basic info page */
+.basic-info-two-column {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.basic-info-left-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.basic-info-right-column {
+  display: flex;
+  flex-direction: column;
+}
+
+@media (max-width: 1024px) {
+  .basic-info-two-column {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+}
+

@@ -4,6 +4,7 @@ import { useMemo, useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import AppSidebar from '../../../../components/common/AppSidebar'
 import AgentHeader from '../../../../components/agent/AgentHeader'
+import LocationMap from '../../../../components/agent/LocationMap'
 import { useCreateListing } from '../../../../contexts/CreateListingContext'
 import {
   FiChevronDown,
@@ -69,7 +70,6 @@ export default function AgentCreateListingBasicInfo() {
   const stepLabels = [
     'Basic Information',
     'Visuals & Features',
-    'Pricing',
     'Owner Info & Review'
   ]
 
@@ -88,13 +88,12 @@ export default function AgentCreateListingBasicInfo() {
   const [lotArea, setLotArea] = useState<number>(data.lotArea)
 
   // Location state
-  const [country, setCountry] = useState(data.country)
-  const [state, setState] = useState(data.state)
-  const [city, setCity] = useState(data.city)
-  const [street, setStreet] = useState(data.street)
-  const [latitude, setLatitude] = useState(data.latitude)
-  const [longitude, setLongitude] = useState(data.longitude)
-  const [zoom, setZoom] = useState(data.zoom)
+  const [country, setCountry] = useState(data.country || 'Philippines')
+  const [state, setState] = useState(data.state || '')
+  const [city, setCity] = useState(data.city || '')
+  const [street, setStreet] = useState(data.street || '')
+  const [latitude, setLatitude] = useState(data.latitude || '')
+  const [longitude, setLongitude] = useState(data.longitude || '')
 
   useEffect(() => {
     setCategory(data.category)
@@ -106,13 +105,12 @@ export default function AgentCreateListingBasicInfo() {
     setFloorArea(data.floorArea)
     setFloorUnit(data.floorUnit)
     setLotArea(data.lotArea)
-    setCountry(data.country)
-    setState(data.state)
-    setCity(data.city)
-    setStreet(data.street)
-    setLatitude(data.latitude)
-    setLongitude(data.longitude)
-    setZoom(data.zoom)
+    setCountry(data.country || 'Philippines')
+    setState(data.state || '')
+    setCity(data.city || '')
+    setStreet(data.street || '')
+    setLatitude(data.latitude || '')
+    setLongitude(data.longitude || '')
   }, [data])
 
   const canProceed = category && title && description
@@ -178,33 +176,33 @@ export default function AgentCreateListingBasicInfo() {
         <div className="section-card aclc-form-card">
           <h2 className="aclc-form-title">Basic Property Information</h2>
 
-          {/* Category Section */}
-          <div style={{ marginBottom: '2rem' }}>
-            <label className="aclc-label" htmlFor="propertyCategory">
-              Property Category *
-            </label>
-            <div className="aclc-select-wrap">
-              <select
-                id="propertyCategory"
-                className="aclc-select"
-                value={category}
-                onChange={(e) => setCategory(e.target.value)}
-              >
-                <option value="" disabled>Select a property category</option>
-                {categories.map((c) => (
-                  <option key={c} value={c}>{c}</option>
-                ))}
-              </select>
-              <FiChevronDown className="aclc-select-caret" />
-            </div>
-          </div>
+          {/* Two Column Layout */}
+          <div className="basic-info-two-column">
+            {/* Left Column: Category, Title, Description */}
+            <div className="basic-info-left-column">
+              {/* Category Section */}
+              <div style={{ marginBottom: '1.5rem' }}>
+                <label className="aclc-label" htmlFor="propertyCategory">
+                  Property Category *
+                </label>
+                <div className="aclc-select-wrap">
+                  <select
+                    id="propertyCategory"
+                    className="aclc-select"
+                    value={category}
+                    onChange={(e) => setCategory(e.target.value)}
+                  >
+                    <option value="" disabled>Select a property category</option>
+                    {categories.map((c) => (
+                      <option key={c} value={c}>{c}</option>
+                    ))}
+                  </select>
+                  <FiChevronDown className="aclc-select-caret" />
+                </div>
+              </div>
 
-          {/* Details Section */}
-          <div style={{ marginBottom: '20px', borderTop: '1px solid #E5E7EB', paddingTop: '20px' }}>
-            <h3 style={{ fontSize: '1.125rem', fontWeight: 600, marginBottom: '12px', color: '#111827' }}>Property Details</h3>
-            
-            <div className="acld-title-desc-grid">
-              <div>
+              {/* Title */}
+              <div style={{ marginBottom: '1.5rem' }}>
                 <label className="aclc-label" htmlFor="propertyTitle">
                   Property Title *
                 </label>
@@ -215,9 +213,59 @@ export default function AgentCreateListingBasicInfo() {
                   onChange={(e) => setTitle(e.target.value)}
                   placeholder="Enter a title for your property"
                 />
-                <div className="acld-grid-3-compact" style={{ marginTop: '16px' }}>
+              </div>
+
+              {/* Description */}
+              <div>
+                <div className="ai-generate-row">
+                  <label className="aclc-label" htmlFor="propertyDescription" style={{ marginBottom: 0 }}>
+                    Property Description *
+                  </label>
+                  <button
+                    type="button"
+                    className="ai-generate-btn"
+                    disabled={!category || !title || isGenerating}
+                    onClick={handleAiGenerate}
+                    title={!category || !title ? 'Select a category and enter a title first' : 'Generate description with AI'}
+                  >
+                    {isGenerating ? <span className="ai-spinner" /> : <span className="ai-sparkle">✨</span>}
+                    {isGenerating ? 'Generating...' : 'AI Generate'}
+                  </button>
+                </div>
+                <div className="acld-editor">
+                  <div className="acld-editor-toolbar" aria-hidden="true">
+                    <button className="acld-tool-btn" type="button">B</button>
+                    <button className="acld-tool-btn" type="button">I</button>
+                    <button className="acld-tool-btn" type="button">U</button>
+                    <button className="acld-tool-btn" type="button">S</button>
+                    <button className="acld-tool-btn" type="button">•</button>
+                    <button className="acld-tool-btn" type="button">1.</button>
+                    <button className="acld-tool-btn" type="button">↺</button>
+                    <button className="acld-tool-btn" type="button">↻</button>
+                    <button className="acld-tool-btn" type="button">⤢</button>
+                  </div>
+                  <textarea
+                    id="propertyDescription"
+                    className="acld-textarea"
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                    placeholder="Describe your property in detail..."
+                    rows={8}
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Right Column: Property Specs and Location */}
+            <div className="basic-info-right-column">
+              {/* Property Specs Section */}
+              <div style={{ marginBottom: '1.5rem' }}>
+                <h3 style={{ fontSize: '1.125rem', fontWeight: 600, marginBottom: '16px', color: '#111827' }}>Property Specifications</h3>
+                
+                {/* Bedrooms, Bathrooms, Garage */}
+                <div className="acld-grid-3-compact" style={{ marginBottom: '16px' }}>
                   <div>
-                    <label className="aclc-label" htmlFor="bedrooms">Bedrooms</label>
+                    <label className="aclc-label" htmlFor="bedrooms">Bedrooms *</label>
                     <input
                       id="bedrooms"
                       className="acld-input acld-input-compact"
@@ -228,7 +276,7 @@ export default function AgentCreateListingBasicInfo() {
                     />
                   </div>
                   <div>
-                    <label className="aclc-label" htmlFor="bathrooms">Bathrooms</label>
+                    <label className="aclc-label" htmlFor="bathrooms">Bathrooms *</label>
                     <input
                       id="bathrooms"
                       className="acld-input acld-input-compact"
@@ -250,191 +298,76 @@ export default function AgentCreateListingBasicInfo() {
                     />
                   </div>
                 </div>
-              </div>
-              <div>
-                <div className="ai-generate-row">
-                  <label className="aclc-label" htmlFor="propertyDescription" style={{ marginBottom: 0 }}>
-                    Property Description *
-                  </label>
-                  <button
-                    type="button"
-                    className="ai-generate-btn"
-                    disabled={!category || !title || isGenerating}
-                    onClick={handleAiGenerate}
-                    title={!category || !title ? 'Select a category and enter a title first' : 'Generate description with AI'}
-                  >
-                    {isGenerating ? <span className="ai-spinner" /> : <span className="ai-sparkle">✨</span>}
-                    {isGenerating ? 'Generating...' : 'AI Generate'}
-                  </button>
-                </div>
-                <div className="acld-editor">
-                  <div className="acld-editor-toolbar" aria-hidden="true">
-                    <button className="acld-tool-btn" type="button">
-                      B
-                    </button>
-                    <button className="acld-tool-btn" type="button">
-                      I
-                    </button>
-                    <button className="acld-tool-btn" type="button">
-                      U
-                    </button>
-                    <button className="acld-tool-btn" type="button">
-                      S
-                    </button>
-                    <button className="acld-tool-btn" type="button">
-                      •
-                    </button>
-                    <button className="acld-tool-btn" type="button">
-                      1.
-                    </button>
-                    <button className="acld-tool-btn" type="button">
-                      ↺
-                    </button>
-                    <button className="acld-tool-btn" type="button">
-                      ↻
-                    </button>
-                    <button className="acld-tool-btn" type="button">
-                      ⤢
-                    </button>
-                  </div>
-                  <textarea
-                    id="propertyDescription"
-                    className="acld-textarea"
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                    placeholder="Describe your property in detail..."
-                    rows={7}
-                  />
-                </div>
-              </div>
-            </div>
 
-            <div className="acld-grid-2" style={{ marginTop: '0' }}>
-              <div>
-                <label className="aclc-label" htmlFor="floorArea">Floor Area</label>
-                <div className="acld-split">
-                  <input
-                    id="floorArea"
-                    className="acld-input acld-split-left"
-                    type="number"
-                    min={0}
-                    value={floorArea}
-                    onChange={(e) => setFloorArea(Number(e.target.value))}
-                  />
-                  <div className="aclc-select-wrap acld-split-right">
-                    <select
-                      className="aclc-select acld-select-tight"
-                      value={floorUnit}
-                      onChange={(e) => setFloorUnit(e.target.value as 'Square Meters' | 'Square Feet')}
-                    >
-                      <option value="Square Meters">Square Meters</option>
-                      <option value="Square Feet">Square Feet</option>
-                    </select>
-                    <FiChevronDown className="aclc-select-caret" />
+                {/* Floor Area, Unit, Lot Area */}
+                <div className="acld-grid-3-compact">
+                  <div>
+                    <label className="aclc-label" htmlFor="floorArea">Floor Area</label>
+                    <input
+                      id="floorArea"
+                      className="acld-input acld-input-compact"
+                      type="number"
+                      min={0}
+                      value={floorArea}
+                      onChange={(e) => setFloorArea(Number(e.target.value))}
+                    />
+                  </div>
+                  <div>
+                    <label className="aclc-label" htmlFor="floorUnit">Unit</label>
+                    <div className="aclc-select-wrap">
+                      <select
+                        className="aclc-select"
+                        value={floorUnit}
+                        onChange={(e) => setFloorUnit(e.target.value as 'Square Meters' | 'Square Feet')}
+                      >
+                        <option value="Square Meters">Square Meters</option>
+                        <option value="Square Feet">Square Feet</option>
+                      </select>
+                      <FiChevronDown className="aclc-select-caret" />
+                    </div>
+                  </div>
+                  <div>
+                    <label className="aclc-label" htmlFor="lotArea">Lot Area</label>
+                    <input
+                      id="lotArea"
+                      className="acld-input acld-input-compact"
+                      type="number"
+                      min={0}
+                      value={lotArea}
+                      onChange={(e) => setLotArea(Number(e.target.value))}
+                    />
                   </div>
                 </div>
               </div>
-              <div>
-                <label className="aclc-label" htmlFor="lotArea">Lot Area</label>
-                <input
-                  id="lotArea"
-                  className="acld-input"
-                  type="number"
-                  min={0}
-                  value={lotArea}
-                  onChange={(e) => setLotArea(Number(e.target.value))}
-                />
-              </div>
-            </div>
-          </div>
 
-          {/* Location Section */}
-          <div style={{ borderTop: '1px solid #E5E7EB', paddingTop: '20px' }}>
-            <h3 style={{ fontSize: '1.125rem', fontWeight: 600, marginBottom: '12px', color: '#111827' }}>Location</h3>
-            
-            <div className="acll-grid-3">
+              {/* Location Section */}
               <div>
-                <label className="aclc-label" htmlFor="country">Country</label>
-                <div className="aclc-select-wrap">
-                  <select
-                    id="country"
-                    className="aclc-select"
-                    value={country}
-                    onChange={(e) => setCountry(e.target.value)}
-                  >
-                    <option value="Philippines">Philippines</option>
-                  </select>
-                  <FiChevronDown className="aclc-select-caret" />
+                <h3 style={{ fontSize: '1.125rem', fontWeight: 600, marginBottom: '12px', color: '#111827' }}>Location</h3>
+                
+                <div style={{ marginTop: '12px' }}>
+                  <LocationMap
+                    latitude={latitude || null}
+                    longitude={longitude || null}
+                    onLocationChange={(lat, lng) => {
+                      setLatitude(lat)
+                      setLongitude(lng)
+                    }}
+                    onAddressChange={(address) => {
+                      if (address.country) setCountry(address.country)
+                      if (address.state) setState(address.state)
+                      if (address.city) setCity(address.city)
+                      if (address.street) setStreet(address.street)
+                    }}
+                  />
                 </div>
-              </div>
-              <div>
-                <label className="aclc-label" htmlFor="state">State/Province</label>
-                <div className="aclc-select-wrap">
-                  <select
-                    id="state"
-                    className="aclc-select"
-                    value={state}
-                    onChange={(e) => setState(e.target.value)}
-                  >
-                    <option value="">--Select State/Province--</option>
-                  </select>
-                  <FiChevronDown className="aclc-select-caret" />
-                </div>
-              </div>
-              <div>
-                <label className="aclc-label" htmlFor="city">City</label>
-                <div className="aclc-select-wrap">
-                  <select
-                    id="city"
-                    className="aclc-select"
-                    value={city}
-                    onChange={(e) => setCity(e.target.value)}
-                  >
-                    <option value="">--Select City--</option>
-                  </select>
-                  <FiChevronDown className="aclc-select-caret" />
-                </div>
-              </div>
-            </div>
 
-            <div style={{ marginTop: '0', marginBottom: '16px' }}>
-              <label className="aclc-label" htmlFor="street">Street Address</label>
-              <input
-                id="street"
-                className="acld-input"
-                placeholder="Enter street address, building name, etc."
-                value={street}
-                onChange={(e) => setStreet(e.target.value)}
-              />
-            </div>
-
-            <div className="acll-coords-grid">
-              <div>
-                <label className="aclc-label" htmlFor="latitude">Latitude</label>
-                <input
-                  id="latitude"
-                  className="acld-input"
-                  value={latitude}
-                  onChange={(e) => setLatitude(e.target.value)}
-                />
-              </div>
-              <div>
-                <label className="aclc-label" htmlFor="longitude">Longitude</label>
-                <input
-                  id="longitude"
-                  className="acld-input"
-                  value={longitude}
-                  onChange={(e) => setLongitude(e.target.value)}
-                />
-              </div>
-              <div>
-                <label className="aclc-label" htmlFor="zoom">Zoom Level</label>
-                <input
-                  id="zoom"
-                  className="acld-input"
-                  value={zoom}
-                  onChange={(e) => setZoom(e.target.value)}
-                />
+                {/* Hidden inputs for location data (kept for backward compatibility) */}
+                <input type="hidden" name="country" value={country} />
+                <input type="hidden" name="state" value={state} />
+                <input type="hidden" name="city" value={city} />
+                <input type="hidden" name="street" value={street} />
+                <input type="hidden" name="latitude" value={latitude} />
+                <input type="hidden" name="longitude" value={longitude} />
               </div>
             </div>
           </div>
@@ -454,13 +387,12 @@ export default function AgentCreateListingBasicInfo() {
                   floorArea,
                   floorUnit,
                   lotArea,
-                  country,
-                  state,
-                  city,
-                  street,
-                  latitude,
-                  longitude,
-                  zoom,
+                  country: country || 'Philippines',
+                  state: state || '',
+                  city: city || '',
+                  street: street || '',
+                  latitude: latitude || '',
+                  longitude: longitude || '',
                 })
                 router.push('/agent/create-listing/visuals-features')
               }}

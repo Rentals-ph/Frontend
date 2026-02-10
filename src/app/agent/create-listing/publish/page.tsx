@@ -445,15 +445,10 @@ export default function AgentCreateListingPublish() {
                     formData.append('amenities', JSON.stringify(data.amenities))
                   }
                   
-                  if (data.furnishing) {
-                    formData.append('furnishing', data.furnishing)
-                  }
-                  
                   // Location details (batch append)
                   const locationData = {
                     latitude: data.latitude,
                     longitude: data.longitude,
-                    zoom_level: data.zoom,
                     country: data.country,
                     state_province: data.state,
                     city: data.city,

@@ -4,6 +4,7 @@ import { useMemo, useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import AppSidebar from '../../../../components/common/AppSidebar'
 import AgentHeader from '../../../../components/agent/AgentHeader'
+import LocationMap from '../../../../components/agent/LocationMap'
 import { useCreateListing } from '../../../../contexts/CreateListingContext'
 import {
   FiChevronDown,
@@ -304,36 +305,17 @@ export default function AgentCreateListingLocation() {
           </div>
 
           <div className="acll-map-section">
-            <div className="acll-map-header">
-              <span className="acll-map-title">Map Location</span>
-              <div className="acll-map-tabs">
-                <button className="acll-map-tab active" type="button">
-                  Map
-                </button>
-                <button className="acll-map-tab" type="button">
-                  Satellite
-                </button>
-              </div>
-            </div>
-
-            <div className="acll-map-container">
-              <div className="acll-map-placeholder">
-                <span className="acll-map-placeholder-text">
-                  {latitude && longitude 
-                    ? `Map location: ${latitude}, ${longitude}` 
-                    : 'Map preview will appear here based on the selected location.'}
-                </span>
-              </div>
-              <button className="acll-map-fullscreen-btn" type="button" aria-label="Full screen map">
-                ⛶
-              </button>
-              <button className="acll-map-zoom-btn" type="button" aria-label="Map controls">
-                +
-              </button>
-            </div>
+            <LocationMap
+              latitude={latitude || null}
+              longitude={longitude || null}
+              onLocationChange={(lat, lng) => {
+                setLatitude(lat)
+                setLongitude(lng)
+              }}
+            />
           </div>
           
-          {/* Hidden inputs for coordinates (auto-assigned via geocoding) */}
+          {/* Hidden inputs for coordinates (auto-assigned via map or geocoding) */}
           <input type="hidden" name="latitude" value={latitude} />
           <input type="hidden" name="longitude" value={longitude} />
 

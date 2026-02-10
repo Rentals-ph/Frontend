@@ -435,10 +435,34 @@
 
   .categories-row {
     display: flex;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     gap: 8px;
     align-items: center;
     width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: thin;
+    scrollbar-color: #d1d5db #f3f4f6;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 4px;
+  }
+
+  .categories-row::-webkit-scrollbar {
+    height: 6px;
+  }
+
+  .categories-row::-webkit-scrollbar-track {
+    background: #f3f4f6;
+    border-radius: 3px;
+  }
+
+  .categories-row::-webkit-scrollbar-thumb {
+    background: #d1d5db;
+    border-radius: 3px;
+  }
+
+  .categories-row::-webkit-scrollbar-thumb:hover {
+    background: #9ca3af;
   }
 
   .category-chip {
@@ -1384,7 +1408,8 @@
   }
 
   .hamburger-menu-btn,
-  .grid-view-btn {
+  .grid-view-btn,
+  .map-view-btn {
     width: 52px;
     height: 52px;
     border: 2px solid #dbeafe;
@@ -1401,7 +1426,8 @@
   }
 
   .hamburger-menu-btn:hover,
-  .grid-view-btn:hover {
+  .grid-view-btn:hover,
+  .map-view-btn:hover {
     border-color: #93c5fd;
     background: #ffffff;
     box-shadow: 0 3px 12px rgba(0, 0, 0, 0.1);
@@ -1409,37 +1435,45 @@
   }
 
   .hamburger-menu-btn:active,
-  .grid-view-btn:active {
+  .grid-view-btn:active,
+  .map-view-btn:active {
     transform: translateY(0);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   }
 
   .hamburger-menu-btn svg,
-  .grid-view-btn svg {
+  .grid-view-btn svg,
+  .map-view-btn svg {
     width: 24px;
     height: 24px;
   }
 
   .hamburger-menu-btn svg path,
-  .grid-view-btn svg rect {
+  .grid-view-btn svg rect,
+  .map-view-btn svg path,
+  .map-view-btn svg circle {
     stroke: #374151;
   }
 
   .hamburger-menu-btn[style*="background-color: rgb(254, 142, 10)"],
-  .grid-view-btn[style*="background-color: rgb(254, 142, 10)"] {
+  .grid-view-btn[style*="background-color: rgb(254, 142, 10)"],
+  .map-view-btn[style*="background-color: rgb(254, 142, 10)"] {
     background: linear-gradient(135deg, #FE8E0A 0%, #e67e00 100%) !important;
     border-color: #FE8E0A !important;
     box-shadow: 0 4px 16px rgba(254, 142, 10, 0.3) !important;
   }
 
   .hamburger-menu-btn[style*="background-color: rgb(254, 142, 10)"]:hover,
-  .grid-view-btn[style*="background-color: rgb(254, 142, 10)"]:hover {
+  .grid-view-btn[style*="background-color: rgb(254, 142, 10)"]:hover,
+  .map-view-btn[style*="background-color: rgb(254, 142, 10)"]:hover {
     background: linear-gradient(135deg, #e67e00 0%, #d16e00 100%) !important;
     box-shadow: 0 6px 20px rgba(254, 142, 10, 0.4) !important;
   }
 
   .hamburger-menu-btn[style*="background-color: rgb(254, 142, 10)"] svg path,
-  .grid-view-btn[style*="background-color: rgb(254, 142, 10)"] svg rect {
+  .grid-view-btn[style*="background-color: rgb(254, 142, 10)"] svg rect,
+  .map-view-btn[style*="background-color: rgb(254, 142, 10)"] svg path,
+  .map-view-btn[style*="background-color: rgb(254, 142, 10)"] svg circle {
     stroke: #ffffff !important;
     fill: none;
   }
@@ -1457,6 +1491,18 @@
   .properties-list .horizontal-property-card {
     max-width: 100% !important;
     width: 100% !important;
+  }
+
+  /* Properties Map Container */
+  .properties-map-container {
+    width: 100%;
+    height: calc(100vh - 300px);
+    min-height: 600px;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    background: #f3f4f6;
+    margin-bottom: 24px;
   }
 
   /* Properties Grid (Vertical Layout) */
@@ -2185,6 +2231,12 @@
       padding-top: 16px;
     }
 
+    .properties-map-container {
+      height: calc(100vh - 250px);
+      min-height: 500px;
+      border-radius: 8px;
+    }
+
     .properties-grid {
       grid-template-columns: repeat(2, 1fr);
       gap: 16px;
@@ -2270,6 +2322,9 @@
   @media (max-width: 480px) {
     .categories-row {
       gap: 6px;
+      overflow-x: auto;
+      flex-wrap: nowrap;
+      -webkit-overflow-scrolling: touch;
     }
 
     .category-chip {
@@ -2505,7 +2560,8 @@
 
     /* Hide view mode buttons in sticky search bar on mobile */
     .sticky-search-bar .hamburger-menu-btn,
-    .sticky-search-bar .grid-view-btn {
+    .sticky-search-bar .grid-view-btn,
+    .sticky-search-bar .map-view-btn {
       display: none !important;
     }
 

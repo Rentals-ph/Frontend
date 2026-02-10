@@ -8,6 +8,7 @@ import Footer from '../../../components/layout/Footer'
 import PageHeader from '../../../components/layout/PageHeader'
 import VerticalPropertyCard from '../../../components/common/VerticalPropertyCard'
 import SharePopup, { type SharePlatform, type ShareOption } from '../../../components/common/SharePopup'
+import PropertyLocationMap from '../../../components/common/PropertyLocationMap'
 import { propertiesApi, messagesApi } from '../../../api'
 import type { Property } from '../../../types'
 import { ASSETS } from '@/utils/assets'
@@ -358,21 +359,7 @@ export default function PropertyDetailsPage() {
                   <h2 className="property-section-title">Location</h2>
                   <p className="property-location-label">{property.location}</p>
                   <div className="map-container">
-                    <iframe
-                      title="Property Location Map"
-                      className="property-map-iframe"
-                      src={`https://www.openstreetmap.org/export/embed.html?bbox=${(() => {
-                        const location = property.location?.toLowerCase() || '';
-                        if (location.includes('cebu')) return '123.85%2C10.26%2C123.93%2C10.33';
-                        if (location.includes('manila') || location.includes('makati') || location.includes('taguig') || location.includes('pasig') || location.includes('quezon')) return '120.95%2C14.55%2C121.05%2C14.65';
-                        if (location.includes('davao')) return '125.55%2C7.05%2C125.65%2C7.12';
-                        if (location.includes('baguio')) return '120.57%2C16.39%2C120.62%2C16.43';
-                        if (location.includes('iloilo')) return '122.53%2C10.68%2C122.60%2C10.74';
-                        if (location.includes('cagayan de oro')) return '124.62%2C8.45%2C124.68%2C8.50';
-                        if (location.includes('zamboanga')) return '122.05%2C6.88%2C122.12%2C6.94';
-                        return '120.90%2C14.40%2C121.15%2C14.70';
-                      })()}&layer=mapnik`}
-                    />
+                    <PropertyLocationMap property={property} />
                   </div>
                 </div>
               </div>

@@ -35,7 +35,6 @@ export interface CreateListingData {
   
   // Attributes
   amenities: string[]
-  furnishing: string
   
   // Owner Info
   ownerFirstname: string
@@ -77,7 +76,6 @@ const defaultData: CreateListingData = {
   price: '',
   priceType: 'Monthly',
   amenities: [],
-  furnishing: '',
   ownerFirstname: '',
   ownerLastname: '',
   ownerPhone: '',

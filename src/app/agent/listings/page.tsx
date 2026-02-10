@@ -16,6 +16,7 @@ import {
 } from 'react-icons/fi'
 import { ASSETS } from '@/utils/assets'
 import { resolvePropertyImage } from '@/utils/imageResolver'
+import PropertiesMap from '../../../components/agent/PropertiesMap'
 import './page.css'
 
 type ListingStatus = 'active' | 'rented' | 'hidden'
@@ -40,6 +41,8 @@ export default function AgentMyListings() {
   const [hiddenProperties, setHiddenProperties] = useState(0)
   const [editingProperty, setEditingProperty] = useState<Property | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [currentAgentId, setCurrentAgentId] = useState<number | null>(null)
+  const [selectedFilter, setSelectedFilter] = useState<string>('all') // 'all' or property type
 
   useEffect(() => {
     const fetchAgentListings = async () => {
@@ -59,8 +62,18 @@ export default function AgentMyListings() {
           return
         }
         
+        // Store current agent ID for filtering
+        setCurrentAgentId(agent.id)
+        
         // Fetch properties for this agent
         const properties = await propertiesApi.getByAgentId(agent.id)
+        
+        // Additional safety check: filter properties to ensure they belong to this agent
+        const agentProperties = properties.filter((p: Property) => p.agent_id === agent.id)
+        
+        if (agentProperties.length !== properties.length) {
+          console.warn(`Filtered out ${properties.length - agentProperties.length} properties that don't belong to agent ${agent.id}`)
+        }
         
         if (!properties || !Array.isArray(properties)) {
           console.error('Invalid properties response:', properties)
@@ -68,11 +81,11 @@ export default function AgentMyListings() {
           return
         }
         
-        // Store properties for editing
-        setProperties(properties)
+        // Store properties for editing (only agent's properties)
+        setProperties(agentProperties)
         
-        // Transform properties to ListingCard format
-        const transformedListings: ListingCard[] = properties.map((property: Property) => {
+        // Transform properties to ListingCard format (only agent's properties)
+        const transformedListings: ListingCard[] = agentProperties.map((property: Property) => {
           const address = property.street_address 
             ? `${property.street_address}, ${property.city || property.location || 'N/A'}`
             : property.location || 'Address not available'
@@ -84,24 +97,45 @@ export default function AgentMyListings() {
           }
           // Note: 'rented' status would need additional property field
           
+          // Use image_url if available (from backend), otherwise fall back to resolving image
+          // Priority: image_url > image_path > image > placeholder
+          let imageUrl = property.image_url
+          if (!imageUrl && property.image_path) {
+            imageUrl = resolvePropertyImage(property.image_path, property.id)
+          }
+          if (!imageUrl && property.image) {
+            imageUrl = resolvePropertyImage(property.image, property.id)
+          }
+          if (!imageUrl) {
+            imageUrl = resolvePropertyImage(null, property.id)
+          }
+          
+          // Debug logging (remove in production)
+          if (property.image_path && !property.image_url) {
+            console.log(`Property ${property.id}: image_path=${property.image_path}, image_url=${property.image_url}, resolved=${imageUrl}`)
+          }
+          
           return {
             id: property.id,
             title: property.title,
             address: address,
             rating: 4, // Default rating, could be fetched from reviews API
             views: 0, // Could be tracked separately
-            image: resolvePropertyImage(property.image, property.id),
+            image: imageUrl,
             status: status
           }
         })
         
         setListings(transformedListings)
         
-        // Calculate stats
-        setTotalProperties(properties.length)
-        setActiveProperties(properties.filter(p => p.published_at).length)
+        // Calculate stats (only agent's properties)
+        setTotalProperties(agentProperties.length)
+        setActiveProperties(agentProperties.filter(p => p.published_at).length)
         setRentedProperties(0) // Would need additional data
-        setHiddenProperties(properties.filter(p => !p.published_at).length)
+        setHiddenProperties(agentProperties.filter(p => !p.published_at).length)
+        
+        // Set initial listings (will be filtered by selectedFilter if needed)
+        setListings(transformedListings)
       } catch (error: any) {
         console.error('Error fetching agent listings:', error)
         if (error.response?.status === 401) {
@@ -143,9 +177,13 @@ export default function AgentMyListings() {
         const agent = await agentsApi.getCurrent()
         if (agent?.id) {
           const updatedProperties = await propertiesApi.getByAgentId(agent.id)
-          setProperties(updatedProperties)
           
-          const transformedListings: ListingCard[] = updatedProperties.map((property: Property) => {
+          // Additional safety check: filter properties to ensure they belong to this agent
+          const agentProperties = updatedProperties.filter((p: Property) => p.agent_id === agent.id)
+          
+          setProperties(agentProperties)
+          
+          const transformedListings: ListingCard[] = agentProperties.map((property: Property) => {
             const address = property.street_address 
               ? `${property.street_address}, ${property.city || property.location || 'N/A'}`
               : property.location || 'Address not available'
@@ -155,21 +193,34 @@ export default function AgentMyListings() {
               status = 'hidden'
             }
             
+            // Use image_url if available (from backend), otherwise fall back to resolving image
+            // Priority: image_url > image_path > image > placeholder
+            let imageUrl = property.image_url
+            if (!imageUrl && property.image_path) {
+              imageUrl = resolvePropertyImage(property.image_path, property.id)
+            }
+            if (!imageUrl && property.image) {
+              imageUrl = resolvePropertyImage(property.image, property.id)
+            }
+            if (!imageUrl) {
+              imageUrl = resolvePropertyImage(null, property.id)
+            }
+            
             return {
               id: property.id,
               title: property.title,
               address: address,
               rating: 4,
               views: 0,
-              image: resolvePropertyImage(property.image, property.id),
+              image: imageUrl,
               status: status
             }
           })
           
           setListings(transformedListings)
-          setTotalProperties(updatedProperties.length)
-          setActiveProperties(updatedProperties.filter(p => p.published_at).length)
-          setHiddenProperties(updatedProperties.filter(p => !p.published_at).length)
+          setTotalProperties(agentProperties.length)
+          setActiveProperties(agentProperties.filter(p => p.published_at).length)
+          setHiddenProperties(agentProperties.filter(p => !p.published_at).length)
         }
       } catch (error) {
         console.error('Error refreshing listings:', error)
@@ -282,37 +333,71 @@ export default function AgentMyListings() {
             </div>
 
             <div className="aml-map">
-              <iframe
-                title="Map"
-                className="aml-map-iframe"
-                src="https://www.openstreetmap.org/export/embed.html?bbox=123.85%2C10.26%2C123.93%2C10.33&layer=mapnik"
+              <PropertiesMap 
+                properties={properties}
+                agentId={currentAgentId}
               />
             </div>
           </div>
 
           <div className="aml-filters">
-            <label className="aml-filter">
-              <input type="checkbox" />
-              <span>All(23)</span>
-            </label>
-            <button type="button" className="aml-filter-pill">
-              Condominium(4)
-            </button>
-            <button type="button" className="aml-filter-pill">
-              Bed Space(8)
-            </button>
-            <button type="button" className="aml-filter-pill">
-              Apartment(12)
-            </button>
+            {(() => {
+              // Calculate property type counts
+              const typeCounts: Record<string, number> = {}
+              properties.forEach((property) => {
+                const type = property.type || 'Other'
+                typeCounts[type] = (typeCounts[type] || 0) + 1
+              })
+              
+              // Get unique property types sorted by count (descending)
+              const propertyTypes = Object.keys(typeCounts).sort((a, b) => typeCounts[b] - typeCounts[a])
+              
+              return (
+                <>
+                  <label className="aml-filter">
+                    <input 
+                      type="checkbox" 
+                      checked={selectedFilter === 'all'}
+                      onChange={() => setSelectedFilter('all')}
+                    />
+                    <span>All({totalProperties})</span>
+                  </label>
+                  {propertyTypes.map((type) => (
+                    <button
+                      key={type}
+                      type="button"
+                      className={`aml-filter-pill ${selectedFilter === type ? 'active' : ''}`}
+                      onClick={() => setSelectedFilter(type)}
+                    >
+                      {type}({typeCounts[type]})
+                    </button>
+                  ))}
+                </>
+              )
+            })()}
           </div>
 
           <div className="aml-grid">
             {loading ? (
               <div style={{ padding: '2rem', textAlign: 'center', gridColumn: '1 / -1' }}>Loading listings...</div>
-            ) : listings.length === 0 ? (
-              <div style={{ padding: '2rem', textAlign: 'center', gridColumn: '1 / -1' }}>No listings yet. Create your first listing!</div>
-            ) : (
-              listings.map((l) => (
+            ) : (() => {
+              // Filter listings based on selected filter
+              const filteredListings = selectedFilter === 'all' 
+                ? listings 
+                : listings.filter((l) => {
+                    const property = properties.find(p => p.id === l.id)
+                    return property?.type === selectedFilter
+                  })
+              
+              return filteredListings.length === 0 ? (
+                <div style={{ padding: '2rem', textAlign: 'center', gridColumn: '1 / -1' }}>
+                  {selectedFilter === 'all' 
+                    ? 'No listings yet. Create your first listing!'
+                    : `No ${selectedFilter} properties found.`
+                  }
+                </div>
+              ) : (
+                filteredListings.map((l) => (
                 <div key={l.id} className="aml-card">
                 <div className="aml-card-media">
                   <img
@@ -320,7 +405,7 @@ export default function AgentMyListings() {
                     alt={l.title}
                     onError={(e) => {
                       const target = e.target as HTMLImageElement
-                      target.style.display = 'none'
+                      target.src = ASSETS.PLACEHOLDER_PROPERTY_MAIN
                     }}
                   />
                   <div className="aml-pin" title="Pinned">
@@ -351,8 +436,9 @@ export default function AgentMyListings() {
                   </div>
                 </div>
               </div>
-              ))
-            )}
+                ))
+              )
+            })()}
           </div>
         </div>
       </main>

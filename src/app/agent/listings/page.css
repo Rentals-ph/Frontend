@@ -170,6 +170,12 @@
   color: #111827;
 }
 
+.agent-my-listings .aml-filter-pill.active {
+  background-color: #EFF6FF;
+  color: #2563EB;
+  font-weight: 600;
+}
+
 .agent-my-listings .aml-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));

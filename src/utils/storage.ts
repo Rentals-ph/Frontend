@@ -166,14 +166,43 @@ export function getImageUrl(path: string, baseUrl?: string): string {
     return path
   }
   
-  // If path starts with /, it's already a public path
+  // If path starts with /storage/, use backend URL for storage images
+  if (path.startsWith('/storage/')) {
+    // Import getApiBaseUrl dynamically to avoid circular dependency issues
+    let backendBaseUrl = baseUrl
+    if (!backendBaseUrl && typeof window !== 'undefined') {
+      try {
+        const { getApiBaseUrl } = require('../config/api')
+        backendBaseUrl = getApiBaseUrl().replace('/api', '')
+      } catch (e) {
+        // Fallback if import fails
+        backendBaseUrl = 'http://localhost:8000'
+      }
+    } else if (!backendBaseUrl) {
+      backendBaseUrl = 'http://localhost:8000'
+    }
+    return `${backendBaseUrl}${path}`
+  }
+  
+  // If path starts with /, it's already a public path (not storage)
   if (path.startsWith('/')) {
     return baseUrl ? `${baseUrl}${path}` : path
   }
   
   // Otherwise, assume it's a storage path and prepend /storage/images
-  const fullPath = path.startsWith('/storage/') ? path : `/storage/images/${path}`
-  return baseUrl ? `${baseUrl}${fullPath}` : fullPath
+  const fullPath = `/storage/images/${path}`
+  let backendBaseUrl = baseUrl
+  if (!backendBaseUrl && typeof window !== 'undefined') {
+    try {
+      const { getApiBaseUrl } = require('../config/api')
+      backendBaseUrl = getApiBaseUrl().replace('/api', '')
+    } catch (e) {
+      backendBaseUrl = 'http://localhost:8000'
+    }
+  } else if (!backendBaseUrl) {
+    backendBaseUrl = 'http://localhost:8000'
+  }
+  return `${backendBaseUrl}${fullPath}`
 }
 
 /**

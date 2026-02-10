@@ -7,6 +7,7 @@ import Navbar from '../../components/layout/Navbar'
 import Footer from '../../components/layout/Footer'
 import VerticalPropertyCard from '../../components/common/VerticalPropertyCard'
 import HorizontalPropertyCard from '../../components/common/HorizontalPropertyCard'
+import PublicPropertiesMap from '../../components/common/PublicPropertiesMap'
 import './page.css'
 import PageHeader from '../../components/layout/PageHeader'
 import { propertiesApi } from '../../api/endpoints/properties'
@@ -26,7 +27,7 @@ function PropertiesContent() {
   const [sortByPrice, setSortByPrice] = useState('')
   const [subCategory, setSubCategory] = useState('all')
   const [currentPage, setCurrentPage] = useState(1)
-  const [viewMode, setViewMode] = useState<'horizontal' | 'vertical'>('vertical')
+  const [viewMode, setViewMode] = useState<'horizontal' | 'vertical' | 'map'>('vertical')
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
   const sidebarOpenTimeRef = useRef<number>(0)
   const [properties, setProperties] = useState<Property[]>([])
@@ -76,7 +77,7 @@ function PropertiesContent() {
     }
   }, [searchParams])
 
-  const propertyTypes = ['All Types', 'Condominium', 'Apartment', 'House', 'Bed Space', 'Commercial Spaces', 'Office Spaces', 'Studio', 'TownHouse', 'WareHouse', 'Dormitory', 'Farm Land']
+  const propertyTypes = ['All Types', 'Condominium', 'Apartment', 'Apartment / Condo', 'House', 'Bed Space', 'Commercial', 'Commercial Spaces', 'Office', 'Office Spaces', 'Studio', 'Townhouse', 'TownHouse', 'Warehouse', 'WareHouse', 'Dormitory', 'Farm Land']
   const locations = ['Metro Manila', 'Makati City', 'BGC', 'Quezon City', 'Mandaluyong', 'Pasig', 'Cebu City', 'Davao City', 'Lapulapu', 'Manila']
   const bathOptions = ['1', '2', '3', '4+']
   const bedOptions = ['1', '2', '3', '4+']
@@ -110,17 +111,6 @@ function PropertiesContent() {
 
     fetchAllPropertiesForCount()
   }, [])
-
-  // Calculate categories dynamically from all properties
-  const categories = useMemo(() => {
-    // Get all property types except "All Types"
-    const typesToCount = propertyTypes.filter(type => type !== 'All Types')
-    
-    return typesToCount.map(type => {
-      const count = allPropertiesForCount.filter(property => property.type === type).length
-      return { name: type, count }
-    }).filter(category => category.count > 0) // Only show categories with properties
-  }, [allPropertiesForCount, propertyTypes])
 
   const topSearches = [
     'Condominium For Rent In Cebu',
@@ -238,6 +228,76 @@ function PropertiesContent() {
 
     return bathMatch && bedMatch && priceMatch
   })
+
+  // Calculate categories dynamically from all properties with filters applied
+  // Use allPropertiesForCount which has all properties, then apply current filters
+  // In map view, only count properties with valid coordinates
+  const categories = useMemo(() => {
+    // Get all property types except "All Types"
+    const typesToCount = propertyTypes.filter(type => type !== 'All Types')
+    
+    // Start with all properties and apply the same filters as the main query
+    let filtered = [...allPropertiesForCount]
+    
+    // In map view, only include properties with valid coordinates
+    if (viewMode === 'map') {
+      filtered = filtered.filter(property => {
+        return property.latitude && property.longitude && 
+               !isNaN(parseFloat(property.latitude)) && 
+               !isNaN(parseFloat(property.longitude))
+      })
+    }
+    
+    // Apply API-level filters (type, location, search) - same as what's sent to API
+    if (selectedType && selectedType !== 'All Types') {
+      filtered = filtered.filter(property => property.type === selectedType)
+    }
+    if (selectedLocation) {
+      filtered = filtered.filter(property => {
+        const location = property.location?.toLowerCase() || ''
+        const city = property.city?.toLowerCase() || ''
+        const state = property.state_province?.toLowerCase() || ''
+        const searchLocation = selectedLocation.toLowerCase()
+        return location.includes(searchLocation) || 
+               city.includes(searchLocation) || 
+               state.includes(searchLocation)
+      })
+    }
+    if (searchQuery) {
+      const search = searchQuery.toLowerCase()
+      filtered = filtered.filter(property => {
+        const title = property.title?.toLowerCase() || ''
+        const description = property.description?.toLowerCase() || ''
+        return title.includes(search) || description.includes(search)
+      })
+    }
+    
+    // Apply client-side filters (bathrooms, bedrooms, price)
+    filtered = filtered.filter(property => {
+      const bathMatch = !minBaths || property.bathrooms >= parseInt(minBaths)
+      const bedMatch = !minBeds || property.bedrooms >= parseInt(minBeds)
+
+      let priceMatch = true
+      if (priceMin || priceMax) {
+        const price = property.price
+        if (priceMin) priceMatch = priceMatch && price >= parseInt(priceMin)
+        if (priceMax) priceMatch = priceMatch && price <= parseInt(priceMax)
+      }
+
+      return bathMatch && bedMatch && priceMatch
+    })
+    
+    // Count by type - use actual property types from database, not predefined list
+    // First, get all unique property types from filtered properties
+    const actualTypes = [...new Set(filtered.map(p => p.type).filter(Boolean))]
+    
+    // Count each actual type
+    return actualTypes.map(type => {
+      const count = filtered.filter(property => property.type === type).length
+      return { name: type, count }
+    }).filter(category => category.count > 0) // Only show categories with properties
+      .sort((a, b) => a.name.localeCompare(b.name)) // Sort alphabetically
+  }, [allPropertiesForCount, propertyTypes, viewMode, selectedType, selectedLocation, searchQuery, minBaths, minBeds, priceMin, priceMax])
 
   // Filter by subcategory first
   const subCategoryFiltered = filteredProperties.filter(property => {
@@ -518,6 +578,17 @@ function PropertiesContent() {
                     <rect x="14" y="14" width="7" height="7" stroke={viewMode === 'vertical' ? "#ffffff" : "#333"} strokeWidth="2" fill="none" />
                   </svg>
                 </button>
+                <button
+                  className="map-view-btn"
+                  aria-label="Map View"
+                  onClick={() => setViewMode('map')}
+                  style={{ backgroundColor: viewMode === 'map' ? '#FE8E0A' : '#ffffff' }}
+                >
+                  <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" stroke={viewMode === 'map' ? "#ffffff" : "#333"} strokeWidth="2" fill="none" />
+                    <circle cx="12" cy="10" r="3" stroke={viewMode === 'map' ? "#ffffff" : "#333"} strokeWidth="2" fill="none" />
+                  </svg>
+                </button>
               </div>
             </div>
           </div>
@@ -591,6 +662,17 @@ function PropertiesContent() {
                     <rect x="14" y="3" width="7" height="7" stroke={viewMode === 'vertical' ? "#ffffff" : "#333"} strokeWidth="2" fill="none" />
                     <rect x="3" y="14" width="7" height="7" stroke={viewMode === 'vertical' ? "#ffffff" : "#333"} strokeWidth="2" fill="none" />
                     <rect x="14" y="14" width="7" height="7" stroke={viewMode === 'vertical' ? "#ffffff" : "#333"} strokeWidth="2" fill="none" />
+                  </svg>
+                </button>
+                <button
+                  className="map-view-btn"
+                  aria-label="Map View"
+                  onClick={() => setViewMode('map')}
+                  style={{ backgroundColor: viewMode === 'map' ? '#FE8E0A' : '#ffffff' }}
+                >
+                  <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" stroke={viewMode === 'map' ? "#ffffff" : "#333"} strokeWidth="2" fill="none" />
+                    <circle cx="12" cy="10" r="3" stroke={viewMode === 'map' ? "#ffffff" : "#333"} strokeWidth="2" fill="none" />
                   </svg>
                 </button>
               </div>
@@ -1226,47 +1308,57 @@ function PropertiesContent() {
               </div>
             ) : paginatedProperties.length > 0 ? (
               <>
-                <div className={viewMode === 'horizontal' ? 'properties-list' : 'properties-grid'}>
-                  {paginatedProperties.map(property => {
-                    const propertySize = property.area 
-                      ? `${property.area} sqft` 
-                      : `${(property.bedrooms * 15 + property.bathrooms * 5)} sqft`
-                    
-                    const cardProps = {
-                      id: property.id,
-                      propertyType: property.type,
-                      date: formatDate(property.published_at),
-                      price: formatPrice(property.price),
-                      title: property.title,
-                      image: property.image || ASSETS.PLACEHOLDER_PROPERTY_MAIN,
-                      rentManagerName: property.agent?.first_name && property.agent?.last_name
-                        ? `${property.agent.first_name} ${property.agent.last_name}`
-                        : property.agent?.full_name
-                        || property.rent_manager?.name
-                        || 'Rental.Ph Official',
-                      rentManagerRole: property.agent
-                        ? getRentManagerRole(property.agent.verified)
-                        : getRentManagerRole(property.rent_manager?.is_official),
-                      bedrooms: property.bedrooms,
-                      bathrooms: property.bathrooms,
-                      parking: 0, // Parking not in backend model, defaulting to 0
-                      propertySize,
-                      location: property.location,
-                    }
-
-                    return viewMode === 'horizontal' ? (
-                      <HorizontalPropertyCard key={property.id} {...cardProps} />
-                    ) : (
-                      <VerticalPropertyCard key={property.id} {...cardProps} />
-                    )
-                  })}
-                </div>
-                
-                {/* Loading indicator for infinite scroll - both modes */}
-                {isLoadingMore && (
-                  <div className="loading-more-indicator">
-                    <p>Loading more properties...</p>
+                {viewMode === 'map' ? (
+                  <div className="properties-map-container">
+                    <PublicPropertiesMap 
+                      properties={paginatedProperties}
+                    />
                   </div>
+                ) : (
+                  <>
+                    <div className={viewMode === 'horizontal' ? 'properties-list' : 'properties-grid'}>
+                      {paginatedProperties.map(property => {
+                        const propertySize = property.area 
+                          ? `${property.area} sqft` 
+                          : `${(property.bedrooms * 15 + property.bathrooms * 5)} sqft`
+                        
+                        const cardProps = {
+                          id: property.id,
+                          propertyType: property.type,
+                          date: formatDate(property.published_at),
+                          price: formatPrice(property.price),
+                          title: property.title,
+                          image: property.image || ASSETS.PLACEHOLDER_PROPERTY_MAIN,
+                          rentManagerName: property.agent?.first_name && property.agent?.last_name
+                            ? `${property.agent.first_name} ${property.agent.last_name}`
+                            : property.agent?.full_name
+                            || property.rent_manager?.name
+                            || 'Rental.Ph Official',
+                          rentManagerRole: property.agent
+                            ? getRentManagerRole(property.agent.verified)
+                            : getRentManagerRole(property.rent_manager?.is_official),
+                          bedrooms: property.bedrooms,
+                          bathrooms: property.bathrooms,
+                          parking: 0, // Parking not in backend model, defaulting to 0
+                          propertySize,
+                          location: property.location,
+                        }
+
+                        return viewMode === 'horizontal' ? (
+                          <HorizontalPropertyCard key={property.id} {...cardProps} />
+                        ) : (
+                          <VerticalPropertyCard key={property.id} {...cardProps} />
+                        )
+                      })}
+                    </div>
+                    
+                    {/* Loading indicator for infinite scroll - both modes */}
+                    {isLoadingMore && (
+                      <div className="loading-more-indicator">
+                        <p>Loading more properties...</p>
+                      </div>
+                    )}
+                  </>
                 )}
               </>
             ) : (

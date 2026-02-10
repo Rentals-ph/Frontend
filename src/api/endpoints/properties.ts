@@ -99,12 +99,38 @@ export const propertiesApi = {
    */
   update: async (id: number, propertyData: FormData | Partial<Property>): Promise<{ success: boolean; message: string; data: Property }> => {
     try {
+      // Debug: Log FormData contents
+      if (propertyData instanceof FormData) {
+        console.log('Sending FormData with keys:', Array.from(propertyData.keys()))
+        for (const [key, value] of propertyData.entries()) {
+          if (value instanceof File) {
+            console.log(`${key}: [File] ${value.name} (${value.size} bytes, type: ${value.type})`)
+          } else {
+            console.log(`${key}: ${value}`)
+          }
+        }
+        
+        // For FormData with PUT, use POST with _method=PUT (Laravel method spoofing)
+        // This ensures FormData is parsed correctly
+        propertyData.append('_method', 'PUT')
+        const response = await apiClient.post<{ success: boolean; message: string; data: Property }>(`/properties/${id}`, propertyData, {
+          headers: {}
+        })
+        return response.data
+      }
+      
+      // For JSON data, use PUT directly
       const response = await apiClient.put<{ success: boolean; message: string; data: Property }>(`/properties/${id}`, propertyData, {
-        headers: propertyData instanceof FormData ? {} : { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json' }
       })
       return response.data
     } catch (error: any) {
       console.error('API call error:', error)
+      if (error.response?.data) {
+        console.error('Validation errors:', error.response.data)
+        console.error('Response status:', error.response.status)
+        console.error('Response headers:', error.response.headers)
+      }
       throw error
     }
   },

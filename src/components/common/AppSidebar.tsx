@@ -172,13 +172,13 @@ function AppSidebar() {
   // Agent sidebar content
   const renderAgentSidebar = () => (
     <>
-      <Link
+      {/*<Link
         href="/"
         className={`nav-item ${isActive('/') && !pathname?.includes('//') ? 'active' : ''}`}
       >
         <FiLayout className="nav-icon" />
         <span>Home</span>
-      </Link>
+      </Link>*/}
       <Link
         href="/agent"
         className={`nav-item ${isActive('/agent') && !pathname?.includes('/agent/') ? 'active' : ''}`}
@@ -196,27 +196,27 @@ function AppSidebar() {
         </div>
         <span>Inbox</span>
       </Link>
-      <Link
+      {/* <Link
         href="/agent/downloadables"
         className={`nav-item ${isActive('/agent/downloadables') ? 'active' : ''}`}
       >
         <FiDownload className="nav-icon" />
         <span>Downloadables</span>
-      </Link>
+      </Link> 
       <Link
         href="/agent/digital-card"
         className={`nav-item ${isActive('/agent/digital-card') ? 'active' : ''}`}
       >
         <FiCreditCard className="nav-icon" />
         <span>Digital Business Card</span>
-      </Link>
+      </Link>*/}
       <Link
         href="/agent/page-builder"
         className={`nav-item ${isActive('/agent/page-builder') ? 'active' : ''}`}
       >
         <FiSettings className="nav-icon" />
         <span>Page Builder</span>
-      </Link>
+      </Link> 
 
       <Link
           href="/agent/listings"
@@ -225,7 +225,7 @@ function AppSidebar() {
           <FiList className="nav-icon" />
           <span>My Listings</span>
         </Link>
-        <Link
+        {/* <Link
           href="/agent/tracker"
           className={`nav-item ${isActive('/agent/tracker') ? 'active' : ''}`}
         >
@@ -245,7 +245,7 @@ function AppSidebar() {
         >
           <FiBookOpen className="nav-icon" />
           <span>Share Blogs</span>
-        </Link>
+        </Link>*/}
     </>
   )
 

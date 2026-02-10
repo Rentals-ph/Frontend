@@ -71,7 +71,6 @@ export default function AgentCreateListingVisualsFeatures() {
   const stepLabels = [
     'Basic Information',
     'Visuals & Features',
-    'Pricing',
     'Owner Info & Review'
   ]
 
@@ -83,7 +82,6 @@ export default function AgentCreateListingVisualsFeatures() {
 
   // Attributes state
   const [amenities, setAmenities] = useState<string[]>(data.amenities)
-  const [furnishing, setFurnishing] = useState<string>(data.furnishing)
 
   const amenitiesList = [
     'Air Conditioning',
@@ -92,7 +90,30 @@ export default function AgentCreateListingVisualsFeatures() {
     'Parking',
     'Pool',
     'Wi-Fi Internet',
-    'Pet-Friendly'
+    'Pet-Friendly',
+    'Gym / Fitness Center',
+    'Security',
+    'Elevator',
+    'Balcony',
+    'Garden',
+    'Laundry',
+    'Dishwasher',
+    'Microwave',
+    'Refrigerator',
+    'TV / Cable',
+    'Hot Water',
+    'Furnished',
+    'Near Public Transport',
+    'Near Schools',
+    'Near Shopping',
+    'Near Hospitals',
+    'Water Supply',
+    'Electricity',
+    'Internet Ready',
+    '24/7 Security',
+    'CCTV',
+    'Fire Safety',
+    'Generator'
   ]
 
   const furnishingOptions = ['Fully Furnished', 'Semi Furnished', 'Unfurnished']
@@ -101,7 +122,6 @@ export default function AgentCreateListingVisualsFeatures() {
     setImages(data.images)
     setVideoUrl(data.videoUrl)
     setAmenities(data.amenities)
-    setFurnishing(data.furnishing)
     
     // Generate thumbnails
     const generateThumbnails = async () => {
@@ -327,24 +347,6 @@ export default function AgentCreateListingVisualsFeatures() {
               </div>
             </div>
 
-            <div className="acat-section">
-              <h3 className="acat-section-title">Furnishing</h3>
-              <div className="acat-checkbox-row">
-                {furnishingOptions.map((option) => (
-                  <label key={option} className="acat-checkbox-label">
-                    <input
-                      type="radio"
-                      name="furnishing"
-                      className="acat-radio"
-                      value={option}
-                      checked={furnishing === option}
-                      onChange={(e) => setFurnishing(e.target.value)}
-                    />
-                    <span className="acat-checkbox-text">{option}</span>
-                  </label>
-                ))}
-              </div>
-            </div>
           </div>
 
           <div style={{ marginTop: '2rem', display: 'flex', justifyContent: 'space-between' }}>
@@ -359,12 +361,12 @@ export default function AgentCreateListingVisualsFeatures() {
             <button
               className="aclc-next-btn"
               onClick={() => {
-                updateData({ images, videoUrl, amenities, furnishing })
-                router.push('/agent/create-listing/pricing')
+                updateData({ images, videoUrl, amenities })
+                router.push('/agent/create-listing/owner-review')
               }}
               type="button"
             >
-              <span>Next: Pricing</span>
+              <span>Next: Owner Info & Review</span>
               <FiArrowRight />
             </button>
           </div>

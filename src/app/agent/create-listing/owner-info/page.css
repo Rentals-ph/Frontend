@@ -163,3 +163,17 @@
   }
 }
 
+/* Two-column layout for owner review page */
+.owner-review-two-column {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+@media (max-width: 1024px) {
+  .owner-review-two-column {
+    grid-template-columns: 1fr;
+  }
+}
+

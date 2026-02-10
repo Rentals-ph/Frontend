@@ -50,7 +50,6 @@
     width: 25%;
     min-width: 320px;
     max-width: 380px;
-    margin-top: -170px;
     padding: 48px 0px;
     padding-right: 30px;
     border-right: #e5e7eb;
@@ -101,6 +100,7 @@
     margin-bottom: 10px;
     padding: 28px 20px;
     padding-bottom: 32px;
+    margin-top: -30px;
     background: #ffffff;
     border-radius: 16px;
     border: 1px solid #e5e7eb;
@@ -375,6 +375,7 @@
     flex-direction: column;
     gap: 16px;
     width: 100%;
+    margin-bottom: 10px;
   }
 
   .results-header-top {
@@ -806,11 +807,10 @@
   /* Top Search Bar Container - Full width background */
   .top-search-bar-container {
     background: linear-gradient(135deg, #205ED7 0%, #1a4db3 100%);
-    margin-top: 30px;
-    padding: 24px 32px;
-    margin-bottom: 0;
-    margin-right: 0;
-    max-width: none;
+    margin: 30px auto 0;
+    padding: 24px 40px;
+    max-width: 1400px;
+    width: 100%;
     border-radius: 16px;
     min-width: 0;
     box-shadow: 0 4px 20px rgba(32, 94, 215, 0.25), 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -1201,19 +1201,18 @@
     }
   }
   
-  /* For screens where container is full width but sidebar is still 25% */
-  @media (max-width: 1480px) {
+  /* Responsive width adjustments - match properties-main-layout */
+  @media (max-width: 1200px) {
     .top-search-bar-container {
-      margin-left: calc(25% + 40px);
-      width: calc(100vw - 25% - 40px);
+      max-width: 100%;
+      padding: 24px 32px;
     }
   }
   
-  /* For very large screens, ensure it stays aligned */
-  @media (min-width: 1481px) {
+  @media (max-width: 1024px) {
     .top-search-bar-container {
-      margin-left: calc((98vw - 1400px) / 2 + 350px + 40px);
-      width: calc(100vw - ((98vw - 1410px) / 2 + 350px + 40px));
+      max-width: 100%;
+      padding: 20px 24px;
     }
   }
 
@@ -1586,14 +1585,11 @@
     }
 
     .top-search-bar-container {
-      margin-left: calc(30% + 32px); /* Match sidebar width (30%) + container padding */
-      margin-right: 0;
-      width: calc(100vw - 30% - 32px);
-      padding: 24px 0;
+      padding: 24px 32px;
     }
 
     .top-search-bar {
-      padding: 0 40px;
+      padding: 0;
     }
 
     .sticky-search-bar-container {
@@ -1721,17 +1717,11 @@
     }
 
     .top-search-bar-container {
-      margin-left: 0; /* Sidebar is full width below, so search bar starts at edge */
-      margin-right: 0;
-      width: 100vw;
-      padding: 20px 0;
+      padding: 20px 24px;
     }
 
     .top-search-bar {
-      padding: 0 24px;
-    }
-
-    .top-search-bar {
+      padding: 0;
       flex-wrap: wrap;
     }
 
@@ -2181,17 +2171,13 @@
     }
 
     .top-search-bar-container {
-      margin-left: 0;
-      margin-right: 0;
-      width: 100vw;
-      padding: 12px 0;
-      background: #205ED7;
+      padding: 12px 16px;
       margin-top: 20px;
       border-radius: 0;
     }
 
     .top-search-bar {
-      padding: 0 16px;
+      padding: 0;
     }
 
     .properties-content-wrapper {
@@ -2423,16 +2409,13 @@
     }
 
     .top-search-bar-container {
-      margin-left: 0;
-      margin-right: 0;
-      width: 100vw;
-      padding: 12px 0;
+      padding: 12px 16px;
     }
 
     .top-search-bar {
       gap: 8px;
       display: flex;
-      padding: 0 16px;
+      padding: 0;
       flex-direction: column;
       border-radius: 0px;
     }

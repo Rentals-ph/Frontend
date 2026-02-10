@@ -101,7 +101,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 0px;
+  gap: 8px;
   min-width: 0;
   position: relative; /* Ensure proper positioning context for icons */
   overflow: visible; /* Allow icons to be visible even if they extend slightly */
@@ -115,6 +115,102 @@
   white-space: nowrap;
   flex-shrink: 0;
   min-width: fit-content;
+}
+
+/* =========================
+   SHARE BUTTON & POPUP
+========================= */
+.vertical-property-share-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.vertical-property-share-btn {
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.vertical-property-share-btn:hover {
+  background: #f3f4f6;
+  transform: translateY(-2px);
+}
+
+.vertical-property-share-btn svg {
+  width: 100%;
+  height: 100%;
+}
+
+.vertical-property-share-popup {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  right: 0;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15), 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 8px;
+  z-index: 1000;
+  min-width: 160px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  border: 1px solid #e5e7eb;
+}
+
+.vertical-property-share-popup::before {
+  content: '';
+  position: absolute;
+  bottom: -6px;
+  right: 12px;
+  width: 12px;
+  height: 12px;
+  background: #ffffff;
+  border-left: 1px solid #e5e7eb;
+  border-top: none;
+  border-bottom: 1px solid #e5e7eb;
+  transform: rotate(45deg);
+}
+
+.vertical-property-share-popup .share-option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  color: #374151;
+  text-align: left;
+  width: 100%;
+}
+
+.vertical-property-share-popup .share-option:hover {
+  background: #f3f4f6;
+}
+
+.vertical-property-share-popup .share-option svg {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+.vertical-property-share-popup .share-option span {
+  flex: 1;
 }
 
 /* LIKE BUTTON */
@@ -704,6 +800,41 @@
     line-height: 1.2;
   }
 
+  .vertical-property-share-btn {
+    width: 28px;
+    height: 28px;
+    padding: 4px;
+  }
+
+  /* Share popup on mobile - appears below */
+  .vertical-property-share-popup {
+    bottom: auto;
+    top: calc(100% + 8px);
+    min-width: 140px;
+    padding: 6px;
+    gap: 3px;
+  }
+
+  .vertical-property-share-popup::before {
+    bottom: auto;
+    top: -6px;
+    border-left: 1px solid #e5e7eb;
+    border-bottom: none;
+    border-top: 1px solid #e5e7eb;
+    transform: rotate(45deg);
+  }
+
+  .vertical-property-share-popup .share-option {
+    padding: 8px 10px;
+    font-size: 13px;
+    gap: 10px;
+  }
+
+  .vertical-property-share-popup .share-option svg {
+    width: 18px;
+    height: 18px;
+  }
+
   /* Contact Icons - Mobile: Positioned at bottom right of image */
   .vertical-property-contact-icons {
     position: absolute;
@@ -721,64 +852,59 @@
     align-items: center;
   }
 
-  /* Make all icons match heart icon size on mobile */
-  .vertical-property-contact-icons svg,
-  .vertical-property-contact-icons button svg {
-    width: 18px;
-    height: 18px;
-    padding: 0;
-    background: transparent;
-    border: none;
-    border-radius: 6px;
-    transition: all 0.2s ease;
-    flex-shrink: 0;
-  }
-  
+  /* Make heart icon same size as share icon on mobile - responsive */
   .vertical-property-contact-icons button {
-    width: 24px;
-    height: 24px;
-    padding: 3px;
+    width: 28px !important;
+    height: 28px !important;
+    padding: 4px !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   .vertical-property-contact-icons .vertical-property-like {
-    background: transparent;
-    border: none;
-    padding: 0;
-    margin: 0;
-    width: auto;
-    height: auto;
+    background: transparent !important;
+    border: none !important;
+    padding: 4px !important;
+    margin: 0 !important;
+    width: 28px !important;
+    height: 28px !important;
     display: flex;
     align-items: center;
     justify-content: center;
   }
 
   .vertical-property-contact-icons .vertical-property-like svg {
-    width: 18px;
-    height: 18px;
-    padding: 0;
+    width: 20px !important;
+    height: 20px !important;
+    padding: 0 !important;
   }
 
-  .vertical-property-contact-icons svg:active {
+  .vertical-property-contact-icons svg:active,
+  .vertical-property-contact-icons button:active {
     transform: scale(0.95);
     background: #f3f4f6;
   }
 
   /* Like Button - Mobile: Keep inside contact-icons group */
   .vertical-property-like {
-    position: static;
-    width: auto;
-    height: auto;
-    background: transparent;
-    border: none;
-    border-radius: 0;
-    box-shadow: none;
-    padding: 0;
-    margin: 0;
+    position: static !important;
+    width: 28px !important;
+    height: 28px !important;
+    background: transparent !important;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    padding: 4px !important;
+    margin: 0 !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   .vertical-property-like svg {
-    width: 28px;
-    height: 28px;
+    width: 20px !important;
+    height: 20px !important;
   }
 
   .vertical-property-like:active {
@@ -903,6 +1029,71 @@
   
   .vertical-property-price {
     font-size: 18px;
+  }
+
+  .vertical-property-share-btn {
+    width: 24px;
+    height: 24px;
+    padding: 3px;
+  }
+
+  /* Share popup on small mobile - appears below */
+  .vertical-property-share-popup {
+    bottom: auto;
+    top: calc(100% + 8px);
+    min-width: 130px;
+    padding: 5px;
+    gap: 2px;
+  }
+
+  .vertical-property-share-popup::before {
+    bottom: auto;
+    top: -6px;
+    border-left: 1px solid #e5e7eb;
+    border-bottom: none;
+    border-top: 1px solid #e5e7eb;
+    transform: rotate(45deg);
+  }
+
+  .vertical-property-share-popup .share-option {
+    padding: 7px 9px;
+    font-size: 12px;
+    gap: 8px;
+  }
+
+  .vertical-property-share-popup .share-option svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  /* Heart icon same size as share icon on small mobile */
+  .vertical-property-contact-icons button {
+    width: 24px !important;
+    height: 24px !important;
+    padding: 3px !important;
+  }
+
+  .vertical-property-contact-icons .vertical-property-like {
+    width: 24px !important;
+    height: 24px !important;
+    padding: 3px !important;
+  }
+
+  .vertical-property-contact-icons .vertical-property-like svg {
+    width: 18px !important;
+    height: 18px !important;
+    padding: 0 !important;
+  }
+
+  .vertical-property-like {
+    width: 24px !important;
+    height: 24px !important;
+    padding: 3px !important;
+  }
+
+  .vertical-property-like svg {
+    width: 18px !important;
+    height: 18px !important;
   }
 
   .vertical-property-title {

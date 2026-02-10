@@ -1,0 +1,169 @@
+@import '../broker-shared.css';
+
+/* ===================== */
+/* Listings Table Card   */
+/* ===================== */
+
+.bl-table-card {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+  padding: 28px 32px 20px 32px;
+  margin-top: 8px;
+}
+
+.bl-table-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.bl-table-title {
+  font-size: 1.18rem;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.bl-filter-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #f8f9fb;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 8px 18px;
+  font-size: 0.95rem;
+  color: #64748b;
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+
+.bl-filter-btn:hover {
+  border-color: #bfc7d1;
+}
+
+/* Table */
+.bl-table-wrapper {
+  overflow-x: auto;
+}
+
+.bl-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 800px;
+}
+
+.bl-table thead th {
+  text-align: left;
+  padding: 12px 14px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  border-bottom: 1.5px solid #f1f5f9;
+  white-space: nowrap;
+}
+
+.bl-table tbody td {
+  padding: 14px 14px;
+  font-size: 0.97rem;
+  color: #334155;
+  border-bottom: 1px solid #f1f5f9;
+  vertical-align: middle;
+}
+
+.bl-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.bl-table tbody tr:hover {
+  background: #f8fafc;
+}
+
+/* Checkbox */
+.bl-th-check,
+.bl-td-check {
+  width: 44px;
+  text-align: center;
+}
+
+.bl-checkbox {
+  width: 18px;
+  height: 18px;
+  accent-color: #3b82f6;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+/* Column-specific */
+.bl-td-title {
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.bl-td-by {
+  color: #475569;
+}
+
+.bl-td-role {
+  color: #64748b;
+}
+
+.bl-td-category {
+  color: #64748b;
+}
+
+.bl-td-price {
+  font-weight: 500;
+  color: #334155;
+}
+
+/* Status Badge */
+.bl-status-badge {
+  display: inline-block;
+  padding: 4px 14px;
+  border-radius: 999px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  text-align: center;
+  min-width: 72px;
+}
+
+.bl-status-badge.active {
+  background: #d1fae5;
+  color: #059669;
+}
+
+.bl-status-badge.pending {
+  background: #fef3c7;
+  color: #d97706;
+}
+
+.bl-status-badge.rented {
+  background: #f1f5f9;
+  color: #64748b;
+}
+
+.bl-status-badge.featured {
+  background: #dbeafe;
+  color: #2563eb;
+}
+
+/* ===================== */
+/* Responsive            */
+/* ===================== */
+
+@media (max-width: 900px) {
+  .bl-table-card {
+    padding: 18px 12px;
+  }
+}
+
+@media (max-width: 768px) {
+  .bl-table-card {
+    border-radius: 10px;
+    padding: 14px 6px;
+  }
+}

@@ -1,0 +1,213 @@
+/* Popular Searches Section */
+.popular-searches-section {
+  padding: 80px 80px 60px;
+  background: #ffffff;
+}
+
+.popular-searches-container {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.popular-searches-title {
+  text-align: center;
+  font-family: 'Inter', sans-serif;
+  font-size: 32px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin-bottom: 32px;
+}
+
+/* Tabs */
+.popular-searches-tabs {
+  display: flex;
+  justify-content: center;
+  gap: 0;
+  margin-bottom: 40px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.popular-searches-tab {
+  padding: 12px 32px;
+  background: none;
+  border: none;
+  font-family: 'Inter', sans-serif;
+  font-size: 16px;
+  font-weight: 500;
+  color: #6b7280;
+  cursor: pointer;
+  position: relative;
+  transition: color 0.2s;
+}
+
+.popular-searches-tab:hover {
+  color: #205ed7;
+}
+
+.popular-searches-tab.active {
+  color: #205ed7;
+  font-weight: 600;
+}
+
+.popular-searches-tab.active::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: #205ed7;
+  border-radius: 3px 3px 0 0;
+}
+
+/* Grid */
+.popular-searches-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 40px 60px;
+}
+
+.popular-searches-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.popular-searches-category {
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  color: #374151;
+  letter-spacing: 0.5px;
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+}
+
+.popular-searches-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.popular-searches-link {
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  color: #0e7490;
+  text-decoration: none;
+  transition: color 0.2s;
+  line-height: 1.5;
+}
+
+.popular-searches-link:hover {
+  color: #fe8e0a;
+  text-decoration: underline;
+}
+
+/* View More */
+.popular-searches-view-more {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: none;
+  border: none;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  color: #6b7280;
+  cursor: pointer;
+  margin-top: 16px;
+  padding: 0;
+  transition: color 0.2s;
+}
+
+.popular-searches-view-more:hover {
+  color: #205ed7;
+}
+
+.view-more-chevron {
+  font-size: 14px;
+  transition: transform 0.2s;
+}
+
+.view-more-chevron.expanded {
+  transform: rotate(180deg);
+}
+
+/* Divider line between groups (if needed in the future) */
+.popular-searches-grid + .popular-searches-grid {
+  margin-top: 48px;
+  padding-top: 48px;
+  border-top: 1px solid #e5e7eb;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .popular-searches-section {
+    padding: 60px 40px 40px;
+  }
+
+  .popular-searches-title {
+    font-size: 28px;
+  }
+
+  .popular-searches-grid {
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 32px 40px;
+  }
+}
+
+@media (max-width: 768px) {
+  .popular-searches-section {
+    padding: 48px 24px 32px;
+  }
+
+  .popular-searches-title {
+    font-size: 24px;
+    margin-bottom: 24px;
+  }
+
+  .popular-searches-tab {
+    font-size: 14px;
+    padding: 10px 20px;
+  }
+
+  .popular-searches-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 28px 32px;
+  }
+}
+
+@media (max-width: 480px) {
+  .popular-searches-section {
+    padding: 40px 16px 24px;
+  }
+
+  .popular-searches-title {
+    font-size: 20px;
+  }
+
+  .popular-searches-tabs {
+    margin-bottom: 28px;
+  }
+
+  .popular-searches-tab {
+    font-size: 13px;
+    padding: 8px 16px;
+  }
+
+  .popular-searches-grid {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  .popular-searches-category {
+    font-size: 12px;
+  }
+
+  .popular-searches-link {
+    font-size: 13px;
+  }
+}

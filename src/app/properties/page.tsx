@@ -2,6 +2,7 @@
 
 import { useState, useEffect, Suspense, useMemo, useRef } from 'react'
 import { useSearchParams } from 'next/navigation'
+import Link from 'next/link'
 import Navbar from '../../components/layout/Navbar'
 import Footer from '../../components/layout/Footer'
 import VerticalPropertyCard from '../../components/common/VerticalPropertyCard'
@@ -526,11 +527,13 @@ function PropertiesContent() {
         <div className="sticky-search-bar-wrapper">
           {/* Logo on the left */}
           <div className="sticky-search-logo">
-            <img
-              src={ASSETS.LOGO_HERO_MAIN}
-              alt="Rentals.ph logo"
-              className="sticky-logo-img"
-            />
+            <Link href="/">
+              <img
+                src={ASSETS.LOGO_HERO_MAIN}
+                alt="Rentals.ph logo"
+                className="sticky-logo-img"
+              />
+            </Link>
           </div>
           
           {/* Search and filters content on the right */}

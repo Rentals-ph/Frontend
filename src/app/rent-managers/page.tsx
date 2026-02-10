@@ -11,6 +11,7 @@ import { getApiBaseUrl } from '../../config/api'
 import type { Property } from '../../types'
 import type { Agent } from '../../api/endpoints/agents'
 import type { PaginatedResponse } from '../../api/types'
+import { ASSETS } from '@/utils/assets'
 import './page.css'
 
 // Helper function to get agent image URL
@@ -297,6 +298,13 @@ export default function RentManagersPage() {
           {/* Sticky Search Bar */}
           <div className={`sticky-search-filters-container ${showStickySearch ? 'visible' : ''}`}>
             <div className="sticky-search-filters">
+              <Link href="/" className="sticky-logo-link">
+                <img
+                  src={ASSETS.LOGO_HERO_MAIN}
+                  alt="Rentals.ph logo"
+                  className="sticky-logo"
+                />
+              </Link>
               <div className="search-input-wrapper">
                 <svg className="search-icon" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M9 17C13.4183 17 17 13.4183 17 9C17 4.58172 13.4183 1 9 1C4.58172 1 1 4.58172 1 9C1 13.4183 4.58172 17 9 17Z" stroke="#666" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>

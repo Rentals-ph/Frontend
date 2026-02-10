@@ -7,11 +7,13 @@ function Footer() {
     <footer className="footer" id="contact">
       <div className="footer-content-wrapper">
         <div className="footer-left">
-          <img
-            src={ASSETS.LOGO_FOOTER}
-            alt="Rentals.ph logo"
-            className="footer-logo"
-          />
+          <Link href="/">
+            <img
+              src={ASSETS.LOGO_FOOTER}
+              alt="Rentals.ph logo"
+              className="footer-logo"
+            />
+          </Link>
           <p className="footer-tagline">
             Unlock the door to your new beginning.
           </p>

@@ -17,7 +17,7 @@ function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isUserLoggedIn, setIsUserLoggedIn] = useState(false)
   const [userName, setUserName] = useState('User')
-  const [userRole, setUserRole] = useState<'agent' | 'admin'>('agent')
+  const [userRole, setUserRole] = useState<'agent' | 'admin' | 'broker'>('agent')
   const pathname = usePathname()
   const router = useRouter()
   const userMenuRef = useRef<HTMLDivElement>(null)
@@ -31,14 +31,15 @@ function Navbar() {
     
     // For agents, check if they have agent_status
     // For admins, just check if they have auth_token and role is admin
-    if (authToken && (role === 'admin' || (role === 'agent' && agentStatus))) {
+    // For brokers, check if they have auth_token and role is broker
+    if (authToken && (role === 'admin' || role === 'broker' || (role === 'agent' && agentStatus))) {
       setIsUserLoggedIn(true)
       // Try to get user name from localStorage - prioritize user_name, then agent_name
       const storedName = localStorage.getItem('user_name') || 
         localStorage.getItem('agent_name') || 
-        (role === 'admin' ? 'Admin' : 'Agent')
+        (role === 'admin' ? 'Admin' : role === 'broker' ? 'Broker' : 'Agent')
       setUserName(storedName)
-      setUserRole(role === 'admin' ? 'admin' : 'agent')
+      setUserRole(role === 'admin' ? 'admin' : role === 'broker' ? 'broker' : 'agent')
     } else {
       setIsUserLoggedIn(false)
       setUserName('User')
@@ -138,8 +139,8 @@ function Navbar() {
     setUserRole('agent')
     setShowUserMenu(false)
     
-    // If currently on agent or admin pages, redirect to home and reload
-    if (pathname?.startsWith('/agent') || pathname?.startsWith('/admin')) {
+    // If currently on agent, admin, or broker pages, redirect to home and reload
+    if (pathname?.startsWith('/agent') || pathname?.startsWith('/admin') || pathname?.startsWith('/broker')) {
       router.push('/')
       // Small delay to ensure navigation happens before reload
       setTimeout(() => {
@@ -164,11 +165,13 @@ function Navbar() {
       <header className="navbar-container">
         <div className="navbar-wrapper">
           <div className="navbar-logo-section">
-            <img
-              src={ASSETS.LOGO_HERO_MAIN}
-              alt="Rentals.ph logo"
-              className="navbar-logo"
-            />
+            <Link href="/">
+              <img
+                src={ASSETS.LOGO_HERO_MAIN}
+                alt="Rentals.ph logo"
+                className="navbar-logo"
+              />
+            </Link>
           </div>
 
           {/* Desktop Navigation */}
@@ -185,9 +188,17 @@ function Navbar() {
             <Link href="/rent-managers" className={`nav-link ${pathname === '/rent-managers' ? 'active' : ''}`}>
               RENT MANAGERS
             </Link>
-            <Link href="/blog" className={`nav-link ${pathname === '/blog' ? 'active' : ''}`}>
-              BLOG
-            </Link>
+            <div className="nav-dropdown-wrapper">
+              <Link href={pathname === '/news' ? '/news' : '/blog'} className={`nav-link ${pathname === '/blog' || pathname === '/news' ? 'active' : ''}`}>
+                {pathname === '/news' ? 'NEWS' : 'BLOG'}
+                <FiChevronDown className="nav-dropdown-chevron" />
+              </Link>
+              <div className="nav-dropdown-menu">
+                <Link href={pathname === '/news' ? '/blog' : '/news'} className="nav-dropdown-item" onClick={() => {}}>
+                  {pathname === '/news' ? 'BLOG' : 'NEWS'}
+                </Link>
+              </div>
+            </div>
             <Link href="/contact" className={`nav-link ${pathname === '/contact' ? 'active' : ''}`}>
               CONTACT US
             </Link>
@@ -216,7 +227,7 @@ function Navbar() {
                     <div className="navbar-user-info">
                       <span className="navbar-user-name">{userName}</span>
                       <span className="navbar-user-role">
-                        {userRole === 'admin' ? 'Admin' : 'Agent'}
+                        {userRole === 'admin' ? 'Admin' : userRole === 'broker' ? 'Broker' : 'Agent'}
                       </span>
                     </div>
                     <FiChevronDown className={`navbar-user-menu-chevron ${showUserMenu ? 'open' : ''}`} />
@@ -228,7 +239,7 @@ function Navbar() {
                     <button 
                       className="navbar-user-menu-item" 
                       onClick={() => {
-                        router.push(userRole === 'admin' ? '/admin' : '/agent')
+                        router.push(userRole === 'admin' ? '/admin' : userRole === 'broker' ? '/broker' : '/agent')
                         setShowUserMenu(false)
                       }}
                     >
@@ -288,8 +299,11 @@ function Navbar() {
           <Link href="/rent-managers" className={`nav-link ${pathname === '/rent-managers' ? 'active' : ''}`} onClick={() => setIsMobileMenuOpen(false)}>
             RENT MANAGERS
           </Link>
-          <Link href="/blog" className={`nav-link ${pathname === '/blog' ? 'active' : ''}`} onClick={() => setIsMobileMenuOpen(false)}>
-            BLOG
+          <Link href={pathname === '/news' ? '/news' : '/blog'} className={`nav-link ${pathname === '/blog' || pathname === '/news' ? 'active' : ''}`} onClick={() => setIsMobileMenuOpen(false)}>
+            {pathname === '/news' ? 'NEWS' : 'BLOG'}
+          </Link>
+          <Link href={pathname === '/news' ? '/blog' : '/news'} className={`nav-link nav-link-sub ${pathname === '/news' || pathname === '/blog' ? '' : ''}`} onClick={() => setIsMobileMenuOpen(false)}>
+            ↳ {pathname === '/news' ? 'BLOG' : 'NEWS'}
           </Link>
           <Link href="/contact" className={`nav-link ${pathname === '/contact' ? 'active' : ''}`} onClick={() => setIsMobileMenuOpen(false)}>
             CONTACT US
@@ -314,14 +328,14 @@ function Navbar() {
                 <div className="navbar-user-info">
                   <span className="navbar-user-name">{userName}</span>
                   <span className="navbar-user-role">
-                    {userRole === 'admin' ? 'Admin' : 'Agent'}
+                    {userRole === 'admin' ? 'Admin' : userRole === 'broker' ? 'Broker' : 'Agent'}
                   </span>
                 </div>
               </div>
               <button 
                 className="navbar-mobile-menu-item" 
                 onClick={() => {
-                  router.push(userRole === 'admin' ? '/admin' : '/agent')
+                  router.push(userRole === 'admin' ? '/admin' : userRole === 'broker' ? '/broker' : '/agent')
                   setIsMobileMenuOpen(false)
                 }}
               >

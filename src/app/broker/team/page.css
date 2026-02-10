@@ -1,0 +1,308 @@
+/* ============================================
+   TEAM MANAGEMENT PAGE
+   ============================================ */
+
+@import '../broker-shared.css';
+
+/* ============================================
+   TABLE CARD
+   ============================================ */
+
+.tm-table-card {
+  background: #FFFFFF;
+  border-radius: 14px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+}
+
+.tm-table-header {
+  padding: 24px 24px 16px;
+}
+
+.tm-table-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0;
+}
+
+/* ============================================
+   TABLE
+   ============================================ */
+
+.tm-table-wrapper {
+  overflow-x: auto;
+}
+
+.tm-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 860px;
+}
+
+.tm-table thead {
+  background: #F9FAFB;
+  border-top: 1px solid #E5E7EB;
+  border-bottom: 1px solid #E5E7EB;
+}
+
+.tm-table th {
+  padding: 12px 16px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #6B7280;
+  text-align: left;
+  white-space: nowrap;
+  user-select: none;
+}
+
+.tm-table td {
+  padding: 14px 16px;
+  font-size: 13px;
+  color: #374151;
+  border-bottom: 1px solid #F3F4F6;
+  white-space: nowrap;
+}
+
+.tm-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.tm-table tbody tr:hover {
+  background: #FAFBFC;
+}
+
+/* Checkbox column */
+.tm-th-check,
+.tm-td-check {
+  width: 44px;
+  text-align: center;
+}
+
+.tm-checkbox {
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  border: 1.5px solid #D1D5DB;
+  cursor: pointer;
+  accent-color: #3B82F6;
+}
+
+/* Name column */
+.tm-td-name {
+  font-weight: 500;
+  color: #111827;
+}
+
+/* Role column */
+.tm-td-role {
+  color: #374151;
+}
+
+/* Reports to */
+.tm-td-reports {
+  color: #374151;
+}
+
+.tm-dash {
+  color: #D1D5DB;
+  font-weight: 500;
+}
+
+/* Listings */
+.tm-td-listings {
+  color: #374151;
+}
+
+/* Inquiry Channels */
+.tm-td-channels {
+  color: #6B7280;
+  font-size: 12px;
+}
+
+/* Status badge */
+.tm-status-badge {
+  display: inline-block;
+  padding: 2px 0;
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: 4px;
+}
+
+.tm-status-badge.active {
+  color: #10B981;
+}
+
+.tm-status-badge.inactive {
+  color: #EF4444;
+}
+
+.tm-status-badge.pending {
+  color: #F59E0B;
+}
+
+/* Date */
+.tm-td-date {
+  color: #6B7280;
+  font-size: 13px;
+}
+
+/* ============================================
+   ACTIONS
+   ============================================ */
+
+.tm-td-actions {
+  width: 130px;
+}
+
+.tm-actions-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.tm-action-btn {
+  width: 30px;
+  height: 30px;
+  border-radius: 6px;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.15s;
+}
+
+.tm-action-btn.edit {
+  background: #EFF6FF;
+  color: #3B82F6;
+}
+
+.tm-action-btn.edit:hover {
+  background: #DBEAFE;
+}
+
+.tm-action-btn.delete {
+  background: #FEF2F2;
+  color: #EF4444;
+}
+
+.tm-action-btn.delete:hover {
+  background: #FEE2E2;
+}
+
+.tm-action-btn.reassign {
+  background: #F0FDF4;
+  color: #22C55E;
+}
+
+.tm-action-btn.reassign:hover {
+  background: #DCFCE7;
+}
+
+.tm-action-btn.more {
+  background: transparent;
+  color: #9CA3AF;
+}
+
+.tm-action-btn.more:hover {
+  background: #F3F4F6;
+  color: #6B7280;
+}
+
+/* More menu wrapper */
+.tm-more-wrapper {
+  position: relative;
+}
+
+/* ============================================
+   ACTION DROPDOWN MENU
+   ============================================ */
+
+.tm-action-menu {
+  position: absolute;
+  top: calc(100% + 4px);
+  right: 0;
+  min-width: 160px;
+  background: #FFFFFF;
+  border: 1px solid #E5E7EB;
+  border-radius: 10px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  z-index: 50;
+  overflow: hidden;
+  padding: 4px;
+}
+
+.tm-action-menu-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 12px;
+  border: none;
+  background: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  color: #374151;
+  transition: background 0.15s;
+}
+
+.tm-action-menu-item:hover {
+  background: #F9FAFB;
+}
+
+.tm-action-menu-item.danger {
+  color: #EF4444;
+}
+
+.tm-action-menu-item.danger:hover {
+  background: #FEF2F2;
+}
+
+.tm-action-menu-icon {
+  font-size: 14px;
+}
+
+.tm-action-menu-icon.edit {
+  color: #3B82F6;
+}
+
+.tm-action-menu-icon.reassign {
+  color: #F59E0B;
+}
+
+.tm-action-menu-icon.deactivate {
+  color: #EF4444;
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+
+@media (max-width: 1200px) {
+  .tm-table {
+    min-width: 780px;
+  }
+}
+
+@media (max-width: 768px) {
+  .tm-table-header {
+    padding: 16px 16px 12px;
+  }
+
+  .tm-table th,
+  .tm-table td {
+    padding: 10px 12px;
+  }
+
+  .tm-table th {
+    font-size: 11px;
+  }
+
+  .tm-table td {
+    font-size: 12px;
+  }
+}

@@ -1,0 +1,292 @@
+@import '../broker-shared.css';
+
+/* ===================== */
+/* Reports Stats Grid    */
+/* ===================== */
+
+.rp-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  margin-top: 8px;
+  margin-bottom: 28px;
+}
+
+.rp-stat-card {
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+  padding: 22px 20px;
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.rp-stat-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  flex-shrink: 0;
+}
+
+.rp-stat-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.rp-stat-top {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.rp-stat-label {
+  font-size: 0.82rem;
+  color: #94a3b8;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.rp-stat-change {
+  font-size: 0.72rem;
+  color: #10b981;
+  font-weight: 500;
+}
+
+.rp-stat-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin-top: 4px;
+}
+
+/* ===================== */
+/* Productivity Table    */
+/* ===================== */
+
+.rp-table-card {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+  padding: 28px 32px 20px 32px;
+  margin-bottom: 32px;
+}
+
+.rp-table-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.rp-table-title {
+  font-size: 1.18rem;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.rp-filter-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #f8f9fb;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 8px 18px;
+  font-size: 0.95rem;
+  color: #64748b;
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+
+.rp-filter-btn:hover {
+  border-color: #bfc7d1;
+}
+
+.rp-table-wrapper {
+  overflow-x: auto;
+}
+
+.rp-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 800px;
+}
+
+.rp-table thead th {
+  text-align: left;
+  padding: 12px 14px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  border-bottom: 1.5px solid #f1f5f9;
+  white-space: nowrap;
+}
+
+.rp-table tbody td {
+  padding: 14px 14px;
+  font-size: 0.97rem;
+  color: #334155;
+  border-bottom: 1px solid #f1f5f9;
+  vertical-align: middle;
+}
+
+.rp-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.rp-table tbody tr:hover {
+  background: #f8fafc;
+}
+
+.rp-th-check,
+.rp-td-check {
+  width: 44px;
+  text-align: center;
+}
+
+.rp-checkbox {
+  width: 18px;
+  height: 18px;
+  accent-color: #3b82f6;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.rp-td-name {
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.rp-td-num {
+  font-weight: 500;
+  color: #475569;
+  text-align: center;
+}
+
+.rp-td-popular {
+  color: #475569;
+}
+
+/* ===================== */
+/* Inventory Insights    */
+/* ===================== */
+
+.rp-section-title {
+  font-size: 1.18rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 16px;
+}
+
+.rp-insights-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-bottom: 36px;
+}
+
+.rp-chart-card {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+  padding: 28px 28px 22px 28px;
+}
+
+.rp-chart-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 20px;
+}
+
+/* Pie Chart */
+.rp-pie-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+.rp-pie-chart {
+  width: 210px;
+  height: 210px;
+}
+
+.rp-pie-legend {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.rp-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.rp-legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* Bar Chart */
+.rp-bar-container {
+  display: flex;
+  justify-content: center;
+}
+
+.rp-bar-chart {
+  width: 100%;
+  max-width: 420px;
+  height: auto;
+}
+
+/* ===================== */
+/* Responsive            */
+/* ===================== */
+
+@media (max-width: 1200px) {
+  .rp-stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 900px) {
+  .rp-stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .rp-insights-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .rp-table-card,
+  .rp-chart-card {
+    padding: 18px 12px;
+  }
+}
+
+@media (max-width: 768px) {
+  .rp-stat-card {
+    padding: 16px;
+  }
+
+  .rp-table-card,
+  .rp-chart-card {
+    border-radius: 10px;
+    padding: 14px 6px;
+  }
+}

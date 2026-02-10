@@ -37,6 +37,20 @@ export function middleware(request: NextRequest) {
     }
   }
 
+  // Broker routes protection
+  if (pathname.startsWith('/broker')) {
+    const authToken = request.cookies.get('auth_token')?.value
+    const userRole = request.cookies.get('user_role')?.value || request.cookies.get('agent_role')?.value
+
+    // If cookies exist and role doesn't match, redirect
+    // If cookies don't exist, let client-side component handle it
+    if (authToken && userRole && userRole !== 'broker') {
+      const url = request.nextUrl.clone()
+      url.pathname = '/'
+      return NextResponse.redirect(url)
+    }
+  }
+
   return NextResponse.next()
 }
 
@@ -44,6 +58,7 @@ export const config = {
   matcher: [
     '/admin/:path*',
     '/agent/:path*',
+    '/broker/:path*',
   ],
 }
 

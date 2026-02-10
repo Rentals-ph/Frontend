@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import AppSidebar from '../../../components/common/AppSidebar'
 import AgentHeader from '../../../components/agent/AgentHeader'
 import { agentsApi } from '../../../api'
+import { useRouter } from 'next/navigation'
 import type { Agent } from '../../../api/endpoints/agents'
 import { ASSETS } from '@/utils/assets'
 import { 
@@ -12,6 +13,7 @@ import {
 import './page.css'
 
 export default function AgentEditProfile() {
+  const router = useRouter()
   const [loading, setLoading] = useState(true)
   const [agent, setAgent] = useState<Agent | null>(null)
   const [formData, setFormData] = useState({
@@ -125,10 +127,65 @@ export default function AgentEditProfile() {
     }))
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [imageFile, setImageFile] = useState<File | null>(null)
+  const [imagePreview, setImagePreview] = useState<string | null>(null)
+  const [uploading, setUploading] = useState(false)
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      setImageFile(file)
+      // Create preview
+      const reader = new FileReader()
+      reader.onloadend = () => {
+        setImagePreview(reader.result as string)
+      }
+      reader.readAsDataURL(file)
+    }
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    // Handle form submission
-    console.log('Form submitted:', formData)
+    setUploading(true)
+    
+    try {
+      const updateData: {
+        first_name?: string
+        last_name?: string
+        phone?: string
+        city?: string
+        state?: string
+        office_address?: string
+        image?: File
+      } = {
+        first_name: formData.firstName,
+        last_name: formData.lastName,
+        phone: formData.contactNumber ? `+63${formData.contactNumber.replace(/\D/g, '')}` : undefined,
+        city: formData.city,
+        state: formData.region,
+        office_address: formData.addressLine1,
+      }
+      
+      if (imageFile) {
+        updateData.image = imageFile
+      }
+      
+      const updatedAgent = await agentsApi.update(updateData)
+      
+      // Update local state
+      setAgent(updatedAgent)
+      
+      // Clear image file and preview
+      setImageFile(null)
+      setImagePreview(null)
+      
+      alert('Profile updated successfully!')
+    } catch (error) {
+      console.error('Error updating profile:', error)
+      alert('Failed to update profile. Please try again.')
+    } finally {
+      setUploading(false)
+    }
   }
 
   return (
@@ -155,21 +212,48 @@ export default function AgentEditProfile() {
             <>
           <div className="profile-section-top">
             <div className="profile-image-section">
-              <div className="profile-image-large">
-                <img src={agentImage} alt={agentName} onError={(e) => {
+              <div className="profile-image-large" style={{ position: 'relative' }}>
+                <img src={imagePreview || agentImage} alt={agentName} onError={(e) => {
                   const target = e.target as HTMLImageElement;
                   target.style.display = 'none';
                   target.nextElementSibling?.classList.remove('hidden');
                 }} />
                 <div className="avatar-fallback-large hidden">{agentInitials}</div>
+                <label htmlFor="profile-image-upload-edit" className="profile-image-upload-label">
+                  <input
+                    type="file"
+                    id="profile-image-upload-edit"
+                    accept="image/*"
+                    onChange={handleImageChange}
+                    style={{ display: 'none' }}
+                  />
+                  <span style={{ 
+                    position: 'absolute', 
+                    bottom: '10px', 
+                    right: '10px', 
+                    background: '#FE8E0A', 
+                    color: 'white', 
+                    padding: '8px 12px', 
+                    borderRadius: '4px', 
+                    cursor: 'pointer',
+                    fontSize: '12px'
+                  }}>
+                    Change Photo
+                  </span>
+                </label>
               </div>
               <div className="profile-name-section">
                 <h3>{agentName}</h3>
                 <p>{agent?.verified ? 'Rent Manager' : 'Property Agent'}</p>
               </div>
             </div>
-            <button type="submit" form="edit-profile-form" className="save-changes-btn">
-              Save Changes
+            <button 
+              type="submit" 
+              form="edit-profile-form" 
+              className="save-changes-btn"
+              disabled={uploading}
+            >
+              {uploading ? 'Saving...' : 'Save Changes'}
             </button>
           </div>
 

@@ -389,8 +389,21 @@ export default function AgentCreateListingPublish() {
                   // Step 1: Compress images before upload (reduces upload time significantly)
                   let compressedImage: File | null = null
                   if (data.images.length > 0) {
+                    const originalImage = data.images[0]
+                    
+                    // Validate original image
+                    if (!originalImage || originalImage.size === 0) {
+                      throw new Error('Invalid image file. Please select a valid image.')
+                    }
+                    
+                    // Check file type
+                    const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp']
+                    if (!originalImage.type || !validTypes.includes(originalImage.type.toLowerCase())) {
+                      throw new Error('Image must be a valid image file (JPEG, JPG, PNG, GIF, or WEBP).')
+                    }
+                    
                     try {
-                      compressedImage = await compressImage(data.images[0], {
+                      compressedImage = await compressImage(originalImage, {
                         maxWidth: 1920,
                         maxHeight: 1920,
                         quality: 0.85,
@@ -398,7 +411,8 @@ export default function AgentCreateListingPublish() {
                       })
                     } catch (compressError) {
                       console.warn('Image compression failed, using original:', compressError)
-                      compressedImage = data.images[0]
+                      // Use original file if compression fails
+                      compressedImage = originalImage
                     }
                   }
                   setIsCompressing(false)
@@ -455,25 +469,56 @@ export default function AgentCreateListingPublish() {
                     formData.append('video_url', data.videoUrl)
                   }
                   
-                  // Step 3: Create property first to get ID, then upload image
+                  // Append main image if available
+                  if (compressedImage) {
+                    // Ensure the file has a valid name and type
+                    const imageFile = compressedImage instanceof File 
+                      ? compressedImage 
+                      : new File([compressedImage], 'image.jpg', { type: 'image/jpeg' })
+                    
+                    // Verify file is valid before appending
+                    if (imageFile.size > 0 && imageFile.type.startsWith('image/')) {
+                      formData.append('image', imageFile, imageFile.name)
+                    } else {
+                      throw new Error('Invalid image file. Please select a valid image.')
+                    }
+                  }
+                  
+                  // Step 3: Create property with image
                   const API_BASE_URL = getApiBaseUrl()
                   const token = localStorage.getItem('auth_token')
                   
-                  // Create property without image first
+                  // Create property with image included in FormData
                   const createResponse = await uploadWithProgress(
                     `${API_BASE_URL}/properties`,
                     formData,
                     token,
                     (progress) => {
-                      // Update progress for property creation (first 50%)
-                      setUploadProgress(Math.min(progress.percent / 2, 50))
+                      // Update progress for property creation (includes image upload)
+                      setUploadProgress(progress.percent)
                     }
                   )
                   
                   const createResponseData = await createResponse.json()
                   
                   if (!createResponse.ok || !createResponseData.success) {
-                    throw new Error(createResponseData.message || 'Failed to create property')
+                    // Extract detailed error messages if available
+                    const errorMessage = createResponseData.message || 'Failed to create property'
+                    const errorMessages = createResponseData.error_messages || []
+                    const errors = createResponseData.errors || {}
+                    
+                    let fullErrorMessage = errorMessage
+                    if (errorMessages.length > 0) {
+                      fullErrorMessage += '\n' + errorMessages.join('\n')
+                    }
+                    if (Object.keys(errors).length > 0) {
+                      const errorDetails = Object.entries(errors)
+                        .map(([field, messages]) => `${field}: ${Array.isArray(messages) ? messages.join(', ') : messages}`)
+                        .join('\n')
+                      fullErrorMessage += '\n' + errorDetails
+                    }
+                    
+                    throw new Error(fullErrorMessage)
                   }
                   
                   // Get property ID from response
@@ -483,7 +528,9 @@ export default function AgentCreateListingPublish() {
                     throw new Error('Property created but no ID returned')
                   }
                   
-                  // Step 4: Upload image with storage path structure
+                  // Step 4: Optional - Upload image separately if backend requires it
+                  // (This step may not be needed if image was already processed in Step 3)
+                  // Keeping as fallback for backend implementations that require separate image upload
                   if (compressedImage && propertyId) {
                     try {
                       const imageResult = await uploadPropertyMainImage(
@@ -492,16 +539,17 @@ export default function AgentCreateListingPublish() {
                         `${API_BASE_URL}/properties/${propertyId}/image`,
                         token,
                         (progress) => {
-                          // Update progress for image upload (last 50%)
-                          setUploadProgress(50 + (progress.percent / 2))
+                          // Update progress if separate upload is needed
+                          setUploadProgress(90 + (progress.percent / 10))
                         }
                       )
                       
                       // Image uploaded successfully with storage path
                       console.log('Image uploaded to:', imageResult.path)
                     } catch (imageError) {
-                      console.warn('Image upload failed, but property was created:', imageError)
-                      // Property is created, image upload failure is not critical
+                      console.warn('Separate image upload failed, but property was created:', imageError)
+                      // Property is created, separate image upload failure is not critical
+                      // if image was already included in initial request
                     }
                   }
                   

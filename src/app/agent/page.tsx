@@ -54,31 +54,54 @@ export default function AgentDashboard() {
         // Get current agent
         const agent = await agentsApi.getCurrent()
         
-        if (agent?.id) {
-          // Fetch properties for this agent
-          const properties = await propertiesApi.getByAgentId(agent.id)
-          
-          // Transform properties to ListingData format
-          const transformedListings: ListingData[] = properties.slice(0, 3).map((property: Property) => {
-            const area = property.area ? `${property.area}${property.floor_area_unit || ' sqm'}` : 'N/A'
-            const price = property.price_type 
-              ? `₱${property.price.toLocaleString()}/${property.price_type}`
-              : `₱${property.price.toLocaleString()}/month`
-            
-            return {
-              id: property.id,
-              title: property.title,
-              image: property.image || ASSETS.PLACEHOLDER_PROPERTY_MAIN,
-              details: `${property.bedrooms} Bedrooms • ${property.bathrooms} Bathroom${property.bathrooms > 1 ? 's' : ''} • ${area}`,
-              price: price,
-              status: property.published_at ? 'active' : 'pending'
-            }
-          })
-          
-          setListings(transformedListings)
+        if (!agent) {
+          console.error('No agent found. Please ensure you are logged in.')
+          setLoading(false)
+          return
         }
-      } catch (error) {
+        
+        if (!agent.id) {
+          console.error('Agent ID is missing')
+          setLoading(false)
+          return
+        }
+        
+        // Fetch properties for this agent
+        const properties = await propertiesApi.getByAgentId(agent.id)
+        
+        if (!properties || !Array.isArray(properties)) {
+          console.error('Invalid properties response:', properties)
+          setLoading(false)
+          return
+        }
+        
+        // Transform properties to ListingData format
+        const transformedListings: ListingData[] = properties.slice(0, 3).map((property: Property) => {
+          const area = property.area ? `${property.area}${property.floor_area_unit || ' sqm'}` : 'N/A'
+          const price = property.price_type 
+            ? `₱${property.price.toLocaleString()}/${property.price_type}`
+            : `₱${property.price.toLocaleString()}/month`
+          
+          return {
+            id: property.id,
+            title: property.title,
+            image: property.image || ASSETS.PLACEHOLDER_PROPERTY_MAIN,
+            details: `${property.bedrooms} Bedrooms • ${property.bathrooms} Bathroom${property.bathrooms > 1 ? 's' : ''} • ${area}`,
+            price: price,
+            status: property.published_at ? 'active' : 'pending'
+          }
+        })
+        
+        setListings(transformedListings)
+      } catch (error: any) {
         console.error('Error fetching agent listings:', error)
+        if (error.response?.status === 401) {
+          console.error('Unauthorized. Please log in again.')
+        } else if (error.response?.status === 404) {
+          console.error('Agent not found.')
+        } else {
+          console.error('Failed to fetch properties:', error.message || error)
+        }
       } finally {
         setLoading(false)
       }

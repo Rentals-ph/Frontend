@@ -73,26 +73,30 @@ export async function compressImage(
                     reject(new Error('Failed to compress image'))
                     return
                   }
+                  // Ensure filename has .jpg extension to match JPEG MIME type
+                  const filename = file.name.replace(/\.[^/.]+$/, '') + '.jpg'
                   const compressedFile = new File(
                     [lowerQualityBlob],
-                    file.name,
-                    { type: file.type || 'image/jpeg' }
+                    filename,
+                    { type: 'image/jpeg' }
                   )
                   resolve(compressedFile)
                 },
-                file.type || 'image/jpeg',
+                'image/jpeg',
                 Math.max(0.5, opts.quality - 0.2)
               )
             } else {
+              // Ensure filename has .jpg extension to match JPEG MIME type
+              const filename = file.name.replace(/\.[^/.]+$/, '') + '.jpg'
               const compressedFile = new File(
                 [blob],
-                file.name,
-                { type: file.type || 'image/jpeg' }
+                filename,
+                { type: 'image/jpeg' }
               )
               resolve(compressedFile)
             }
           },
-          file.type || 'image/jpeg',
+          'image/jpeg', // Always compress to JPEG for consistency
           opts.quality
         )
       }

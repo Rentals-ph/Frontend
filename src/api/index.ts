@@ -13,6 +13,8 @@ export { newsApi } from './endpoints/news'
 export { testimonialsApi } from './endpoints/testimonials'
 export { agentsApi } from './endpoints/agents'
 export { authApi } from './endpoints/auth'
+export { messagesApi } from './endpoints/messages'
+export { pageBuilderApi } from './endpoints/pageBuilder'
 
 // Export types from endpoints
 export type { GetPropertiesParams } from './endpoints/properties'
@@ -20,4 +22,6 @@ export type { GetBlogsParams } from './endpoints/blogs'
 export type { GetNewsParams, News } from './endpoints/news'
 export type { AgentRegistrationData, AgentRegistrationResponse } from './endpoints/agents'
 export type { LoginCredentials, LoginResponse } from './endpoints/auth'
+export type { Message, SendMessageData, GetMessagesParams } from './endpoints/messages'
+export type { PageBuilderData, PageBuilderResponse } from './endpoints/pageBuilder'
 

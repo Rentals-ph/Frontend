@@ -7,7 +7,7 @@ import Navbar from '../../../components/layout/Navbar'
 import Footer from '../../../components/layout/Footer'
 import HorizontalPropertyCard from '../../../components/common/HorizontalPropertyCard'
 import VerticalPropertyCard from '../../../components/common/VerticalPropertyCard'
-import { propertiesApi, agentsApi } from '../../../api'
+import { propertiesApi, agentsApi, messagesApi } from '../../../api'
 import { getApiBaseUrl } from '../../../config/api'
 import type { Property } from '../../../types'
 import type { Agent } from '../../../api/endpoints/agents'
@@ -251,12 +251,26 @@ export default function RentManagerDetailsPage() {
     setFormData(prev => ({ ...prev, [name]: value }))
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!manager) return
-    console.log('Rent manager contact submitted:', { managerId: manager.id, ...formData })
-    alert('Message sent successfully!')
-    setFormData({ firstName: '', lastName: '', phone: '', email: '', message: '' })
+
+    try {
+      await messagesApi.send({
+        recipient_id: manager.id,
+        sender_name: `${formData.firstName} ${formData.lastName}`,
+        sender_email: formData.email,
+        sender_phone: formData.phone,
+        message: formData.message,
+        type: 'contact',
+        subject: `Contact from ${formData.firstName} ${formData.lastName}`,
+      })
+      alert('Message sent successfully!')
+      setFormData({ firstName: '', lastName: '', phone: '', email: '', message: '' })
+    } catch (error: any) {
+      console.error('Error sending message:', error)
+      alert(error.response?.data?.message || 'Failed to send message. Please try again.')
+    }
   }
 
   // Conditional returns - must come after all hooks

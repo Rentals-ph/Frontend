@@ -1,7 +1,9 @@
 {
-  "/page": "app/page.js",
-  "/broker/listings/page": "app/broker/listings/page.js",
-  "/broker/approvals/page": "app/broker/approvals/page.js",
-  "/broker/team/page": "app/broker/team/page.js",
-  "/broker/page-builder/page": "app/broker/page-builder/page.js"
+  "/_not-found/page": "app/_not-found/page.js",
+  "/agent/downloadables/page": "app/agent/downloadables/page.js",
+  "/agent/digital-card/page": "app/agent/digital-card/page.js",
+  "/agent/page": "app/agent/page.js",
+  "/agent/tracker/page": "app/agent/tracker/page.js",
+  "/agent/inbox/page": "app/agent/inbox/page.js",
+  "/agent/listings/page": "app/agent/listings/page.js"
 }

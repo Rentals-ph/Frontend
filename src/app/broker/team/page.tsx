@@ -157,9 +157,24 @@ export default function TeamManagementPage() {
         {/* Team Table */}
         <div className="tm-table-card">
           <div className="tm-table-header">
-            <h3 className="tm-table-title">All users</h3>
+            <div className="tm-header-content">
+              <h3 className="tm-table-title">All users</h3>
+              <div className="tm-mobile-select-all">
+                <input
+                  type="checkbox"
+                  checked={allSelected}
+                  onChange={toggleSelectAll}
+                  className="tm-mobile-card-checkbox"
+                  id="mobile-select-all"
+                />
+                <label htmlFor="mobile-select-all" className="tm-mobile-select-all-label">
+                  Select all
+                </label>
+              </div>
+            </div>
           </div>
 
+          {/* Desktop Table View */}
           <div className="tm-table-wrapper">
             <table className="tm-table">
               <thead>
@@ -240,6 +255,85 @@ export default function TeamManagementPage() {
                 ))}
               </tbody>
             </table>
+          </div>
+
+          {/* Mobile Card View */}
+          <div className="tm-mobile-card">
+            {teamData.map((member) => (
+              <div key={member.id} className="tm-mobile-card-item">
+                <div className="tm-mobile-card-header">
+                  <h3 className="tm-mobile-card-name">{member.name}</h3>
+                  <input
+                    type="checkbox"
+                    checked={selectedMembers.includes(member.id)}
+                    onChange={() => toggleSelect(member.id)}
+                    className="tm-mobile-card-checkbox"
+                  />
+                </div>
+                <div className="tm-mobile-card-body">
+                  <div className="tm-mobile-card-row">
+                    <span className="tm-mobile-card-label">Role:</span>
+                    <span className="tm-mobile-card-value">{member.role}</span>
+                  </div>
+                  <div className="tm-mobile-card-row">
+                    <span className="tm-mobile-card-label">Reports to:</span>
+                    <span className="tm-mobile-card-value">
+                      {member.reportsTo || <span className="tm-dash">&mdash;</span>}
+                    </span>
+                  </div>
+                  <div className="tm-mobile-card-row">
+                    <span className="tm-mobile-card-label">Listings:</span>
+                    <span className="tm-mobile-card-value">{member.listings}</span>
+                  </div>
+                  <div className="tm-mobile-card-row">
+                    <span className="tm-mobile-card-label">Channels:</span>
+                    <span className="tm-mobile-card-value tm-mobile-card-channels">
+                      {formatChannels(member.inquiryChannels)}
+                    </span>
+                  </div>
+                  <div className="tm-mobile-card-row">
+                    <span className="tm-mobile-card-label">Status:</span>
+                    <span className="tm-mobile-card-value">
+                      <span className={`tm-status-badge ${member.status.toLowerCase()}`}>
+                        {member.status}
+                      </span>
+                    </span>
+                  </div>
+                  <div className="tm-mobile-card-row">
+                    <span className="tm-mobile-card-label">Join Date:</span>
+                    <span className="tm-mobile-card-value">{member.joinDate}</span>
+                  </div>
+                </div>
+                <div className="tm-mobile-card-actions">
+                  <button className="tm-mobile-action-btn edit" title="Edit">
+                    <FiEdit />
+                  </button>
+                  <button className="tm-mobile-action-btn delete" title="Delete">
+                    <FiTrash2 />
+                  </button>
+                  <button className="tm-mobile-action-btn reassign" title="Reassign">
+                    <FiRefreshCw />
+                  </button>
+                  <div className="tm-mobile-more-wrapper">
+                    <button
+                      className="tm-mobile-action-btn more"
+                      title="More"
+                      onClick={() =>
+                        setOpenMenuId(openMenuId === member.id ? null : member.id)
+                      }
+                    >
+                      <FiMoreVertical />
+                    </button>
+                    {openMenuId === member.id && (
+                      <ActionMenu
+                        memberId={member.id}
+                        onClose={() => setOpenMenuId(null)}
+                      />
+                    )}
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </main>

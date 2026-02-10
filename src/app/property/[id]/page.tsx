@@ -21,6 +21,8 @@ export default function PropertyDetailsPage() {
   const [loading, setLoading] = useState(true)
   const [selectedImageIndex, setSelectedImageIndex] = useState(0)
   const [showShareMenu, setShowShareMenu] = useState(false)
+  const [showImageModal, setShowImageModal] = useState(false)
+  const [modalImageIndex, setModalImageIndex] = useState(0)
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -180,6 +182,27 @@ export default function PropertyDetailsPage() {
     }
   }, [showShareMenu])
 
+  // Keyboard navigation for image modal
+  useEffect(() => {
+    if (!showImageModal || !property) return
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const images = getPropertyImages(property)
+      if (e.key === 'ArrowRight' && modalImageIndex < images.length - 1) {
+        setModalImageIndex(prev => prev + 1)
+      } else if (e.key === 'ArrowLeft' && modalImageIndex > 0) {
+        setModalImageIndex(prev => prev - 1)
+      } else if (e.key === 'Escape') {
+        setShowImageModal(false)
+      }
+    }
+
+    document.addEventListener('keydown', handleKeyDown)
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [showImageModal, modalImageIndex, property])
+
   return (
     <div className="property-details-page">
       <Navbar />
@@ -206,7 +229,14 @@ export default function PropertyDetailsPage() {
             <div className="property-details-container">
               <div className="property-details-left">
                 <div className="property-images-grid">
-                  <div className="property-main-image">
+                  <div 
+                    className="property-main-image"
+                    onClick={() => {
+                      setModalImageIndex(selectedImageIndex)
+                      setShowImageModal(true)
+                    }}
+                    style={{ cursor: 'pointer' }}
+                  >
                     {property && (
                       <img 
                         src={getPropertyImages(property)[selectedImageIndex]} 
@@ -224,7 +254,12 @@ export default function PropertyDetailsPage() {
                         <div 
                           key={index}
                           className="property-thumbnail"
-                          onClick={() => setSelectedImageIndex(index)}
+                          onClick={() => {
+                            setSelectedImageIndex(index)
+                            setModalImageIndex(index)
+                            setShowImageModal(true)
+                          }}
+                          style={{ cursor: 'pointer' }}
                         >
                           <img src={image} alt={`Property view ${index + 1}`} />
                         </div>
@@ -541,6 +576,116 @@ export default function PropertyDetailsPage() {
       )}
 
       <Footer />
+
+      {/* Image Modal */}
+      {showImageModal && property && (() => {
+        const images = getPropertyImages(property)
+        const currentIndex = modalImageIndex
+        const hasNext = currentIndex < images.length - 1
+        const hasPrev = currentIndex > 0
+
+        const handleNext = (e: React.MouseEvent) => {
+          e.stopPropagation()
+          if (hasNext) {
+            setModalImageIndex(currentIndex + 1)
+          }
+        }
+
+        const handlePrev = (e: React.MouseEvent) => {
+          e.stopPropagation()
+          if (hasPrev) {
+            setModalImageIndex(currentIndex - 1)
+          }
+        }
+
+        return (
+          <div 
+            className="image-modal-overlay"
+            onClick={() => setShowImageModal(false)}
+          >
+            <div 
+              className="image-modal-content"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button 
+                className="image-modal-close"
+                onClick={() => setShowImageModal(false)}
+                aria-label="Close image"
+              >
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path
+                    d="M18 6L6 18M6 6l12 12"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </button>
+              
+              {hasPrev && (
+                <button 
+                  className="image-modal-arrow image-modal-arrow-left"
+                  onClick={handlePrev}
+                  aria-label="Previous image"
+                >
+                  <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                      d="M15 18l-6-6 6-6"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </button>
+              )}
+
+              <img 
+                src={images[currentIndex]} 
+                alt={`${property.title} - Image ${currentIndex + 1}`}
+                className="image-modal-img"
+              />
+
+              {hasNext && (
+                <button 
+                  className="image-modal-arrow image-modal-arrow-right"
+                  onClick={handleNext}
+                  aria-label="Next image"
+                >
+                  <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                      d="M9 18l6-6-6-6"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </button>
+              )}
+
+              <div className="image-modal-thumbnails">
+                {images.map((image, index) => (
+                  <div
+                    key={index}
+                    className={`image-modal-thumbnail ${index === currentIndex ? 'active' : ''}`}
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      setModalImageIndex(index)
+                    }}
+                  >
+                    <img 
+                      src={image} 
+                      alt={`${property.title} - Thumbnail ${index + 1}`}
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )
+      })()}
     </div>
   )
 }

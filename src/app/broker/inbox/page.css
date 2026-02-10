@@ -1,117 +1,7 @@
-.agent-inbox {
-  display: flex;
-  min-height: 100vh;
-  background-color: #F3F4F6;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-}
-
-/* Sidebar styles removed - using component CSS */
-
-/* Main Content */
-.agent-main {
-  margin-left: 280px;
-  flex: 1;
-  padding: 32px;
-  min-height: 100vh;
-}
-
-/* Header */
-.agent-header {
-  margin-bottom: 32px;
-}
-
-.header-content {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-}
-
-.agent-header h1 {
-  margin: 0 0 8px 0;
-  font-size: 28px;
-  font-weight: 700;
-  color: #111827;
-}
-
-.welcome-text {
-  margin: 0;
-  font-size: 14px;
-  color: #6B7280;
-}
-
-.header-right {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-}
-
-.notification-icon {
-  font-size: 24px;
-  color: #6B7280;
-  cursor: pointer;
-  transition: color 0.2s;
-}
-
-.notification-icon:hover {
-  color: #111827;
-}
-
-.user-profile {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.profile-avatar {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  background-color: #E5E7EB;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-  position: relative;
-}
-
-.profile-avatar img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.avatar-fallback {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: linear-gradient(135deg, #3B82F6 0%, #8B5CF6 100%);
-  color: white;
-  font-weight: 600;
-  font-size: 14px;
-}
-
-.avatar-fallback.hidden {
-  display: none;
-}
-
-.user-info {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.user-name {
-  font-size: 14px;
-  font-weight: 600;
-  color: #111827;
-}
-
-.user-role {
-  font-size: 12px;
-  color: #6B7280;
-}
+/* ============================================
+   BROKER INBOX PAGE
+   Responsive styles for web and mobile
+   ============================================ */
 
 /* Inbox Container */
 .inbox-container {
@@ -219,6 +109,7 @@
   font-size: 20px;
   color: #6B7280;
   pointer-events: none;
+  z-index: 1;
 }
 
 .search-input {
@@ -230,6 +121,7 @@
   color: #111827;
   background-color: #FFFFFF;
   transition: border-color 0.2s;
+  box-sizing: border-box;
 }
 
 .search-input:focus {
@@ -249,6 +141,7 @@
   margin-bottom: 24px;
   padding-bottom: 16px;
   border-bottom: 1px solid #E5E7EB;
+  flex-wrap: wrap;
 }
 
 .filter-tab {
@@ -264,6 +157,7 @@
   color: #6B7280;
   cursor: pointer;
   transition: all 0.2s;
+  white-space: nowrap;
 }
 
 .filter-tab:hover {
@@ -278,6 +172,7 @@
 
 .filter-checkbox {
   font-size: 18px;
+  flex-shrink: 0;
 }
 
 .filter-dot {
@@ -285,6 +180,7 @@
   height: 8px;
   border-radius: 50%;
   display: inline-block;
+  flex-shrink: 0;
 }
 
 .refresh-button {
@@ -300,6 +196,7 @@
   justify-content: center;
   cursor: pointer;
   transition: all 0.2s;
+  flex-shrink: 0;
 }
 
 .refresh-button:hover {
@@ -383,6 +280,7 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
+  min-width: 0;
 }
 
 .inbox-item-header {
@@ -390,12 +288,14 @@
   justify-content: space-between;
   align-items: center;
   gap: 16px;
+  flex-wrap: wrap;
 }
 
 .inbox-item-left {
   display: flex;
   align-items: center;
   gap: 12px;
+  flex-wrap: wrap;
 }
 
 .inbox-sender {
@@ -411,6 +311,7 @@
   border-radius: 12px;
   font-size: 12px;
   font-weight: 600;
+  white-space: nowrap;
 }
 
 .message-type-label {
@@ -424,46 +325,372 @@
   font-size: 14px;
   color: #6B7280;
   line-height: 1.5;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
-/* Responsive Design */
-@media (max-width: 1024px) {
-  /* Sidebar width handled by component */
+/* ============================================
+   RESPONSIVE DESIGN
+   ============================================ */
 
-  .agent-main {
-    margin-left: 240px;
+/* Tablet and smaller desktop */
+@media (max-width: 1024px) {
+  .inbox-container {
     padding: 24px;
   }
-}
 
-@media (max-width: 768px) {
-  .agent-main {
-    margin-left: 0;
-    padding: 16px;
-    padding-top: 80px; /* Space for mobile menu button */
-  }
-
-  .inbox-container {
-    padding: 20px;
+  .inbox-title {
+    font-size: 22px;
   }
 
   .inbox-filters {
-    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .filter-tab {
+    padding: 7px 14px;
+    font-size: 13px;
+  }
+}
+
+/* Mobile and small tablets */
+@media (max-width: 768px) {
+  .inbox-container {
+    padding: 20px;
+    border-radius: 8px;
+    min-height: auto;
+  }
+
+  .inbox-title {
+    font-size: 20px;
+    margin-bottom: 20px;
+  }
+
+  .processing-banner {
+    padding: 14px 16px;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .processing-banner-icon {
+    width: 20px;
+    height: 20px;
+    font-size: 20px;
+  }
+
+  .processing-banner-text h3 {
+    font-size: 13px;
+  }
+
+  .processing-banner-text p {
+    font-size: 12px;
+  }
+
+  .processing-banner-close {
+    width: 20px;
+    height: 20px;
+  }
+
+  .processing-banner-close svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .inbox-search {
+    margin-bottom: 20px;
+  }
+
+  .search-icon {
+    left: 14px;
+    font-size: 18px;
+  }
+
+  .search-input {
+    padding: 10px 14px 10px 44px;
+    font-size: 14px;
+  }
+
+  .inbox-filters {
     gap: 8px;
+    margin-bottom: 20px;
+    padding-bottom: 14px;
   }
 
   .filter-tab {
     padding: 6px 12px;
+    font-size: 12px;
+    gap: 6px;
+  }
+
+  .filter-checkbox {
+    font-size: 16px;
+  }
+
+  .filter-dot {
+    width: 6px;
+    height: 6px;
+  }
+
+  .refresh-button {
+    width: 32px;
+    height: 32px;
+  }
+
+  .refresh-icon {
+    font-size: 16px;
+  }
+
+  .inbox-items {
+    gap: 12px;
+  }
+
+  .inbox-item {
+    padding: 16px;
+    gap: 12px;
+  }
+
+  .avatar-circle {
+    width: 44px;
+    height: 44px;
+    font-size: 15px;
+  }
+
+  .message-type-dot {
+    width: 10px;
+    height: 10px;
+    border-width: 2px;
+  }
+
+  .inbox-item-content {
+    gap: 6px;
+  }
+
+  .inbox-item-header {
+    gap: 12px;
+  }
+
+  .inbox-item-left {
+    gap: 8px;
+  }
+
+  .inbox-sender {
+    font-size: 15px;
+  }
+
+  .new-badge {
+    padding: 3px 8px;
+    font-size: 11px;
+  }
+
+  .message-type-label {
     font-size: 13px;
   }
 
-  .header-content {
-    flex-direction: column;
-    gap: 16px;
+  .inbox-snippet {
+    font-size: 13px;
   }
 }
 
-/* Table Styles */
+/* Small mobile devices */
+@media (max-width: 480px) {
+  .inbox-container {
+    padding: 16px;
+    border-radius: 8px;
+  }
+
+  .inbox-title {
+    font-size: 18px;
+    margin-bottom: 16px;
+  }
+
+  .processing-banner {
+    padding: 12px 14px;
+    gap: 10px;
+    margin-bottom: 16px;
+    flex-direction: column;
+  }
+
+  .processing-banner-content {
+    gap: 10px;
+  }
+
+  .processing-banner-icon {
+    width: 18px;
+    height: 18px;
+    font-size: 18px;
+  }
+
+  .processing-banner-text h3 {
+    font-size: 12px;
+    margin-bottom: 4px;
+  }
+
+  .processing-banner-text p {
+    font-size: 11px;
+    line-height: 1.4;
+  }
+
+  .processing-banner-close {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 24px;
+    height: 24px;
+  }
+
+  .inbox-search {
+    margin-bottom: 16px;
+  }
+
+  .search-icon {
+    left: 12px;
+    font-size: 16px;
+  }
+
+  .search-input {
+    padding: 10px 12px 10px 40px;
+    font-size: 14px;
+    border-radius: 6px;
+  }
+
+  .inbox-filters {
+    gap: 6px;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .inbox-filters::-webkit-scrollbar {
+    display: none;
+  }
+
+  .filter-tab {
+    padding: 6px 10px;
+    font-size: 11px;
+    gap: 5px;
+    flex-shrink: 0;
+  }
+
+  .filter-checkbox {
+    font-size: 14px;
+  }
+
+  .filter-dot {
+    width: 5px;
+    height: 5px;
+  }
+
+  .refresh-button {
+    width: 30px;
+    height: 30px;
+    margin-left: 8px;
+    flex-shrink: 0;
+  }
+
+  .refresh-icon {
+    font-size: 14px;
+  }
+
+  .inbox-items {
+    gap: 10px;
+  }
+
+  .inbox-item {
+    padding: 14px;
+    gap: 10px;
+    border-radius: 10px;
+  }
+
+  .inbox-item.unread {
+    border-left-width: 2px;
+  }
+
+  .avatar-circle {
+    width: 40px;
+    height: 40px;
+    font-size: 14px;
+  }
+
+  .message-type-dot {
+    width: 9px;
+    height: 9px;
+    border-width: 1.5px;
+  }
+
+  .inbox-item-content {
+    gap: 6px;
+  }
+
+  .inbox-item-header {
+    gap: 8px;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .inbox-item-left {
+    gap: 6px;
+    width: 100%;
+  }
+
+  .inbox-sender {
+    font-size: 14px;
+  }
+
+  .new-badge {
+    padding: 2px 6px;
+    font-size: 10px;
+  }
+
+  .message-type-label {
+    font-size: 12px;
+    align-self: flex-start;
+  }
+
+  .inbox-snippet {
+    font-size: 12px;
+    line-height: 1.4;
+  }
+}
+
+/* Extra small mobile devices */
+@media (max-width: 360px) {
+  .inbox-container {
+    padding: 12px;
+  }
+
+  .inbox-title {
+    font-size: 16px;
+    margin-bottom: 14px;
+  }
+
+  .filter-tab {
+    padding: 5px 8px;
+    font-size: 10px;
+  }
+
+  .inbox-item {
+    padding: 12px;
+  }
+
+  .avatar-circle {
+    width: 36px;
+    height: 36px;
+    font-size: 13px;
+  }
+
+  .inbox-sender {
+    font-size: 13px;
+  }
+
+  .inbox-snippet {
+    font-size: 11px;
+  }
+}
+
+/* Table Styles - Same as agent inbox */
 .inbox-table-container {
   overflow-x: auto;
   border-radius: 8px;
@@ -931,3 +1158,4 @@
     padding: 16px;
   }
 }
+

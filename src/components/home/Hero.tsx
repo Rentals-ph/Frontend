@@ -1,16 +1,72 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
 import { ASSETS, getAsset } from '@/utils/assets'
 import { api, type PropertySearchResponse, type ConversationMessage } from '@/lib/api'
 import { Property } from '@/types'
 import { getImageUrl } from '@/utils/storage'
-import VerticalPropertyCard from '@/components/common/VerticalPropertyCard'
+import SimplePropertyCard from '@/components/common/SimplePropertyCard'
 import './Hero.css'
 import HeroBanner from './HeroBanner'
 
 const CONVERSATION_ID_KEY = 'rentals_ph_conversation_id'
+
+// Function to format AI message with proper paragraph spacing
+const formatAIMessage = (text: string): string => {
+  if (!text) return ''
+  
+  // First, handle bold text (**text**)
+  let formatted = text.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+  
+  // Split by double line breaks to identify paragraphs
+  const paragraphs = formatted.split(/\n\s*\n/).filter(p => p.trim())
+  
+  return paragraphs.map(paragraph => {
+    const trimmed = paragraph.trim()
+    
+    // Check if paragraph contains numbered list items (handle both single and multi-line)
+    // Split by newlines first, then check for numbered items
+    const lines = trimmed.split(/\n/).map(l => l.trim()).filter(l => l)
+    const numberedLines = lines.filter(line => /^\d+\.\s/.test(line))
+    
+    if (numberedLines.length >= 2 || (numberedLines.length === 1 && lines.length === 1)) {
+      // This appears to be a list section
+      // Try to extract all numbered items, handling multi-line items
+      const listItems: string[] = []
+      let currentItem = ''
+      
+      for (const line of lines) {
+        if (/^\d+\.\s/.test(line)) {
+          // New list item
+          if (currentItem) {
+            listItems.push(currentItem)
+          }
+          currentItem = line.replace(/^\d+\.\s/, '')
+        } else if (currentItem) {
+          // Continuation of current item
+          currentItem += ' ' + line
+        } else {
+          // Regular text before list, treat as paragraph
+          if (listItems.length === 0) {
+            return `<p>${trimmed}</p>`
+          }
+        }
+      }
+      
+      if (currentItem) {
+        listItems.push(currentItem)
+      }
+      
+      if (listItems.length > 0) {
+        return `<ul class="ai-message-list">${listItems.map(item => `<li>${item.trim()}</li>`).join('')}</ul>`
+      }
+    }
+    
+    // Regular paragraph
+    return `<p>${trimmed}</p>`
+  }).join('')
+}
 
 function Hero() {
   const [searchQuery, setSearchQuery] = useState('')
@@ -26,13 +82,28 @@ function Hero() {
   const [chatMessages, setChatMessages] = useState<Array<{ role: 'user' | 'assistant'; message: string; properties?: Property[] }>>([
     {
       role: 'assistant',
-      message: 'Hello! I\'m your AI assistant. How can I help you find the perfect rental property today?'
+      message: 'Hello! I\'m your RentalsGroq. How can I help you find the perfect rental property today?'
     }
   ])
   const [conversationId, setConversationId] = useState<string | undefined>()
   const [isLoading, setIsLoading] = useState(false)
   const [isLoadingHistory, setIsLoadingHistory] = useState(false)
-  const [propertiesOverlay, setPropertiesOverlay] = useState<{ properties: Property[]; title: string } | null>(null)
+  // Automatically get latest properties from chat messages
+  const latestProperties = useMemo(() => {
+    // Find the latest message with properties (search from end)
+    for (let i = chatMessages.length - 1; i >= 0; i--) {
+      const msg = chatMessages[i]
+      if (msg.properties && Array.isArray(msg.properties) && msg.properties.length > 0) {
+        console.log('Found properties in message:', msg.properties)
+        return {
+          properties: msg.properties,
+          title: `Found ${msg.properties.length} propert${msg.properties.length === 1 ? 'y' : 'ies'}`
+        }
+      }
+    }
+    console.log('No properties found in chat messages. Messages:', chatMessages)
+    return null
+  }, [chatMessages])
   const [showHistory, setShowHistory] = useState(false)
   const [showMenu, setShowMenu] = useState(false)
   const [conversations, setConversations] = useState<any[]>([])
@@ -134,7 +205,7 @@ function Hero() {
     setChatMessages([
       {
         role: 'assistant',
-        message: 'Hello! I\'m your AI assistant. How can I help you find the perfect rental property today?'
+        message: 'Hello! I\'m your RentalsGroq. How can I help you find the perfect rental property today?'
       }
     ])
     setShowMenu(false)
@@ -258,6 +329,9 @@ function Hero() {
       if (response.success && response.data) {
         const searchData = response.data as PropertySearchResponse
         
+        console.log('API Response:', searchData)
+        console.log('Properties from API:', searchData.properties)
+        
         // Update conversation ID if provided and save to localStorage
         if (searchData.conversation_id) {
           setConversationId(searchData.conversation_id)
@@ -265,13 +339,17 @@ function Hero() {
         }
         
         // Add assistant message with properties
+        const assistantMessage = {
+          role: 'assistant' as const,
+          message: searchData.ai_response,
+          properties: searchData.properties || []
+        }
+        
+        console.log('Assistant message with properties:', assistantMessage)
+        
         setChatMessages([
           ...newMessages,
-          {
-            role: 'assistant' as const,
-            message: searchData.ai_response,
-            properties: searchData.properties || []
-          }
+          assistantMessage
         ])
       } else {
         // Handle error - show user-friendly message
@@ -386,9 +464,6 @@ function Hero() {
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
-        if (propertiesOverlay) {
-          setPropertiesOverlay(null)
-        }
         if (showHistory) {
           setShowHistory(false)
         }
@@ -398,11 +473,11 @@ function Hero() {
       }
     }
 
-    if (propertiesOverlay || showHistory || showMenu) {
+    if (showHistory || showMenu) {
       window.addEventListener('keydown', handleEscape)
       return () => window.removeEventListener('keydown', handleEscape)
     }
-  }, [propertiesOverlay, showHistory, showMenu])
+  }, [showHistory, showMenu])
 
   // Close menu when clicking outside
   useEffect(() => {
@@ -457,7 +532,8 @@ function Hero() {
         {/* Search bar and filters or Chat container */}
         <div className={`search-container ${isChatMode ? 'chat-mode' : ''}`}>
           {isChatMode ? (
-            /* Chat Interface */
+            <>
+            {/* Chat Interface */}
             <div className="chat-container">
               <div className="chat-header">
                 <div className="chat-header-info">
@@ -501,15 +577,7 @@ function Hero() {
                         </button>
                         {conversationId && (
                           <>
-                            <button 
-                              className="chat-menu-item"
-                              onClick={handleClearContext}
-                            >
-                              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6h14z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                              </svg>
-                              Clear Context
-                            </button>
+                            
                             <button 
                               className="chat-menu-item chat-menu-item-danger"
                               onClick={() => handleDeleteConversation()}
@@ -555,28 +623,14 @@ function Hero() {
                   <>
                     {chatMessages.map((msg, index) => (
                       <div key={index} className={`chat-message ${msg.role === 'user' ? 'user-message' : 'assistant-message'}`}>
-                        <div className="chat-message-content">
-                          {msg.message}
-                        </div>
-                        {/* Show button to view properties if available - outside message bubble */}
-                        {msg.properties && msg.properties.length > 0 && (() => {
-                          const properties = msg.properties!
-                          return (
-                            <button
-                              className="chat-view-properties-button"
-                              onClick={() => setPropertiesOverlay({
-                                properties,
-                                title: `Found ${properties.length} propert${properties.length === 1 ? 'y' : 'ies'}`
-                              })}
-                            >
-                              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                                <circle cx="12" cy="10" r="3" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                              </svg>
-                              View {properties.length} propert{properties.length === 1 ? 'y' : 'ies'}
-                            </button>
-                          )
-                        })()}
+                        <div 
+                          className="chat-message-content"
+                          dangerouslySetInnerHTML={{
+                            __html: msg.role === 'assistant' 
+                              ? formatAIMessage(msg.message)
+                              : msg.message.replace(/\n/g, '<br />')
+                          }}
+                        />
                       </div>
                     ))}
                     {isLoading && (
@@ -605,6 +659,27 @@ function Hero() {
                 </button>
               </form>
             </div>
+            {/* Properties Panel - Right side when in chat mode - Only show when properties exist */}
+            {latestProperties && (
+              <div className="properties-panel">
+                <div className="properties-panel-header">
+                  <h3 className="properties-panel-title">{latestProperties.title}</h3>
+                </div>
+                <div className="properties-panel-list">
+                  {latestProperties.properties.map((property) => (
+                    <SimplePropertyCard
+                      key={property.id}
+                      id={property.id}
+                      title={property.title}
+                      location={property.location || property.city || property.street_address || undefined}
+                      price={`₱${property.price.toLocaleString()}${property.price_type ? `/${property.price_type}` : ''}`}
+                      image={property.image ? getImageUrl(property.image) : ASSETS.PLACEHOLDER_PROPERTY_MAIN}
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
+            </>
           ) : (
             <>
               <div className="search-input-wrapper">
@@ -801,45 +876,6 @@ function Hero() {
         </div>
       )}
 
-      {/* Properties Overlay */}
-      {propertiesOverlay && (
-        <div className="properties-overlay" onClick={() => setPropertiesOverlay(null)}>
-          <div className="properties-overlay-content" onClick={(e) => e.stopPropagation()}>
-            <div className="properties-overlay-header">
-              <h3 className="properties-overlay-title">{propertiesOverlay.title}</h3>
-              <button
-                className="properties-overlay-close"
-                onClick={() => setPropertiesOverlay(null)}
-                aria-label="Close properties"
-              >
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                </svg>
-              </button>
-            </div>
-            <div className="properties-overlay-list">
-              {propertiesOverlay.properties.map((property) => (
-                <VerticalPropertyCard
-                  key={property.id}
-                  id={property.id}
-                  title={property.title}
-                  propertyType={property.type}
-                  price={`₱${property.price.toLocaleString()}${property.price_type ? `/${property.price_type}` : ''}`}
-                  image={property.image ? getImageUrl(property.image) : ASSETS.PLACEHOLDER_PROPERTY_MAIN}
-                  bedrooms={property.bedrooms}
-                  bathrooms={property.bathrooms}
-                  parking={property.garage || 0}
-                  propertySize={property.area ? `${property.area} sqm` : 'N/A'}
-                  location={property.location || property.city || property.street_address || undefined}
-                  rentManagerName={property.agent?.full_name || property.agent?.name || property.rent_manager?.name || 'Rental.Ph Official'}
-                  rentManagerRole={property.agent?.role === 'agent' ? 'Agent' : 'Rent Manager'}
-                  date={property.published_at ? new Date(property.published_at).toLocaleDateString() : undefined}
-                />
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
     </section>
   )
 }

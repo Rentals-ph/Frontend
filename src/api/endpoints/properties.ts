@@ -69,17 +69,57 @@ export const propertiesApi = {
    * Get properties by agent ID
    */
   getByAgentId: async (agentId: number): Promise<Property[]> => {
-    const response = await apiClient.get<Property[] | PaginatedResponse<Property>>('/properties', { 
-      params: { agent_id: agentId } 
-    })
-    
-    // Backend returns paginated response with data, current_page, per_page, total, last_page
-    if (Array.isArray(response.data)) {
-      return response.data
+    try {
+      const response = await apiClient.get<Property[] | PaginatedResponse<Property>>('/properties', { 
+        params: { agent_id: agentId } 
+      })
+      
+      // Backend returns paginated response with data, current_page, per_page, total, last_page
+      if (Array.isArray(response.data)) {
+        return response.data
+      }
+      
+      // Handle paginated response
+      const paginatedResponse = response.data as PaginatedResponse<Property>
+      if (paginatedResponse && paginatedResponse.data && Array.isArray(paginatedResponse.data)) {
+        return paginatedResponse.data
+      }
+      
+      // Fallback: return empty array if structure is unexpected
+      console.warn('Unexpected response structure from /properties endpoint:', response.data)
+      return []
+    } catch (error: any) {
+      console.error('Error fetching properties by agent ID:', error)
+      throw error
     }
-    
-    // Return data array from paginated response
-    return (response.data as PaginatedResponse<Property>).data || []
+  },
+
+  /**
+   * Update a property (requires authentication - agents can only update their own properties)
+   */
+  update: async (id: number, propertyData: FormData | Partial<Property>): Promise<{ success: boolean; message: string; data: Property }> => {
+    try {
+      const response = await apiClient.put<{ success: boolean; message: string; data: Property }>(`/properties/${id}`, propertyData, {
+        headers: propertyData instanceof FormData ? {} : { 'Content-Type': 'application/json' },
+      })
+      return response.data
+    } catch (error: any) {
+      console.error('API call error:', error)
+      throw error
+    }
+  },
+
+  /**
+   * Delete a property (requires authentication - agents can only delete their own properties)
+   */
+  delete: async (id: number): Promise<{ success: boolean; message: string }> => {
+    try {
+      const response = await apiClient.delete<{ success: boolean; message: string }>(`/properties/${id}`)
+      return response.data
+    } catch (error: any) {
+      console.error('API call error:', error)
+      throw error
+    }
   },
 }
 

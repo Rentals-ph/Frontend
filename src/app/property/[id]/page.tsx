@@ -8,7 +8,7 @@ import Footer from '../../../components/layout/Footer'
 import PageHeader from '../../../components/layout/PageHeader'
 import VerticalPropertyCard from '../../../components/common/VerticalPropertyCard'
 import SharePopup, { type SharePlatform, type ShareOption } from '../../../components/common/SharePopup'
-import { propertiesApi } from '../../../api'
+import { propertiesApi, messagesApi } from '../../../api'
 import type { Property } from '../../../types'
 import { ASSETS } from '@/utils/assets'
 import './page.css'
@@ -116,10 +116,30 @@ export default function PropertyDetailsPage() {
     }))
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    console.log('Form submitted:', formData)
-    alert('Inquiry submitted successfully!')
+    if (!property || !property.agent_id) {
+      alert('Property agent information is missing. Please try again later.')
+      return
+    }
+
+    try {
+      await messagesApi.send({
+        recipient_id: property.agent_id,
+        property_id: property.id,
+        sender_name: `${formData.firstName} ${formData.lastName}`,
+        sender_email: formData.email,
+        sender_phone: formData.phone.replace('PH+63', ''),
+        message: formData.message,
+        type: 'property_inquiry',
+        subject: `Inquiry about ${property.title}`,
+      })
+      alert('Inquiry submitted successfully!')
+      setFormData({ firstName: '', lastName: '', phone: 'PH+63', email: '', message: '' })
+    } catch (error: any) {
+      console.error('Error sending inquiry:', error)
+      alert(error.response?.data?.message || 'Failed to send inquiry. Please try again.')
+    }
   }
 
   const getShareUrl = (): string => {

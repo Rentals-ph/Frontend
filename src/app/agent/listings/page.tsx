@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import AppSidebar from '../../../components/common/AppSidebar'
 import AgentHeader from '../../../components/agent/AgentHeader'
+import EditPropertyModal from '../../../components/agent/EditPropertyModal'
 import { propertiesApi, agentsApi } from '../../../api'
 import type { Property } from '../../../types'
 import {
@@ -31,11 +32,14 @@ interface ListingCard {
 
 export default function AgentMyListings() {
   const [listings, setListings] = useState<ListingCard[]>([])
+  const [properties, setProperties] = useState<Property[]>([])
   const [loading, setLoading] = useState(true)
   const [totalProperties, setTotalProperties] = useState(0)
   const [activeProperties, setActiveProperties] = useState(0)
   const [rentedProperties, setRentedProperties] = useState(0)
   const [hiddenProperties, setHiddenProperties] = useState(0)
+  const [editingProperty, setEditingProperty] = useState<Property | null>(null)
+  const [isModalOpen, setIsModalOpen] = useState(false)
 
   useEffect(() => {
     const fetchAgentListings = async () => {
@@ -43,44 +47,70 @@ export default function AgentMyListings() {
         // Get current agent
         const agent = await agentsApi.getCurrent()
         
-        if (agent?.id) {
-          // Fetch properties for this agent
-          const properties = await propertiesApi.getByAgentId(agent.id)
-          
-          // Transform properties to ListingCard format
-          const transformedListings: ListingCard[] = properties.map((property: Property) => {
-            const address = property.street_address 
-              ? `${property.street_address}, ${property.city || property.location || 'N/A'}`
-              : property.location || 'Address not available'
-            
-            // Determine status based on property data
-            let status: ListingStatus = 'active'
-            if (!property.published_at) {
-              status = 'hidden'
-            }
-            // Note: 'rented' status would need additional property field
-            
-            return {
-              id: property.id,
-              title: property.title,
-              address: address,
-              rating: 4, // Default rating, could be fetched from reviews API
-              views: 0, // Could be tracked separately
-              image: resolvePropertyImage(property.image, property.id),
-              status: status
-            }
-          })
-          
-          setListings(transformedListings)
-          
-          // Calculate stats
-          setTotalProperties(properties.length)
-          setActiveProperties(properties.filter(p => p.published_at).length)
-          setRentedProperties(0) // Would need additional data
-          setHiddenProperties(properties.filter(p => !p.published_at).length)
+        if (!agent) {
+          console.error('No agent found. Please ensure you are logged in.')
+          setLoading(false)
+          return
         }
-      } catch (error) {
-        console.error('Error fetching agent listingss:', error)
+        
+        if (!agent.id) {
+          console.error('Agent ID is missing')
+          setLoading(false)
+          return
+        }
+        
+        // Fetch properties for this agent
+        const properties = await propertiesApi.getByAgentId(agent.id)
+        
+        if (!properties || !Array.isArray(properties)) {
+          console.error('Invalid properties response:', properties)
+          setLoading(false)
+          return
+        }
+        
+        // Store properties for editing
+        setProperties(properties)
+        
+        // Transform properties to ListingCard format
+        const transformedListings: ListingCard[] = properties.map((property: Property) => {
+          const address = property.street_address 
+            ? `${property.street_address}, ${property.city || property.location || 'N/A'}`
+            : property.location || 'Address not available'
+          
+          // Determine status based on property data
+          let status: ListingStatus = 'active'
+          if (!property.published_at) {
+            status = 'hidden'
+          }
+          // Note: 'rented' status would need additional property field
+          
+          return {
+            id: property.id,
+            title: property.title,
+            address: address,
+            rating: 4, // Default rating, could be fetched from reviews API
+            views: 0, // Could be tracked separately
+            image: resolvePropertyImage(property.image, property.id),
+            status: status
+          }
+        })
+        
+        setListings(transformedListings)
+        
+        // Calculate stats
+        setTotalProperties(properties.length)
+        setActiveProperties(properties.filter(p => p.published_at).length)
+        setRentedProperties(0) // Would need additional data
+        setHiddenProperties(properties.filter(p => !p.published_at).length)
+      } catch (error: any) {
+        console.error('Error fetching agent listings:', error)
+        if (error.response?.status === 401) {
+          console.error('Unauthorized. Please log in again.')
+        } else if (error.response?.status === 404) {
+          console.error('Agent not found.')
+        } else {
+          console.error('Failed to fetch properties:', error.message || error)
+        }
       } finally {
         setLoading(false)
       }
@@ -88,6 +118,70 @@ export default function AgentMyListings() {
 
     fetchAgentListings()
   }, [])
+
+  const handleEditClick = async (listingId: number) => {
+    try {
+      // Fetch full property details
+      const property = await propertiesApi.getById(listingId)
+      setEditingProperty(property)
+      setIsModalOpen(true)
+    } catch (error: any) {
+      console.error('Error fetching property details:', error)
+      alert('Failed to load property details. Please try again.')
+    }
+  }
+
+  const handleModalClose = () => {
+    setIsModalOpen(false)
+    setEditingProperty(null)
+  }
+
+  const handlePropertyUpdate = () => {
+    // Refresh the listings
+    const fetchAgentListings = async () => {
+      try {
+        const agent = await agentsApi.getCurrent()
+        if (agent?.id) {
+          const updatedProperties = await propertiesApi.getByAgentId(agent.id)
+          setProperties(updatedProperties)
+          
+          const transformedListings: ListingCard[] = updatedProperties.map((property: Property) => {
+            const address = property.street_address 
+              ? `${property.street_address}, ${property.city || property.location || 'N/A'}`
+              : property.location || 'Address not available'
+            
+            let status: ListingStatus = 'active'
+            if (!property.published_at) {
+              status = 'hidden'
+            }
+            
+            return {
+              id: property.id,
+              title: property.title,
+              address: address,
+              rating: 4,
+              views: 0,
+              image: resolvePropertyImage(property.image, property.id),
+              status: status
+            }
+          })
+          
+          setListings(transformedListings)
+          setTotalProperties(updatedProperties.length)
+          setActiveProperties(updatedProperties.filter(p => p.published_at).length)
+          setHiddenProperties(updatedProperties.filter(p => !p.published_at).length)
+        }
+      } catch (error) {
+        console.error('Error refreshing listings:', error)
+      }
+    }
+    fetchAgentListings()
+  }
+
+  const handlePropertyDelete = () => {
+    // Refresh the listings
+    handlePropertyUpdate()
+  }
 
   const renderStars = (rating: number) => {
     return (
@@ -232,7 +326,11 @@ export default function AgentMyListings() {
                   <div className="aml-pin" title="Pinned">
                     <FiMapPin />
                   </div>
-                  <button className="aml-edit-btn" type="button">
+                  <button 
+                    className="aml-edit-btn" 
+                    type="button"
+                    onClick={() => handleEditClick(l.id)}
+                  >
                     Edit
                   </button>
                 </div>
@@ -258,6 +356,14 @@ export default function AgentMyListings() {
           </div>
         </div>
       </main>
+
+      <EditPropertyModal
+        property={editingProperty}
+        isOpen={isModalOpen}
+        onClose={handleModalClose}
+        onUpdate={handlePropertyUpdate}
+        onDelete={handlePropertyDelete}
+      />
     </div>
   )
 }

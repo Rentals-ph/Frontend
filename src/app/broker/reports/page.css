@@ -1,6 +1,16 @@
 @import '../broker-shared.css';
 
 /* ===================== */
+/* Global Mobile Fixes   */
+/* ===================== */
+
+/* Prevent horizontal overflow */
+.broker-main {
+  overflow-x: hidden;
+  max-width: 100%;
+}
+
+/* ===================== */
 /* Reports Stats Grid    */
 /* ===================== */
 
@@ -10,6 +20,8 @@
   gap: 20px;
   margin-top: 8px;
   margin-bottom: 28px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .rp-stat-card {
@@ -20,6 +32,10 @@
   display: flex;
   align-items: flex-start;
   gap: 16px;
+  width: 100%;
+  box-sizing: border-box;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .rp-stat-icon {
@@ -43,6 +59,7 @@
   align-items: baseline;
   gap: 8px;
   flex-wrap: wrap;
+  word-break: break-word;
 }
 
 .rp-stat-label {
@@ -50,6 +67,8 @@
   color: #94a3b8;
   font-weight: 500;
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .rp-stat-change {
@@ -75,6 +94,9 @@
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
   padding: 28px 32px 20px 32px;
   margin-bottom: 32px;
+  width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
 .rp-table-header {
@@ -110,6 +132,115 @@
 
 .rp-table-wrapper {
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+}
+
+.rp-table-wrapper::-webkit-scrollbar {
+  height: 8px;
+}
+
+.rp-table-wrapper::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 4px;
+}
+
+.rp-table-wrapper::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+.rp-table-wrapper::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Mobile Card View - Hidden by default */
+.rp-table-mobile {
+  display: none;
+}
+
+/* Desktop Table View - Visible by default */
+.rp-table-desktop {
+  display: block;
+}
+
+.rp-mobile-select-all {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 0;
+  margin-bottom: 12px;
+  border-bottom: 1px solid #f1f5f9;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.rp-mobile-card {
+  background: #f8fafc;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 14px;
+  margin-bottom: 12px;
+  transition: all 0.2s;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.rp-mobile-card:hover {
+  border-color: #cbd5e1;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.rp-mobile-card-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.rp-mobile-card-name {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 0;
+}
+
+.rp-mobile-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.rp-mobile-card-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.rp-mobile-label {
+  font-size: 0.8rem;
+  color: #64748b;
+  font-weight: 500;
+  flex-shrink: 0;
+}
+
+.rp-mobile-value {
+  font-size: 0.85rem;
+  color: #334155;
+  font-weight: 600;
+  text-align: right;
+}
+
+.rp-mobile-value-popular {
+  font-size: 0.8rem;
+  color: #334155;
+  font-weight: 500;
+  text-align: right;
+  flex: 1;
 }
 
 .rp-table {
@@ -158,6 +289,17 @@
   accent-color: #3b82f6;
   cursor: pointer;
   border-radius: 4px;
+  flex-shrink: 0;
+}
+
+/* Improve touch targets on mobile */
+@media (max-width: 768px) {
+  .rp-checkbox {
+    width: 20px;
+    height: 20px;
+    min-width: 20px;
+    min-height: 20px;
+  }
 }
 
 .rp-td-name {
@@ -191,6 +333,8 @@
   grid-template-columns: 1fr 1fr;
   gap: 24px;
   margin-bottom: 36px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .rp-chart-card {
@@ -198,6 +342,9 @@
   border-radius: 16px;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
   padding: 28px 28px 22px 28px;
+  width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
 .rp-chart-title {
@@ -262,31 +409,396 @@
   .rp-stats-grid {
     grid-template-columns: repeat(2, 1fr);
   }
+
+  .rp-insights-grid {
+    gap: 20px;
+  }
 }
 
 @media (max-width: 900px) {
   .rp-stats-grid {
     grid-template-columns: 1fr;
+    gap: 16px;
+    width: 100%;
   }
 
   .rp-insights-grid {
     grid-template-columns: 1fr;
+    gap: 20px;
+    width: 100%;
   }
 
   .rp-table-card,
   .rp-chart-card {
-    padding: 18px 12px;
+    padding: 20px 16px;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .rp-table {
+    min-width: 700px;
   }
 }
 
 @media (max-width: 768px) {
-  .rp-stat-card {
-    padding: 16px;
+  .rp-stats-grid {
+    gap: 12px;
+    margin-bottom: 20px;
+    width: 100%;
+    grid-template-columns: 1fr;
   }
 
-  .rp-table-card,
+  .rp-stat-card {
+    padding: 16px;
+    gap: 12px;
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  .rp-stat-icon {
+    width: 40px;
+    height: 40px;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+  }
+
+  .rp-stat-info {
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  .rp-stat-label {
+    font-size: 0.75rem;
+    white-space: normal;
+    word-break: break-word;
+    overflow: visible;
+    text-overflow: clip;
+  }
+
+  .rp-stat-change {
+    font-size: 0.7rem;
+    white-space: normal;
+    word-break: break-word;
+  }
+
+  .rp-stat-value {
+    font-size: 1.3rem;
+    margin-top: 2px;
+    word-break: break-word;
+  }
+
+  .rp-table-card {
+    border-radius: 12px;
+    padding: 16px 12px;
+    margin-bottom: 24px;
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
+  .rp-table-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .rp-table-title {
+    font-size: 1.05rem;
+  }
+
+  .rp-filter-btn {
+    padding: 7px 14px;
+    font-size: 0.9rem;
+    width: 100%;
+    justify-content: center;
+  }
+
+  /* Hide desktop table, show mobile cards */
+  .rp-table-desktop {
+    display: none;
+  }
+
+  .rp-table-mobile {
+    display: block;
+  }
+
+  .rp-section-title {
+    font-size: 1.05rem;
+    margin-bottom: 12px;
+  }
+
+  .rp-insights-grid {
+    gap: 16px;
+    margin-bottom: 28px;
+    width: 100%;
+    grid-template-columns: 1fr;
+  }
+
   .rp-chart-card {
+    border-radius: 12px;
+    padding: 20px 16px;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .rp-chart-title {
+    font-size: 0.95rem;
+    margin-bottom: 16px;
+  }
+
+  .rp-pie-chart {
+    width: 180px;
+    height: 180px;
+  }
+
+  .rp-pie-legend {
+    gap: 12px;
+    margin-top: 8px;
+  }
+
+  .rp-legend-item {
+    font-size: 0.8rem;
+  }
+
+  .rp-bar-chart {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .rp-stats-grid {
+    gap: 10px;
+    width: 100%;
+  }
+
+  .rp-stat-card {
+    padding: 14px;
+    gap: 10px;
+    flex-direction: row;
+    align-items: flex-start;
+    width: 100%;
+    box-sizing: border-box;
+    min-width: 0;
+  }
+
+  .rp-stat-icon {
+    width: 36px;
+    height: 36px;
+    font-size: 1rem;
+    flex-shrink: 0;
+  }
+
+  .rp-stat-info {
+    width: 100%;
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  .rp-stat-top {
+    flex-direction: column;
+    gap: 4px;
+    align-items: flex-start;
+    width: 100%;
+  }
+
+  .rp-stat-label {
+    font-size: 0.7rem;
+    white-space: normal;
+    word-break: break-word;
+    line-height: 1.3;
+  }
+
+  .rp-stat-change {
+    font-size: 0.65rem;
+    white-space: normal;
+    word-break: break-word;
+    line-height: 1.3;
+  }
+
+  .rp-stat-value {
+    font-size: 1.2rem;
+    word-break: break-word;
+    line-height: 1.2;
+  }
+
+  .rp-table-card {
+    padding: 12px 8px;
     border-radius: 10px;
-    padding: 14px 6px;
+    width: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
+  }
+
+  .rp-table-header {
+    gap: 10px;
+    margin-bottom: 12px;
+    width: 100%;
+  }
+
+  .rp-table-title {
+    font-size: 1rem;
+    word-break: break-word;
+  }
+
+  .rp-filter-btn {
+    padding: 6px 12px;
+    font-size: 0.85rem;
+    white-space: nowrap;
+  }
+
+  /* Mobile cards styling */
+  .rp-mobile-select-all {
+    padding: 10px 0;
+    font-size: 0.85rem;
+  }
+
+  .rp-mobile-card {
+    padding: 12px;
+    margin-bottom: 10px;
+  }
+
+  .rp-mobile-card-header {
+    gap: 10px;
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+  }
+
+  .rp-mobile-card-name {
+    font-size: 0.9rem;
+  }
+
+  .rp-mobile-card-body {
+    gap: 8px;
+  }
+
+  .rp-mobile-card-row {
+    gap: 10px;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+  }
+
+  .rp-mobile-label {
+    font-size: 0.75rem;
+    word-break: break-word;
+    width: 100%;
+  }
+
+  .rp-mobile-value,
+  .rp-mobile-value-popular {
+    font-size: 0.8rem;
+    text-align: left;
+    word-break: break-word;
+    width: 100%;
+  }
+
+  .rp-checkbox {
+    width: 16px;
+    height: 16px;
+  }
+
+  .rp-section-title {
+    font-size: 1rem;
+    margin-bottom: 10px;
+  }
+
+  .rp-insights-grid {
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+
+  .rp-chart-card {
+    padding: 16px 12px;
+    border-radius: 10px;
+  }
+
+  .rp-chart-title {
+    font-size: 0.9rem;
+    margin-bottom: 12px;
+  }
+
+  .rp-pie-container {
+    margin-bottom: 12px;
+  }
+
+  .rp-pie-chart {
+    width: 160px;
+    height: 160px;
+  }
+
+  .rp-pie-legend {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    margin-top: 8px;
+  }
+
+  .rp-legend-item {
+    font-size: 0.75rem;
+  }
+
+  .rp-bar-container {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    width: 100%;
+    -ms-overflow-style: -ms-autohiding-scrollbar;
+  }
+
+  .rp-bar-chart {
+    min-width: 350px;
+    max-width: 100%;
+  }
+
+  .rp-pie-container {
+    width: 100%;
+    overflow: hidden;
+  }
+}
+
+/* Extra small devices */
+@media (max-width: 360px) {
+  .rp-stat-card {
+    padding: 12px;
+    gap: 8px;
+  }
+
+  .rp-stat-icon {
+    width: 32px;
+    height: 32px;
+    font-size: 0.9rem;
+  }
+
+  .rp-stat-value {
+    font-size: 1.1rem;
+  }
+
+  .rp-stat-label {
+    font-size: 0.65rem;
+  }
+
+  .rp-stat-change {
+    font-size: 0.6rem;
+  }
+
+  .rp-table-card {
+    padding: 10px 6px;
+  }
+
+  .rp-mobile-card {
+    padding: 10px;
+  }
+
+  .rp-pie-chart {
+    width: 140px;
+    height: 140px;
+  }
+
+  .rp-bar-chart {
+    min-width: 280px;
+  }
+
+  .rp-chart-card {
+    padding: 14px 10px;
   }
 }

@@ -185,7 +185,8 @@ export default function ReportsPage() {
             </button>
           </div>
 
-          <div className="rp-table-wrapper">
+          {/* Desktop Table View */}
+          <div className="rp-table-wrapper rp-table-desktop">
             <table className="rp-table">
               <thead>
                 <tr>
@@ -224,6 +225,50 @@ export default function ReportsPage() {
                 ))}
               </tbody>
             </table>
+          </div>
+
+          {/* Mobile Card View */}
+          <div className="rp-table-mobile">
+            <div className="rp-mobile-select-all">
+              <input
+                type="checkbox"
+                checked={allSelected}
+                onChange={toggleSelectAll}
+                className="rp-checkbox"
+              />
+              <span>Select All</span>
+            </div>
+            {productivityData.map((row, index) => (
+              <div className="rp-mobile-card" key={index}>
+                <div className="rp-mobile-card-header">
+                  <input
+                    type="checkbox"
+                    checked={selectedRows.includes(index)}
+                    onChange={() => toggleSelect(index)}
+                    className="rp-checkbox"
+                  />
+                  <h4 className="rp-mobile-card-name">{row.name}</h4>
+                </div>
+                <div className="rp-mobile-card-body">
+                  <div className="rp-mobile-card-row">
+                    <span className="rp-mobile-label">Total Listings</span>
+                    <span className="rp-mobile-value">{row.totalListings}</span>
+                  </div>
+                  <div className="rp-mobile-card-row">
+                    <span className="rp-mobile-label">Total Inquiries</span>
+                    <span className="rp-mobile-value">{row.totalInquiries}</span>
+                  </div>
+                  <div className="rp-mobile-card-row">
+                    <span className="rp-mobile-label">Most Popular Listing</span>
+                    <span className="rp-mobile-value-popular">{row.mostPopular}</span>
+                  </div>
+                  <div className="rp-mobile-card-row">
+                    <span className="rp-mobile-label">Inquiry-to-Listing Ratio</span>
+                    <span className="rp-mobile-value">{row.ratio}</span>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
 

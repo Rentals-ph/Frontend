@@ -143,5 +143,66 @@ export const agentsApi = {
       throw error
     }
   },
+
+  /**
+   * Get agent dashboard statistics
+   */
+  getDashboardStats: async (): Promise<{
+    total_listings: number
+    active_listings: number
+    total_revenue: number
+    unread_messages: number
+  }> => {
+    try {
+      const response = await apiClient.get<{
+        success: boolean
+        data: {
+          total_listings: number
+          active_listings: number
+          total_revenue: number
+          unread_messages: number
+        }
+      }>('/agents/dashboard/stats')
+      return response.data.data
+    } catch (error: any) {
+      console.error('API call error:', error)
+      throw error
+    }
+  },
+
+  /**
+   * Update agent profile
+   */
+  update: async (data: {
+    first_name?: string
+    last_name?: string
+    phone?: string
+    city?: string
+    state?: string
+    office_address?: string
+    image?: File
+  }): Promise<Agent> => {
+    const formData = new FormData()
+    
+    if (data.first_name) formData.append('first_name', data.first_name)
+    if (data.last_name) formData.append('last_name', data.last_name)
+    if (data.phone) formData.append('phone', data.phone)
+    if (data.city) formData.append('city', data.city)
+    if (data.state) formData.append('state', data.state)
+    if (data.office_address) formData.append('office_address', data.office_address)
+    if (data.image) formData.append('image', data.image)
+
+    try {
+      const response = await apiClient.put<{ success: boolean; data: Agent }>('/agents/me', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      })
+      return response.data.data
+    } catch (error: any) {
+      console.error('API call error:', error)
+      throw error
+    }
+  },
 }
 

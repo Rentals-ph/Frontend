@@ -40,44 +40,91 @@ export default function AgentDashboard() {
   const [previewListing, setPreviewListing] = useState<ListingData | null>(null)
   const [listings, setListings] = useState<ListingData[]>([])
   const [loading, setLoading] = useState(true)
+  const [stats, setStats] = useState({
+    totalListings: 0,
+    activeListings: 0,
+    totalRevenue: 0,
+    unreadMessages: 0
+  })
+  const [statsLoading, setStatsLoading] = useState(true)
 
   useEffect(() => {
-    const fetchAgentListings = async () => {
+    const fetchAgentData = async () => {
       try {
         // Get current agent
         const agent = await agentsApi.getCurrent()
         
-        if (agent?.id) {
-          // Fetch properties for this agent
-          const properties = await propertiesApi.getByAgentId(agent.id)
-          
-          // Transform properties to ListingData format
-          const transformedListings: ListingData[] = properties.slice(0, 3).map((property: Property) => {
-            const area = property.area ? `${property.area}${property.floor_area_unit || ' sqm'}` : 'N/A'
-            const price = property.price_type 
-              ? `₱${property.price.toLocaleString()}/${property.price_type}`
-              : `₱${property.price.toLocaleString()}/month`
-            
-            return {
-              id: property.id,
-              title: property.title,
-              image: property.image || ASSETS.PLACEHOLDER_PROPERTY_MAIN,
-              details: `${property.bedrooms} Bedrooms • ${property.bathrooms} Bathroom${property.bathrooms > 1 ? 's' : ''} • ${area}`,
-              price: price,
-              status: property.published_at ? 'active' : 'pending'
-            }
-          })
-          
-          setListings(transformedListings)
+        if (!agent) {
+          console.error('No agent found. Please ensure you are logged in.')
+          setLoading(false)
+          return
         }
-      } catch (error) {
+        
+        if (!agent.id) {
+          console.error('Agent ID is missing')
+          setLoading(false)
+          return
+        }
+        
+        // Fetch properties for this agent
+        const properties = await propertiesApi.getByAgentId(agent.id)
+        
+        if (!properties || !Array.isArray(properties)) {
+          console.error('Invalid properties response:', properties)
+          setLoading(false)
+          return
+        }
+        
+        // Transform properties to ListingData format
+        const transformedListings: ListingData[] = properties.slice(0, 3).map((property: Property) => {
+          const area = property.area ? `${property.area}${property.floor_area_unit || ' sqm'}` : 'N/A'
+          const price = property.price_type 
+            ? `₱${property.price.toLocaleString()}/${property.price_type}`
+            : `₱${property.price.toLocaleString()}/month`
+          
+          return {
+            id: property.id,
+            title: property.title,
+            image: property.image || ASSETS.PLACEHOLDER_PROPERTY_MAIN,
+            details: `${property.bedrooms} Bedrooms • ${property.bathrooms} Bathroom${property.bathrooms > 1 ? 's' : ''} • ${area}`,
+            price: price,
+            status: property.published_at ? 'active' : 'pending'
+          }
+        })
+        
+        setListings(transformedListings)
+      } catch (error: any) {
         console.error('Error fetching agent listings:', error)
+        if (error.response?.status === 401) {
+          console.error('Unauthorized. Please log in again.')
+        } else if (error.response?.status === 404) {
+          console.error('Agent not found.')
+        } else {
+          console.error('Failed to fetch properties:', error.message || error)
+        }
       } finally {
         setLoading(false)
       }
     }
 
-    fetchAgentListings()
+    const fetchDashboardStats = async () => {
+      try {
+        const dashboardStats = await agentsApi.getDashboardStats()
+        setStats({
+          totalListings: dashboardStats.total_listings,
+          activeListings: dashboardStats.active_listings,
+          totalRevenue: dashboardStats.total_revenue,
+          unreadMessages: dashboardStats.unread_messages
+        })
+      } catch (error) {
+        console.error('Error fetching dashboard stats:', error)
+      } finally {
+        setStatsLoading(false)
+      }
+    }
+
+    fetchAgentData()
+    fetchDashboardStats()
   }, [])
 
   const handleViewClick = (listing: ListingData) => {
@@ -104,7 +151,7 @@ export default function AgentDashboard() {
             </div>
             <div className="metric-content">
               <h3>Total Listings</h3>
-              <p className="metric-value">24</p>
+              <p className="metric-value">{statsLoading ? '...' : stats.totalListings}</p>
               <p className="metric-change positive">+12%</p>
             </div>
           </div>
@@ -114,8 +161,8 @@ export default function AgentDashboard() {
               <FiCheckCircle />
             </div>
             <div className="metric-content">
-              <h3>Rented Properties</h3>
-              <p className="metric-value">18</p>
+              <h3>Active Properties</h3>
+              <p className="metric-value">{statsLoading ? '...' : stats.activeListings}</p>
               <p className="metric-status active">Active</p>
             </div>
           </div>
@@ -126,7 +173,11 @@ export default function AgentDashboard() {
             </div>
             <div className="metric-content">
               <h3>Total Revenue</h3>
-              <p className="metric-value">P145K</p>
+              <p className="metric-value">
+                {statsLoading ? '...' : stats.totalRevenue >= 1000 
+                  ? `₱${(stats.totalRevenue / 1000).toFixed(0)}K`
+                  : `₱${stats.totalRevenue.toLocaleString()}`}
+              </p>
               <p className="metric-frequency">Monthly</p>
             </div>
           </div>
@@ -137,8 +188,8 @@ export default function AgentDashboard() {
             </div>
             <div className="metric-content">
               <h3>Unread Messages</h3>
-              <p className="metric-value">3</p>
-              <p className="metric-status new">New</p>
+              <p className="metric-value">{statsLoading ? '...' : stats.unreadMessages}</p>
+              <p className="metric-status new">{stats.unreadMessages > 0 ? 'New' : 'None'}</p>
             </div>
           </div>
         </div>
@@ -244,44 +295,15 @@ export default function AgentDashboard() {
                 <Link href="/agent/inbox" className="view-all-link">View All Messages</Link>
               </div>
               <div className="messages-list">
-                <div className="message-item">
-                  <div className="message-avatar">
-                    <div className="avatar-fallback">MS</div>
+                {stats.unreadMessages === 0 ? (
+                  <div style={{ padding: '2rem', textAlign: 'center', color: '#666' }}>
+                    No new messages
                   </div>
-                  <div className="message-content">
-                    <div className="message-header">
-                      <span className="message-sender">Maria Santos</span>
-                      <span className="message-time">2h ago</span>
-                    </div>
-                    <p className="message-text">Interested in the Makati condo...</p>
+                ) : (
+                  <div style={{ padding: '2rem', textAlign: 'center', color: '#666' }}>
+                    {stats.unreadMessages} unread message{stats.unreadMessages !== 1 ? 's' : ''}
                   </div>
-                </div>
-
-                <div className="message-item">
-                  <div className="message-avatar">
-                    <div className="avatar-fallback">CR</div>
-                  </div>
-                  <div className="message-content">
-                    <div className="message-header">
-                      <span className="message-sender">Carlos Rivera</span>
-                      <span className="message-time">5h ago</span>
-                    </div>
-                    <p className="message-text">Can we schedule a viewing?</p>
-                  </div>
-                </div>
-
-                <div className="message-item">
-                  <div className="message-avatar">
-                    <div className="avatar-fallback">AC</div>
-                  </div>
-                  <div className="message-content">
-                    <div className="message-header">
-                      <span className="message-sender">Ana Cruz</span>
-                      <span className="message-time">1d ago</span>
-                    </div>
-                    <p className="message-text">Thank you for the information!</p>
-                  </div>
-                </div>
+                )}
               </div>
             </div>
 

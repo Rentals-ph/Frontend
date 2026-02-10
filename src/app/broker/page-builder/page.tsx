@@ -1,8 +1,9 @@
 'use client'
 
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import AppSidebar from '../../../components/common/AppSidebar'
 import { ASSETS } from '@/utils/assets'
+import { pageBuilderApi } from '@/api'
 import { 
   FiBell,
   FiPlus,
@@ -23,7 +24,8 @@ import {
   FiTrash2,
   FiMove,
   FiCheck,
-  FiX
+  FiX,
+  FiExternalLink
 } from 'react-icons/fi'
 import '../../agent/page-builder/page.css'
 import '../broker-shared.css'
@@ -38,6 +40,7 @@ export default function BrokerPageBuilder() {
   const [bio, setBio] = useState('This is my bio...')
   const [activeTab, setActiveTab] = useState('profile')
   const [leftSidebarTab, setLeftSidebarTab] = useState('content')
+  const [showFullPreview, setShowFullPreview] = useState(false)
   
   // Profile image state
   const [profileImage, setProfileImage] = useState<string | null>(null)
@@ -121,6 +124,67 @@ export default function BrokerPageBuilder() {
   // Design states
   const [selectedBrandColor, setSelectedBrandColor] = useState('white')
   const [selectedCornerRadius, setSelectedCornerRadius] = useState('soft')
+  
+  // Page builder data state
+  const [pageBuilderId, setPageBuilderId] = useState<number | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
+  const [isSaving, setIsSaving] = useState(false)
+  
+  // Load page builder data on mount
+  useEffect(() => {
+    const loadPageBuilder = async () => {
+      try {
+        setIsLoading(true)
+        const pageBuilders = await pageBuilderApi.getAll('broker', activeTab as 'profile' | 'property')
+        
+        if (pageBuilders.length > 0) {
+          const pageData = pageBuilders[0]
+          setPageBuilderId(pageData.id || null)
+          
+          // Load profile data
+          if (activeTab === 'profile' && pageData.page_type === 'profile') {
+            if (pageData.selected_theme) setSelectedTheme(pageData.selected_theme)
+            if (pageData.bio !== undefined) setBio(pageData.bio)
+            if (pageData.show_bio !== undefined) setShowBio(pageData.show_bio)
+            if (pageData.show_contact_number !== undefined) setShowContactNumber(pageData.show_contact_number)
+            if (pageData.show_experience_stats !== undefined) setShowExperienceStats(pageData.show_experience_stats)
+            if (pageData.show_featured_listings !== undefined) setShowFeaturedListings(pageData.show_featured_listings)
+            if (pageData.show_testimonials !== undefined) setShowTestimonials(pageData.show_testimonials)
+            if (pageData.profile_image) setProfileImage(pageData.profile_image)
+            if (pageData.contact_info) setContactInfo(pageData.contact_info)
+            if (pageData.experience_stats) setExperienceStats(pageData.experience_stats)
+          }
+          
+          // Load property data
+          if (activeTab === 'property' && pageData.page_type === 'property') {
+            if (pageData.hero_image) setHeroImage(pageData.hero_image)
+            if (pageData.main_heading) setMainHeading(pageData.main_heading)
+            if (pageData.tagline) setTagline(pageData.tagline)
+            if (pageData.overall_darkness !== undefined) setOverallDarkness(pageData.overall_darkness)
+            if (pageData.property_description) setPropertyDescription(pageData.property_description)
+            if (pageData.property_images) setPropertyImages(pageData.property_images)
+            if (pageData.property_price) setPropertyPrice(pageData.property_price)
+            if (pageData.contact_phone) setContactPhone(pageData.contact_phone)
+            if (pageData.contact_email) setContactEmail(pageData.contact_email)
+            if (pageData.profile_card_name) setProfileCardName(pageData.profile_card_name)
+            if (pageData.profile_card_role) setProfileCardRole(pageData.profile_card_role)
+            if (pageData.profile_card_bio) setProfileCardBio(pageData.profile_card_bio)
+            if (pageData.profile_card_image) setProfileCardImage(pageData.profile_card_image)
+            if (pageData.section_visibility) setSectionVisibility(pageData.section_visibility)
+            if (pageData.layout_sections) setLayoutSections(pageData.layout_sections)
+            if (pageData.selected_brand_color) setSelectedBrandColor(pageData.selected_brand_color)
+            if (pageData.selected_corner_radius) setSelectedCornerRadius(pageData.selected_corner_radius)
+          }
+        }
+      } catch (error) {
+        console.error('Error loading page builder:', error)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+    
+    loadPageBuilder()
+  }, [activeTab])
   
   const brandColors = [
     { id: 'white', color: '#FFFFFF' },
@@ -277,37 +341,60 @@ export default function BrokerPageBuilder() {
   }
   
   // Save changes handler
-  const handleSaveChanges = () => {
-    console.log('Saving changes...', {
-      selectedTheme,
-      bio,
-      showBio,
-      showContactNumber,
-      showExperienceStats,
-      experienceStats,
-      showFeaturedListings,
-      showTestimonials,
-      contactInfo,
-      profileImage,
-      heroImage,
-      mainHeading,
-      tagline,
-      overallDarkness,
-      propertyDescription,
-      propertyImages,
-      propertyPrice,
-      contactPhone,
-      contactEmail,
-      profileCardName,
-      profileCardRole,
-      profileCardBio,
-      profileCardImage,
-      sectionVisibility,
-      layoutSections,
-      selectedBrandColor,
-      selectedCornerRadius
-    })
-    alert('Changes saved successfully!')
+  const handleSaveChanges = async () => {
+    try {
+      setIsSaving(true)
+      
+      const pageData = {
+        user_type: 'broker' as const,
+        page_type: activeTab as 'profile' | 'property',
+        selected_theme: selectedTheme,
+        bio: bio,
+        show_bio: showBio,
+        show_contact_number: showContactNumber,
+        show_experience_stats: showExperienceStats,
+        show_featured_listings: showFeaturedListings,
+        show_testimonials: showTestimonials,
+        profile_image: profileImage,
+        contact_info: contactInfo,
+        experience_stats: experienceStats,
+        hero_image: heroImage,
+        main_heading: mainHeading,
+        tagline: tagline,
+        overall_darkness: overallDarkness,
+        property_description: propertyDescription,
+        property_images: propertyImages,
+        property_price: propertyPrice,
+        contact_phone: contactPhone,
+        contact_email: contactEmail,
+        profile_card_name: profileCardName,
+        profile_card_role: profileCardRole,
+        profile_card_bio: profileCardBio,
+        profile_card_image: profileCardImage,
+        section_visibility: sectionVisibility,
+        layout_sections: layoutSections,
+        selected_brand_color: selectedBrandColor,
+        selected_corner_radius: selectedCornerRadius,
+      }
+      
+      let savedData
+      if (pageBuilderId) {
+        savedData = await pageBuilderApi.update(pageBuilderId, pageData)
+      } else {
+        savedData = await pageBuilderApi.save(pageData)
+        setPageBuilderId(savedData.id || null)
+      }
+      
+      alert('Changes saved successfully!')
+      if (savedData.page_url) {
+        console.log('Page URL:', savedData.page_url)
+      }
+    } catch (error: any) {
+      console.error('Error saving page builder:', error)
+      alert('Failed to save changes: ' + (error.response?.data?.message || error.message))
+    } finally {
+      setIsSaving(false)
+    }
   }
   
   // Apply design settings to preview
@@ -396,6 +483,17 @@ export default function BrokerPageBuilder() {
             </a>
           </div>
         </header>
+
+        {/* Preview Button */}
+        <div className="preview-button-container">
+          <button 
+            className="full-preview-button"
+            onClick={() => setShowFullPreview(true)}
+          >
+            <FiExternalLink className="preview-icon" />
+            <span>Preview Full Page</span>
+          </button>
+        </div>
 
         <div className="page-builder-container">
           {/* Left Column - Customization */}
@@ -619,8 +717,12 @@ export default function BrokerPageBuilder() {
                   </div>
                 </div>
 
-                <button className="save-changes-button" onClick={handleSaveChanges}>
-                  Save Changes
+                <button 
+                  className="save-changes-button" 
+                  onClick={handleSaveChanges}
+                  disabled={isSaving || isLoading}
+                >
+                  {isSaving ? 'Saving...' : 'Save Changes'}
                 </button>
               </>
             ) : (
@@ -1415,6 +1517,303 @@ export default function BrokerPageBuilder() {
               >
                 Close
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Full Page Preview Modal */}
+      {showFullPreview && (
+        <div className="full-preview-overlay" onClick={() => setShowFullPreview(false)}>
+          <div className="full-preview-container" onClick={(e) => e.stopPropagation()}>
+            <div className="full-preview-header">
+              <h2 className="full-preview-title">
+                {activeTab === 'profile' ? 'Profile Page Preview' : 'Property Page Preview'}
+              </h2>
+              <button 
+                className="full-preview-close"
+                onClick={() => setShowFullPreview(false)}
+                aria-label="Close preview"
+              >
+                <FiX />
+              </button>
+            </div>
+            <div className="full-preview-content">
+              {activeTab === 'profile' ? (
+                <div className="full-preview-page">
+                  {/* Profile Preview */}
+                  <div className="full-preview-profile-section">
+                    <div className="full-preview-profile-header">
+                      <div className="full-preview-profile-image-wrapper">
+                        <img 
+                          src={profileImage || ASSETS.PLACEHOLDER_PROFILE} 
+                          alt="Profile"
+                          className="full-preview-profile-image"
+                          onError={(e) => {
+                            const target = e.target as HTMLImageElement;
+                            target.style.display = 'none';
+                          }}
+                        />
+                        <div className="full-preview-profile-fallback">JA</div>
+                      </div>
+                      <div className="full-preview-profile-info">
+                        <h2 className="full-preview-name">John Anderson</h2>
+                        {showBio && <p className="full-preview-tagline">{bio}</p>}
+                        {showContactNumber && (
+                          <div className="full-preview-contact-icons">
+                            {contactInfo.email && (
+                              <button className="full-preview-contact-icon" title={contactInfo.email}>
+                                <FiMail />
+                              </button>
+                            )}
+                            {contactInfo.phone && (
+                              <button className="full-preview-contact-icon" title={contactInfo.phone}>
+                                <FiPhone />
+                              </button>
+                            )}
+                            {contactInfo.message && (
+                              <button className="full-preview-contact-icon" title={contactInfo.message}>
+                                <FiMessageCircle />
+                              </button>
+                            )}
+                            {contactInfo.website && (
+                              <button className="full-preview-contact-icon" title={contactInfo.website}>
+                                <FiGlobe />
+                              </button>
+                            )}
+                          </div>
+                        )}
+                        {showExperienceStats && experienceStats.length > 0 && (
+                          <div className="full-preview-experience-stats">
+                            {experienceStats.map((stat, index) => (
+                              <div key={index} className="full-preview-stat-item">
+                                <div className="full-preview-stat-value">{stat.value}</div>
+                                <div className="full-preview-stat-label">{stat.label}</div>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  {showFeaturedListings && (
+                    <div className="full-preview-featured-section">
+                      <h3 className="full-preview-section-title">Featured Listings</h3>
+                      <div className="full-preview-listings-grid">
+                        {featuredListings.map((listing) => (
+                          <div key={listing.id} className="full-preview-listing-card">
+                            <div className="full-preview-listing-badge">
+                              <FiStar className="full-preview-star-icon" />
+                              <span>Featured</span>
+                            </div>
+                            <div className="full-preview-listing-image-wrapper">
+                              <img src={listing.image} alt={listing.title} />
+                            </div>
+                            <div className="full-preview-listing-info">
+                              <div className="full-preview-listing-info-header">
+                                <div className="full-preview-listing-price">{listing.price}/Month</div>
+                                <button className="full-preview-listing-heart" aria-label="Favorite">
+                                  <FiHeart />
+                                </button>
+                              </div>
+                              <div className="full-preview-listing-title">{listing.title}</div>
+                              <div className="full-preview-listing-category">{listing.category}</div>
+                              <div className="full-preview-listing-info-footer">
+                                <div className="full-preview-listing-date">{listing.date}</div>
+                                <div className="full-preview-listing-view-count">
+                                  <span>1</span>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {showTestimonials && (
+                    <div className="full-preview-testimonials-section">
+                      <h3 className="full-preview-section-title">Client Testimonials</h3>
+                      <div className="full-preview-testimonials-grid">
+                        {testimonials.map((testimonial) => (
+                          <div key={testimonial.id} className="full-preview-testimonial-card">
+                            <div className="full-preview-testimonial-header">
+                              <img 
+                                src={testimonial.avatar} 
+                                alt={testimonial.name}
+                                className="full-preview-testimonial-avatar"
+                                onError={(e) => {
+                                  const target = e.target as HTMLImageElement;
+                                  target.style.display = 'none';
+                                }}
+                              />
+                              <div className="full-preview-testimonial-avatar-fallback">
+                                {testimonial.name.split(' ').map(n => n[0]).join('')}
+                              </div>
+                              <div className="full-preview-testimonial-name">{testimonial.name}</div>
+                            </div>
+                            <p className="full-preview-testimonial-quote">&ldquo;{testimonial.quote}&rdquo;</p>
+                            <div className="full-preview-testimonial-rating">
+                              {[...Array(testimonial.rating)].map((_, i) => (
+                                <FiStar key={i} className="full-preview-rating-star" />
+                              ))}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div className="full-preview-property-page">
+                  {/* Property Preview */}
+                  {layoutSections.map((section) => {
+                    if (!section.visible) return null
+                    
+                    switch (section.id) {
+                      case 'hero':
+                        return (
+                          <div key={section.id} className="full-preview-property-hero-section">
+                            <div 
+                              className="full-preview-property-hero-image"
+                              style={{
+                                backgroundImage: `url(${heroImage})`,
+                                backgroundSize: 'cover',
+                                backgroundPosition: 'center',
+                                position: 'relative',
+                                filter: `brightness(${100 - overallDarkness}%)`
+                              }}
+                            >
+                              <div className="full-preview-property-hero-overlay">
+                                <h1 className="full-preview-property-hero-title">{mainHeading}</h1>
+                                <p className="full-preview-property-hero-tagline">{tagline}</p>
+                                <button className="full-preview-property-hero-price-btn">
+                                  Starts at {propertyPrice} /mo
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        )
+                      
+                      case 'propertyDescription':
+                        return (
+                          <div key={section.id} className="full-preview-property-about-section">
+                            <h2 className="full-preview-property-section-heading">About</h2>
+                            <p className="full-preview-property-about-text">{propertyDescription}</p>
+                          </div>
+                        )
+                      
+                      case 'propertyImages':
+                        return (
+                          <div key={section.id} className="full-preview-property-inside-section">
+                            <h2 className="full-preview-property-section-heading">What&apos;s Inside?</h2>
+                            <div className="full-preview-property-inside-images">
+                              {propertyImages.map((image, index) => (
+                                <div 
+                                  key={index} 
+                                  className="full-preview-property-inside-image-item"
+                                  style={{ borderRadius: getCornerRadiusClass() }}
+                                >
+                                  <img src={image} alt={`Interior ${index + 1}`} />
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )
+                      
+                      case 'profileCard':
+                        return (
+                          <div 
+                            key={section.id}
+                            className="full-preview-property-agent-card"
+                            style={{
+                              backgroundColor: selectedBrandColor === 'white' ? '#3B82F6' : 
+                                             selectedBrandColor === 'dark' ? '#1F2937' :
+                                             selectedBrandColor === 'orange' ? '#F97316' :
+                                             selectedBrandColor === 'blue' ? '#3B82F6' : '#3B82F6',
+                              borderRadius: getCornerRadiusClass()
+                            }}
+                          >
+                            <div className="full-preview-property-agent-content">
+                              <div className="full-preview-property-agent-image-wrapper">
+                                <img src={profileCardImage} alt={profileCardName} className="full-preview-property-agent-image" />
+                              </div>
+                              <div className="full-preview-property-agent-info">
+                                <h3 className="full-preview-property-agent-name">{profileCardName}</h3>
+                                <p className="full-preview-property-agent-role">{profileCardRole}</p>
+                                <p className="full-preview-property-agent-quote">{profileCardBio}</p>
+                                <div className="full-preview-property-agent-icons">
+                                  <button className="full-preview-property-agent-icon">
+                                    <FiMail />
+                                  </button>
+                                  <button className="full-preview-property-agent-icon">
+                                    <FiPhone />
+                                  </button>
+                                  <button className="full-preview-property-agent-icon">
+                                    <FiMessageCircle />
+                                  </button>
+                                  <button className="full-preview-property-agent-icon">
+                                    <FiGlobe />
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        )
+                      
+                      default:
+                        return null
+                    }
+                  })}
+
+                  {/* Ready To View? Section */}
+                  <div className="full-preview-property-contact-section">
+                    <div className="full-preview-property-contact-left">
+                      <h2 className="full-preview-property-section-heading">Ready To View?</h2>
+                      <p className="full-preview-property-contact-text">Schedule a tour or ask any questions about the property.</p>
+                      <div className="full-preview-property-contact-info">
+                        <div className="full-preview-property-contact-item">
+                          <FiPhone className="full-preview-property-contact-icon" />
+                          <span>{contactPhone}</span>
+                        </div>
+                        <div className="full-preview-property-contact-item">
+                          <FiMail className="full-preview-property-contact-icon" />
+                          <span>{contactEmail}</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="full-preview-property-contact-form">
+                      <h3 className="full-preview-property-form-title">Contact {profileCardName}</h3>
+                      <input
+                        type="text"
+                        className="full-preview-property-form-input"
+                        placeholder="Your name"
+                        value={contactFormName}
+                        onChange={(e) => setContactFormName(e.target.value)}
+                      />
+                      <input
+                        type="email"
+                        className="full-preview-property-form-input"
+                        placeholder="Your email"
+                        value={contactFormEmail}
+                        onChange={(e) => setContactFormEmail(e.target.value)}
+                      />
+                      <textarea
+                        className="full-preview-property-form-textarea"
+                        placeholder="Your message"
+                        value={contactFormMessage}
+                        onChange={(e) => setContactFormMessage(e.target.value)}
+                        rows={4}
+                      />
+                      <button className="full-preview-property-form-submit-btn">
+                        <span>Send Inquiry</span>
+                        <FiMessageCircle />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>

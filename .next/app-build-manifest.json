@@ -12,17 +12,11 @@
       "static/css/app/layout.css",
       "static/chunks/app/layout.js"
     ],
-    "/broker/approvals/page": [
+    "/rent-managers/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/css/app/broker/approvals/page.css",
-      "static/chunks/app/broker/approvals/page.js"
-    ],
-    "/broker/layout": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/css/app/broker/layout.css",
-      "static/chunks/app/broker/layout.js"
+      "static/css/app/rent-managers/page.css",
+      "static/chunks/app/rent-managers/page.js"
     ],
     "/about/page": [
       "static/chunks/webpack.js",
@@ -30,11 +24,53 @@
       "static/css/app/about/page.css",
       "static/chunks/app/about/page.js"
     ],
+    "/properties/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/css/app/properties/page.css",
+      "static/chunks/app/properties/page.js"
+    ],
+    "/property/[id]/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/css/app/property/[id]/page.css",
+      "static/chunks/app/property/[id]/page.js"
+    ],
+    "/contact/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/css/app/contact/page.css",
+      "static/chunks/app/contact/page.js"
+    ],
+    "/rent-managers/[id]/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/css/app/rent-managers/[id]/page.css",
+      "static/chunks/app/rent-managers/[id]/page.js"
+    ],
+    "/agent/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/css/app/agent/page.css",
+      "static/chunks/app/agent/page.js"
+    ],
+    "/agent/layout": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/css/app/agent/layout.css",
+      "static/chunks/app/agent/layout.js"
+    ],
     "/broker/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
       "static/css/app/broker/page.css",
       "static/chunks/app/broker/page.js"
+    ],
+    "/broker/layout": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/css/app/broker/layout.css",
+      "static/chunks/app/broker/layout.js"
     ],
     "/broker/company-profile/page": [
       "static/chunks/webpack.js",
@@ -54,41 +90,17 @@
       "static/css/app/broker/listings/page.css",
       "static/chunks/app/broker/listings/page.js"
     ],
+    "/broker/approvals/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/css/app/broker/approvals/page.css",
+      "static/chunks/app/broker/approvals/page.js"
+    ],
     "/broker/page-builder/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
       "static/css/app/broker/page-builder/page.css",
       "static/chunks/app/broker/page-builder/page.js"
-    ],
-    "/broker/reports/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/css/app/broker/reports/page.css",
-      "static/chunks/app/broker/reports/page.js"
-    ],
-    "/broker/inbox/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/css/app/broker/inbox/page.css",
-      "static/chunks/app/broker/inbox/page.js"
-    ],
-    "/broker/downloadables/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/css/app/broker/downloadables/page.css",
-      "static/chunks/app/broker/downloadables/page.js"
-    ],
-    "/broker/digital-card/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/css/app/broker/digital-card/page.css",
-      "static/chunks/app/broker/digital-card/page.js"
-    ],
-    "/broker/settings/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/css/app/broker/settings/page.css",
-      "static/chunks/app/broker/settings/page.js"
     ],
     "/_not-found/page": [
       "static/chunks/webpack.js",

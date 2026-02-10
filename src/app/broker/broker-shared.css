@@ -134,8 +134,41 @@
     gap: 14px;
   }
 
+  .broker-header-left {
+    width: 100%;
+  }
+
   .broker-header-left h1 {
     font-size: 20px;
+  }
+
+  .broker-header-left p {
+    font-size: 12px;
+  }
+
+  .broker-header-right {
+    width: 100%;
+    justify-content: space-between;
+    gap: 10px;
+  }
+
+  .broker-notification-btn {
+    width: 38px;
+    height: 38px;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+
+  .broker-add-listing-btn {
+    padding: 9px 18px;
+    font-size: 13px;
+    flex: 1;
+    justify-content: center;
+    min-width: 0;
+  }
+
+  .broker-add-listing-btn svg {
+    font-size: 14px;
   }
 
   .section-card {
@@ -147,5 +180,37 @@
   .broker-main {
     padding: 12px;
     padding-top: 56px;
+  }
+
+  .broker-header {
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .broker-header-left h1 {
+    font-size: 18px;
+  }
+
+  .broker-header-left p {
+    font-size: 11px;
+  }
+
+  .broker-header-right {
+    gap: 8px;
+  }
+
+  .broker-notification-btn {
+    width: 36px;
+    height: 36px;
+    font-size: 15px;
+  }
+
+  .broker-add-listing-btn {
+    padding: 8px 14px;
+    font-size: 12px;
+  }
+
+  .broker-add-listing-btn svg {
+    font-size: 13px;
   }
 }

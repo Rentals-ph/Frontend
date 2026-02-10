@@ -11,7 +11,7 @@ import {
   FiAlertCircle,
   FiX
 } from 'react-icons/fi'
-import '../../agent/inbox/page.css'
+import './page.css'
 import '../broker-shared.css'
 
 interface InboxItem {

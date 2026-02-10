@@ -130,6 +130,7 @@ export default function ListingsPage() {
             </button>
           </div>
 
+          {/* Desktop Table View */}
           <div className="bl-table-wrapper">
             <table className="bl-table">
               <thead>
@@ -175,6 +176,59 @@ export default function ListingsPage() {
                 ))}
               </tbody>
             </table>
+          </div>
+
+          {/* Mobile Card View */}
+          <div className="bl-mobile-cards">
+            <div className="bl-mobile-header-actions">
+              <label className="bl-mobile-select-all">
+                <input
+                  type="checkbox"
+                  checked={allSelected}
+                  onChange={toggleSelectAll}
+                  className="bl-checkbox"
+                />
+                <span>Select All</span>
+              </label>
+            </div>
+            {listingsData.map((listing) => (
+              <div key={listing.id} className="bl-mobile-card">
+                <div className="bl-mobile-card-header">
+                  <label className="bl-mobile-checkbox-label">
+                    <input
+                      type="checkbox"
+                      checked={selectedListings.includes(listing.id)}
+                      onChange={() => toggleSelect(listing.id)}
+                      className="bl-checkbox"
+                    />
+                  </label>
+                  <span className={`bl-status-badge ${getStatusClass(listing.status)}`}>
+                    {listing.status}
+                  </span>
+                </div>
+                <div className="bl-mobile-card-body">
+                  <h4 className="bl-mobile-title">{listing.propertyTitle}</h4>
+                  <div className="bl-mobile-details">
+                    <div className="bl-mobile-detail-row">
+                      <span className="bl-mobile-label">Listed By:</span>
+                      <span className="bl-mobile-value">{listing.listedBy}</span>
+                    </div>
+                    <div className="bl-mobile-detail-row">
+                      <span className="bl-mobile-label">Role:</span>
+                      <span className="bl-mobile-value">{listing.role}</span>
+                    </div>
+                    <div className="bl-mobile-detail-row">
+                      <span className="bl-mobile-label">Category:</span>
+                      <span className="bl-mobile-value">{listing.category}</span>
+                    </div>
+                    <div className="bl-mobile-detail-row">
+                      <span className="bl-mobile-label">Price Range:</span>
+                      <span className="bl-mobile-value bl-mobile-price">{listing.priceRange}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </main>

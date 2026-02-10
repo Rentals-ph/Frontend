@@ -340,7 +340,7 @@ export default function AgentApprovalsPage() {
                   <div className="ba-detail-item">
                     <div className="ba-detail-left">
                       <FiPhone className="ba-detail-icon" />
-                      <span>Contact Details</span>
+                      <span>Contact</span>
                     </div>
                     <button className="ba-view-btn">
                       <FiEye />

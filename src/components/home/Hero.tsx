@@ -3,8 +3,14 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { ASSETS, getAsset } from '@/utils/assets'
+import { api, type PropertySearchResponse, type ConversationMessage } from '@/lib/api'
+import { Property } from '@/types'
+import { getImageUrl } from '@/utils/storage'
+import VerticalPropertyCard from '@/components/common/VerticalPropertyCard'
 import './Hero.css'
 import HeroBanner from './HeroBanner'
+
+const CONVERSATION_ID_KEY = 'rentals_ph_conversation_id'
 
 function Hero() {
   const [searchQuery, setSearchQuery] = useState('')
@@ -15,6 +21,22 @@ function Hero() {
   const [priceMin, setPriceMin] = useState('')
   const [priceMax, setPriceMax] = useState('')
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
+  const [isChatMode, setIsChatMode] = useState(false)
+  const [chatMessage, setChatMessage] = useState('')
+  const [chatMessages, setChatMessages] = useState<Array<{ role: 'user' | 'assistant'; message: string; properties?: Property[] }>>([
+    {
+      role: 'assistant',
+      message: 'Hello! I\'m your AI assistant. How can I help you find the perfect rental property today?'
+    }
+  ])
+  const [conversationId, setConversationId] = useState<string | undefined>()
+  const [isLoading, setIsLoading] = useState(false)
+  const [isLoadingHistory, setIsLoadingHistory] = useState(false)
+  const [propertiesOverlay, setPropertiesOverlay] = useState<{ properties: Property[]; title: string } | null>(null)
+  const [showHistory, setShowHistory] = useState(false)
+  const [showMenu, setShowMenu] = useState(false)
+  const [conversations, setConversations] = useState<any[]>([])
+  const [isLoadingConversations, setIsLoadingConversations] = useState(false)
   const router = useRouter()
 
   // Array of background images - all three backgrounds for rotation
@@ -103,6 +125,250 @@ function Hero() {
     router.push(`/properties?${params.toString()}`)
   }
 
+  const handleNewConversation = () => {
+    // Clear conversation ID and localStorage
+    setConversationId(undefined)
+    localStorage.removeItem(CONVERSATION_ID_KEY)
+    
+    // Reset messages to initial greeting
+    setChatMessages([
+      {
+        role: 'assistant',
+        message: 'Hello! I\'m your AI assistant. How can I help you find the perfect rental property today?'
+      }
+    ])
+    setShowMenu(false)
+  }
+
+  const handleClearContext = async () => {
+    if (!conversationId) return
+    
+    try {
+      const response = await api.clearConversationContext(conversationId)
+      if (response.success) {
+        // Reload conversation to get updated state
+        const convResponse = await api.getConversation(conversationId)
+        if (convResponse.success && convResponse.data) {
+          const conversation = convResponse.data
+          const messages = conversation.messages.map((msg: any) => {
+            const frontendMessage: { role: 'user' | 'assistant'; message: string; properties?: Property[] } = {
+              role: msg.role,
+              message: msg.content,
+            }
+            if (msg.metadata?.properties && Array.isArray(msg.metadata.properties)) {
+              frontendMessage.properties = msg.metadata.properties
+            }
+            return frontendMessage
+          })
+          if (messages.length > 0) {
+            setChatMessages(messages)
+          }
+        }
+        setShowMenu(false)
+      }
+    } catch (error) {
+      console.error('Failed to clear context:', error)
+    }
+  }
+
+  const handleDeleteConversation = async (convId?: string) => {
+    const idToDelete = convId || conversationId
+    if (!idToDelete) return
+    
+    if (!confirm('Are you sure you want to delete this conversation? This action cannot be undone.')) {
+      return
+    }
+    
+    try {
+      const response = await api.deleteConversation(idToDelete)
+      if (response.success) {
+        // If deleting current conversation, start new one
+        if (idToDelete === conversationId) {
+          handleNewConversation()
+        }
+        // Reload conversations list
+        loadConversations()
+      }
+    } catch (error) {
+      console.error('Failed to delete conversation:', error)
+    }
+  }
+
+  const loadConversations = async () => {
+    setIsLoadingConversations(true)
+    try {
+      const response = await api.listConversations()
+      if (response.success && response.data) {
+        setConversations(response.data)
+      }
+    } catch (error) {
+      console.error('Failed to load conversations:', error)
+    } finally {
+      setIsLoadingConversations(false)
+    }
+  }
+
+  const handleLoadConversation = async (convId: string) => {
+    setConversationId(convId)
+    localStorage.setItem(CONVERSATION_ID_KEY, convId)
+    setIsLoadingHistory(true)
+    setShowHistory(false)
+    
+    try {
+      const response = await api.getConversation(convId)
+      if (response.success && response.data) {
+        const conversation = response.data
+        const messages = conversation.messages.map((msg: any) => {
+          const frontendMessage: { role: 'user' | 'assistant'; message: string; properties?: Property[] } = {
+            role: msg.role,
+            message: msg.content,
+          }
+          if (msg.metadata?.properties && Array.isArray(msg.metadata.properties)) {
+            frontendMessage.properties = msg.metadata.properties
+          }
+          return frontendMessage
+        })
+        if (messages.length > 0) {
+          setChatMessages(messages)
+        }
+      }
+    } catch (error) {
+      console.error('Failed to load conversation:', error)
+    } finally {
+      setIsLoadingHistory(false)
+    }
+  }
+
+  const handleChatSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!chatMessage.trim() || isLoading) return
+
+    const userMessage = chatMessage.trim()
+    
+    // Add user message
+    const newMessages = [...chatMessages, { role: 'user' as const, message: userMessage }]
+    setChatMessages(newMessages)
+    setChatMessage('')
+    setIsLoading(true)
+
+    try {
+      // Call the search API
+      const response = await api.searchProperties(userMessage, conversationId)
+      
+      if (response.success && response.data) {
+        const searchData = response.data as PropertySearchResponse
+        
+        // Update conversation ID if provided and save to localStorage
+        if (searchData.conversation_id) {
+          setConversationId(searchData.conversation_id)
+          localStorage.setItem(CONVERSATION_ID_KEY, searchData.conversation_id)
+        }
+        
+        // Add assistant message with properties
+        setChatMessages([
+          ...newMessages,
+          {
+            role: 'assistant' as const,
+            message: searchData.ai_response,
+            properties: searchData.properties || []
+          }
+        ])
+      } else {
+        // Handle error - show user-friendly message
+        const errorMessage = response.message || 'Sorry, I encountered an error while searching. Please try again.'
+        setChatMessages([
+          ...newMessages,
+          {
+            role: 'assistant' as const,
+            message: errorMessage
+          }
+        ])
+      }
+    } catch (error) {
+      console.error('Search error:', error)
+      // This catch block should rarely be hit since apiRequest handles errors
+      // But we'll keep it as a safety net
+      const errorMessage = error instanceof Error && error.message.includes('Failed to fetch')
+        ? 'Unable to connect to the server. Please make sure the backend server is running on http://localhost:8000'
+        : 'Sorry, I encountered an unexpected error. Please try again.'
+      
+      setChatMessages([
+        ...newMessages,
+        {
+          role: 'assistant' as const,
+          message: errorMessage
+        }
+      ])
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  // Load conversation ID from localStorage on mount
+  useEffect(() => {
+    const storedConversationId = localStorage.getItem(CONVERSATION_ID_KEY)
+    if (storedConversationId) {
+      setConversationId(storedConversationId)
+    }
+  }, [])
+
+  // Save conversation ID to localStorage when it changes
+  useEffect(() => {
+    if (conversationId) {
+      localStorage.setItem(CONVERSATION_ID_KEY, conversationId)
+    }
+  }, [conversationId])
+
+  // Load conversation history when conversation ID exists and chat mode is opened
+  useEffect(() => {
+    const loadConversationHistory = async () => {
+      if (!isChatMode || !conversationId || isLoadingHistory) return
+
+      setIsLoadingHistory(true)
+      try {
+        const response = await api.getConversation(conversationId)
+        
+        if (response.success && response.data) {
+          const conversation = response.data
+          
+          // Convert backend messages to frontend format
+          const messages = conversation.messages.map((msg: ConversationMessage) => {
+            const frontendMessage: { role: 'user' | 'assistant'; message: string; properties?: Property[] } = {
+              role: msg.role,
+              message: msg.content,
+            }
+            
+            // Extract properties from metadata if available
+            if (msg.metadata?.properties && Array.isArray(msg.metadata.properties)) {
+              frontendMessage.properties = msg.metadata.properties
+            }
+            
+            return frontendMessage
+          })
+          
+          // If we have messages, replace the default greeting
+          if (messages.length > 0) {
+            setChatMessages(messages)
+          }
+        }
+      } catch (error) {
+        console.error('Failed to load conversation history:', error)
+        // Don't show error to user, just continue with current messages
+      } finally {
+        setIsLoadingHistory(false)
+      }
+    }
+
+    loadConversationHistory()
+  }, [isChatMode, conversationId])
+
+  // Load conversations list when history panel is opened
+  useEffect(() => {
+    if (showHistory) {
+      loadConversations()
+    }
+  }, [showHistory])
+
   // Auto-rotate background images with smooth transitions
   useEffect(() => {
     if (backgroundImages.length <= 1) return
@@ -116,8 +382,45 @@ function Hero() {
     return () => clearInterval(interval)
   }, [backgroundImages.length])
 
+  // Close overlay on Escape key
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        if (propertiesOverlay) {
+          setPropertiesOverlay(null)
+        }
+        if (showHistory) {
+          setShowHistory(false)
+        }
+        if (showMenu) {
+          setShowMenu(false)
+        }
+      }
+    }
+
+    if (propertiesOverlay || showHistory || showMenu) {
+      window.addEventListener('keydown', handleEscape)
+      return () => window.removeEventListener('keydown', handleEscape)
+    }
+  }, [propertiesOverlay, showHistory, showMenu])
+
+  // Close menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      const target = e.target as HTMLElement
+      if (showMenu && !target.closest('.chat-menu-container')) {
+        setShowMenu(false)
+      }
+    }
+
+    if (showMenu) {
+      document.addEventListener('mousedown', handleClickOutside)
+      return () => document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [showMenu])
+
   return (
-    <section id="home" className="hero-section">
+    <section id="home" className={`hero-section ${isChatMode ? 'chat-mode-active' : ''}`}>
       {/* Background images with smooth transitions */}
       <div className="hero-background-container">
         {backgroundImages.map((imageSrc, index) => (
@@ -140,120 +443,284 @@ function Hero() {
           <span className="hero-subtitle-brand">Rentals.ph.</span>
         </p>
 
-        {/* Search bar and filters */}
-        <div className="search-container">
-          <div className="search-input-wrapper">
-            <input 
-              type="text" 
-              className="search-inputs" 
-              placeholder="What are you looking for?"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              onKeyPress={handleKeyPress}
-            />
+        {/* AI Assistant Button */}
+        <button 
+          className="ai-assistant-button"
+          onClick={() => setIsChatMode(!isChatMode)}
+        >
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" fill="currentColor"/>
+          </svg>
+          Try our A.I assistant
+        </button>
 
-            <div className="search-divider" />
-
-            <select 
-              className="search-dropdown"
-              value={propertyType}
-              onChange={(e) => setPropertyType(e.target.value)}
-            >
-              <option value="">Property Type</option>
-              <option value="condominium">Condominium</option>
-              <option value="apartment">Apartment</option>
-              <option value="bedspace">Bed Space</option>
-              <option value="commercial">Commercial Spaces</option>
-              <option value="office">Office Spaces</option>
-            </select>
-              
-            <div className="search-divider" />
-              
-            <select 
-              className="search-dropdown"
-              value={location}
-              onChange={(e) => setLocation(e.target.value)}
-            >
-              <option value="">Location</option>
-              <option value="metro-manila">Metro Manila</option>
-              <option value="makati">Makati City</option>
-              <option value="bgc">BGC</option>
-              <option value="quezon">Quezon City</option>
-              <option value="mandaluyong">Mandaluyong</option>
-              <option value="pasig">Pasig</option>
-              <option value="cebu">Cebu City</option>
-              <option value="davao">Davao City</option>
-              <option value="lapulapu">Lapulapu</option>
-              <option value="manila">Manila</option>
-            </select>
-
-            <button 
-              className="search-button"
-              onClick={handleSearch}
-            >
-              <span className="sr-only">Search</span>
-              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="11" cy="11" r="6" stroke="white" strokeWidth="2.5"/>
-                <line x1="15.5" y1="15.5" x2="20" y2="20" stroke="white" strokeWidth="2.5" strokeLinecap="round"/>
-              </svg>
-            </button>
-          </div>
-
-          {/* Advanced Options - Inside search container */}
-          <div className="advanced-options-panel">
-            <div className="advanced-options-grid">
-              <div className="advanced-option-group">
-                <label className="advanced-option-label">Min. Bedrooms</label>
-                <select 
-                  className="advanced-option-select"
-                  value={minBeds}
-                  onChange={(e) => setMinBeds(e.target.value)}
-                >
-                  <option value="">Any</option>
-                  <option value="1">1+</option>
-                  <option value="2">2+</option>
-                  <option value="3">3+</option>
-                  <option value="4">4+</option>
-                </select>
-              </div>
-
-              <div className="advanced-option-group">
-                <label className="advanced-option-label">Min. Bathrooms</label>
-                <select 
-                  className="advanced-option-select"
-                  value={minBaths}
-                  onChange={(e) => setMinBaths(e.target.value)}
-                >
-                  <option value="">Any</option>
-                  <option value="1">1+</option>
-                  <option value="2">2+</option>
-                  <option value="3">3+</option>
-                  <option value="4">4+</option>
-                </select>
-              </div>
-
-              <div className="advanced-option-group price-range-group">
-                <label className="advanced-option-label">Price Range</label>
-                <div className="price-range-inputs-wrapper">
-                  <input
-                    type="number"
-                    className="price-range-input"
-                    placeholder="Min"
-                    value={priceMin}
-                    onChange={(e) => setPriceMin(e.target.value)}
-                  />
-                  <span className="price-range-separator">to</span>
-                  <input
-                    type="number"
-                    className="price-range-input"
-                    placeholder="Max"
-                    value={priceMax}
-                    onChange={(e) => setPriceMax(e.target.value)}
-                  />
+        {/* Search bar and filters or Chat container */}
+        <div className={`search-container ${isChatMode ? 'chat-mode' : ''}`}>
+          {isChatMode ? (
+            /* Chat Interface */
+            <div className="chat-container">
+              <div className="chat-header">
+                <div className="chat-header-info">
+                  <div className="chat-avatar">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" fill="currentColor"/>
+                    </svg>
+                  </div>
+                  <div>
+                    <h3 className="chat-title">AI Assistant</h3>
+                    <p className="chat-subtitle">Online</p>
+                  </div>
+                </div>
+                <div className="chat-header-actions">
+                  <div className="chat-menu-container">
+                    <button 
+                      className="chat-menu-button"
+                      onClick={() => setShowMenu(!showMenu)}
+                      aria-label="More options"
+                      title="More options"
+                    >
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="12" cy="12" r="1" fill="currentColor"/>
+                        <circle cx="12" cy="5" r="1" fill="currentColor"/>
+                        <circle cx="12" cy="19" r="1" fill="currentColor"/>
+                      </svg>
+                    </button>
+                    {showMenu && (
+                      <div className="chat-menu-dropdown">
+                        <button 
+                          className="chat-menu-item"
+                          onClick={() => {
+                            setShowHistory(true)
+                            setShowMenu(false)
+                          }}
+                        >
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M3 12h18M3 6h18M3 18h18" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                          </svg>
+                          View History
+                        </button>
+                        {conversationId && (
+                          <>
+                            <button 
+                              className="chat-menu-item"
+                              onClick={handleClearContext}
+                            >
+                              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6h14z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                              </svg>
+                              Clear Context
+                            </button>
+                            <button 
+                              className="chat-menu-item chat-menu-item-danger"
+                              onClick={() => handleDeleteConversation()}
+                            >
+                              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6h14z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                              </svg>
+                              Delete Conversation
+                            </button>
+                          </>
+                        )}
+                        <button 
+                          className="chat-menu-item"
+                          onClick={handleNewConversation}
+                        >
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 5v14M5 12h14" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                          </svg>
+                          New Conversation
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                  <button 
+                    className="chat-close-button"
+                    onClick={() => setIsChatMode(false)}
+                    aria-label="Close chat"
+                  >
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                    </svg>
+                  </button>
                 </div>
               </div>
+              <div className="chat-messages">
+                {isLoadingHistory ? (
+                  <div className="chat-message assistant-message">
+                    <div className="chat-message-content">
+                      <span className="chat-loading">Loading conversation...</span>
+                    </div>
+                  </div>
+                ) : (
+                  <>
+                    {chatMessages.map((msg, index) => (
+                      <div key={index} className={`chat-message ${msg.role === 'user' ? 'user-message' : 'assistant-message'}`}>
+                        <div className="chat-message-content">
+                          {msg.message}
+                        </div>
+                        {/* Show button to view properties if available - outside message bubble */}
+                        {msg.properties && msg.properties.length > 0 && (() => {
+                          const properties = msg.properties!
+                          return (
+                            <button
+                              className="chat-view-properties-button"
+                              onClick={() => setPropertiesOverlay({
+                                properties,
+                                title: `Found ${properties.length} propert${properties.length === 1 ? 'y' : 'ies'}`
+                              })}
+                            >
+                              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                                <circle cx="12" cy="10" r="3" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                              </svg>
+                              View {properties.length} propert{properties.length === 1 ? 'y' : 'ies'}
+                            </button>
+                          )
+                        })()}
+                      </div>
+                    ))}
+                    {isLoading && (
+                      <div className="chat-message assistant-message">
+                        <div className="chat-message-content">
+                          <span className="chat-loading">Searching...</span>
+                        </div>
+                      </div>
+                    )}
+                  </>
+                )}
+              </div>
+              <form className="chat-input-form" onSubmit={handleChatSubmit}>
+                <input
+                  type="text"
+                  className="chat-input"
+                  placeholder={isLoading ? "Searching..." : "Type your message..."}
+                  value={chatMessage}
+                  onChange={(e) => setChatMessage(e.target.value)}
+                  disabled={isLoading}
+                />
+                <button type="submit" className="chat-send-button">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </button>
+              </form>
             </div>
-          </div>
+          ) : (
+            <>
+              <div className="search-input-wrapper">
+                <input 
+                  type="text" 
+                  className="search-inputs" 
+                  placeholder="What are you looking for?"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onKeyPress={handleKeyPress}
+                />
+
+                <div className="search-divider" />
+
+                <select 
+                  className="search-dropdown"
+                  value={propertyType}
+                  onChange={(e) => setPropertyType(e.target.value)}
+                >
+                  <option value="">Property Type</option>
+                  <option value="condominium">Condominium</option>
+                  <option value="apartment">Apartment</option>
+                  <option value="bedspace">Bed Space</option>
+                  <option value="commercial">Commercial Spaces</option>
+                  <option value="office">Office Spaces</option>
+                </select>
+                  
+                <div className="search-divider" />
+                  
+                <select 
+                  className="search-dropdown"
+                  value={location}
+                  onChange={(e) => setLocation(e.target.value)}
+                >
+                  <option value="">Location</option>
+                  <option value="metro-manila">Metro Manila</option>
+                  <option value="makati">Makati City</option>
+                  <option value="bgc">BGC</option>
+                  <option value="quezon">Quezon City</option>
+                  <option value="mandaluyong">Mandaluyong</option>
+                  <option value="pasig">Pasig</option>
+                  <option value="cebu">Cebu City</option>
+                  <option value="davao">Davao City</option>
+                  <option value="lapulapu">Lapulapu</option>
+                  <option value="manila">Manila</option>
+                </select>
+
+                <button 
+                  className="search-button"
+                  onClick={handleSearch}
+                >
+                  <span className="sr-only">Search</span>
+                  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="11" cy="11" r="6" stroke="white" strokeWidth="2.5"/>
+                    <line x1="15.5" y1="15.5" x2="20" y2="20" stroke="white" strokeWidth="2.5" strokeLinecap="round"/>
+                  </svg>
+                </button>
+              </div>
+
+              {/* Advanced Options - Inside search container */}
+              <div className="advanced-options-panel">
+                <div className="advanced-options-grid">
+                  <div className="advanced-option-group">
+                    <label className="advanced-option-label">Min. Bedrooms</label>
+                    <select 
+                      className="advanced-option-select"
+                      value={minBeds}
+                      onChange={(e) => setMinBeds(e.target.value)}
+                    >
+                      <option value="">Any</option>
+                      <option value="1">1+</option>
+                      <option value="2">2+</option>
+                      <option value="3">3+</option>
+                      <option value="4">4+</option>
+                    </select>
+                  </div>
+
+                  <div className="advanced-option-group">
+                    <label className="advanced-option-label">Min. Bathrooms</label>
+                    <select 
+                      className="advanced-option-select"
+                      value={minBaths}
+                      onChange={(e) => setMinBaths(e.target.value)}
+                    >
+                      <option value="">Any</option>
+                      <option value="1">1+</option>
+                      <option value="2">2+</option>
+                      <option value="3">3+</option>
+                      <option value="4">4+</option>
+                    </select>
+                  </div>
+
+                  <div className="advanced-option-group price-range-group">
+                    <label className="advanced-option-label">Price Range</label>
+                    <div className="price-range-inputs-wrapper">
+                      <input
+                        type="number"
+                        className="price-range-input"
+                        placeholder="Min"
+                        value={priceMin}
+                        onChange={(e) => setPriceMin(e.target.value)}
+                      />
+                      <span className="price-range-separator">to</span>
+                      <input
+                        type="number"
+                        className="price-range-input"
+                        placeholder="Max"
+                        value={priceMax}
+                        onChange={(e) => setPriceMax(e.target.value)}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </>
+          )}
         </div>
 
         {/* Recommended Searches - Outside search container */}
@@ -274,6 +741,105 @@ function Hero() {
 
       {/* Hero Banner - Positioned absolutely at bottom */}
       <HeroBanner />
+
+      {/* Conversation History Sidebar */}
+      {showHistory && (
+        <div className="conversation-history-overlay" onClick={() => setShowHistory(false)}>
+          <div className="conversation-history-sidebar" onClick={(e) => e.stopPropagation()}>
+            <div className="conversation-history-header">
+              <h3 className="conversation-history-title">Conversation History</h3>
+              <button
+                className="conversation-history-close"
+                onClick={() => setShowHistory(false)}
+                aria-label="Close history"
+              >
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                </svg>
+              </button>
+            </div>
+            <div className="conversation-history-list">
+              {isLoadingConversations ? (
+                <div className="conversation-history-loading">Loading conversations...</div>
+              ) : conversations.length === 0 ? (
+                <div className="conversation-history-empty">No conversations yet</div>
+              ) : (
+                conversations.map((conv) => (
+                  <div
+                    key={conv.conversation_id}
+                    className={`conversation-history-item ${conversationId === conv.conversation_id ? 'active' : ''}`}
+                  >
+                    <button
+                      className="conversation-history-item-button"
+                      onClick={() => handleLoadConversation(conv.conversation_id)}
+                    >
+                      <div className="conversation-history-item-content">
+                        <h4 className="conversation-history-item-title">{conv.title}</h4>
+                        <p className="conversation-history-item-meta">
+                          {conv.message_count} message{conv.message_count !== 1 ? 's' : ''} • {new Date(conv.last_message_at).toLocaleDateString()}
+                        </p>
+                      </div>
+                    </button>
+                    <button
+                      className="conversation-history-item-delete"
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        handleDeleteConversation(conv.conversation_id)
+                      }}
+                      aria-label="Delete conversation"
+                      title="Delete conversation"
+                    >
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6h14z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                    </button>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Properties Overlay */}
+      {propertiesOverlay && (
+        <div className="properties-overlay" onClick={() => setPropertiesOverlay(null)}>
+          <div className="properties-overlay-content" onClick={(e) => e.stopPropagation()}>
+            <div className="properties-overlay-header">
+              <h3 className="properties-overlay-title">{propertiesOverlay.title}</h3>
+              <button
+                className="properties-overlay-close"
+                onClick={() => setPropertiesOverlay(null)}
+                aria-label="Close properties"
+              >
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                </svg>
+              </button>
+            </div>
+            <div className="properties-overlay-list">
+              {propertiesOverlay.properties.map((property) => (
+                <VerticalPropertyCard
+                  key={property.id}
+                  id={property.id}
+                  title={property.title}
+                  propertyType={property.type}
+                  price={`₱${property.price.toLocaleString()}${property.price_type ? `/${property.price_type}` : ''}`}
+                  image={property.image ? getImageUrl(property.image) : ASSETS.PLACEHOLDER_PROPERTY_MAIN}
+                  bedrooms={property.bedrooms}
+                  bathrooms={property.bathrooms}
+                  parking={property.garage || 0}
+                  propertySize={property.area ? `${property.area} sqm` : 'N/A'}
+                  location={property.location || property.city || property.street_address || undefined}
+                  rentManagerName={property.agent?.full_name || property.agent?.name || property.rent_manager?.name || 'Rental.Ph Official'}
+                  rentManagerRole={property.agent?.role === 'agent' ? 'Agent' : 'Rent Manager'}
+                  date={property.published_at ? new Date(property.published_at).toLocaleDateString() : undefined}
+                />
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   )
 }

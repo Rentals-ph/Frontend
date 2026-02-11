@@ -160,14 +160,12 @@ export default function PublicPageBuilderPage() {
                   }}
                 />
                 <div className="full-preview-profile-fallback">
-                  {pageData.user?.first_name?.[0] || 'A'}{pageData.user?.last_name?.[0] || 'G'}
+                  {pageData.profile_card_name?.[0] || 'A'}{pageData.profile_card_name?.split(' ').pop()?.[0] || 'G'}
                 </div>
               </div>
               <div className="full-preview-profile-info">
                 <h2 className="full-preview-name">
-                  {pageData.user?.first_name && pageData.user?.last_name
-                    ? `${pageData.user.first_name} ${pageData.user.last_name}`
-                    : pageData.user?.name || 'Agent Name'}
+                  {pageData.profile_card_name || 'Agent Name'}
                 </h2>
                 {pageData.show_bio && pageData.bio && (
                   <p className="full-preview-tagline">{pageData.bio}</p>

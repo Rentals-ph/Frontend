@@ -21,7 +21,7 @@ export default function PropertyLocationMap({ property }: PropertyLocationMapPro
     const loadLeaflet = async () => {
       try {
         const L = (await import('leaflet')).default
-        await import('leaflet/dist/leaflet.css')
+        // CSS is imported at the top of the file
 
         // Fix for default marker icon in Next.js
         delete (L.Icon.Default.prototype as any)._getIconUrl
@@ -92,7 +92,7 @@ export default function PropertyLocationMap({ property }: PropertyLocationMapPro
     const map = mapRef.current
 
     // Remove existing marker if any
-    if (markerRef.current) {
+    if (map && markerRef.current) {
       map.removeLayer(markerRef.current)
     }
 

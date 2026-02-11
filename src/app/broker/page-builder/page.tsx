@@ -151,7 +151,14 @@ export default function BrokerPageBuilder() {
             if (pageData.show_featured_listings !== undefined) setShowFeaturedListings(pageData.show_featured_listings)
             if (pageData.show_testimonials !== undefined) setShowTestimonials(pageData.show_testimonials)
             if (pageData.profile_image) setProfileImage(pageData.profile_image)
-            if (pageData.contact_info) setContactInfo(pageData.contact_info)
+            if (pageData.contact_info) {
+              setContactInfo(prev => ({
+                email: pageData.contact_info?.email || prev.email,
+                phone: pageData.contact_info?.phone || prev.phone,
+                message: pageData.contact_info?.message || prev.message,
+                website: pageData.contact_info?.website || prev.website,
+              }))
+            }
             if (pageData.experience_stats) setExperienceStats(pageData.experience_stats)
           }
           
@@ -170,7 +177,14 @@ export default function BrokerPageBuilder() {
             if (pageData.profile_card_role) setProfileCardRole(pageData.profile_card_role)
             if (pageData.profile_card_bio) setProfileCardBio(pageData.profile_card_bio)
             if (pageData.profile_card_image) setProfileCardImage(pageData.profile_card_image)
-            if (pageData.section_visibility) setSectionVisibility(pageData.section_visibility)
+            if (pageData.section_visibility) {
+              setSectionVisibility(prev => ({
+                hero: pageData.section_visibility?.hero ?? prev.hero,
+                propertyDescription: pageData.section_visibility?.propertyDescription ?? prev.propertyDescription,
+                propertyImages: pageData.section_visibility?.propertyImages ?? prev.propertyImages,
+                profileCard: pageData.section_visibility?.profileCard ?? prev.profileCard,
+              }))
+            }
             if (pageData.layout_sections) setLayoutSections(pageData.layout_sections)
             if (pageData.selected_brand_color) setSelectedBrandColor(pageData.selected_brand_color)
             if (pageData.selected_corner_radius) setSelectedCornerRadius(pageData.selected_corner_radius)
@@ -377,11 +391,18 @@ export default function BrokerPageBuilder() {
         selected_corner_radius: selectedCornerRadius,
       }
       
+      // Send to backend with page_data structure
+      const savePayload = {
+        user_type: 'broker' as const,
+        page_type: activeTab as 'profile' | 'property',
+        page_data: pageData,
+      }
+      
       let savedData
       if (pageBuilderId) {
-        savedData = await pageBuilderApi.update(pageBuilderId, pageData)
+        savedData = await pageBuilderApi.update(pageBuilderId, savePayload)
       } else {
-        savedData = await pageBuilderApi.save(pageData)
+        savedData = await pageBuilderApi.save(savePayload)
         setPageBuilderId(savedData.id || null)
       }
       

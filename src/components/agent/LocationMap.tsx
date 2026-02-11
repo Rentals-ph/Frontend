@@ -3,6 +3,8 @@
 import { useEffect, useRef, useState } from 'react'
 import { FiMapPin, FiNavigation } from 'react-icons/fi'
 import type { Map, Marker, LeafletMouseEvent } from 'leaflet'
+// @ts-ignore - CSS import
+import 'leaflet/dist/leaflet.css'
 
 interface AddressDetails {
   country?: string
@@ -105,7 +107,7 @@ export default function LocationMap({ latitude, longitude, onLocationChange, onA
     const loadLeaflet = async () => {
       try {
         const L = (await import('leaflet')).default
-        await import('leaflet/dist/leaflet.css')
+        // CSS is imported at the top of the file
 
         // Fix for default marker icon in Next.js
         delete (L.Icon.Default.prototype as any)._getIconUrl

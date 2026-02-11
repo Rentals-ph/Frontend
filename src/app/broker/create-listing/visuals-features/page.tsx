@@ -54,7 +54,7 @@ export default function BrokerCreateListingVisualsFeatures() {
 
   // Attributes state
   const [amenities, setAmenities] = useState<string[]>(data.amenities)
-  const [furnishing, setFurnishing] = useState<string>(data.furnishing)
+  const [furnishing, setFurnishing] = useState<string>(data.furnishing || '')
 
   const amenitiesList = ['Air Conditioning', 'Breakfast', 'Kitchen', 'Parking', 'Pool', 'Wi-Fi Internet', 'Pet-Friendly']
   const furnishingOptions = ['Fully Furnished', 'Semi Furnished', 'Unfurnished']
@@ -63,7 +63,7 @@ export default function BrokerCreateListingVisualsFeatures() {
     setImages(data.images)
     setVideoUrl(data.videoUrl)
     setAmenities(data.amenities)
-    setFurnishing(data.furnishing)
+    setFurnishing(data.furnishing || '')
 
     const generateThumbnails = async () => {
       const thumbnailPromises = data.images.map(file =>

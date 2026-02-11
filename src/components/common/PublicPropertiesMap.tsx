@@ -153,7 +153,7 @@ export default function PublicPropertiesMap({ properties, onPropertyClick }: Pub
     const loadLeaflet = async () => {
       try {
         const L = (await import('leaflet')).default
-        await import('leaflet/dist/leaflet.css')
+        // CSS is imported at the top of the file
 
         // Fix for default marker icon in Next.js
         delete (L.Icon.Default.prototype as any)._getIconUrl

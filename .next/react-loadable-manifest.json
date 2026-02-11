@@ -1,26 +1,20 @@
 {
   "components/agent/LocationMap.tsx -> leaflet": {
-    "id": 759,
+    "id": "components/agent/LocationMap.tsx -> leaflet",
     "files": [
-      "static/chunks/d0deef33.e0722780845cf21c.js"
+      "static/chunks/_app-pages-browser_node_modules_leaflet_dist_leaflet-src_js.js"
     ]
   },
   "components/agent/PropertiesMap.tsx -> leaflet": {
-    "id": 759,
+    "id": "components/agent/PropertiesMap.tsx -> leaflet",
     "files": [
-      "static/chunks/d0deef33.e0722780845cf21c.js"
+      "static/chunks/_app-pages-browser_node_modules_leaflet_dist_leaflet-src_js.js"
     ]
   },
   "components/common/PropertyLocationMap.tsx -> leaflet": {
-    "id": 759,
+    "id": "components/common/PropertyLocationMap.tsx -> leaflet",
     "files": [
-      "static/chunks/d0deef33.e0722780845cf21c.js"
-    ]
-  },
-  "components/common/PublicPropertiesMap.tsx -> leaflet": {
-    "id": 759,
-    "files": [
-      "static/chunks/d0deef33.e0722780845cf21c.js"
+      "static/chunks/_app-pages-browser_node_modules_leaflet_dist_leaflet-src_js.js"
     ]
   }
 }

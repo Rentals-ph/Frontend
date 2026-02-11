@@ -191,6 +191,7 @@ export default function EditPropertyModal({
         
         // Append file with explicit filename to ensure Laravel recognizes it
         // The third parameter (filename) is important for Laravel's file validation
+        // Make sure to append the file AFTER all other fields to avoid issues
         formDataToSend.append('image', imageFile, imageFile.name)
         
         // Verify the file was added correctly
@@ -203,10 +204,23 @@ export default function EditPropertyModal({
           })
         } else {
           console.error('File was not added correctly to FormData!')
+          throw new Error('Failed to add image file to form data')
         }
       }
 
+      // Log final FormData before sending
+      console.log('Final FormData before sending:', {
+        hasImage: formDataToSend.has('image'),
+        allKeys: Array.from(formDataToSend.keys()),
+      })
+
       const response = await propertiesApi.update(property.id, formDataToSend)
+      
+      // Log response to verify image was processed
+      if (imageFile && response.data) {
+        console.log('Update response - image_path:', response.data.image_path)
+        console.log('Update response - image:', response.data.image)
+      }
       
       if (response.success) {
         onUpdate()

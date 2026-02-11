@@ -110,11 +110,17 @@ export const propertiesApi = {
           }
         }
         
-        // For FormData with PUT, use POST with _method=PUT (Laravel method spoofing)
-        // This ensures FormData is parsed correctly
-        propertyData.append('_method', 'PUT')
+        // For FormData, use POST with _method=PUT (Laravel method spoofing)
+        // This ensures FormData is parsed correctly, especially for file uploads
+        // Don't append _method if it already exists
+        if (!propertyData.has('_method')) {
+          propertyData.append('_method', 'PUT')
+        }
+        
         const response = await apiClient.post<{ success: boolean; message: string; data: Property }>(`/properties/${id}`, propertyData, {
-          headers: {}
+          headers: {
+            // Don't set Content-Type - let browser set it with boundary for multipart/form-data
+          }
         })
         return response.data
       }

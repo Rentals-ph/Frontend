@@ -18,6 +18,36 @@
       "static/css/app/properties/page.css",
       "static/chunks/app/properties/page.js"
     ],
+    "/property/[id]/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/css/app/property/[id]/page.css",
+      "static/chunks/app/property/[id]/page.js"
+    ],
+    "/agent/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/css/app/agent/page.css",
+      "static/chunks/app/agent/page.js"
+    ],
+    "/agent/layout": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/css/app/agent/layout.css",
+      "static/chunks/app/agent/layout.js"
+    ],
+    "/agent/listings/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/css/app/agent/listings/page.css",
+      "static/chunks/app/agent/listings/page.js"
+    ],
+    "/agent/account/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/css/app/agent/account/page.css",
+      "static/chunks/app/agent/account/page.js"
+    ],
     "/_not-found/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",

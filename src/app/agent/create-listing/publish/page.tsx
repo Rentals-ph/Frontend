@@ -386,34 +386,42 @@ export default function AgentCreateListingPublish() {
                 setUploadProgress(0)
 
                 try {
-                  // Step 1: Compress images before upload (reduces upload time significantly)
-                  let compressedImage: File | null = null
+                  // Step 1: Compress all images before upload (reduces upload time significantly)
+                  const compressedImages: File[] = []
                   if (data.images.length > 0) {
-                    const originalImage = data.images[0]
-                    
-                    // Validate original image
-                    if (!originalImage || originalImage.size === 0) {
-                      throw new Error('Invalid image file. Please select a valid image.')
+                    for (const originalImage of data.images) {
+                      // Validate original image
+                      if (!originalImage || originalImage.size === 0) {
+                        continue // Skip invalid images
+                      }
+                      
+                      // Check file type
+                      const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp']
+                      if (!originalImage.type || !validTypes.includes(originalImage.type.toLowerCase())) {
+                        console.warn(`Skipping invalid image type: ${originalImage.type}`)
+                        continue
+                      }
+                      
+                      try {
+                        const compressed = await compressImage(originalImage, {
+                          maxWidth: 1920,
+                          maxHeight: 1920,
+                          quality: 0.85,
+                          maxSizeMB: 2,
+                        })
+                        compressedImages.push(compressed)
+                      } catch (compressError) {
+                        console.warn('Image compression failed, using original:', compressError)
+                        // Use original file if compression fails
+                        compressedImages.push(originalImage)
+                      }
                     }
                     
-                    // Check file type
-                    const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp']
-                    if (!originalImage.type || !validTypes.includes(originalImage.type.toLowerCase())) {
-                      throw new Error('Image must be a valid image file (JPEG, JPG, PNG, GIF, or WEBP).')
+                    if (compressedImages.length === 0) {
+                      throw new Error('No valid images to upload. Please select at least one valid image.')
                     }
-                    
-                    try {
-                      compressedImage = await compressImage(originalImage, {
-                        maxWidth: 1920,
-                        maxHeight: 1920,
-                        quality: 0.85,
-                        maxSizeMB: 2,
-                      })
-                    } catch (compressError) {
-                      console.warn('Image compression failed, using original:', compressError)
-                      // Use original file if compression fails
-                      compressedImage = originalImage
-                    }
+                  } else {
+                    throw new Error('Please upload at least one property image.')
                   }
                   setIsCompressing(false)
 
@@ -464,18 +472,18 @@ export default function AgentCreateListingPublish() {
                     formData.append('video_url', data.videoUrl)
                   }
                   
-                  // Append main image if available
-                  if (compressedImage) {
-                    // Ensure the file has a valid name and type
-                    const imageFile = compressedImage instanceof File 
-                      ? compressedImage 
-                      : new File([compressedImage], 'image.jpg', { type: 'image/jpeg' })
-                    
-                    // Verify file is valid before appending
+                  // Append all images to FormData (multiple images support)
+                  compressedImages.forEach((imageFile, index) => {
                     if (imageFile.size > 0 && imageFile.type.startsWith('image/')) {
-                      formData.append('image', imageFile, imageFile.name)
-                    } else {
-                      throw new Error('Invalid image file. Please select a valid image.')
+                      formData.append('images[]', imageFile, imageFile.name || `image-${index}.jpg`)
+                    }
+                  })
+                  
+                  // Also set first image as main image for backward compatibility
+                  if (compressedImages.length > 0) {
+                    const mainImage = compressedImages[0]
+                    if (mainImage.size > 0 && mainImage.type.startsWith('image/')) {
+                      formData.append('image', mainImage, mainImage.name || 'image.jpg')
                     }
                   }
                   
@@ -523,30 +531,7 @@ export default function AgentCreateListingPublish() {
                     throw new Error('Property created but no ID returned')
                   }
                   
-                  // Step 4: Optional - Upload image separately if backend requires it
-                  // (This step may not be needed if image was already processed in Step 3)
-                  // Keeping as fallback for backend implementations that require separate image upload
-                  if (compressedImage && propertyId) {
-                    try {
-                      const imageResult = await uploadPropertyMainImage(
-                        compressedImage,
-                        propertyId,
-                        `${API_BASE_URL}/properties/${propertyId}/image`,
-                        token,
-                        (progress) => {
-                          // Update progress if separate upload is needed
-                          setUploadProgress(90 + (progress.percent / 10))
-                        }
-                      )
-                      
-                      // Image uploaded successfully with storage path
-                      console.log('Image uploaded to:', imageResult.path)
-                    } catch (imageError) {
-                      console.warn('Separate image upload failed, but property was created:', imageError)
-                      // Property is created, separate image upload failure is not critical
-                      // if image was already included in initial request
-                    }
-                  }
+                  // Images are already uploaded with the property creation, no need for separate upload
                   
                   resetData()
                   setUploadProgress(100)

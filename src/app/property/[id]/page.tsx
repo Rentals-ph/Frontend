@@ -86,27 +86,51 @@ export default function PropertyDetailsPage() {
     return isOfficial ? 'Rent Manager' : 'Property Specialist'
   }
 
-  const getImageUrl = (image: string | null): string => {
+  const getImageUrl = (image: string | null | undefined): string => {
     if (!image) return ASSETS.PLACEHOLDER_PROPERTY_MAIN
     if (image.startsWith('http://') || image.startsWith('https://')) {
       return image
     }
+    // If it's a storage path, construct the full URL
     if (image.startsWith('storage/') || image.startsWith('/storage/')) {
-      return `/api/${image.startsWith('/') ? image.slice(1) : image}`
+      const baseUrl = typeof window !== 'undefined' 
+        ? window.location.origin.replace('/api', '')
+        : 'http://localhost:8000'
+      return `${baseUrl}/${image.startsWith('/') ? image.slice(1) : image}`
     }
     return image
   }
 
-  // Generate property images array (in a real app, this would come from the API)
+  // Get all property images from backend
   const getPropertyImages = (property: Property): string[] => {
-    const mainImage = getImageUrl(property.image)
-    // For demo purposes, we'll use the main image and create variations
-    // In production, the API should provide multiple images
-    return [
-      mainImage,
-      mainImage, // Kitchen view (using same image for now)
-      mainImage, // Bedroom view (using same image for now)
-    ]
+    const images: string[] = []
+    
+    // First, check if property has an images array (gallery images)
+    if (property.images && Array.isArray(property.images) && property.images.length > 0) {
+      // Use all gallery images
+      property.images.forEach(img => {
+        if (img) {
+          images.push(getImageUrl(img))
+        }
+      })
+    }
+    
+    // Always include the main image as the first image (thumbnail for cards)
+    // This ensures the first image is always available for property cards
+    const mainImage = property.image_url || getImageUrl(property.image)
+    if (mainImage && mainImage !== ASSETS.PLACEHOLDER_PROPERTY_MAIN) {
+      // Only add main image if it's not already in the images array
+      if (!images.includes(mainImage)) {
+        images.unshift(mainImage) // Add as first image
+      }
+    }
+    
+    // If no images at all, return placeholder
+    if (images.length === 0) {
+      return [ASSETS.PLACEHOLDER_PROPERTY_MAIN]
+    }
+    
+    return images
   }
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -320,17 +344,13 @@ export default function PropertyDetailsPage() {
                   </div>
                   <div className="property-thumbnail-images">
                     {property && getPropertyImages(property)
-                      .map((image, index) => ({ image, index }))
-                      .filter(({ index }) => index !== selectedImageIndex)
-                      .slice(0, 2)
-                      .map(({ image, index }) => (
+                      .map((image, index) => (
                         <div 
                           key={index}
-                          className="property-thumbnail"
+                          className={`property-thumbnail ${index === selectedImageIndex ? 'active' : ''}`}
                           onClick={() => {
                             setSelectedImageIndex(index)
                             setModalImageIndex(index)
-                            setShowImageModal(true)
                           }}
                           style={{ cursor: 'pointer' }}
                         >

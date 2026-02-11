@@ -46,8 +46,10 @@ export default function EditPropertyModal({
     latitude: '',
     longitude: '',
   })
-  const [imageFile, setImageFile] = useState<File | null>(null)
-  const [imagePreview, setImagePreview] = useState<string | null>(null)
+  const [imageFiles, setImageFiles] = useState<File[]>([])
+  const [imagePreviews, setImagePreviews] = useState<string[]>([])
+  const [existingImages, setExistingImages] = useState<string[]>([])
+  const [imagesToDelete, setImagesToDelete] = useState<string[]>([])
 
   useEffect(() => {
     if (property && isOpen) {
@@ -72,8 +74,14 @@ export default function EditPropertyModal({
         latitude: property.latitude || '',
         longitude: property.longitude || '',
       })
-      setImagePreview(property.image || null)
-      setImageFile(null)
+      // Load existing images
+      const existing = property.images && Array.isArray(property.images) 
+        ? property.images 
+        : (property.image_url || property.image ? [property.image_url || property.image] : [])
+      setExistingImages(existing.filter(Boolean))
+      setImagePreviews([])
+      setImageFiles([])
+      setImagesToDelete([])
       setCurrentPage(1) // Reset to first page when opening
     }
   }, [property, isOpen])
@@ -123,33 +131,58 @@ export default function EditPropertyModal({
   }
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (file) {
+    const files = Array.from(e.target.files || [])
+    if (files.length === 0) return
+    
+    const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp']
+    const maxSize = 2 * 1024 * 1024 // 2MB
+    
+    const validFiles: File[] = []
+    const newPreviews: string[] = []
+    
+    files.forEach((file) => {
       // Validate file type
-      const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp']
-      const validExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp']
-      const fileExtension = '.' + file.name.split('.').pop()?.toLowerCase()
-      
-      if (!validTypes.includes(file.type) && !validExtensions.includes(fileExtension)) {
-        alert(`Invalid file type. Please upload a JPEG, JPG, PNG, GIF, or WEBP image.`)
-        e.target.value = '' // Clear the input
+      if (!validTypes.includes(file.type)) {
+        alert(`Invalid file type: ${file.name}. Please upload a JPEG, JPG, PNG, GIF, or WEBP image.`)
         return
       }
       
-      // Validate file size (max 2MB)
-      const maxSize = 2 * 1024 * 1024 // 2MB in bytes
+      // Validate file size
       if (file.size > maxSize) {
-        alert(`Image file is too large. Maximum size is 2MB. Current size: ${(file.size / 1024 / 1024).toFixed(2)}MB`)
-        e.target.value = '' // Clear the input
+        alert(`Image file ${file.name} is too large. Maximum size is 2MB. Current size: ${(file.size / 1024 / 1024).toFixed(2)}MB`)
         return
       }
       
-      setImageFile(file)
+      validFiles.push(file)
+      
+      // Create preview
       const reader = new FileReader()
       reader.onloadend = () => {
-        setImagePreview(reader.result as string)
+        newPreviews.push(reader.result as string)
+        if (newPreviews.length === validFiles.length) {
+          setImagePreviews(prev => [...prev, ...newPreviews])
+        }
       }
       reader.readAsDataURL(file)
+    })
+    
+    if (validFiles.length > 0) {
+      setImageFiles(prev => [...prev, ...validFiles])
+    }
+    
+    e.target.value = '' // Clear the input
+  }
+  
+  const handleRemoveNewImage = (index: number) => {
+    setImageFiles(prev => prev.filter((_, i) => i !== index))
+    setImagePreviews(prev => prev.filter((_, i) => i !== index))
+  }
+  
+  const handleRemoveExistingImage = (imageUrl: string) => {
+    setExistingImages(prev => prev.filter(img => img !== imageUrl))
+    // Track which images to delete from server
+    if (property?.images && property.images.includes(imageUrl)) {
+      setImagesToDelete(prev => [...prev, imageUrl])
     }
   }
 
@@ -168,43 +201,28 @@ export default function EditPropertyModal({
         formDataToSend.append(key, value.toString())
       })
 
-      // Add image if changed
-      if (imageFile) {
-        // Verify file type before sending
-        const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp']
-        if (!validTypes.includes(imageFile.type)) {
-          throw new Error(`Invalid image type: ${imageFile.type}. Please upload a JPEG, JPG, PNG, GIF, or WEBP image.`)
-        }
-        
-        // Verify file size (max 2MB = 2048KB)
-        const maxSize = 2 * 1024 * 1024 // 2MB in bytes
-        if (imageFile.size > maxSize) {
-          throw new Error(`Image file is too large. Maximum size is 2MB. Current size: ${(imageFile.size / 1024 / 1024).toFixed(2)}MB`)
-        }
-        
-        console.log('Appending image file:', {
-          name: imageFile.name,
-          type: imageFile.type,
-          size: imageFile.size,
-          lastModified: imageFile.lastModified
+      // Add new images if any
+      if (imageFiles.length > 0) {
+        imageFiles.forEach((imageFile, index) => {
+          // Verify file type before sending
+          const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp']
+          if (!validTypes.includes(imageFile.type)) {
+            throw new Error(`Invalid image type: ${imageFile.type}. Please upload a JPEG, JPG, PNG, GIF, or WEBP image.`)
+          }
+          
+          // Verify file size (max 2MB = 2048KB)
+          const maxSize = 2 * 1024 * 1024 // 2MB in bytes
+          if (imageFile.size > maxSize) {
+            throw new Error(`Image file ${imageFile.name} is too large. Maximum size is 2MB. Current size: ${(imageFile.size / 1024 / 1024).toFixed(2)}MB`)
+          }
+          
+          // Append each image file
+          formDataToSend.append('images[]', imageFile, imageFile.name || `image-${index}.jpg`)
         })
         
-        // Append file with explicit filename to ensure Laravel recognizes it
-        // The third parameter (filename) is important for Laravel's file validation
-        // Make sure to append the file AFTER all other fields to avoid issues
-        formDataToSend.append('image', imageFile, imageFile.name)
-        
-        // Verify the file was added correctly
-        const fileEntry = formDataToSend.get('image')
-        if (fileEntry instanceof File) {
-          console.log('File verified in FormData:', {
-            name: fileEntry.name,
-            type: fileEntry.type,
-            size: fileEntry.size
-          })
-        } else {
-          console.error('File was not added correctly to FormData!')
-          throw new Error('Failed to add image file to form data')
+        // Also set first image as main image for backward compatibility
+        if (imageFiles.length > 0) {
+          formDataToSend.append('image', imageFiles[0], imageFiles[0].name || 'image.jpg')
         }
       }
 
@@ -572,19 +590,104 @@ export default function EditPropertyModal({
                 <div className="edit-property-section">
                   <h3>Media</h3>
                   <div className="edit-property-form-group full-width">
-                    <label>Property Image</label>
-                    {imagePreview && (
-                      <div className="edit-property-image-preview">
-                        <img src={imagePreview} alt="Preview" />
+                    <label>Property Images</label>
+                    
+                    {/* Existing Images */}
+                    {existingImages.length > 0 && (
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px', marginBottom: '16px' }}>
+                        {existingImages.map((imageUrl, index) => (
+                          <div key={index} style={{ position: 'relative', width: '120px', height: '120px' }}>
+                            <img 
+                              src={imageUrl} 
+                              alt={`Property image ${index + 1}`}
+                              style={{ 
+                                width: '100%', 
+                                height: '100%', 
+                                objectFit: 'cover', 
+                                borderRadius: '8px',
+                                border: '2px solid #e5e7eb'
+                              }}
+                            />
+                            <button
+                              type="button"
+                              onClick={() => handleRemoveExistingImage(imageUrl)}
+                              style={{
+                                position: 'absolute',
+                                top: '-8px',
+                                right: '-8px',
+                                background: '#ef4444',
+                                color: 'white',
+                                border: 'none',
+                                borderRadius: '50%',
+                                width: '24px',
+                                height: '24px',
+                                cursor: 'pointer',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                fontSize: '16px',
+                                lineHeight: '1',
+                              }}
+                            >
+                              ×
+                            </button>
+                          </div>
+                        ))}
                       </div>
                     )}
+                    
+                    {/* New Image Previews */}
+                    {imagePreviews.length > 0 && (
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px', marginBottom: '16px' }}>
+                        {imagePreviews.map((preview, index) => (
+                          <div key={index} style={{ position: 'relative', width: '120px', height: '120px' }}>
+                            <img 
+                              src={preview} 
+                              alt={`New image ${index + 1}`}
+                              style={{ 
+                                width: '100%', 
+                                height: '100%', 
+                                objectFit: 'cover', 
+                                borderRadius: '8px',
+                                border: '2px solid #3b82f6'
+                              }}
+                            />
+                            <button
+                              type="button"
+                              onClick={() => handleRemoveNewImage(index)}
+                              style={{
+                                position: 'absolute',
+                                top: '-8px',
+                                right: '-8px',
+                                background: '#ef4444',
+                                color: 'white',
+                                border: 'none',
+                                borderRadius: '50%',
+                                width: '24px',
+                                height: '24px',
+                                cursor: 'pointer',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                fontSize: '16px',
+                                lineHeight: '1',
+                              }}
+                            >
+                              ×
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                    
                     <input
                       type="file"
                       accept="image/jpeg,image/jpg,image/png,image/gif,image/webp"
                       onChange={handleImageChange}
-                      style={{ marginTop: imagePreview ? '12px' : '0' }}
+                      multiple
+                      style={{ marginTop: (existingImages.length > 0 || imagePreviews.length > 0) ? '12px' : '0' }}
                     />
-                    <small>Leave empty to keep current image</small>
+                    <small>You can upload multiple images. The first image will be used as the main thumbnail.</small>
                   </div>
 
                   <div className="edit-property-form-group full-width" style={{ marginTop: '16px' }}>

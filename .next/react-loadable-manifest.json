@@ -25,19 +25,6 @@
       "static/chunks/_app-pages-browser_node_modules_leaflet_dist_leaflet_css.js"
     ]
   },
-  "components/common/PropertyLocationMap.tsx -> leaflet": {
-    "id": "components/common/PropertyLocationMap.tsx -> leaflet",
-    "files": [
-      "static/chunks/_app-pages-browser_node_modules_leaflet_dist_leaflet-src_js.js"
-    ]
-  },
-  "components/common/PropertyLocationMap.tsx -> leaflet/dist/leaflet.css": {
-    "id": "components/common/PropertyLocationMap.tsx -> leaflet/dist/leaflet.css",
-    "files": [
-      "static/css/_app-pages-browser_node_modules_leaflet_dist_leaflet_css.css",
-      "static/chunks/_app-pages-browser_node_modules_leaflet_dist_leaflet_css.js"
-    ]
-  },
   "components/common/PublicPropertiesMap.tsx -> leaflet": {
     "id": "components/common/PublicPropertiesMap.tsx -> leaflet",
     "files": [

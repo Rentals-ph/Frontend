@@ -1,8 +1,9 @@
 {
   "/_not-found/page": "app/_not-found/page.js",
-  "/page": "app/page.js",
-  "/properties/page": "app/properties/page.js",
-  "/property/[id]/page": "app/property/[id]/page.js",
+  "/agent/page-builder/page": "app/agent/page-builder/page.js",
   "/agent/listings/page": "app/agent/listings/page.js",
-  "/agent/page-builder/page": "app/agent/page-builder/page.js"
+  "/agent/inbox/page": "app/agent/inbox/page.js",
+  "/agent/page": "app/agent/page.js",
+  "/agent/create-listing/visuals-features/page": "app/agent/create-listing/visuals-features/page.js",
+  "/agent/create-listing/owner-review/page": "app/agent/create-listing/owner-review/page.js"
 }

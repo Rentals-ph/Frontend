@@ -115,7 +115,7 @@ export default function EditPropertyModal({
           .filter(Boolean) as string[]
       } else if (property.image_url || property.image) {
         // Fallback to single image
-        existingUrls = [property.image_url || property.image].filter(Boolean)
+        existingUrls = [property.image_url || property.image || ''].filter(Boolean) as string[]
         if (property.image_path) {
           existingPaths = [property.image_path]
         } else if (property.image && !property.image.startsWith('http')) {

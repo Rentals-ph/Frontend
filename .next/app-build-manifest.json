@@ -1,16 +1,10 @@
 {
   "pages": {
-    "/agent/listings/page": [
+    "/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/css/app/agent/listings/page.css",
-      "static/chunks/app/agent/listings/page.js"
-    ],
-    "/agent/layout": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/css/app/agent/layout.css",
-      "static/chunks/app/agent/layout.js"
+      "static/css/app/page.css",
+      "static/chunks/app/page.js"
     ],
     "/layout": [
       "static/chunks/webpack.js",
@@ -18,17 +12,29 @@
       "static/css/app/layout.css",
       "static/chunks/app/layout.js"
     ],
-    "/page": [
+    "/agent/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/css/app/page.css",
-      "static/chunks/app/page.js"
+      "static/css/app/agent/page.css",
+      "static/chunks/app/agent/page.js"
+    ],
+    "/agent/layout": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/css/app/agent/layout.css",
+      "static/chunks/app/agent/layout.js"
     ],
     "/properties/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
       "static/css/app/properties/page.css",
       "static/chunks/app/properties/page.js"
+    ],
+    "/agent/listings/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/css/app/agent/listings/page.css",
+      "static/chunks/app/agent/listings/page.js"
     ],
     "/property/[id]/page": [
       "static/chunks/webpack.js",

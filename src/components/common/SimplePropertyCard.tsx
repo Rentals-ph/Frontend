@@ -34,6 +34,10 @@ function SimplePropertyCard({
           src={image} 
           alt={title}
           className="simple-property-image"
+          onError={(e) => {
+            // Fallback to default image if the provided image fails to load
+            e.currentTarget.src = ASSETS.PLACEHOLDER_PROPERTY_MAIN
+          }}
         />
         <div className="simple-property-overlay">
           <div className="simple-property-content">

@@ -62,11 +62,9 @@ export default function AgentCreateListingAttributes() {
   const router = useRouter()
   const { data, updateData } = useCreateListing()
   const [amenities, setAmenities] = useState<string[]>(data.amenities)
-  const [furnishing, setFurnishing] = useState<string>(data.furnishing)
 
   useEffect(() => {
     setAmenities(data.amenities)
-    setFurnishing(data.furnishing)
   }, [data])
 
   const stepLabels = [
@@ -89,8 +87,6 @@ export default function AgentCreateListingAttributes() {
     'Wi-Fi Internet',
     'Pet-Friendly'
   ]
-
-  const furnishingOptions = ['Fully Furnished', 'Semi Furnished', 'Unfurnished']
 
   const handleAmenityChange = (amenity: string) => {
     setAmenities((prev) =>
@@ -164,24 +160,7 @@ export default function AgentCreateListingAttributes() {
             </div>
           </div>
 
-          <div className="acat-section">
-            <h3 className="acat-section-title">Furnishing</h3>
-            <div className="acat-checkbox-row">
-              {furnishingOptions.map((option) => (
-                <label key={option} className="acat-checkbox-label">
-                  <input
-                    type="radio"
-                    name="furnishing"
-                    className="acat-radio"
-                    value={option}
-                    checked={furnishing === option}
-                    onChange={(e) => setFurnishing(e.target.value)}
-                  />
-                  <span className="acat-checkbox-text">{option}</span>
-                </label>
-              ))}
-            </div>
-          </div>
+    
 
           <div className="acat-footer-actions">
             <button
@@ -195,7 +174,7 @@ export default function AgentCreateListingAttributes() {
             <button
               className="aclc-next-btn"
               onClick={() => {
-                updateData({ amenities, furnishing })
+                updateData({ amenities })
                 router.push('/agent/create-listing/owner-info')
               }}
               type="button"

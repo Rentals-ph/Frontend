@@ -200,7 +200,7 @@ function FeaturedProperties() {
                     date={formatDate(property.published_at)}
                     price={formatPrice(property.price)}
                     title={property.title}
-                    image={getImageUrl(property.image)}
+                    image={property.image_url || property.image || ASSETS.PLACEHOLDER_PROPERTY_MAIN}
                     rentManagerName={property.rent_manager?.name || 'Rental.Ph Official'}
                     rentManagerRole={getRentManagerRole(property.rent_manager?.is_official)}
                     bedrooms={property.bedrooms}

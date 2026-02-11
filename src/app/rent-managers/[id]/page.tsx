@@ -610,7 +610,7 @@ export default function RentManagerDetailsPage() {
                           date={formatDate(p.published_at)}
                           price={formatPrice(p.price)}
                           title={p.title}
-                          image={getImageUrl(p.image)}
+                          image={p.image_url || p.image || ASSETS.PLACEHOLDER_PROPERTY_MAIN}
                           rentManagerName={manager.name}
                           rentManagerRole={manager.role}
                           bedrooms={p.bedrooms}
@@ -627,7 +627,7 @@ export default function RentManagerDetailsPage() {
                           date={formatDate(p.published_at)}
                           price={formatPrice(p.price)}
                           title={p.title}
-                          image={getImageUrl(p.image)}
+                          image={p.image_url || p.image || ASSETS.PLACEHOLDER_PROPERTY_MAIN}
                           rentManagerName={manager.name}
                           rentManagerRole={manager.role}
                           bedrooms={p.bedrooms}

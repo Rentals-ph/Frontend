@@ -12,29 +12,11 @@
       "static/css/app/layout.css",
       "static/chunks/app/layout.js"
     ],
-    "/property/[id]/page": [
+    "/properties/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/css/app/property/[id]/page.css",
-      "static/chunks/app/property/[id]/page.js"
-    ],
-    "/agent/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/css/app/agent/page.css",
-      "static/chunks/app/agent/page.js"
-    ],
-    "/agent/layout": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/css/app/agent/layout.css",
-      "static/chunks/app/agent/layout.js"
-    ],
-    "/agent/listings/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/css/app/agent/listings/page.css",
-      "static/chunks/app/agent/listings/page.js"
+      "static/css/app/properties/page.css",
+      "static/chunks/app/properties/page.js"
     ],
     "/_not-found/page": [
       "static/chunks/webpack.js",

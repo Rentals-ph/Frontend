@@ -549,7 +549,7 @@ export default function PropertyDetailsPage() {
                           date={formatDate(prop.published_at)}
                           price={formatPrice(prop.price)}
                           title={prop.title}
-                          image={getImageUrl(prop.image)}
+                          image={prop.image_url || prop.image || ASSETS.PLACEHOLDER_PROPERTY_MAIN}
                           rentManagerName={
                             prop.agent?.first_name && prop.agent?.last_name
                               ? `${prop.agent.first_name} ${prop.agent.last_name}`

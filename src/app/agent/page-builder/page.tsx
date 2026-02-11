@@ -264,10 +264,11 @@ export default function PageBuilder() {
               setProfileCardBio(profilePageData.bio)
             }
             if (profilePageData.contact_info) {
+              const contactInfo = profilePageData.contact_info
               setContactInfo(prev => ({ 
                 ...prev, 
-                email: profilePageData.contact_info.email || prev.email,
-                phone: profilePageData.contact_info.phone || prev.phone
+                email: contactInfo.email || prev.email,
+                phone: contactInfo.phone || prev.phone
               }))
             }
           }

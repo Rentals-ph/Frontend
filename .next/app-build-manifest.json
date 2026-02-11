@@ -1,10 +1,10 @@
 {
   "pages": {
-    "/agent/page": [
+    "/agent/listings/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/css/app/agent/page.css",
-      "static/chunks/app/agent/page.js"
+      "static/css/app/agent/listings/page.css",
+      "static/chunks/app/agent/listings/page.js"
     ],
     "/agent/layout": [
       "static/chunks/webpack.js",
@@ -17,12 +17,6 @@
       "static/chunks/main-app.js",
       "static/css/app/layout.css",
       "static/chunks/app/layout.js"
-    ],
-    "/agent/listings/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/css/app/agent/listings/page.css",
-      "static/chunks/app/agent/listings/page.js"
     ],
     "/page": [
       "static/chunks/webpack.js",
@@ -42,11 +36,10 @@
       "static/css/app/property/[id]/page.css",
       "static/chunks/app/property/[id]/page.js"
     ],
-    "/rent-managers/page": [
+    "/_not-found/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/css/app/rent-managers/page.css",
-      "static/chunks/app/rent-managers/page.js"
+      "static/chunks/app/_not-found/page.js"
     ]
   }
 }

@@ -2,8 +2,28 @@
 const nextConfig = {
   reactStrictMode: true,
   images: {
-    domains: ['localhost', '127.0.0.1'],
-    unoptimized: true, // For static export if needed
+    remotePatterns: [
+      // Local development
+      {
+        protocol: 'http',
+        hostname: 'localhost',
+        port: '8000',
+        pathname: '/storage/**',
+      },
+      {
+        protocol: 'http',
+        hostname: '127.0.0.1',
+        port: '8000',
+        pathname: '/storage/**',
+      },
+      // Production (Railway)
+      {
+        protocol: 'https',
+        hostname: 'rentalsbackend-production.up.railway.app',
+        pathname: '/storage/**',
+      },
+    ],
+    unoptimized: true,
   },
   async rewrites() {
     const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 
@@ -18,4 +38,3 @@ const nextConfig = {
 }
 
 module.exports = nextConfig
-

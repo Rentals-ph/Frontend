@@ -124,6 +124,7 @@
   border-radius: 12px;
   padding: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  height: 600px; /* Fixed height to prevent layout shifts */
 }
 
 .property-main-image {
@@ -131,6 +132,7 @@
   position: relative;
   overflow: hidden;
   border-radius: 8px;
+  height: 100%; /* Take full height of grid row */
 }
 
 .property-main-image img {
@@ -138,7 +140,6 @@
   height: 100%;
   object-fit: cover;
   border-radius: 8px;
-  min-height: 400px;
   display: block;
   transition: opacity 0.3s ease;
 }
@@ -151,9 +152,7 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
-  max-height: 600px;
-  overflow-y: auto;
-  padding-right: 4px;
+  height: 100%;
 }
 
 .property-thumbnail-images::-webkit-scrollbar {
@@ -175,12 +174,14 @@
 }
 
 .property-thumbnail {
-  flex: 1;
+  flex-shrink: 0;
   cursor: pointer;
   position: relative;
   transition: all 0.3s ease;
   border-radius: 8px;
   overflow: hidden;
+  min-height: 120px;
+  height: 120px;
 }
 
 .property-thumbnail::before {
@@ -214,7 +215,6 @@
   height: 100%;
   object-fit: cover;
   border-radius: 8px;
-  min-height: 194px;
   display: block;
   transition: transform 0.3s ease;
 }
@@ -729,18 +729,32 @@
 
   .property-images-grid {
     grid-template-columns: 1fr;
+    height: auto; /* Allow height to adjust on tablet */
+    min-height: 500px;
   }
 
   .property-main-image {
     grid-row: 1;
+    height: 400px; /* Fixed height for main image on tablet */
+    min-height: 400px;
   }
 
   .property-thumbnail-images {
     flex-direction: row;
+    max-height: 150px;
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+  
+  .property-thumbnail {
+    min-width: 120px;
+    width: 120px;
+    height: 120px;
+    flex-shrink: 0;
   }
 
   .property-thumbnail img {
-    min-height: 200px;
+    min-height: auto;
   }
 }
 
@@ -844,6 +858,15 @@
 
   .property-price {
     font-size: 18px;
+  }
+
+  .property-images-grid {
+    min-height: 350px;
+  }
+
+  .property-main-image {
+    height: 300px;
+    min-height: 300px;
   }
 
   .property-overview-section,

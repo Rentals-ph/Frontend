@@ -407,7 +407,7 @@ export default function AgentCreateListingPublish() {
                           maxWidth: 1920,
                           maxHeight: 1920,
                           quality: 0.85,
-                          maxSizeMB: 2,
+                          maxSizeMB: 10,
                         })
                         compressedImages.push(compressed)
                       } catch (compressError) {
@@ -473,19 +473,23 @@ export default function AgentCreateListingPublish() {
                   }
                   
                   // Append all images to FormData (multiple images support)
+                  // Laravel expects indexed array keys: images[0], images[1], etc.
                   compressedImages.forEach((imageFile, index) => {
                     if (imageFile.size > 0 && imageFile.type.startsWith('image/')) {
-                      formData.append('images[]', imageFile, imageFile.name || `image-${index}.jpg`)
+                      // Ensure file has proper extension for Laravel validation
+                      const extension = imageFile.name.split('.').pop()?.toLowerCase() || 
+                                       (imageFile.type.includes('jpeg') ? 'jpg' : 
+                                        imageFile.type.includes('png') ? 'png' : 
+                                        imageFile.type.includes('gif') ? 'gif' : 
+                                        imageFile.type.includes('webp') ? 'webp' : 'jpg')
+                      const fileName = imageFile.name || `image-${index}.${extension}`
+                      formData.append(`images[${index}]`, imageFile, fileName)
                     }
                   })
                   
-                  // Also set first image as main image for backward compatibility
-                  if (compressedImages.length > 0) {
-                    const mainImage = compressedImages[0]
-                    if (mainImage.size > 0 && mainImage.type.startsWith('image/')) {
-                      formData.append('image', mainImage, mainImage.name || 'image.jpg')
-                    }
-                  }
+                  // Don't send 'image' field when we have images[] array
+                  // The backend will use the first image from images[] as the main image
+                  // This prevents duplicate uploads
                   
                   // Step 3: Create property with image
                   const API_BASE_URL = getApiBaseUrl()

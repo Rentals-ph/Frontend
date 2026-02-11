@@ -91,23 +91,37 @@ export default function PropertyDetailsPage() {
     if (image.startsWith('http://') || image.startsWith('https://')) {
       return image
     }
-    // If it's a storage path, construct the full URL
+    // Construct the full URL from backend
+    const baseUrl = typeof window !== 'undefined' 
+      ? window.location.origin.replace('/api', '').replace(':3000', ':8000')
+      : 'http://localhost:8000'
+    
+    // Handle different path formats
     if (image.startsWith('storage/') || image.startsWith('/storage/')) {
-      const baseUrl = typeof window !== 'undefined' 
-        ? window.location.origin.replace('/api', '')
-        : 'http://localhost:8000'
       return `${baseUrl}/${image.startsWith('/') ? image.slice(1) : image}`
     }
-    return image
+    // Handle images/products/ paths (without storage/)
+    if (image.startsWith('images/')) {
+      return `${baseUrl}/storage/${image}`
+    }
+    // Default: assume it's a storage path
+    return `${baseUrl}/storage/${image}`
   }
 
   // Get all property images from backend
   const getPropertyImages = (property: Property): string[] => {
     const images: string[] = []
     
-    // First, check if property has an images array (gallery images)
-    if (property.images && Array.isArray(property.images) && property.images.length > 0) {
-      // Use all gallery images
+    // First, check if property has images_url (full URLs from backend)
+    if (property.images_url && Array.isArray(property.images_url) && property.images_url.length > 0) {
+      // Use images_url (full URLs) - these already include the main image
+      property.images_url.forEach(img => {
+        if (img) {
+          images.push(img)
+        }
+      })
+    } else if (property.images && Array.isArray(property.images) && property.images.length > 0) {
+      // Fallback: resolve image paths to full URLs
       property.images.forEach(img => {
         if (img) {
           images.push(getImageUrl(img))
@@ -115,13 +129,12 @@ export default function PropertyDetailsPage() {
       })
     }
     
-    // Always include the main image as the first image (thumbnail for cards)
-    // This ensures the first image is always available for property cards
-    const mainImage = property.image_url || getImageUrl(property.image)
-    if (mainImage && mainImage !== ASSETS.PLACEHOLDER_PROPERTY_MAIN) {
-      // Only add main image if it's not already in the images array
-      if (!images.includes(mainImage)) {
-        images.unshift(mainImage) // Add as first image
+    // If we have images from the array, use them (they already include the main image)
+    // Only add main image separately if we don't have any images yet
+    if (images.length === 0) {
+      const mainImage = property.image_url || getImageUrl(property.image)
+      if (mainImage && mainImage !== ASSETS.PLACEHOLDER_PROPERTY_MAIN) {
+        images.push(mainImage)
       }
     }
     
@@ -334,19 +347,28 @@ export default function PropertyDetailsPage() {
                     }}
                     style={{ cursor: 'pointer' }}
                   >
-                    {property && (
-                      <img 
-                        src={getPropertyImages(property)[selectedImageIndex]} 
-                        alt={property.title}
-                        key={selectedImageIndex}
-                      />
-                    )}
+                    {property && (() => {
+                      const allImages = getPropertyImages(property)
+                      const currentImage = allImages[selectedImageIndex] || allImages[0] || ASSETS.PLACEHOLDER_PROPERTY_MAIN
+                      return (
+                        <img 
+                          src={currentImage} 
+                          alt={property.title}
+                          key={`main-${selectedImageIndex}-${currentImage.substring(0, 20)}`}
+                          onError={(e) => {
+                            // Fallback to placeholder if image fails to load
+                            e.currentTarget.src = ASSETS.PLACEHOLDER_PROPERTY_MAIN
+                          }}
+                        />
+                      )
+                    })()}
                   </div>
                   <div className="property-thumbnail-images">
-                    {property && getPropertyImages(property)
-                      .map((image, index) => (
+                    {property && (() => {
+                      const allImages = getPropertyImages(property)
+                      return allImages.map((image, index) => (
                         <div 
-                          key={index}
+                          key={`img-${index}-${image.substring(0, 20)}`}
                           className={`property-thumbnail ${index === selectedImageIndex ? 'active' : ''}`}
                           onClick={() => {
                             setSelectedImageIndex(index)
@@ -354,9 +376,17 @@ export default function PropertyDetailsPage() {
                           }}
                           style={{ cursor: 'pointer' }}
                         >
-                          <img src={image} alt={`Property view ${index + 1}`} />
+                          <img 
+                            src={image} 
+                            alt={`Property view ${index + 1}`}
+                            onError={(e) => {
+                              // Fallback to placeholder if image fails to load
+                              e.currentTarget.src = ASSETS.PLACEHOLDER_PROPERTY_MAIN
+                            }}
+                          />
                         </div>
-                      ))}
+                      ))
+                    })()}
                   </div>
                 </div>
 
@@ -667,9 +697,13 @@ export default function PropertyDetailsPage() {
               )}
 
               <img 
-                src={images[currentIndex]} 
+                src={images[currentIndex] || ASSETS.PLACEHOLDER_PROPERTY_MAIN} 
                 alt={`${property.title} - Image ${currentIndex + 1}`}
                 className="image-modal-img"
+                onError={(e) => {
+                  // Fallback to placeholder if image fails to load
+                  e.currentTarget.src = ASSETS.PLACEHOLDER_PROPERTY_MAIN
+                }}
               />
 
               {hasNext && (
@@ -693,7 +727,7 @@ export default function PropertyDetailsPage() {
               <div className="image-modal-thumbnails">
                 {images.map((image, index) => (
                   <div
-                    key={index}
+                    key={`thumb-${index}-${image?.substring(0, 20) || index}`}
                     className={`image-modal-thumbnail ${index === currentIndex ? 'active' : ''}`}
                     onClick={(e) => {
                       e.stopPropagation()
@@ -701,8 +735,12 @@ export default function PropertyDetailsPage() {
                     }}
                   >
                     <img 
-                      src={image} 
+                      src={image || ASSETS.PLACEHOLDER_PROPERTY_MAIN} 
                       alt={`${property.title} - Thumbnail ${index + 1}`}
+                      onError={(e) => {
+                        // Fallback to placeholder if image fails to load
+                        e.currentTarget.src = ASSETS.PLACEHOLDER_PROPERTY_MAIN
+                      }}
                     />
                   </div>
                 ))}

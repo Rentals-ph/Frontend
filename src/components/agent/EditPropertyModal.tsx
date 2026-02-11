@@ -48,7 +48,8 @@ export default function EditPropertyModal({
   })
   const [imageFiles, setImageFiles] = useState<File[]>([])
   const [imagePreviews, setImagePreviews] = useState<string[]>([])
-  const [existingImages, setExistingImages] = useState<string[]>([])
+  const [existingImages, setExistingImages] = useState<string[]>([]) // URLs for display
+  const [existingImagePaths, setExistingImagePaths] = useState<string[]>([]) // Paths for backend
   const [imagesToDelete, setImagesToDelete] = useState<string[]>([])
 
   useEffect(() => {
@@ -74,11 +75,55 @@ export default function EditPropertyModal({
         latitude: property.latitude || '',
         longitude: property.longitude || '',
       })
-      // Load existing images
-      const existing = property.images && Array.isArray(property.images) 
-        ? property.images 
-        : (property.image_url || property.image ? [property.image_url || property.image] : [])
-      setExistingImages(existing.filter(Boolean))
+      // Load existing images - use images_url if available (full URLs), otherwise resolve images paths
+      let existingUrls: string[] = []
+      let existingPaths: string[] = []
+      
+      if (property.images_url && Array.isArray(property.images_url) && property.images_url.length > 0) {
+        // Use images_url (full URLs from backend)
+        existingUrls = property.images_url.filter(Boolean)
+        // Get corresponding paths from property.images
+        if (property.images && Array.isArray(property.images) && property.images.length === existingUrls.length) {
+          existingPaths = property.images.filter(Boolean)
+        }
+      } else if (property.images && Array.isArray(property.images) && property.images.length > 0) {
+        // Resolve image paths to full URLs
+        existingPaths = property.images.filter(Boolean)
+        existingUrls = property.images
+          .filter(Boolean)
+          .map(img => {
+            if (typeof img === 'string') {
+              // If already a full URL, use it
+              if (img.startsWith('http://') || img.startsWith('https://')) {
+                return img
+              }
+              // Otherwise, construct full URL from backend
+              const baseUrl = typeof window !== 'undefined' 
+                ? window.location.origin.replace('/api', '').replace(':3000', ':8000')
+                : 'http://localhost:8000'
+              // Handle both storage/ and images/ paths
+              if (img.startsWith('storage/') || img.startsWith('/storage/')) {
+                return `${baseUrl}/${img.startsWith('/') ? img.slice(1) : img}`
+              }
+              if (img.startsWith('images/')) {
+                return `${baseUrl}/storage/${img}`
+              }
+              return `${baseUrl}/storage/${img}`
+            }
+            return null
+          })
+          .filter(Boolean) as string[]
+      } else if (property.image_url || property.image) {
+        // Fallback to single image
+        existingUrls = [property.image_url || property.image].filter(Boolean)
+        if (property.image_path) {
+          existingPaths = [property.image_path]
+        } else if (property.image && !property.image.startsWith('http')) {
+          existingPaths = [property.image]
+        }
+      }
+      setExistingImages(existingUrls)
+      setExistingImagePaths(existingPaths)
       setImagePreviews([])
       setImageFiles([])
       setImagesToDelete([])
@@ -135,7 +180,7 @@ export default function EditPropertyModal({
     if (files.length === 0) return
     
     const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp']
-    const maxSize = 2 * 1024 * 1024 // 2MB
+    const maxSize = 10 * 1024 * 1024 // 10MB
     
     const validFiles: File[] = []
     const newPreviews: string[] = []
@@ -149,7 +194,7 @@ export default function EditPropertyModal({
       
       // Validate file size
       if (file.size > maxSize) {
-        alert(`Image file ${file.name} is too large. Maximum size is 2MB. Current size: ${(file.size / 1024 / 1024).toFixed(2)}MB`)
+        alert(`Image file ${file.name} is too large. Maximum size is 10MB. Current size: ${(file.size / 1024 / 1024).toFixed(2)}MB`)
         return
       }
       
@@ -179,10 +224,13 @@ export default function EditPropertyModal({
   }
   
   const handleRemoveExistingImage = (imageUrl: string) => {
+    const index = existingImages.indexOf(imageUrl)
     setExistingImages(prev => prev.filter(img => img !== imageUrl))
-    // Track which images to delete from server
-    if (property?.images && property.images.includes(imageUrl)) {
-      setImagesToDelete(prev => [...prev, imageUrl])
+    // Also remove corresponding path
+    if (index >= 0 && index < existingImagePaths.length) {
+      const pathToDelete = existingImagePaths[index]
+      setExistingImagePaths(prev => prev.filter((_, i) => i !== index))
+      setImagesToDelete(prev => [...prev, pathToDelete])
     }
   }
 
@@ -201,6 +249,9 @@ export default function EditPropertyModal({
         formDataToSend.append(key, value.toString())
       })
 
+      // Handle images: send existing images to keep + new images to add
+      // Use the tracked existingImagePaths (paths of images that weren't removed)
+      
       // Add new images if any
       if (imageFiles.length > 0) {
         imageFiles.forEach((imageFile, index) => {
@@ -210,20 +261,35 @@ export default function EditPropertyModal({
             throw new Error(`Invalid image type: ${imageFile.type}. Please upload a JPEG, JPG, PNG, GIF, or WEBP image.`)
           }
           
-          // Verify file size (max 2MB = 2048KB)
-          const maxSize = 2 * 1024 * 1024 // 2MB in bytes
+          // Verify file size (max 10MB)
+          const maxSize = 10 * 1024 * 1024 // 10MB in bytes
           if (imageFile.size > maxSize) {
-            throw new Error(`Image file ${imageFile.name} is too large. Maximum size is 2MB. Current size: ${(imageFile.size / 1024 / 1024).toFixed(2)}MB`)
+            throw new Error(`Image file ${imageFile.name} is too large. Maximum size is 10MB. Current size: ${(imageFile.size / 1024 / 1024).toFixed(2)}MB`)
           }
           
-          // Append each image file
-          formDataToSend.append('images[]', imageFile, imageFile.name || `image-${index}.jpg`)
+          // Append each image file with indexed keys for Laravel
+          // Ensure file has proper extension for Laravel validation
+          const extension = imageFile.name.split('.').pop()?.toLowerCase() || 
+                           (imageFile.type.includes('jpeg') ? 'jpg' : 
+                            imageFile.type.includes('png') ? 'png' : 
+                            imageFile.type.includes('gif') ? 'gif' : 
+                            imageFile.type.includes('webp') ? 'webp' : 'jpg')
+          const fileName = imageFile.name || `image-${index}.${extension}`
+          formDataToSend.append(`images[${index}]`, imageFile, fileName)
         })
         
-        // Also set first image as main image for backward compatibility
-        if (imageFiles.length > 0) {
-          formDataToSend.append('image', imageFiles[0], imageFiles[0].name || 'image.jpg')
-        }
+        // Don't send 'image' field when we have images[] array
+        // The backend will use the first image from images[] as the main image
+        // This prevents duplicate uploads
+      }
+      
+      // Send existing images to keep (so backend knows which ones to preserve)
+      // Only send if we have existing images that should be kept
+      if (existingImagePaths.length > 0) {
+        formDataToSend.append('keep_images', JSON.stringify(existingImagePaths))
+      } else if (imageFiles.length === 0 && existingImages.length === 0) {
+        // If no existing images and no new images, send empty array to clear all images
+        formDataToSend.append('keep_images', JSON.stringify([]))
       }
 
       // Log final FormData before sending
@@ -234,10 +300,10 @@ export default function EditPropertyModal({
 
       const response = await propertiesApi.update(property.id, formDataToSend)
       
-      // Log response to verify image was processed
-      if (imageFile && response.data) {
+      // Log response to verify images were processed
+      if (imageFiles.length > 0 && response.data) {
         console.log('Update response - image_path:', response.data.image_path)
-        console.log('Update response - image:', response.data.image)
+        console.log('Update response - images:', response.data.images)
       }
       
       if (response.success) {

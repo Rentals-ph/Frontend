@@ -18,6 +18,7 @@ export interface Property {
   image_path?: string | null // Storage path for the image
   image_url?: string | null // Full URL to the image (computed by backend)
   images?: string[] | null // Gallery images (array of storage paths)
+  images_url?: string[] | null // Full URLs to gallery images (computed by backend)
   video_url?: string | null
   latitude?: string | null
   longitude?: string | null

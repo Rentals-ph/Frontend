@@ -526,7 +526,7 @@ function Hero() {
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" fill="currentColor"/>
           </svg>
-          Try our A.I assistant
+          Try our RentalsGroq
         </button>
 
         {/* Search bar and filters or Chat container */}
@@ -543,8 +543,7 @@ function Hero() {
                     </svg>
                   </div>
                   <div>
-                    <h3 className="chat-title">AI Assistant</h3>
-                    <p className="chat-subtitle">Online</p>
+                    <h3 className="chat-title">RentalsGroq</h3>
                   </div>
                 </div>
                 <div className="chat-header-actions">

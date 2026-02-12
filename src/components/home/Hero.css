@@ -159,7 +159,7 @@
   align-items: center;
   justify-content: center;
   padding: 25px 20px;
-  background: rgb(255, 255, 255, 0.6);
+  background: rgb(255, 255, 255, 0.8);
   border-radius: 12px;
   box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
@@ -312,8 +312,7 @@
 
 /* Advanced Options Panel - Inside search container */
 .advanced-options-panel {
-  margin-top: 15px;
-  padding: 10px 0 0 0;
+  padding: 5px 0 0 0;
   width: 100%;
   border-top: 1px solid rgba(167, 167, 167, 0.2);
 }
@@ -322,8 +321,8 @@
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   grid-template-rows: 1fr;
-  margin-bottom: -15px;
-  gap: 18px;
+  margin-bottom: -10px;
+  gap: 20px;
 }
 
 .advanced-option-group {
@@ -351,7 +350,7 @@
   background: #ffffff;
   color: #374151;
   font-family: 'Inter', sans-serif;
-  font-size: 14px;
+  font-size: 10px;
   cursor: pointer;
   transition: border-color 0.2s ease;
   appearance: none;
@@ -383,7 +382,7 @@
   background: #ffffff;
   color: #374151;
   font-family: 'Inter', sans-serif;
-  font-size: 14px;
+  font-size: 12px;
   transition: border-color 0.2s ease;
 }
 
@@ -671,7 +670,7 @@
   }
 
   .advanced-options-panel {
-    margin-top: 16px;
+
     padding: 14px 0 0 0;
   }
 }

@@ -520,7 +520,6 @@ function PropertiesContent() {
   return (
     <div className="properties-for-rent-page">
       <Navbar />
-      <PageHeader title="Properties for Rent" />
       
       <div className="top-search-bar-container">
             <div className="top-search-bar">

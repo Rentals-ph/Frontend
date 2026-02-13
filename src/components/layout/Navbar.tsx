@@ -188,17 +188,12 @@ function Navbar() {
             <Link href="/rent-managers" className={`nav-link ${pathname === '/rent-managers' ? 'active' : ''}`}>
               RENT MANAGERS
             </Link>
-            <div className="nav-dropdown-wrapper">
-              <Link href={pathname === '/news' ? '/news' : '/blog'} className={`nav-link ${pathname === '/blog' || pathname === '/news' ? 'active' : ''}`}>
-                {pathname === '/news' ? 'NEWS' : 'BLOG'}
-                <FiChevronDown className="nav-dropdown-chevron" />
-              </Link>
-              <div className="nav-dropdown-menu">
-                <Link href={pathname === '/news' ? '/blog' : '/news'} className="nav-dropdown-item" onClick={() => {}}>
-                  {pathname === '/news' ? 'BLOG' : 'NEWS'}
-                </Link>
-              </div>
-            </div>
+            <Link href="/rent-managers" className={`nav-link ${pathname === '/blog' ? 'active' : ''}`}>
+              BLOG
+            </Link>
+            <Link href="/news" className={`nav-link ${pathname === '/news' ? 'active' : ''}`}>
+              NEWS
+            </Link>
             <Link href="/contact" className={`nav-link ${pathname === '/contact' ? 'active' : ''}`}>
               CONTACT US
             </Link>

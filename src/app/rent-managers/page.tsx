@@ -210,8 +210,6 @@ export default function RentManagersPage() {
     <div className="rent-managers-page">
       <Navbar />
 
-      <PageHeader title="RENT MANAGERS" />
-
       <main className="managers-main-content">
         <section className="what-are-rm-section">
           <h2 className="what-are-rm-title">What are Rent Managers?</h2>

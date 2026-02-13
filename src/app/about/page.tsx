@@ -6,13 +6,12 @@ import Footer from '../../components/layout/Footer'
 import Partners from '../../components/home/Partners'
 import { ASSETS } from '@/utils/assets'
 import './page.css'
-import PageHeader from '../../components/layout/PageHeader'
 
 export default function AboutPage() {
   return (
     <div className="about-page">
       <Navbar />
-      <PageHeader title="ABOUT US" />
+
       
       {/* Hero Section */}
       <section className="about-hero-section">

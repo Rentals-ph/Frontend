@@ -16,14 +16,38 @@
 }
 
 .tm-table-header {
-  padding: 24px 24px 16px;
+  padding: 20px 20px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .tm-header-content {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: 16px;
 }
+
+.tm-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.tm-add-user-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: #2563EB;
+  color: #FFFFFF;
+  border-radius: 8px;
+  border: none;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.tm-add-user-btn:active { transform: translateY(1px); }
 
 .tm-table-title {
   font-size: 16px;
@@ -67,7 +91,7 @@
 }
 
 .tm-table th {
-  padding: 12px 16px;
+  padding: 12px 14px;
   font-size: 12px;
   font-weight: 600;
   color: #6B7280;
@@ -77,7 +101,7 @@
 }
 
 .tm-table td {
-  padding: 14px 16px;
+  padding: 12px 14px;
   font-size: 13px;
   color: #374151;
   border-bottom: 1px solid #F3F4F6;
@@ -172,7 +196,8 @@
    ============================================ */
 
 .tm-td-actions {
-  width: 130px;
+  width: 160px;
+  text-align: right;
 }
 
 .tm-actions-row {
@@ -442,6 +467,202 @@
   left: auto;
 }
 
+/* ============================================
+   TEAM GRID (Create team + Teams list)
+   Matches layout in design attachments
+   ============================================ */
+
+.tm-section {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 24px;
+  margin-top: 24px;
+  align-items: start;
+}
+
+.tm-create-team {
+  background: #FFFFFF;
+  border: 1px solid #E5E7EB;
+  border-radius: 12px;
+  padding: 18px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+}
+
+.tm-create-team h4 {
+  margin: 0 0 8px 0;
+  font-size: 15px;
+  color: #111827;
+  font-weight: 700;
+}
+
+.tm-create-team .tm-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.tm-create-team label {
+  font-size: 13px;
+  color: #6B7280;
+  font-weight: 600;
+}
+
+.tm-create-team input[type="text"],
+.tm-create-team select,
+.tm-create-team textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #E5E7EB;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #374151;
+  background: #FFFFFF;
+}
+
+.tm-create-team .tm-create-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 16px;
+  background: #2563EB;
+  color: #FFFFFF;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.tm-team-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.tm-team-card {
+  background: #FFFFFF;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid #E5E7EB;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+}
+
+.tm-team-card-header {
+  padding: 14px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #FFFFFF;
+  min-height: 64px;
+}
+
+.tm-team-card-header .tm-team-title {
+  display: flex;
+  flex-direction: column;
+}
+
+.tm-team-card-header .tm-team-title .title {
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.tm-team-card-header .tm-team-title .subtitle {
+  font-size: 12px;
+  opacity: 0.95;
+}
+
+.tm-team-card-body {
+  padding: 14px 18px 12px 18px;
+  display: flex;
+  gap: 18px;
+  align-items: flex-start;
+  flex-direction: column;
+}
+
+.tm-team-lead {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.tm-team-lead .lead-meta {
+  display: flex;
+  flex-direction: column;
+}
+
+.tm-team-members {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.tm-team-member {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: #FFFFFF;
+  border: 1px solid transparent;
+}
+
+.tm-team-stats {
+  display: flex;
+  gap: 28px;
+  padding: 14px 18px 18px 18px;
+  border-top: 1px solid #F3F4F6;
+  background: #FFFFFF;
+  justify-content: flex-start;
+}
+
+.tm-team-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.tm-team-stat .value {
+  font-size: 18px;
+  font-weight: 800;
+  color: #111827;
+}
+
+.tm-team-stat .label {
+  font-size: 12px;
+  color: #6B7280;
+}
+
+/* Colored headers for teams */
+.team-blue .tm-team-card-header { background: linear-gradient(90deg,#2563EB 0%,#1D4ED8 100%); }
+.team-orange .tm-team-card-header { background: linear-gradient(90deg,#F97316 0%,#EA580C 100%); }
+.team-green .tm-team-card-header { background: linear-gradient(90deg,#10B981 0%,#059669 100%); }
+
+/* small adjustments to match alignment in design */
+.tm-table-card { padding-bottom: 0; }
+
+/* Responsive: stack create-team above team list on narrow screens */
+@media (max-width: 960px) {
+  .tm-section {
+    grid-template-columns: 1fr;
+  }
+
+  .tm-create-team {
+    order: 0;
+  }
+
+  .tm-team-list {
+    order: 1;
+  }
+
+  .tm-table {
+    min-width: 640px;
+  }
+}
+
+@media (max-width: 720px) {
+  .tm-add-user-btn { padding: 8px 10px; font-size: 13px; }
+  .tm-table { min-width: 520px; }
+}
 /* ============================================
    RESPONSIVE
    ============================================ */

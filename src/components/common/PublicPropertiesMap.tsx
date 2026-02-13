@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState, useMemo } from 'react'
+import 'leaflet/dist/leaflet.css'
 import type { Map, Marker, TileLayer } from 'leaflet'
 import type { Property } from '@/types'
 import { ASSETS } from '@/utils/assets'

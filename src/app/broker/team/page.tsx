@@ -158,18 +158,23 @@ export default function TeamManagementPage() {
         <div className="tm-table-card">
           <div className="tm-table-header">
             <div className="tm-header-content">
-              <h3 className="tm-table-title">All users</h3>
-              <div className="tm-mobile-select-all">
-                <input
-                  type="checkbox"
-                  checked={allSelected}
-                  onChange={toggleSelectAll}
-                  className="tm-mobile-card-checkbox"
-                  id="mobile-select-all"
-                />
-                <label htmlFor="mobile-select-all" className="tm-mobile-select-all-label">
-                  Select all
-                </label>
+              <div>
+                <h3 className="tm-table-title">All users</h3>
+              </div>
+              <div className="tm-header-actions">
+                <button className="tm-add-user-btn">+ Add User</button>
+                <div className="tm-mobile-select-all">
+                  <input
+                    type="checkbox"
+                    checked={allSelected}
+                    onChange={toggleSelectAll}
+                    className="tm-mobile-card-checkbox"
+                    id="mobile-select-all"
+                  />
+                  <label htmlFor="mobile-select-all" className="tm-mobile-select-all-label">
+                    Select all
+                  </label>
+                </div>
               </div>
             </div>
           </div>
@@ -334,6 +339,154 @@ export default function TeamManagementPage() {
                 </div>
               </div>
             ))}
+          </div>
+        </div>
+
+        {/* Create Team + Team List section */}
+        <div className="tm-section">
+          <div className="tm-create-team">
+            <h4>My Teams</h4>
+            <div className="tm-field">
+              <label>Team Name</label>
+              <input type="text" placeholder="Enter team name" />
+            </div>
+            <div className="tm-field">
+              <label>Team Lead</label>
+              <select>
+                <option>Select team lead</option>
+                {teamData.map((m) => (
+                  <option key={m.id} value={m.id}>
+                    {m.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="tm-field">
+              <label>Team Members</label>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                {teamData.map((m) => (
+                  <label key={m.id} style={{ fontSize: 13, color: '#374151' }}>
+                    <input type="checkbox" style={{ marginRight: 8 }} /> {m.name}
+                  </label>
+                ))}
+              </div>
+            </div>
+            <div className="tm-field">
+              <label>Focus Area</label>
+              <input type="text" placeholder="e.g., Luxury Condos" />
+            </div>
+            <div className="tm-field">
+              <label>Team Color</label>
+              <div style={{ display: 'flex', gap: 8 }}>
+                <button style={{ width: 28, height: 28, borderRadius: 6, background: '#2563EB', border: 'none' }} />
+                <button style={{ width: 28, height: 28, borderRadius: 6, background: '#10B981', border: 'none' }} />
+                <button style={{ width: 28, height: 28, borderRadius: 6, background: '#F97316', border: 'none' }} />
+                <button style={{ width: 28, height: 28, borderRadius: 6, background: '#6EE7B7', border: 'none' }} />
+              </div>
+            </div>
+            <div>
+              <button className="tm-create-btn">Create Team</button>
+            </div>
+          </div>
+
+          <div className="tm-team-list">
+            <div className="tm-team-card team-blue">
+              <div className="tm-team-card-header">
+                <div className="tm-team-title">
+                  <div className="title">The High-Risers</div>
+                  <div className="subtitle">Luxury Condos</div>
+                </div>
+                <div className="subtitle">Top Performing</div>
+              </div>
+              <div className="tm-team-card-body">
+                <div className="tm-team-lead">
+                  <div style={{ width: 44, height: 44, borderRadius: 22, background: '#ffffff22', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 700 }}>G</div>
+                  <div className="lead-meta">
+                    <div style={{ fontWeight: 700 }}>Gabo Dela Cruz</div>
+                    <div style={{ fontSize: 13, color: '#E6F0FF' }}>Unit Manager</div>
+                  </div>
+                </div>
+                <div className="tm-team-members">
+                  <div className="tm-team-member">
+                    <div style={{ width: 36, height: 36, borderRadius: 18, background: '#F3F4F6' }} />
+                    <div>
+                      <div style={{ fontWeight: 600 }}>Angelo Reyes</div>
+                      <div style={{ fontSize: 12, color: '#6B7280' }}>Sales Agent</div>
+                    </div>
+                  </div>
+                  <div className="tm-team-member">
+                    <div style={{ width: 36, height: 36, borderRadius: 18, background: '#F3F4F6' }} />
+                    <div>
+                      <div style={{ fontWeight: 600 }}>Sofia Mendoza</div>
+                      <div style={{ fontSize: 12, color: '#6B7280' }}>Sales Agent</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="tm-team-stats">
+                <div className="tm-team-stat">
+                  <div className="value">47</div>
+                  <div className="label">Active Listings</div>
+                </div>
+                <div className="tm-team-stat">
+                  <div className="value">128</div>
+                  <div className="label">Inquiries</div>
+                </div>
+                <div className="tm-team-stat">
+                  <div className="value">92%</div>
+                  <div className="label">Response Rate</div>
+                </div>
+              </div>
+            </div>
+
+            <div className="tm-team-card team-orange">
+              <div className="tm-team-card-header">
+                <div className="tm-team-title">
+                  <div className="title">Urban Specialists</div>
+                  <div className="subtitle">Affordable Studios</div>
+                </div>
+                <div className="subtitle">Growing</div>
+              </div>
+              <div className="tm-team-card-body">
+                <div className="tm-team-lead">
+                  <div style={{ width: 44, height: 44, borderRadius: 22, background: '#ffffff22', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 700 }}>C</div>
+                  <div className="lead-meta">
+                    <div style={{ fontWeight: 700 }}>Camille Santos</div>
+                    <div style={{ fontSize: 13, color: '#FFF3E6' }}>Unit Manager</div>
+                  </div>
+                </div>
+                <div className="tm-team-members">
+                  <div className="tm-team-member">
+                    <div style={{ width: 36, height: 36, borderRadius: 18, background: '#F3F4F6' }} />
+                    <div>
+                      <div style={{ fontWeight: 600 }}>Marco Valdez</div>
+                      <div style={{ fontSize: 12, color: '#6B7280' }}>Sales Agent</div>
+                    </div>
+                  </div>
+                  <div className="tm-team-member">
+                    <div style={{ width: 36, height: 36, borderRadius: 18, background: '#F3F4F6' }} />
+                    <div>
+                      <div style={{ fontWeight: 600 }}>Beatriz Luna</div>
+                      <div style={{ fontSize: 12, color: '#6B7280' }}>Sales Agent</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="tm-team-stats">
+                <div className="tm-team-stat">
+                  <div className="value">83</div>
+                  <div className="label">Active Listings</div>
+                </div>
+                <div className="tm-team-stat">
+                  <div className="value">96</div>
+                  <div className="label">Inquiries</div>
+                </div>
+                <div className="tm-team-stat">
+                  <div className="value">87%</div>
+                  <div className="label">Response Rate</div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </main>

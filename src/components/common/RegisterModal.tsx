@@ -25,7 +25,7 @@ function RegisterModal({ isOpen, onClose }: RegisterModalProps) {
     try {
       // Validate email format
       if (!email.trim()) {
-        setSubmitError('Please enter your LR Email Account')
+        setSubmitError('Please enter your Email Account')
         setIsSubmitting(false)
         return
       }
@@ -84,7 +84,7 @@ function RegisterModal({ isOpen, onClose }: RegisterModalProps) {
 
         <div className="register-modal-content">
           <h2 className="register-title">Register</h2>
-          <p className="register-subtitle">Please enter your LR Email Account to register</p>
+          <p className="register-subtitle">Please enter your Email Account to register</p>
 
           {/* Success Message */}
           {submitSuccess && (
@@ -116,7 +116,7 @@ function RegisterModal({ isOpen, onClose }: RegisterModalProps) {
 
           <form onSubmit={handleSubmit} className="register-form simple-form">
             <div className="form-group">
-              <label htmlFor="email">LR Email Account *</label>
+              <label htmlFor="email">Email Account *</label>
               <div className="input-with-icon">
                 <svg className="input-icon" width="20" height="20" viewBox="0 0 20 20" fill="none">
                   <path d="M16.6667 5.83333V14.1667C16.6667 15.0871 15.9205 15.8333 15 15.8333H5C4.07953 15.8333 3.33333 15.0871 3.33333 14.1667V5.83333M16.6667 5.83333C16.6667 4.91286 15.9205 4.16667 15 4.16667H5C4.07953 4.16667 3.33333 4.91286 3.33333 5.83333M16.6667 5.83333L10 10.8333L3.33333 5.83333" stroke="#FE8E0A" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
@@ -125,7 +125,7 @@ function RegisterModal({ isOpen, onClose }: RegisterModalProps) {
                   type="email"
                   id="email"
                   name="email"
-                  placeholder="Enter your LR email account"
+                  placeholder="Enter your email account"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required

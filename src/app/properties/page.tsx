@@ -555,38 +555,25 @@ function PropertiesContent() {
                   <option value="price-high">Price: High to Low</option>
                 </select>
                 <button
-                  className="hamburger-menu-btn"
+                  className={`hamburger-menu-btn${viewMode === 'horizontal' ? ' active' : ''}`}
                   aria-label="List View"
                   onClick={() => setViewMode('horizontal')}
-                  style={{ backgroundColor: viewMode === 'horizontal' ? '#FE8E0A' : '#ffffff' }}
                 >
-                  <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M3 12H21M3 6H21M3 18H21" stroke={viewMode === 'horizontal' ? "#ffffff" : "#333"} strokeWidth="2" strokeLinecap="round" />
-                  </svg>
+                  List view
                 </button>
                 <button
-                  className="grid-view-btn"
+                  className={`grid-view-btn${viewMode === 'vertical' ? ' active' : ''}`}
                   aria-label="Grid View"
                   onClick={() => setViewMode('vertical')}
-                  style={{ backgroundColor: viewMode === 'vertical' ? '#FE8E0A' : '#ffffff' }}
                 >
-                  <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <rect x="3" y="3" width="7" height="7" stroke={viewMode === 'vertical' ? "#ffffff" : "#333"} strokeWidth="2" fill="none" />
-                    <rect x="14" y="3" width="7" height="7" stroke={viewMode === 'vertical' ? "#ffffff" : "#333"} strokeWidth="2" fill="none" />
-                    <rect x="3" y="14" width="7" height="7" stroke={viewMode === 'vertical' ? "#ffffff" : "#333"} strokeWidth="2" fill="none" />
-                    <rect x="14" y="14" width="7" height="7" stroke={viewMode === 'vertical' ? "#ffffff" : "#333"} strokeWidth="2" fill="none" />
-                  </svg>
+                  Grid view
                 </button>
                 <button
-                  className="map-view-btn"
+                  className={`map-view-btn${viewMode === 'map' ? ' active' : ''}`}
                   aria-label="Map View"
                   onClick={() => setViewMode('map')}
-                  style={{ backgroundColor: viewMode === 'map' ? '#FE8E0A' : '#ffffff' }}
                 >
-                  <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" stroke={viewMode === 'map' ? "#ffffff" : "#333"} strokeWidth="2" fill="none" />
-                    <circle cx="12" cy="10" r="3" stroke={viewMode === 'map' ? "#ffffff" : "#333"} strokeWidth="2" fill="none" />
-                  </svg>
+                  Map view
                 </button>
               </div>
             </div>

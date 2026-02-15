@@ -29,6 +29,12 @@
       "static/chunks/main-app.js",
       "static/css/app/about/page.css",
       "static/chunks/app/about/page.js"
+    ],
+    "/rent-managers/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/css/app/rent-managers/page.css",
+      "static/chunks/app/rent-managers/page.js"
     ]
   }
 }

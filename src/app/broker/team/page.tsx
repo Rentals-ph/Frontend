@@ -9,6 +9,10 @@ import {
   FiTrash2,
   FiRefreshCw,
   FiMoreVertical,
+  FiHome,
+  FiKey,
+  FiGrid,
+  FiStar,
   FiUser,
   FiAlertCircle,
 } from 'react-icons/fi'
@@ -384,6 +388,15 @@ export default function TeamManagementPage() {
                 <button style={{ width: 28, height: 28, borderRadius: 6, background: '#6EE7B7', border: 'none' }} />
               </div>
             </div>
+            <div className="tm-field">
+              <label>Team Icon</label>
+              <div className="tm-icon-swatches">
+                <button className="tm-icon-swatch"><FiHome /></button>
+                <button className="tm-icon-swatch"><FiKey /></button>
+                <button className="tm-icon-swatch"><FiGrid /></button>
+                <button className="tm-icon-swatch"><FiStar /></button>
+              </div>
+            </div>
             <div>
               <button className="tm-create-btn">Create Team</button>
             </div>
@@ -392,9 +405,12 @@ export default function TeamManagementPage() {
           <div className="tm-team-list">
             <div className="tm-team-card team-blue">
               <div className="tm-team-card-header">
-                <div className="tm-team-title">
-                  <div className="title">The High-Risers</div>
-                  <div className="subtitle">Luxury Condos</div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                  <div className="tm-team-icon-box"><FiHome /></div>
+                  <div className="tm-team-title">
+                    <div className="title">The High-Risers</div>
+                    <div className="subtitle">Luxury Condos</div>
+                  </div>
                 </div>
                 <div className="subtitle">Top Performing</div>
               </div>
@@ -441,9 +457,12 @@ export default function TeamManagementPage() {
 
             <div className="tm-team-card team-orange">
               <div className="tm-team-card-header">
-                <div className="tm-team-title">
-                  <div className="title">Urban Specialists</div>
-                  <div className="subtitle">Affordable Studios</div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                  <div className="tm-team-icon-box"><FiGrid /></div>
+                  <div className="tm-team-title">
+                    <div className="title">Urban Specialists</div>
+                    <div className="subtitle">Affordable Studios</div>
+                  </div>
                 </div>
                 <div className="subtitle">Growing</div>
               </div>

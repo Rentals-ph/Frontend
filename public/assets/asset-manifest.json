@@ -31,6 +31,13 @@
         "description": "New footer logo",
         "originalName": "rentals-logo-footer-new.png"
       },
+      "LOGO_FOOTER_WHITE": {
+        "id": "LOGO_FOOTER_WHITE",
+        "path": "/assets/logos/rentals-logo-white.png",
+        "category": "logos",
+        "description": "White footer logo",
+        "originalName": "rentals-logo-white.png"
+      },
       "LOGO_ICON": {
         "id": "LOGO_ICON",
         "path": "/assets/logos/rental-ph-logo.svg",

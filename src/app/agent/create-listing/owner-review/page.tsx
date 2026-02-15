@@ -19,7 +19,6 @@ import {
 } from 'react-icons/fi'
 import '../AgentCreateListingCategory.css'
 import '../publish/page.css'
-import '../owner-info/page.css'
 import '../pricing/page.css'
 
 function ProgressRing({ percent }: { percent: number }) {

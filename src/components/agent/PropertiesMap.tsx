@@ -61,19 +61,14 @@ export default function PropertiesMap({ properties, agentId }: PropertiesMapProp
     const L = (window as any).L
     if (!L) return
 
-    // Calculate bounds if we have properties
-    let bounds: L.LatLngBounds | null = null
-    if (propertiesWithCoords.length > 0) {
-      bounds = L.latLngBounds(
-        propertiesWithCoords.map((p) => [parseFloat(p.latitude!), parseFloat(p.longitude!)])
-      )
-    }
-
     // Initialize map
     if (!mapRef.current) {
       const defaultLat = 14.5995 // Manila, Philippines
       const defaultLng = 120.9842
-      const map = L.map(mapContainerRef.current).setView([defaultLat, defaultLng], bounds ? undefined : 13)
+      const map = L.map(mapContainerRef.current, {
+        center: [defaultLat, defaultLng],
+        zoom: 13,
+      })
 
       // Add OpenStreetMap tile layer
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -98,6 +93,11 @@ export default function PropertiesMap({ properties, agentId }: PropertiesMapProp
     propertiesWithCoords.forEach((property) => {
       const lat = parseFloat(property.latitude!)
       const lng = parseFloat(property.longitude!)
+
+      // Skip invalid coordinates
+      if (isNaN(lat) || isNaN(lng) || !isFinite(lat) || !isFinite(lng)) {
+        return
+      }
 
       // Determine marker color based on status
       let markerColor = '#2563EB' // Default blue for active
@@ -164,9 +164,29 @@ export default function PropertiesMap({ properties, agentId }: PropertiesMapProp
       markersRef.current.push(marker)
     })
 
-    // Fit bounds if we have properties
-    if (map && bounds && propertiesWithCoords.length > 0) {
-      map.fitBounds(bounds, { padding: [50, 50] })
+    // Fit bounds if we have markers with valid coordinates
+    if (map && markersRef.current.length > 0) {
+      try {
+        const validCoords = propertiesWithCoords
+          .map((p) => {
+            const lat = parseFloat(p.latitude!)
+            const lng = parseFloat(p.longitude!)
+            if (isNaN(lat) || isNaN(lng) || !isFinite(lat) || !isFinite(lng)) {
+              return null
+            }
+            return [lat, lng] as [number, number]
+          })
+          .filter((coord): coord is [number, number] => coord !== null)
+        
+        if (validCoords.length > 0) {
+          const bounds = L.latLngBounds(validCoords)
+          if (bounds.isValid()) {
+            map.fitBounds(bounds, { padding: [50, 50] })
+          }
+        }
+      } catch (err) {
+        console.warn('Could not fit map bounds:', err)
+      }
     }
 
     // Cleanup

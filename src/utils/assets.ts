@@ -206,6 +206,7 @@ export const ASSETS = {
   // Placeholders
   PLACEHOLDER_PROPERTY_MAIN_NEW: getAsset('PLACEHOLDER_PROPERTY_MAIN_NEW')!,
   PLACEHOLDER_PROPERTY: getAsset('PLACEHOLDER_PROPERTY')!,
+    LOGO_FOOTER_WHITE: '/assets/logos/rentals-logo-white.png',
 } as const;
 
 export default {

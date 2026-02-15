@@ -11,7 +11,7 @@
 .news-hero-banner {
   position: relative;
   background: #002D84;
-  padding: 40px 40px; /* Match properties page side spacing */
+  padding: 40px var(--page-padding-desktop); /* Match properties page side spacing */
   overflow: hidden;
   min-height: 120px;
   display: flex;
@@ -22,13 +22,13 @@
 .news-hero-content {
   position: relative;
   z-index: 2;
-  max-width: 1400px;
+  max-width: var(--page-max-width);
   margin: 0 auto;
   width: 100%;
 }
 
 .news-hero-title {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 64px;
   font-weight: 700;
   color: #FFFFFF;
@@ -50,9 +50,9 @@
 
 /* Main Content */
 .news-main-content {
-  max-width: 1400px; /* Match properties page */
+  max-width: var(--page-max-width); /* Match properties page */
   margin: 0 auto;
-  padding: 40px 40px; /* Match properties page side spacing */
+  padding: 40px var(--page-padding-desktop); /* Match properties page side spacing */
   width: 100%;
 }
 
@@ -65,7 +65,7 @@
 
 /* Section Titles */
 .news-section-title {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 24px;
   font-weight: 700;
   color: #002D84;
@@ -115,7 +115,7 @@
 }
 
 .featured-news-title {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 16px;
   font-weight: 600;
   color: #000000;
@@ -127,7 +127,7 @@
   display: flex;
   gap: 12px;
   align-items: center;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 14px;
   color: #666666;
 }
@@ -135,7 +135,7 @@
 .news-author,
 .news-date {
   color: #666666;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 14px;
 }
 
@@ -151,7 +151,7 @@
 }
 
 .ad-text {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 32px;
   font-weight: 700;
   color: #FFFFFF;
@@ -161,7 +161,7 @@
 
 /* See More Link */
 .news-see-more-link {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 16px;
   font-weight: 600;
   color: #002D84;
@@ -220,7 +220,7 @@
 }
 
 .column2-category {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 14px;
   color: #FFFFFF;
   margin-bottom: 4px;
@@ -228,7 +228,7 @@
 }
 
 .column2-large-title {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 22px;
   font-weight: 600;
   color: #FFFFFF;
@@ -240,7 +240,7 @@
   display: flex;
   gap: 12px;
   align-items: center;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 14px;
   color: #FFFFFF;
 }
@@ -287,7 +287,7 @@
 }
 
 .column2-medium-title {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 14px;
   font-weight: 600;
   color: #000000;
@@ -299,7 +299,7 @@
   display: flex;
   gap: 8px;
   align-items: center;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 12px;
   color: #666666;
 }
@@ -325,14 +325,14 @@
 }
 
 .column2-small-category {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 12px;
   color: #999999;
   font-weight: 500;
 }
 
 .column2-small-title {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 14px;
   font-weight: 600;
   color: #000000;
@@ -344,7 +344,7 @@
   display: flex;
   gap: 8px;
   align-items: center;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 11px;
   color: #666666;
 }
@@ -401,7 +401,7 @@
 }
 
 .column3-medium-title {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 16px;
   font-weight: 600;
   color: #000000;
@@ -413,7 +413,7 @@
   display: flex;
   gap: 8px;
   align-items: center;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 12px;
   color: #666666;
 }
@@ -439,14 +439,14 @@
 }
 
 .column3-small-category {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 12px;
   color: #999999;
   font-weight: 500;
 }
 
 .column3-small-title {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 14px;
   font-weight: 600;
   color: #000000;
@@ -458,7 +458,7 @@
   display: flex;
   gap: 8px;
   align-items: center;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 11px;
   color: #666666;
 }

@@ -188,8 +188,8 @@ function Navbar() {
             <Link href="/rent-managers" className={`nav-link ${pathname === '/rent-managers' ? 'active' : ''}`}>
               RENT MANAGERS
             </Link>
-            <Link href="/rent-managers" className={`nav-link ${pathname === '/blog' ? 'active' : ''}`}>
-              BLOG
+            <Link href="/blog" className={`nav-link ${pathname === '/blog' ? 'active' : ''}`}>
+              BLOG  
             </Link>
             <Link href="/news" className={`nav-link ${pathname === '/news' ? 'active' : ''}`}>
               NEWS

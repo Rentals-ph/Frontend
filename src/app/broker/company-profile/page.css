@@ -564,7 +564,7 @@
   color: #1a1a2e;
   outline: none;
   transition: border-color 0.2s;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
 }
 
 .cp-form-input:focus {

@@ -1,11 +1,15 @@
 /* SECTION */
 .featured-section {
   background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
-  padding: 20px 0 70px 0;
+  padding: 60px 0;
   border-top: none;
   overflow: hidden;
   position: relative;
   margin-top: 0;
+  min-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 /* Decorative background elements */
@@ -31,9 +35,8 @@
 
 /* CONTAINER */
 .featured-container {
-  max-width: 1280px;
+  width: 100%;
   margin: 0 auto;
-  padding: 0 80px;
 }
 
 /* HEADER */
@@ -54,7 +57,7 @@
 }
 
 .featured-section .section-title {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 36px;
   font-weight: 700;
   color: #111827;
@@ -75,7 +78,7 @@
 }
 
 .browse-section-title {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 32px;
   font-weight: 700;
   color: #111827;
@@ -109,7 +112,7 @@
   border: 2px solid #e5e7eb;
   border-radius: 50px;
   color: #374151;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 15px;
   font-weight: 500;
   cursor: pointer;
@@ -118,8 +121,8 @@
   flex-shrink: 0;
 
 }
-
 .location-tab:hover {
+  font-size: 15px;
   border-color: #205ED7;
   color: #205ED7;
 }
@@ -215,7 +218,7 @@
   padding: 14px 32px;
   background: #205ED7;
   color: #ffffff;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 16px;
   font-weight: 600;
   border-radius: 1  0px;
@@ -231,7 +234,7 @@
 }
 
 .categories-title {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 24px;
   font-weight: 600;
   color: #111827;
@@ -256,7 +259,7 @@
   border: 2px solid #e5e7eb;
   border-radius: 10px;
   color: #374151;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 15px;
   font-weight: 500;
   text-decoration: none;
@@ -273,7 +276,7 @@
 }
 
 .featured-section .section-subtitle {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 18px;
   color: #4B5563;
   line-height: 1.33;
@@ -282,7 +285,7 @@
 
 /* LINK */
 .featured-section .section-link {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 16px;
   font-weight: 500;
   color: #205ED7;
@@ -479,7 +482,7 @@
 
   .location-tab {
     padding: 5px 10px;
-    font-size: 11px;
+    font-size: 15px;
     border-width: 1.5px;
   }
 

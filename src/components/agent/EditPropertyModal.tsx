@@ -443,7 +443,7 @@ export default function EditPropertyModal({
                     </div>
                   </div>
 
-                  <div className="edit-property-form-group full-width" style={{ marginTop: '16px' }}>
+                  <div className="edit-property-form-group full-width" style={{ marginTop: '12px' }}>
                     <label>Property Title *</label>
                     <input
                       type="text"
@@ -454,13 +454,13 @@ export default function EditPropertyModal({
                     />
                   </div>
 
-                  <div className="edit-property-form-group full-width" style={{ marginTop: '16px' }}>
+                  <div className="edit-property-form-group full-width" style={{ marginTop: '12px' }}>
                     <label>Description *</label>
                     <textarea
                       name="description"
                       value={formData.description}
                       onChange={handleInputChange}
-                      rows={6}
+                      rows={4}
                       required
                     />
                   </div>
@@ -545,7 +545,7 @@ export default function EditPropertyModal({
                     </div>
                   </div>
 
-                  <div className="edit-property-form-grid-compact" style={{ marginTop: '16px' }}>
+                  <div className="edit-property-form-grid-compact" style={{ marginTop: '12px' }}>
                     <div className="edit-property-form-group">
                       <label>Floor Area</label>
                       <input
@@ -597,7 +597,7 @@ export default function EditPropertyModal({
                   <h3>Location</h3>
                   
                   {/* Location Map - Show first for better UX */}
-                  <div className="edit-property-form-group full-width" style={{ marginBottom: '20px' }}>
+                  <div className="edit-property-form-group full-width" style={{ marginBottom: '12px' }}>
                     <LocationMap
                       latitude={formData.latitude || null}
                       longitude={formData.longitude || null}
@@ -629,7 +629,7 @@ export default function EditPropertyModal({
                     </div>
                   </div>
 
-                  <div className="edit-property-form-grid-2" style={{ marginTop: '16px' }}>
+                  <div className="edit-property-form-grid-2" style={{ marginTop: '12px' }}>
                     <div className="edit-property-form-group">
                       <label>City</label>
                       <input
@@ -660,9 +660,9 @@ export default function EditPropertyModal({
                     
                     {/* Existing Images */}
                     {existingImages.length > 0 && (
-                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px', marginBottom: '16px' }}>
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', marginBottom: '12px' }}>
                         {existingImages.map((imageUrl, index) => (
-                          <div key={index} style={{ position: 'relative', width: '120px', height: '120px' }}>
+                          <div key={index} style={{ position: 'relative', width: '100px', height: '100px' }}>
                             <img 
                               src={imageUrl} 
                               alt={`Property image ${index + 1}`}
@@ -670,8 +670,8 @@ export default function EditPropertyModal({
                                 width: '100%', 
                                 height: '100%', 
                                 objectFit: 'cover', 
-                                borderRadius: '8px',
-                                border: '2px solid #e5e7eb'
+                                borderRadius: '6px',
+                                border: '1px solid #e5e7eb'
                               }}
                             />
                             <button
@@ -679,19 +679,19 @@ export default function EditPropertyModal({
                               onClick={() => handleRemoveExistingImage(imageUrl)}
                               style={{
                                 position: 'absolute',
-                                top: '-8px',
-                                right: '-8px',
+                                top: '-6px',
+                                right: '-6px',
                                 background: '#ef4444',
                                 color: 'white',
                                 border: 'none',
                                 borderRadius: '50%',
-                                width: '24px',
-                                height: '24px',
+                                width: '20px',
+                                height: '20px',
                                 cursor: 'pointer',
                                 display: 'flex',
                                 alignItems: 'center',
                                 justifyContent: 'center',
-                                fontSize: '16px',
+                                fontSize: '14px',
                                 lineHeight: '1',
                               }}
                             >
@@ -704,9 +704,9 @@ export default function EditPropertyModal({
                     
                     {/* New Image Previews */}
                     {imagePreviews.length > 0 && (
-                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px', marginBottom: '16px' }}>
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', marginBottom: '12px' }}>
                         {imagePreviews.map((preview, index) => (
-                          <div key={index} style={{ position: 'relative', width: '120px', height: '120px' }}>
+                          <div key={index} style={{ position: 'relative', width: '100px', height: '100px' }}>
                             <img 
                               src={preview} 
                               alt={`New image ${index + 1}`}
@@ -714,7 +714,7 @@ export default function EditPropertyModal({
                                 width: '100%', 
                                 height: '100%', 
                                 objectFit: 'cover', 
-                                borderRadius: '8px',
+                                borderRadius: '6px',
                                 border: '2px solid #3b82f6'
                               }}
                             />
@@ -723,19 +723,19 @@ export default function EditPropertyModal({
                               onClick={() => handleRemoveNewImage(index)}
                               style={{
                                 position: 'absolute',
-                                top: '-8px',
-                                right: '-8px',
+                                top: '-6px',
+                                right: '-6px',
                                 background: '#ef4444',
                                 color: 'white',
                                 border: 'none',
                                 borderRadius: '50%',
-                                width: '24px',
-                                height: '24px',
+                                width: '20px',
+                                height: '20px',
                                 cursor: 'pointer',
                                 display: 'flex',
                                 alignItems: 'center',
                                 justifyContent: 'center',
-                                fontSize: '16px',
+                                fontSize: '14px',
                                 lineHeight: '1',
                               }}
                             >
@@ -751,12 +751,12 @@ export default function EditPropertyModal({
                       accept="image/jpeg,image/jpg,image/png,image/gif,image/webp"
                       onChange={handleImageChange}
                       multiple
-                      style={{ marginTop: (existingImages.length > 0 || imagePreviews.length > 0) ? '12px' : '0' }}
+                      style={{ marginTop: (existingImages.length > 0 || imagePreviews.length > 0) ? '8px' : '0' }}
                     />
-                    <small>You can upload multiple images. The first image will be used as the main thumbnail.</small>
+                    <small>Upload multiple images. First image is the thumbnail.</small>
                   </div>
 
-                  <div className="edit-property-form-group full-width" style={{ marginTop: '16px' }}>
+                  <div className="edit-property-form-group full-width" style={{ marginTop: '12px' }}>
                     <label>Video URL</label>
                     <input
                       type="url"

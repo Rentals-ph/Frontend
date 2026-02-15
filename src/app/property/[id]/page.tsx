@@ -416,33 +416,23 @@ export default function PropertyDetailsPage() {
 
               <div className="property-details-right">
                 <div className="contact-info-card">
-                  <div className="contact-icon phone-icon">
-                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M3 5C3 3.89543 3.89543 3 5 3H8.27924C8.70967 3 9.09181 3.27543 9.22792 3.68377L10.7257 8.17721C10.8831 8.64932 10.6694 9.16531 10.2243 9.38787L7.96701 10.5165C9.06925 12.9612 11.0388 14.9308 13.4835 16.033L14.6121 13.7757C14.8347 13.3306 15.3507 13.1169 15.8228 13.2743L20.3162 14.7721C20.7246 14.9082 21 15.2903 21 15.7208V19C21 20.1046 20.1046 21 19 21H18C9.71573 21 3 14.2843 3 6V5Z" fill="#205ED7" />
-                    </svg>
-                  </div>
-                  <div className="contact-icon email-icon">
-                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <rect x="3" y="5" width="18" height="14" rx="2" stroke="#205ED7" strokeWidth="2" />
-                      <path d="M3 7L12 13L21 7" stroke="#205ED7" strokeWidth="2" strokeLinecap="round" />
-                    </svg>
-                  </div>
-                  <div className="rent-manager-info">
+                  <div className="agent-profile-section">
                     <div className="rent-manager-avatar" style={{ 
-                      width: '50px', 
-                      height: '50px', 
+                      width: '60px', 
+                      height: '60px', 
                       borderRadius: '50%', 
                       backgroundColor: '#205ED7',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
                       color: 'white',
-                      fontSize: '20px',
-                      fontWeight: 'bold'
+                      fontSize: '24px',
+                      fontWeight: 'bold',
+                      flexShrink: 0
                     }}>
                       {(property.agent?.first_name?.charAt(0) || property.rent_manager?.name?.charAt(0) || 'R')}
                     </div>
-                    <div>
+                    <div className="agent-details">
                       <p className="rent-manager-name">
                         {property.agent?.first_name && property.agent?.last_name 
                           ? `${property.agent.first_name} ${property.agent.last_name}`
@@ -455,7 +445,39 @@ export default function PropertyDetailsPage() {
                           ? getRentManagerRole(property.agent.verified) 
                           : getRentManagerRole(property.rent_manager?.is_official)}
                       </p>
+                      {property.agent?.agency_name && (
+                        <p className="agent-agency">{property.agent.agency_name}</p>
+                      )}
                     </div>
+                  </div>
+                  <div className="agent-contact-details">
+                    {(property.agent?.phone || property.rent_manager?.email) && (
+                      <a 
+                        href={`tel:${property.agent?.phone || ''}`} 
+                        className="agent-contact-item"
+                      >
+                        <div className="contact-icon phone-icon">
+                          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M3 5C3 3.89543 3.89543 3 5 3H8.27924C8.70967 3 9.09181 3.27543 9.22792 3.68377L10.7257 8.17721C10.8831 8.64932 10.6694 9.16531 10.2243 9.38787L7.96701 10.5165C9.06925 12.9612 11.0388 14.9308 13.4835 16.033L14.6121 13.7757C14.8347 13.3306 15.3507 13.1169 15.8228 13.2743L20.3162 14.7721C20.7246 14.9082 21 15.2903 21 15.7208V19C21 20.1046 20.1046 21 19 21H18C9.71573 21 3 14.2843 3 6V5Z" fill="#205ED7" />
+                          </svg>
+                        </div>
+                        <span>{property.agent?.phone || 'Contact via inquiry'}</span>
+                      </a>
+                    )}
+                    {(property.agent?.email || property.rent_manager?.email) && (
+                      <a 
+                        href={`mailto:${property.agent?.email || property.rent_manager?.email || ''}`} 
+                        className="agent-contact-item"
+                      >
+                        <div className="contact-icon email-icon">
+                          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect x="3" y="5" width="18" height="14" rx="2" stroke="#205ED7" strokeWidth="2" />
+                            <path d="M3 7L12 13L21 7" stroke="#205ED7" strokeWidth="2" strokeLinecap="round" />
+                          </svg>
+                        </div>
+                        <span>{property.agent?.email || property.rent_manager?.email}</span>
+                      </a>
+                    )}
                   </div>
                 </div>
 
@@ -523,8 +545,16 @@ export default function PropertyDetailsPage() {
                 </div>
 
                 <div className="property-amenities-card">
-                  <h3 className="amenities-title">Description</h3>
-                  <p className="amenities-description">{property.description || 'No description available'}</p>
+                  <h3 className="amenities-title">Amenities</h3>
+                  <div className="amenities-list">
+                    {property.amenities && property.amenities.length > 0 ? (
+                      property.amenities.map((amenity, index) => (
+                        <span key={index} className="amenity-tag">{amenity}</span>
+                      ))
+                    ) : (
+                      <p className="amenities-description">No amenities listed</p>
+                    )}
+                  </div>
                 </div>
 
             <div className="property-inquiry-form-card">

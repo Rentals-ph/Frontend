@@ -10,9 +10,9 @@
 /* Main Content */
 .contact-main-content {
   position: relative;
-  max-width: 1400px; /* Match properties page */
+  max-width: var(--page-max-width); /* Match properties page */
   margin: 0 auto;
-  padding: 40px 40px 50px; /* Match properties page side spacing */
+  padding: 40px var(--page-padding-desktop) 50px; /* Match properties page side spacing */
   min-height: 500px;
 }
 
@@ -58,7 +58,7 @@
 }
 
 .form-section-title {
-  font-family: 'Montserrat', sans-serif;
+  font-family: 'Outfit', 'Montserrat', sans-serif;
   font-size: 24px;
   font-weight: 700;
   color: #333;
@@ -66,7 +66,7 @@
 }
 
 .form-section-subtitle {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 14px;
   color: #666;
   margin: 0 0 20px 0;
@@ -77,7 +77,7 @@
 }
 
 .info-section-subtitle {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 14px;
   color: #666;
   margin: 0 0 20px 0;
@@ -109,7 +109,7 @@
 }
 
 .form-group label {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 14px;
   font-weight: 600;
   color: #333;
@@ -118,7 +118,7 @@
 .form-group input,
 .form-group textarea,
 .form-group select {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 14px;
   padding: 10px 14px;
   border: 2px solid #e5e7eb;
@@ -153,7 +153,7 @@
 .contact-submit-btn {
   background: #205ED7;
   color: white;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 15px;
   font-weight: 600;
   padding: 12px 28px;
@@ -183,7 +183,7 @@
 }
 
 .info-section-title {
-  font-family: 'Montserrat', sans-serif;
+  font-family: 'Outfit', 'Montserrat', sans-serif;
   font-size: 24px;
   font-weight: 700;
   color: #333;
@@ -227,7 +227,7 @@
 }
 
 .info-card-title {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 15px;
   font-weight: 600;
   color: #333;
@@ -235,7 +235,7 @@
 }
 
 .info-card-text {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 13px;
   line-height: 1.6;
   color: #666;

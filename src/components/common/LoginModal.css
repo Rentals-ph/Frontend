@@ -87,7 +87,7 @@
 
 .login-title {
   color: #FE8E0A;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 48px;
   font-weight: 700;
   text-align: center;
@@ -111,7 +111,7 @@
 
 .form-group label {
   color: #1f2937;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 15px;
   font-weight: 500;
   line-height: 1.4;
@@ -137,7 +137,7 @@
   padding: 13px 16px 13px 56px;
   border: 1px solid #e5e7eb;
   border-radius: 6px;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 15px;
   color: #374151;
   background: #ff2200;
@@ -191,7 +191,7 @@
 
 .form-checkbox label {
   color: #4b5563;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 14px;
   font-weight: 400;
   cursor: pointer;
@@ -202,7 +202,7 @@
 .login-submit-btn {
   background: #205ed7;
   color: #ffffff;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 16px;
   font-weight: 600;
   padding: 14px;
@@ -228,7 +228,7 @@
 
 .login-footer p {
   color: #6b7280;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 15px;
   margin: 0 0 10px 0;
   line-height: 1.4;
@@ -238,7 +238,7 @@
   background: transparent;
   border: none;
   color: #FE8E0A;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 15px;
   font-weight: 600;
   text-decoration: underline;
@@ -346,7 +346,7 @@
 
 .processing-title {
   color: #111827;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 32px;
   font-weight: 700;
   margin: 0;
@@ -355,7 +355,7 @@
 
 .processing-message {
   color: #374151;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 16px;
   font-weight: 400;
   line-height: 1.6;
@@ -365,7 +365,7 @@
 
 .processing-details {
   color: #6b7280;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 14px;
   font-weight: 400;
   line-height: 1.6;
@@ -398,7 +398,7 @@
 
 .processing-info-title {
   color: #111827;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 15px;
   font-weight: 600;
   margin: 0 0 12px 0;
@@ -406,7 +406,7 @@
 
 .processing-steps {
   color: #4b5563;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 14px;
   font-weight: 400;
   line-height: 1.8;
@@ -425,7 +425,7 @@
 .processing-close-btn {
   background: #205ed7;
   color: #ffffff;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 16px;
   font-weight: 600;
   padding: 12px 32px;

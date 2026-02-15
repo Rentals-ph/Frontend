@@ -10,7 +10,7 @@
 /* Banner */
 .rm-details-banner {
   background: #205ED7;
-  padding: 30px 40px; /* Match properties page side spacing */
+  padding: 30px var(--page-padding-desktop); /* Match properties page side spacing */
   position: relative;
   overflow: hidden;
   min-height: 135px;
@@ -23,7 +23,7 @@
 .rm-details-banner-content {
   position: relative;
   z-index: 2;
-  max-width: 1400px;
+  max-width: var(--page-max-width);
   margin: 0 auto;
   width: 100%;
 }
@@ -67,7 +67,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 14px;
   background: #f9fafb;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
@@ -76,11 +76,11 @@
 /* Main */
 .rm-details-main {
   background: #f9fafb;
-  padding: 36px 40px 60px; /* Match properties page side spacing */
+  padding: 36px var(--page-padding-desktop) 60px; /* Match properties page side spacing */
 }
 
 .rm-details-container {
-  max-width: 1400px; /* Match properties page */
+  max-width: var(--page-max-width); /* Match properties page */
   margin: 0 auto;
 }
 
@@ -142,7 +142,7 @@
   justify-content: center;
   background: #205ED7;
   color: #ffffff;
-  font-family: 'Montserrat', sans-serif;
+  font-family: 'Outfit', 'Montserrat', sans-serif;
   font-size: 64px;
   font-weight: 700;
   letter-spacing: 2px;
@@ -157,7 +157,7 @@
 }
 
 .rm-profile-name {
-  font-family: 'Montserrat', sans-serif;
+  font-family: 'Outfit', 'Montserrat', sans-serif;
   font-size: 32px;
   font-weight: 800;
   color: #111827;
@@ -178,7 +178,7 @@
   border-radius: 6px;
   background: rgba(32, 94, 215, 0.12);
   color: #205ED7;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 12px;
   font-weight: 700;
 }
@@ -190,7 +190,7 @@
   border-radius: 6px;
   background: #205ED7;
   color: #ffffff;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 12px;
   font-weight: 700;
 }
@@ -232,7 +232,7 @@
 }
 
 .rm-about-title {
-  font-family: 'Montserrat', sans-serif;
+  font-family: 'Outfit', 'Montserrat', sans-serif;
   font-size: 18px;
   font-weight: 800;
   color: #111827;
@@ -240,7 +240,7 @@
 }
 
 .rm-about-paragraph {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 14px;
   line-height: 1.7;
   color: #374151;
@@ -253,7 +253,7 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 13px;
   color: #374151;
 }
@@ -273,7 +273,7 @@
 }
 
 .rm-contact-title {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 14px;
   font-weight: 800;
   color: #111827;
@@ -289,7 +289,7 @@
 .rm-input,
 .rm-textarea {
   width: 100%;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 13px;
   padding: 10px 12px;
   border: 1px solid #e5e7eb;
@@ -318,7 +318,7 @@
   border-radius: 8px;
   background: #205ED7;
   color: #ffffff;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 14px;
   font-weight: 700;
   padding: 12px 14px;
@@ -353,7 +353,7 @@
   border: none;
   background: #ffffff;
   cursor: pointer;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-weight: 800;
   font-size: 14px;
   color: #111827;
@@ -394,7 +394,7 @@
   padding: 10px 12px 10px 36px;
   border-radius: 8px;
   border: 1px solid #e5e7eb;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 13px;
 }
 
@@ -410,7 +410,7 @@
   padding: 9px 12px;
   border-radius: 8px;
   border: 1px solid #e5e7eb;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 13px;
   background: #ffffff;
 }
@@ -420,7 +420,7 @@
   border-radius: 8px;
   border: 1px solid #e5e7eb;
   background: #ffffff;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 13px;
   cursor: pointer;
 }
@@ -459,7 +459,7 @@
 }
 
 .rm-filter-label {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 13px;
   font-weight: 600;
   color: #374151;
@@ -471,7 +471,7 @@
   border: 1px solid #e5e7eb;
   border-radius: 8px;
   background: #ffffff;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 13px;
   color: #6b7280;
   cursor: pointer;
@@ -574,7 +574,7 @@
 }
 
 .rm-rating-number {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 48px;
   font-weight: 700;
   color: #111827;
@@ -582,7 +582,7 @@
 }
 
 .rm-rating-out-of {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 18px;
   color: #6b7280;
   font-weight: 500;
@@ -626,7 +626,7 @@
 }
 
 .rm-rating-count {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 14px;
   color: #6b7280;
   font-weight: 500;
@@ -674,7 +674,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 18px;
   font-weight: 600;
   flex-shrink: 0;
@@ -687,14 +687,14 @@
 }
 
 .rm-reviewer-name {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 16px;
   font-weight: 600;
   color: #111827;
 }
 
 .rm-review-date {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 13px;
   color: #6b7280;
 }
@@ -712,7 +712,7 @@
 }
 
 .rm-review-comment {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 14px;
   line-height: 1.6;
   color: #374151;
@@ -725,7 +725,7 @@
   border: 1px dashed #e5e7eb;
   border-radius: 10px;
   text-align: center;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   color: #6b7280;
 }
 
@@ -746,7 +746,7 @@
   border: 1px solid #e5e7eb;
   background: #ffffff;
   border-radius: 999px;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 14px;
   color: #333;
   cursor: pointer;
@@ -769,7 +769,7 @@
 }
 
 .rm-page-ellipsis {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 14px;
   color: #6b7280;
   padding: 0 4px;
@@ -782,7 +782,7 @@
   border: 1px solid #e5e7eb;
   padding: 28px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
 }
 
 .rm-back-link {

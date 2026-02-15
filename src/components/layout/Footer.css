@@ -1,6 +1,6 @@
 /* Footer */
 .footer {
-  background: #002D84;
+  background: #0A369D;
   color: #ffffff;
   padding: 60px 0 0;
   position: relative;
@@ -8,9 +8,9 @@
 }
 
 .footer-content-wrapper {
-  max-width: 1440px;
+  max-width: var(--page-max-width);
   margin: 0 auto;
-  padding: 0 50px 20px;
+  padding: 0 var(--page-padding-desktop) 0px;
   display: grid;
   grid-template-columns: 2fr 1fr 1fr;
   gap: 120px;
@@ -31,18 +31,19 @@
 
 .footer-tagline {
   color: #ffffff;
-  font-family: 'Inter', sans-serif;
-  font-size: 18px;
+  font-family: 'Outfit', 'Inter', sans-serif;
+  font-size: 24px;
   font-weight: 400;
   line-height: 1.4;
-  margin: 0;
+  margin: 32px 0 0 0;
   max-width: 360px;
 }
 
 .footer-social-icons {
   display: flex;
-  gap: 5px;
+  gap: 24px;
   align-items: center;
+  margin: 32px 0 0 0;
 }
 
 .footer-social-link {
@@ -57,8 +58,8 @@
 }
 
 .footer-social-link svg {
-  width: 60px;
-  height: 60px;
+  width: 48px;
+  height: 48px;
 }
 
 .footer-middle,
@@ -70,22 +71,23 @@
 
 .footer-section-title {
   color: #ffffff;
-  font-family: 'Inter', sans-serif;
-  font-size: 18px;
+  font-family: 'Outfit', 'Inter', sans-serif;
+  font-size: 22px;
   font-weight: 700;
-  margin: 0;
+  margin: 0 0 24px 0;
   letter-spacing: 0.05em;
 }
 
 .footer-link {
   color: #ffffff;
-  font-family: 'Inter', sans-serif;
-  font-size: 14px;
+  font-family: 'Outfit', 'Inter', sans-serif;
+  font-size: 22px;
   font-weight: 400;
   line-height: 1.5;
   text-decoration: none;
   display: block;
   transition: color 0.2s ease;
+  margin-bottom: 24px;
 }
 
 .footer-link:hover {
@@ -94,15 +96,15 @@
 
 .footer-bottom {
   border-top: 1px solid rgba(255, 255, 255, 0.2);
-  padding: 32px 104px;
-  max-width: 1440px;
+  padding: 32px var(--page-padding-desktop);
+  max-width: var(--page-max-width);
   margin: 0 auto;
 }
 
 .footer-copyright {
   color: #FE8E0A;
-  font-family: 'Inter', sans-serif;
-  font-size: 18px;
+  font-family: 'Outfit', 'Inter', sans-serif;
+  font-size: 22px;
   font-weight: 500;
   line-height: 1.5;
   text-align: center;
@@ -153,20 +155,21 @@
   }
   
   .footer-tagline {
-    font-size: 15px;
+    font-size: 18px;
   }
   
   .footer-social-link svg {
-    width: 48px;
-    height: 48px;
+    width: 40px;
+    height: 40px;
   }
   
   .footer-section-title {
-    font-size: 15px;
+    font-size: 18px;
   }
   
   .footer-link {
-    font-size: 14px;
+    font-size: 18px;
+    margin-bottom: 16px;
   }
   
   .footer-bottom {
@@ -174,7 +177,7 @@
   }
   
   .footer-copyright {
-    font-size: 13px;
+    font-size: 16px;
   }
 }
 

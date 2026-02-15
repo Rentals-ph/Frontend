@@ -14,8 +14,9 @@ export default function HomePage() {
       <Navbar />
       <Hero />
       <FeaturedProperties />
-      <Testimonials />
+      
       <Blogs />
+      <Testimonials />
       <PopularSearches />
       <Footer />
     </div>

@@ -1,14 +1,16 @@
 /* Blog Card Base */
+
 .blog-card {
   background: #ffffff;
   border-radius: 10px;
   overflow: hidden;
   box-shadow: 0px 4px 21px 0px rgba(0, 0, 0, 0.25);
   position: relative;
-  height: 632px;
+  min-height: 320px;
   display: flex;
   flex-direction: column;
   width: 100%;
+  height: 100%;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
@@ -18,35 +20,44 @@
 }
 
 /* Small Card (493px - Left side) */
+
 .blog-card-small {
   background: #ffffff;
+  flex: 1 1 0;
+  min-width: 0;
 }
 
 .blog-card-small .blog-image {
   width: 100%;
-  height: 291px;
+  height: 200px;
   object-fit: cover;
   border-radius: 10px 10px 0px 0px;
   flex-shrink: 0;
 }
 
 .blog-card-small .blog-card-content {
-  padding: 24px 40px;
+  padding: 16px 24px;
   display: flex;
   flex-direction: column;
   flex: 1;
 }
 
 /* Large Card (701px - Right side) with Overlay */
+
 .blog-card-large {
   position: relative;
   padding: 0;
   overflow: hidden;
+  flex: 1 1 0;
+  min-width: 0;
 }
+
 
 .blog-card-large .blog-image-large {
   width: 100%;
   height: 100%;
+  min-height: 220px;
+  max-height: 260px;
   object-fit: cover;
   position: absolute;
   top: 0;
@@ -57,12 +68,12 @@
 
 .blog-overlay {
   position: absolute;
-  bottom: 19px;
-  left: 19px;
-  right: 19px;
+  bottom: 12px;
+  left: 12px;
+  right: 12px;
   background: rgba(255, 255, 255, 0.87);
   border-radius: 10px;
-  padding: 40px 57px;
+  padding: 24px 32px;
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -82,8 +93,8 @@
   background: rgba(50, 178, 65, 0.1);
   border-radius: 5px;
   color: #32b241;
-  font-family: 'Inter', sans-serif;
-  font-size: 14px;
+  font-family: 'Outfit', 'Inter', sans-serif;
+  font-size: 15px;
   font-weight: 500;
   padding: 6px 12px;
   display: inline-block;
@@ -92,12 +103,12 @@
 
 .blog-card-small .blog-category,
 .blog-card-large .blog-category {
-  font-size: 12px;
+  font-size: 15px;
 }
 
 .blog-read-time {
   color: rgba(26, 26, 26, 0.6);
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 16px;
   font-weight: 400;
   line-height: 1.21;
@@ -105,13 +116,13 @@
 
 .blog-card-small .blog-read-time,
 .blog-card-large .blog-read-time {
-  font-size: 12px;
+  font-size: 15px;
 }
 
 /* Title */
 .blog-title {
   color: #000000;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 18px;
   font-weight: 400;
   line-height: 1.21;
@@ -127,14 +138,35 @@
 }
 
 /* Excerpt */
+
 .blog-excerpt {
   color: rgba(26, 26, 26, 0.8);
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 16px;
   font-weight: 400;
   line-height: 1.21;
   margin: 0 0 12px 0;
   text-align: justify;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  /* Default clamp for small card, override for large */
+  -webkit-line-clamp: 3;
+  min-height: 3.63em;
+  max-height: 3.63em;
+}
+
+.blog-card-large .blog-excerpt {
+  -webkit-line-clamp: 4;
+  min-height: 4.84em;
+  max-height: 4.84em;
+}
+
+.blog-card-content {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 0;
 }
 
 .blog-card-small .blog-excerpt {
@@ -160,7 +192,7 @@
   align-items: center;
   gap: 13px;
   color: #666666;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 16px;
   font-weight: 400;
   line-height: 1.21;
@@ -182,7 +214,7 @@
 }
 
 .read-more-link {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 18px;
   font-weight: 600;
   text-decoration: none;
@@ -215,7 +247,7 @@
 @media (max-width: 768px) {
   .blog-card {
     height: auto;
-    min-height: 400px;
+    min-height: 300px;
   }
 
   .blog-card-small .blog-image {
@@ -235,12 +267,12 @@
   }
 
   .blog-category {
-    font-size: 11px;
+    font-size: 15px;
     padding: 4px 10px;
   }
 
   .blog-read-time {
-    font-size: 11px;
+    font-size: 15px;
   }
 
   .blog-title {
@@ -261,7 +293,7 @@
   }
 
   .blog-card-small .blog-excerpt {
-    font-size: 13px;
+    font-size: 15px;
   }
 
   .blog-card-large .blog-excerpt {
@@ -275,7 +307,7 @@
 
   .blog-author,
   .blog-date {
-    font-size: 13px;
+    font-size: 15px;
     gap: 8px;
   }
 
@@ -300,7 +332,7 @@
 
 @media (max-width: 480px) {
   .blog-card {
-    min-height: 300px;
+    min-height: 200px;
     border-radius: 8px;
   }
 
@@ -328,17 +360,17 @@
   }
 
   .blog-category {
-    font-size: 9px;
+    font-size: 15px;
     padding: 3px 6px;
     border-radius: 4px;
   }
 
   .blog-read-time {
-    font-size: 9px;
+    font-size: 15px;
   }
 
   .blog-title {
-    font-size: 12px;
+    font-size: 15px;
     margin-bottom: 4px;
     line-height: 1.3;
   }
@@ -348,21 +380,21 @@
   }
 
   .blog-card-large .blog-title {
-    font-size: 12px;
+    font-size: 15px;
   }
 
   .blog-excerpt {
-    font-size: 10px;
+    font-size: 15px;
     margin-bottom: 6px;
     line-height: 1.4;
   }
 
   .blog-card-small .blog-excerpt {
-    font-size: 10px;
+    font-size: 15px;
   }
 
   .blog-card-large .blog-excerpt {
-    font-size: 10px;
+    font-size: 15px;
   }
 
   .blog-meta-row {
@@ -383,7 +415,7 @@
   }
 
   .read-more-link {
-    font-size: 11px;
+    font-size: 15px;
     gap: 6px;
   }
 
@@ -393,11 +425,11 @@
   }
 
   .blog-card-small .read-more-link {
-    font-size: 12px;
+    font-size: 15px;
   }
 
   .blog-card-large .read-more-link {
-    font-size: 11px;
+    font-size: 15px;
   }
 }
 

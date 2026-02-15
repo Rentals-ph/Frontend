@@ -18,7 +18,6 @@ import {
 import '../../broker-shared.css'
 import '../../../agent/create-listing/AgentCreateListingCategory.css'
 import '../../../agent/create-listing/publish/page.css'
-import '../../../agent/create-listing/owner-info/page.css'
 
 function ProgressRing({ percent }: { percent: number }) {
   const { radius, stroke, normalizedRadius, circumference, strokeDashoffset } = useMemo(() => {

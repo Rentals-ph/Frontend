@@ -9,7 +9,7 @@ function Footer() {
         <div className="footer-left">
           <Link href="/">
             <img
-              src={ASSETS.LOGO_FOOTER}
+              src={ASSETS.LOGO_FOOTER_WHITE}
               alt="Rentals.ph logo"
               className="footer-logo"
             />

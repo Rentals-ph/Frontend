@@ -6,14 +6,14 @@
 }
 
 .partners-container {
-  max-width: 1280px;
+  max-width: var(--page-max-width);
   margin: 0 auto;
-  padding: 0 80px;
+  padding: 0 var(--page-padding-desktop);
 }
 
 .partners-title {
   color: #111827;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 48px;
   font-weight: 700;
   line-height: 1.2;

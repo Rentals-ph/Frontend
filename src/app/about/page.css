@@ -51,9 +51,9 @@
 .about-hero-container {
   position: relative;
   z-index: 3;
-  max-width: 1280px;
+  max-width: var(--page-max-width);
   margin: 0 auto;
-  padding: 120px 80px;
+  padding: 120px var(--page-padding-desktop);
   width: 100%;
   display: flex;
   align-items: center;
@@ -71,7 +71,7 @@
 }
 
 .about-hero-title {
-  font-family: 'Montserrat', sans-serif;
+  font-family: 'Outfit', 'Montserrat', sans-serif;
   font-weight: 700;
   font-size: 72px;
   line-height: 1.2;
@@ -82,7 +82,7 @@
 }
 
 .about-hero-subtitle {
-  font-family: 'Montserrat', sans-serif;
+  font-family: 'Outfit', 'Montserrat', sans-serif;
   font-weight: 500;
   font-size: 24px;
   color: #FFFFFF;
@@ -107,9 +107,9 @@
 }
 
 .about-main-container {
-  max-width: 1200px;
+  max-width: var(--page-max-width);
   margin: 0 auto;
-  padding: 0 80px;
+  padding: 0 var(--page-padding-desktop);
 }
 
 .about-main-content {
@@ -127,7 +127,7 @@
 }
 
 .about-main-title {
-  font-family: 'Montserrat', sans-serif;
+  font-family: 'Outfit', 'Montserrat', sans-serif;
   font-size: 36px;
   font-weight: 700;
   color: #205ED7;
@@ -139,7 +139,7 @@
 }
 
 .about-main-paragraph {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 16px;
   font-weight: 400;
   color: #374151;
@@ -165,7 +165,7 @@
 }
 
 .about-main-item-title {
-  font-family: 'Montserrat', sans-serif;
+  font-family: 'Outfit', 'Montserrat', sans-serif;
   font-size: 16px;
   font-weight: 600;
   color: #205ED7;
@@ -175,7 +175,7 @@
 }
 
 .about-main-item-text {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 14px;
   font-weight: 400;
   color: #4b5563;
@@ -188,7 +188,7 @@
 }
 
 .about-main-services-title {
-  font-family: 'Montserrat', sans-serif;
+  font-family: 'Outfit', 'Montserrat', sans-serif;
   font-size: 20px;
   font-weight: 600;
   color: #111827;
@@ -238,7 +238,7 @@
 }
 
 .about-main-service-name {
-  font-family: 'Montserrat', sans-serif;
+  font-family: 'Outfit', 'Montserrat', sans-serif;
   font-size: 15px;
   font-weight: 600;
   color: #111827;
@@ -248,7 +248,7 @@
 }
 
 .about-main-service-desc {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 13px;
   font-weight: 400;
   color: #6b7280;
@@ -260,9 +260,9 @@
 
 
 .about-stats-container {
-  max-width: 1200px;
+  max-width: var(--page-max-width);
   margin: 0 auto;
-  padding: 0 80px;
+  padding: 0 var(--page-padding-desktop);
 }
 
 .about-stats-grid {
@@ -282,7 +282,7 @@
 }
 
 .about-stat-number {
-  font-family: 'Montserrat', sans-serif;
+  font-family: 'Outfit', 'Montserrat', sans-serif;
   font-size: 42px;
   font-weight: 700;
   color: #205ED7;
@@ -291,7 +291,7 @@
 }
 
 .about-stat-label {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 14px;
   font-weight: 500;
   color: #6b7280;

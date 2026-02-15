@@ -533,6 +533,37 @@
   font-weight: 700;
 }
 
+/* make create button full width like design */
+.tm-create-team .tm-create-btn {
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: 10px;
+}
+
+/* Icon swatches */
+.tm-icon-swatches {
+  display: flex;
+  gap: 8px;
+}
+
+.tm-icon-swatch {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #F3F4F6;
+  border: 1px solid transparent;
+  cursor: pointer;
+  color: #374151;
+  font-size: 16px;
+}
+
+.tm-icon-swatch:hover {
+  background: #EFF6FF;
+}
+
 .tm-team-list {
   display: flex;
   flex-direction: column;
@@ -554,6 +585,20 @@
   justify-content: space-between;
   color: #FFFFFF;
   min-height: 64px;
+}
+
+/* team header icon box */
+.tm-team-icon-box {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255,255,255,0.12);
+  color: #fff;
+  font-weight: 700;
+  font-size: 18px;
 }
 
 .tm-team-card-header .tm-team-title {

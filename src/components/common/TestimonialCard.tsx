@@ -1,4 +1,3 @@
-import { ASSETS } from '@/utils/assets'
 import './TestimonialCard.css'
 
 interface TestimonialCardProps {
@@ -24,11 +23,9 @@ function TestimonialCard({
         />
         <div className="testimonial-quote-icon-overlay">
           <div className="testimonial-quote-circle-small">
-            <img 
-              src={ASSETS.ICON_QUOTE_1} 
-              alt="Quote icon" 
-              className="testimonial-quote-icon-svg"
-            />
+            <svg className="testimonial-quote-icon-svg" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+              <path d="M11 7.5V14H7.5C7.5 15.3807 8.61929 16.5 10 16.5V18.5C7.51472 18.5 5.5 16.4853 5.5 14V7.5H11ZM18.5 7.5V14H15C15 15.3807 16.1193 16.5 17.5 16.5V18.5C15.0147 18.5 13 16.4853 13 14V7.5H18.5Z" />
+            </svg>
           </div>
         </div>
       </div>

@@ -509,7 +509,7 @@ function Hero() {
       </div>
 
       {/* Hero content */}
-      <div className="relative z-10 flex flex-col items-center text-center px-4">
+      <div className="hero-content-wrapper relative z-10 px-4">
         <h2 className="hero-title">
           FIND YOUR HOME IN THE PHILIPPINES
         </h2>
@@ -523,10 +523,10 @@ function Hero() {
           className="ai-assistant-button"
           onClick={() => setIsChatMode(!isChatMode)}
         >
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" fill="currentColor"/>
+          <svg className="ai-assistant-sparkle" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2L13.09 8.26L18 6L14.74 10.91L21 12L14.74 13.09L18 18L13.09 15.74L12 22L10.91 15.74L6 18L9.26 13.09L3 12L9.26 10.91L6 6L10.91 8.26L12 2Z" fill="currentColor"/>
           </svg>
-          Try our RentalsGroq
+          Try our A.I. assistant
         </button>
 
         {/* Search bar and filters or Chat container */}
@@ -672,7 +672,7 @@ function Hero() {
                       title={property.title}
                       location={property.location || property.city || property.street_address || undefined}
                       price={`₱${property.price.toLocaleString()}${property.price_type ? `/${property.price_type}` : ''}`}
-                      image={property.image ? getImageUrl(property.image) : ASSETS.PLACEHOLDER_PROPERTY_MAIN}
+                      image={property.image_url || (property.image ? getImageUrl(property.image) : ASSETS.PLACEHOLDER_PROPERTY_MAIN)}
                     />
                   ))}
                 </div>
@@ -813,8 +813,8 @@ function Hero() {
         </div>
       </div>
 
-      {/* Hero Banner - Positioned absolutely at bottom */}
-      <HeroBanner />
+      {/* Hero Banner - Positioned absolutely at bottom (hidden in chat mode) */}
+      {!isChatMode && <HeroBanner />}
 
       {/* Conversation History Sidebar */}
       {showHistory && (

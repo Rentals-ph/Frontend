@@ -13,7 +13,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 14px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
@@ -41,9 +41,9 @@
 
 /* Main Content */
 .managers-main-content {
-  max-width: 1400px; /* Match properties page */
+  max-width: var(--page-max-width); /* Match properties page */
   margin: 0 auto;
-  padding: 0 40px 20px; /* Match properties page side spacing */
+  padding: 0 var(--page-padding-desktop) 20px; /* Match properties page side spacing */
 }
 
 /* What are Rent Managers Section */
@@ -56,7 +56,7 @@
 }
 
 .what-are-rm-title {
-  font-family: 'Montserrat', sans-serif;
+  font-family: 'Outfit', 'Montserrat', sans-serif;
   font-size: 36px;
   font-weight: 700;
   color: #205ED7;
@@ -64,7 +64,7 @@
 }
 
 .what-are-rm-text {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 16px;
   line-height: 1.7;
   color: #333;
@@ -115,7 +115,7 @@
 }
 
 .feature-title {
-  font-family: 'Montserrat', sans-serif;
+  font-family: 'Outfit', 'Montserrat', sans-serif;
   font-size: 16px;
   font-weight: 600;
   color: #205ED7;
@@ -125,7 +125,7 @@
 }
 
 .feature-description {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 13px;
   line-height: 1.5;
   color: #666;
@@ -139,7 +139,7 @@
 }
 
 .find-rm-title {
-  font-family: 'Montserrat', sans-serif;
+  font-family: 'Outfit', 'Montserrat', sans-serif;
   font-size: 36px;
   font-weight: 700;
   color: #205ED7;
@@ -198,7 +198,7 @@
   padding: 16px 20px 16px 52px;
   border: 2px solid #dbeafe;
   border-radius: 12px;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 15px;
   font-weight: 500;
   background: #ffffff;
@@ -229,7 +229,7 @@
   padding: 16px 20px;
   border: 2px solid #dbeafe;
   border-radius: 12px;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 15px;
   font-weight: 500;
   background: #ffffff;
@@ -497,7 +497,7 @@
   justify-content: center;
   background: #205ED7;
   color: #ffffff;
-  font-family: 'Montserrat', sans-serif;
+  font-family: 'Outfit', 'Montserrat', sans-serif;
   font-size: 48px;
   font-weight: 700;
   letter-spacing: 2px;
@@ -522,7 +522,7 @@
 }
 
 .manager-name {
-  font-family: 'Montserrat', sans-serif;
+  font-family: 'Outfit', 'Montserrat', sans-serif;
   font-size: 20px;
   font-weight: 700;
   color: #000000;
@@ -530,7 +530,7 @@
 }
 
 .manager-role {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 14px;
   color: #205ED7;
   margin: 0;
@@ -540,7 +540,7 @@
 .listings-button {
   background: #205ED7;
   color: #ffffff;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 14px;
   font-weight: 600;
   padding: 8px 16px;
@@ -575,7 +575,7 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 14px;
   color: #000000;
   position: relative;
@@ -608,7 +608,7 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 14px;
   color: #205ED7;
   text-decoration: none;
@@ -636,7 +636,7 @@
 }
 
 .sidebar-title {
-  font-family: 'Montserrat', sans-serif;
+  font-family: 'Outfit', 'Montserrat', sans-serif;
   font-size: 18px;
   font-weight: 700;
   color: #205ED7;
@@ -682,7 +682,7 @@
   justify-content: center;
   background: #205ED7;
   color: #ffffff;
-  font-family: 'Montserrat', sans-serif;
+  font-family: 'Outfit', 'Montserrat', sans-serif;
   font-size: 18px;
   font-weight: 700;
   letter-spacing: 1px;
@@ -698,7 +698,7 @@
 }
 
 .recent-manager-name {
-  font-family: 'Montserrat', sans-serif;
+  font-family: 'Outfit', 'Montserrat', sans-serif;
   font-size: 14px;
   font-weight: 600;
   color: #000000;
@@ -706,14 +706,14 @@
 }
 
 .recent-manager-role {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 12px;
   color: #205ED7;
   margin: 0 0 4px 0;
 }
 
 .recent-manager-email {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 12px;
   color: #666;
   margin: 0;
@@ -735,7 +735,7 @@
   border: 1px solid #e5e7eb;
   background: #ffffff;
   border-radius: 50%;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 14px;
   color: #333;
   cursor: pointer;
@@ -758,7 +758,7 @@
 }
 
 .pagination-ellipsis {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 14px;
   color: #666;
   padding: 0 4px;
@@ -774,13 +774,13 @@
 }
 
 .become-rm-container {
-  max-width: 1400px; /* Match properties page */
+  max-width: var(--page-max-width); /* Match properties page */
   margin: 0 auto;
-  padding: 0 40px; /* Match properties page side spacing */
+  padding: 0 var(--page-padding-desktop); /* Match properties page side spacing */
 }
 
 .become-rm-title {
-  font-family: 'Montserrat', sans-serif;
+  font-family: 'Outfit', 'Montserrat', sans-serif;
   font-size: 36px;
   font-weight: 700;
   color: #ffffff;
@@ -788,7 +788,7 @@
 }
 
 .become-rm-text {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 18px;
   font-weight: 400;
   line-height: 1.7;
@@ -799,7 +799,7 @@
 .become-rm-button {
   background: #ffffff;
   color: #333333;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 18px;
   font-weight: 600;
   padding: 14px 48px;

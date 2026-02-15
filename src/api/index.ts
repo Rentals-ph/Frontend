@@ -15,6 +15,7 @@ export { agentsApi } from './endpoints/agents'
 export { authApi } from './endpoints/auth'
 export { messagesApi } from './endpoints/messages'
 export { pageBuilderApi } from './endpoints/pageBuilder'
+export { listingAssistantApi } from './endpoints/listingAssistant'
 
 // Export types from endpoints
 export type { GetPropertiesParams } from './endpoints/properties'

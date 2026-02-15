@@ -70,12 +70,12 @@ function organizeAssets() {
     if (typeof assets === 'object' && assets !== null) {
       Object.values(assets).forEach((asset) => {
         if (asset && asset.path && asset.originalName) {
-          const originalPath = asset.originalName;
+          // Remove leading slash from asset.path if present
+          const currentPath = asset.path.replace(/^\/assets\//, '');
           const newPath = asset.path.replace('/assets/', '');
-          
           // Only move if paths are different
-          if (originalPath !== newPath) {
-            moveFile(originalPath, newPath);
+          if (currentPath !== newPath) {
+            moveFile(currentPath, newPath);
           }
         }
       });

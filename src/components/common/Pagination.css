@@ -12,7 +12,7 @@
 
 /* Pagination Info */
 .pagination-info {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 14px;
   color: #6b7280;
   font-weight: 400;
@@ -40,7 +40,7 @@
   border: 1.5px solid #e5e7eb;
   background: #ffffff;
   border-radius: 50%;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 14px;
   color: #374151;
   cursor: pointer;
@@ -82,7 +82,7 @@
   border: 1.5px solid #e5e7eb;
   background: #ffffff;
   border-radius: 50%;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 14px;
   font-weight: 500;
   color: #374151;
@@ -124,7 +124,7 @@
 
 /* Pagination Ellipsis */
 .pagination-ellipsis {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 14px;
   color: #9ca3af;
   padding: 0 4px;
@@ -135,7 +135,7 @@
 
 /* Page Info */
 .pagination-page-info {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 14px;
   color: #6b7280;
   font-weight: 400;

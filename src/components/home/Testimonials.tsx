@@ -1,19 +1,17 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import TestimonialCard from '../common/TestimonialCard'
-import Pagination from '../common/Pagination'
 import { testimonialsApi } from '../../api'
 import type { Testimonial } from '../../types'
-import { ASSETS, getAsset } from '@/utils/assets'
+import { ASSETS } from '@/utils/assets'
 import './Testimonials.css'
 
 function Testimonials() {
   const [testimonials, setTestimonials] = useState<Testimonial[]>([])
   const [loading, setLoading] = useState(true)
-  const [currentPage, setCurrentPage] = useState(1)
-  const testimonialsPerPage = 3
+  const scrollRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const fetchTestimonials = async () => {
@@ -29,17 +27,6 @@ function Testimonials() {
 
     fetchTestimonials()
   }, [])
-
-  // Calculate pagination
-  const totalPages = Math.ceil(testimonials.length / testimonialsPerPage)
-  const startIndex = (currentPage - 1) * testimonialsPerPage
-  const endIndex = startIndex + testimonialsPerPage
-  const currentTestimonials = testimonials.slice(startIndex, endIndex)
-
-  // Pagination handler
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page)
-  }
 
   // Helper function to get avatar URL
   const getAvatarUrl = (avatar: string | null): string => {
@@ -66,34 +53,37 @@ function Testimonials() {
           <div className="testimonials-left">
             <div className="testimonials-quote-icon-large">
               <div className="testimonials-quote-circle">
-                <img 
-                  src={ASSETS.ICON_QUOTE_2} 
-                  alt="Quote icon" 
-                  className="testimonial-quote-icon-svg"
-                />
+                <svg className="testimonial-quote-icon-svg" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M11 7.5V14H7.5C7.5 15.3807 8.61929 16.5 10 16.5V18.5C7.51472 18.5 5.5 16.4853 5.5 14V7.5H11ZM18.5 7.5V14H15C15 15.3807 16.1193 16.5 17.5 16.5V18.5C15.0147 18.5 13 16.4853 13 14V7.5H18.5Z" />
+                </svg>
               </div>
             </div>
             <div className="testimonials-text-content">
               <h1 className="testimonials-main-heading">Testimonials</h1>
-              <h2 className="testimonials-left-heading">Trusted by the Industry's Best</h2>
+              <h2 className="testimonials-left-heading">Trusted By The Industry's Best</h2>
               <p className="testimonials-left-text">
-                Discover why the most successful property managers in the Philippines rely on Rentals.ph to streamline their operations, verify quality tenants, and maximize their portfolio's reach.
+                Discover Why The Most Successful Property Managers In The Philippines Rely On Rentals.Ph To Streamline Their Operations, Verify Quality Tenants, And Maximize Their Portfolio's Reach.
               </p>
               <Link href="/contact" className="testimonials-connect-link">
-                Connect Now
+                <span>Connect Now</span>
+                <span className="testimonials-connect-arrow">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M5 12H19M19 12L13 6M19 12L13 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </span>
               </Link>
             </div>
           </div>
 
-          {/* Right Section - Testimonials Cards */}
+          {/* Right Section - Testimonials Cards (Horizontal Scroll) */}
           <div className="testimonials-right">
             {loading ? (
               <div className="testimonials-loading">
                 <p>Loading testimonials...</p>
               </div>
             ) : testimonials.length > 0 ? (
-              <div className="testimonials-cards-grid">
-                {currentTestimonials.map((testimonial) => (
+              <div className="testimonials-cards-scroll" ref={scrollRef}>
+                {testimonials.map((testimonial) => (
                   <TestimonialCard
                     key={testimonial.id}
                     avatar={getAvatarUrl(testimonial.avatar)}
@@ -109,17 +99,6 @@ function Testimonials() {
               </div>
             )}
           </div>
-          
-          {/* Pagination Controls - Centered based on full layout */}
-          {!loading && testimonials.length > 0 && totalPages > 1 && (
-            <div className="testimonials-pagination-container">
-              <Pagination
-                currentPage={currentPage}
-                totalPages={totalPages}
-                onPageChange={handlePageChange}
-              />
-            </div>
-          )}
         </div>
       </div>
     </section>

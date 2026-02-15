@@ -10,7 +10,7 @@
 /* Property Details Banner */
 .property-details-banner {
   background: #205ED7;
-  padding: 30px 40px; /* Match properties page side spacing */
+  padding: 30px var(--page-padding-desktop); /* Match properties page side spacing */
   position: relative;
   overflow: hidden;
   min-height: 135px;
@@ -23,7 +23,7 @@
 .property-details-banner-content {
   position: relative;
   z-index: 2;
-  max-width: 1400px;
+  max-width: var(--page-max-width);
   margin: 0 auto;
   width: 100%;
 }
@@ -67,7 +67,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 14px;
   background: #f9fafb;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
@@ -97,11 +97,11 @@
 /* Main Content */
 .property-details-main {
   background: #f9fafb;
-  padding: 40px 40px; /* Match properties page side spacing */
+  padding: 40px var(--page-padding-desktop); /* Match properties page side spacing */
 }
 
 .property-details-container {
-  max-width: 1400px; /* Match properties page */
+  max-width: var(--page-max-width); /* Match properties page */
   margin: 0 auto;
   display: grid;
   grid-template-columns: 1fr 400px;
@@ -232,7 +232,7 @@
 }
 
 .property-section-title {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 24px;
   font-weight: 700;
   color: #111827;
@@ -240,7 +240,7 @@
 }
 
 .property-description {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 16px;
   line-height: 1.6;
   color: #374151;
@@ -252,7 +252,7 @@
   border: none;
   color: #205ED7;
   cursor: pointer;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 16px;
   padding: 0;
   margin-left: 4px;
@@ -281,7 +281,7 @@
 }
 
 .property-location-label {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 15px;
   color: #6b7280;
   margin: 0 0 16px 0;
@@ -326,28 +326,74 @@
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
   display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 20px;
+}
+
+.agent-profile-section {
+  display: flex;
   align-items: center;
   gap: 16px;
-  padding: 15px;
+}
+
+.agent-details {
+  flex: 1;
+  min-width: 0;
+}
+
+.agent-agency {
+  font-family: 'Outfit', 'Inter', sans-serif;
+  font-size: 12px;
+  color: #6b7280;
+  margin: 4px 0 0 0;
+}
+
+.agent-contact-details {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  border-top: 1px solid #e5e7eb;
+  padding-top: 16px;
+}
+
+.agent-contact-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px;
+  background: #f9fafb;
+  border-radius: 8px;
+  text-decoration: none;
+  color: #374151;
+  font-family: 'Outfit', 'Inter', sans-serif;
+  font-size: 13px;
+  transition: background-color 0.2s ease;
+}
+
+.agent-contact-item:hover {
+  background: #f3f4f6;
+}
+
+.agent-contact-item span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .contact-icon {
-  width: 40px;
-  height: 40px;
+  width: 32px;
+  height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
-  cursor: pointer;
+  flex-shrink: 0;
   transition: transform 0.2s ease;
 }
 
-.contact-icon:hover {
-  transform: scale(1.1);
-}
-
 .contact-icon svg {
-  width: 24px;
-  height: 24px;
+  width: 20px;
+  height: 20px;
 }
 
 .rent-manager-info {
@@ -365,7 +411,7 @@
 }
 
 .rent-manager-name {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 14px;
   font-weight: 600;
   color: #111827;
@@ -373,7 +419,7 @@
 }
 
 .rent-manager-role {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 12px;
   color: #6b7280;
   margin: 0;
@@ -413,7 +459,7 @@
 }
 
 .property-title {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 24px;
   font-weight: 700;
   color: #111827;
@@ -465,7 +511,7 @@
 /* SharePopup component styles are in SharePopup.css */
 
 .property-type-label {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 14px;
   color: #205ED7;
   font-weight: 600;
@@ -474,7 +520,7 @@
 }
 
 .property-price {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 28px;
   font-weight: 700;
   color: #205ED7;
@@ -504,14 +550,14 @@
 }
 
 .property-detail-label {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 14px;
   color: #6b7280;
   font-weight: 500;
 }
 
 .property-detail-value {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 14px;
   color: #111827;
   font-weight: 600;
@@ -526,7 +572,7 @@
 }
 
 .amenities-title {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 18px;
   font-weight: 700;
   color: #111827;
@@ -538,12 +584,24 @@
   padding: 0;
   margin: 0;
   display: flex;
-  flex-direction: column;
-  gap: 12px;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.amenity-tag {
+  display: inline-flex;
+  align-items: center;
+  font-family: 'Outfit', 'Inter', sans-serif;
+  font-size: 13px;
+  color: #205ED7;
+  background: #EEF2FF;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-weight: 500;
 }
 
 .amenity-item {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 14px;
   color: #374151;
   padding-left: 24px;
@@ -567,7 +625,7 @@
 }
 
 .inquiry-form-title {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 18px;
   font-weight: 700;
   color: #111827;
@@ -584,7 +642,7 @@
 .inquiry-input,
 .inquiry-textarea {
   width: 100%;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 14px;
   padding: 12px 16px;
   border: 1.5px solid #e5e7eb;
@@ -605,12 +663,12 @@
 .inquiry-textarea {
   resize: vertical;
   min-height: 100px;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
 }
 
 .inquiry-submit-btn {
   width: 100%;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 16px;
   font-weight: 600;
   color: #ffffff;
@@ -645,7 +703,7 @@
 }
 
 .similar-properties-title {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 32px;
   font-weight: 700;
   color: #111827;

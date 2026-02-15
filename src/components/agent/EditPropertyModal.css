@@ -9,7 +9,7 @@
   align-items: center;
   justify-content: center;
   z-index: 1000;
-  padding: 20px;
+  padding: 16px;
   overflow-y: auto;
 }
 
@@ -17,24 +17,24 @@
   background: #FFFFFF;
   border-radius: 12px;
   width: 100%;
-  max-width: 1000px;
-  max-height: 90vh;
+  max-width: 900px;
+  max-height: 92vh;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
 }
 
 .edit-property-modal-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 24px;
+  padding: 16px 20px;
   border-bottom: 1px solid #E5E7EB;
 }
 
 .edit-property-modal-header h2 {
   margin: 0;
-  font-size: 24px;
+  font-size: 18px;
   font-weight: 700;
   color: #111827;
 }
@@ -42,7 +42,7 @@
 .edit-property-modal-close {
   background: none;
   border: none;
-  font-size: 24px;
+  font-size: 20px;
   color: #6B7280;
   cursor: pointer;
   padding: 4px;
@@ -59,7 +59,7 @@
 }
 
 .edit-property-page-indicator {
-  padding: 20px 24px;
+  padding: 12px 20px;
   border-bottom: 1px solid #E5E7EB;
   background-color: #F9FAFB;
 }
@@ -68,21 +68,19 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
+  gap: 8px;
 }
 
 .edit-property-page-tab {
   display: flex;
-  flex-direction: column;
   align-items: center;
   gap: 8px;
   background: none;
   border: none;
   cursor: pointer;
-  padding: 12px 20px;
+  padding: 8px 14px;
   border-radius: 8px;
   transition: all 0.2s;
-  min-width: 120px;
 }
 
 .edit-property-page-tab:hover {
@@ -94,17 +92,18 @@
 }
 
 .edit-property-page-number {
-  width: 32px;
-  height: 32px;
+  width: 24px;
+  height: 24px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 700;
-  font-size: 14px;
+  font-weight: 600;
+  font-size: 12px;
   background-color: #E5E7EB;
   color: #6B7280;
   transition: all 0.2s;
+  flex-shrink: 0;
 }
 
 .edit-property-page-tab.active .edit-property-page-number {
@@ -113,7 +112,7 @@
 }
 
 .edit-property-page-label {
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 600;
   color: #6B7280;
   transition: color 0.2s;
@@ -124,28 +123,27 @@
 }
 
 .edit-property-page-connector {
-  width: 40px;
+  width: 32px;
   height: 2px;
   background-color: #E5E7EB;
   flex-shrink: 0;
 }
 
 .edit-property-modal-content {
-  padding: 28px 32px;
+  padding: 20px;
   overflow-y: auto;
   flex: 1;
-  max-height: calc(90vh - 200px);
-  min-height: 400px;
+  max-height: calc(92vh - 140px);
 }
 
 .edit-property-page {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 0;
 }
 
 .edit-property-section {
-  margin-bottom: 32px;
+  margin-bottom: 20px;
   width: 100%;
   box-sizing: border-box;
 }
@@ -155,19 +153,19 @@
 }
 
 .edit-property-section h3 {
-  margin: 0 0 20px 0;
-  font-size: 18px;
+  margin: 0 0 12px 0;
+  font-size: 14px;
   font-weight: 600;
   color: #111827;
-  padding-bottom: 12px;
-  border-bottom: 2px solid #E5E7EB;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #E5E7EB;
 }
 
-/* Form Grid Layouts - Matching Agent Theme */
+/* Form Grid Layouts - Compact Agent Design */
 .edit-property-form-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 16px;
+  gap: 12px;
   width: 100%;
   box-sizing: border-box;
 }
@@ -175,24 +173,24 @@
 .edit-property-form-grid-2 {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 16px;
+  gap: 12px;
   width: 100%;
   box-sizing: border-box;
 }
 
 .edit-property-form-grid-compact {
   display: grid;
-  grid-template-columns: repeat(3, minmax(120px, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(3, minmax(100px, 1fr));
+  gap: 12px;
   width: fit-content;
-  max-width: 500px;
+  max-width: 450px;
   box-sizing: border-box;
 }
 
 .edit-property-form-group {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 4px;
   width: 100%;
   box-sizing: border-box;
   min-width: 0;
@@ -203,19 +201,18 @@
 }
 
 .edit-property-form-group label {
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
   color: #374151;
-  margin-bottom: 4px;
 }
 
-/* Input Styling - Matching Agent Theme */
+/* Input Styling - Compact Agent Theme */
 .edit-property-form-group input,
 .edit-property-form-group textarea,
 .edit-property-form-group select {
   width: 100%;
-  height: 48px;
-  padding: 0 16px;
+  height: 40px;
+  padding: 0 12px;
   border: 1px solid #D1D5DB;
   border-radius: 8px;
   background-color: #FFFFFF;
@@ -230,19 +227,19 @@
 .edit-property-form-group textarea:focus,
 .edit-property-form-group select:focus {
   border-color: #2563EB;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.18);
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
 }
 
 .edit-property-form-group textarea {
   resize: vertical;
-  min-height: 120px;
-  padding: 14px 16px;
+  min-height: 80px;
+  padding: 10px 12px;
   height: auto;
 }
 
 /* Compact inputs for numbers */
 .edit-property-form-group input[type="number"].compact {
-  max-width: 150px;
+  max-width: 130px;
   width: 100%;
 }
 
@@ -279,31 +276,31 @@
   appearance: none;
   -webkit-appearance: none;
   -moz-appearance: none;
-  padding-right: 40px;
+  padding-right: 32px;
 }
 
 .edit-property-select-caret {
   position: absolute;
-  right: 16px;
+  right: 12px;
   top: 50%;
   transform: translateY(-50%);
   pointer-events: none;
   color: #6B7280;
-  font-size: 12px;
+  font-size: 10px;
 }
 
 .edit-property-form-group small {
-  font-size: 12px;
+  font-size: 11px;
   color: #6B7280;
-  margin-top: -4px;
+  margin-top: 2px;
 }
 
 .edit-property-image-preview {
-  margin-bottom: 12px;
+  margin-bottom: 8px;
   border-radius: 8px;
   overflow: hidden;
   border: 1px solid #E5E7EB;
-  max-width: 400px;
+  max-width: 320px;
   width: 100%;
 }
 
@@ -317,29 +314,30 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 20px 24px;
+  padding: 12px 20px;
   border-top: 1px solid #E5E7EB;
   background-color: #F9FAFB;
+  gap: 12px;
 }
 
 .edit-property-modal-actions {
   display: flex;
-  gap: 12px;
+  gap: 8px;
 }
 
 .edit-property-cancel-btn,
 .edit-property-save-btn,
 .edit-property-delete-btn,
 .edit-property-nav-btn {
-  padding: 10px 20px;
+  padding: 8px 14px;
   border-radius: 8px;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   border: none;
 }
 
@@ -378,12 +376,14 @@
 }
 
 .edit-property-delete-btn {
-  background-color: #EF4444;
-  color: #FFFFFF;
+  background-color: #FEF2F2;
+  color: #DC2626;
+  border: 1px solid #FECACA;
 }
 
 .edit-property-delete-btn:hover:not(:disabled) {
-  background-color: #DC2626;
+  background-color: #FEE2E2;
+  border-color: #F87171;
 }
 
 .edit-property-delete-btn:disabled {
@@ -405,42 +405,52 @@
 
   .edit-property-modal-header,
   .edit-property-modal-content,
-  .edit-property-modal-footer,
+  .edit-property-modal-footer {
+    padding: 12px 16px;
+  }
+  
   .edit-property-page-indicator {
-    padding: 16px;
+    padding: 10px 16px;
   }
 
   .edit-property-page-tabs {
-    gap: 8px;
+    gap: 6px;
   }
 
   .edit-property-page-tab {
-    padding: 8px 12px;
-    min-width: 100px;
+    padding: 6px 10px;
   }
 
   .edit-property-page-number {
-    width: 28px;
-    height: 28px;
-    font-size: 12px;
-  }
-
-  .edit-property-page-label {
+    width: 22px;
+    height: 22px;
     font-size: 11px;
   }
 
+  .edit-property-page-label {
+    font-size: 12px;
+  }
+
   .edit-property-page-connector {
-    width: 20px;
+    width: 16px;
   }
 
   .edit-property-modal-content {
-    max-height: calc(100vh - 250px);
-    min-height: 300px;
+    max-height: calc(100vh - 160px);
   }
 
   .edit-property-form-grid {
     grid-template-columns: 1fr;
-    gap: 12px;
+    gap: 10px;
+  }
+  
+  .edit-property-form-grid-2 {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  
+  .edit-property-modal-footer {
+    flex-wrap: wrap;
   }
 }
 
@@ -451,61 +461,53 @@
   }
 
   .edit-property-modal-footer {
-    flex-direction: column;
-    gap: 12px;
-    align-items: stretch;
+    flex-wrap: wrap;
+    gap: 10px;
   }
 
   .edit-property-delete-btn {
-    width: 100%;
-    justify-content: center;
+    width: auto;
   }
 
   .edit-property-modal-actions {
-    width: 100%;
-  }
-
-  .edit-property-cancel-btn,
-  .edit-property-save-btn {
-    flex: 1;
-    justify-content: center;
+    width: auto;
   }
 }
 
-/* Location Map Styles */
+/* Location Map Styles - Compact */
 .location-map-container {
-  margin-top: 20px;
+  margin-top: 12px;
 }
 
 .location-map-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
   flex-wrap: wrap;
-  gap: 12px;
+  gap: 10px;
 }
 
 .location-map-header h4 {
   margin: 0;
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 600;
   color: #111827;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
 }
 
 .location-map-get-current-btn {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 8px 16px;
+  gap: 6px;
+  padding: 6px 12px;
   background-color: #3B82F6;
   color: white;
   border: none;
   border-radius: 6px;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 500;
   cursor: pointer;
   transition: background-color 0.2s;
@@ -521,37 +523,38 @@
 }
 
 .location-map-error {
-  padding: 12px;
+  padding: 10px;
   background-color: #FEF2F2;
   border: 1px solid #FECACA;
   border-radius: 6px;
   color: #DC2626;
-  font-size: 14px;
-  margin-bottom: 12px;
+  font-size: 13px;
+  margin-bottom: 10px;
 }
 
 .location-map-info {
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 }
 
 .location-map-info p {
-  margin: 0 0 8px 0;
-  font-size: 14px;
+  margin: 0 0 6px 0;
+  font-size: 13px;
   color: #6B7280;
-  line-height: 1.5;
+  line-height: 1.4;
 }
 
 .location-map-coordinates {
-  padding: 8px 12px;
+  padding: 6px 10px;
   background-color: #F3F4F6;
   border-radius: 6px;
-  font-size: 13px;
+  font-size: 12px;
   color: #374151;
   font-family: monospace;
 }
 
 .location-map {
   border: 1px solid #E5E7EB;
+  border-radius: 8px;
   overflow: hidden;
 }
 

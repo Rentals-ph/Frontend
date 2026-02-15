@@ -95,3 +95,5 @@ export interface Blog {
   updated_at?: string | null
 }
 
+// Listing Assistant types
+export * from './listingAssistant'

@@ -61,7 +61,7 @@
 
 .vertical-property-type {
   color: #205ed7;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 13px;
   font-weight: 600;
   text-transform: uppercase;
@@ -73,7 +73,7 @@
 
 .vertical-property-date {
   color: #9ca3af;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 12px;
   font-weight: 500;
   white-space: nowrap;
@@ -92,7 +92,7 @@
 
 .vertical-property-price {
   color: #205ED7;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 24px;
   font-weight: 700;
   letter-spacing: -0.5px;
@@ -131,7 +131,7 @@
 ========================= */
 .vertical-property-title {
   color: #111827;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 16px;
   font-weight: 600;
   line-height: 1.4;
@@ -206,7 +206,7 @@
 
 .vertical-rent-manager-name {
   color: #205ed7;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 13px;
   font-weight: 600;
   line-height: 1.2;
@@ -217,7 +217,7 @@
 
 .vertical-rent-manager-role {
   color: #60a5fa;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 11px;
   font-weight: 400;
   line-height: 1.2;
@@ -259,7 +259,7 @@
 
 .vertical-property-feature-item span {
   color: #374151;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 15px;
   font-weight: 600;
 }

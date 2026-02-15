@@ -36,9 +36,9 @@
     gap: 0;
     min-height: calc(100vh - 200px);
     width: 100%;
-    max-width: 1400px; /* Constrained width like professional rental sites */
+    max-width: var(--page-max-width); /* Constrained width like professional rental sites */
     margin: 20px auto 0; /* Center the container with auto margins */
-    padding: 0 40px; /* Side padding for breathing room */
+    padding: 0 var(--page-padding-desktop); /* Side padding for breathing room */
     position: relative;
     overflow-x: visible;
   }
@@ -78,7 +78,7 @@
   }
 
   .section-title {
-    font-family: 'Inter', sans-serif;
+    font-family: 'Outfit', 'Inter', sans-serif;
     font-size: 17px;
     font-weight: 700;
     color: #111827;
@@ -117,7 +117,7 @@
 
   .filter-select {
     width: 100%;
-    font-family: 'Inter', sans-serif;
+    font-family: 'Outfit', 'Inter', sans-serif;
     font-size: 14px;
     padding: 12px 14px;
     border: 1.5px solid #e5e7eb;
@@ -166,7 +166,7 @@
 
   .price-range-label {
     display: block;
-    font-family: 'Inter', sans-serif;
+    font-family: 'Outfit', 'Inter', sans-serif;
     font-size: 14px;
     font-weight: 600;
     color: #374151;
@@ -188,7 +188,7 @@
 
   .price-input {
     flex: 1;
-    font-family: 'Inter', sans-serif;
+    font-family: 'Outfit', 'Inter', sans-serif;
     font-size: 14px;
     padding: 10px 14px;
     width: 50px;
@@ -225,7 +225,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    font-family: 'Inter', sans-serif;
+    font-family: 'Outfit', 'Inter', sans-serif;
     font-size: 11px;
     color: #9ca3af;
     line-height: 1.2;
@@ -298,7 +298,7 @@
   /* Apply Button */
   .apply-filter-btn {
     width: 100%;
-    font-family: 'Inter', sans-serif;
+    font-family: 'Outfit', 'Inter', sans-serif;
     font-size: 14px;
     font-weight: 600;
     color: white;
@@ -328,7 +328,7 @@
   /* Clear Filters Button */
   .clear-filters-btn {
     width: 100%;
-    font-family: 'Inter', sans-serif;
+    font-family: 'Outfit', 'Inter', sans-serif;
     font-size: 14px;
     font-weight: 600;
     color: #6b7280;
@@ -404,7 +404,7 @@
     background: #f3f4f6;
     border: 1.5px solid #e5e7eb;
     border-radius: 20px;
-    font-family: 'Inter', sans-serif;
+    font-family: 'Outfit', 'Inter', sans-serif;
     font-size: 13px;
     font-weight: 500;
     color: #374151;
@@ -472,7 +472,7 @@
     background: #f3f4f6;
     border: 1.5px solid #e5e7eb;
     border-radius: 20px;
-    font-family: 'Inter', sans-serif;
+    font-family: 'Outfit', 'Inter', sans-serif;
     font-size: 13px;
     font-weight: 500;
     color: #374151;
@@ -502,7 +502,7 @@
   }
 
   .results-count {
-    font-family: 'Inter', sans-serif;
+    font-family: 'Outfit', 'Inter', sans-serif;
     font-size: 14px;
     color: #6b7280;
     font-weight: 400;
@@ -534,7 +534,7 @@
     background: #f0f7ff;
     border: 1.5px solid #205ED7;
     border-radius: 20px;
-    font-family: 'Inter', sans-serif;
+    font-family: 'Outfit', 'Inter', sans-serif;
     font-size: 13px;
     color: #205ED7;
     font-weight: 500;
@@ -568,7 +568,7 @@
   }
 
   .clear-filters-link {
-    font-family: 'Inter', sans-serif;
+    font-family: 'Outfit', 'Inter', sans-serif;
     font-size: 13px;
     color: #205ED7;
     background: none;
@@ -667,7 +667,7 @@
   }
 
   .category-name {
-    font-family: 'Inter', sans-serif;
+    font-family: 'Outfit', 'Inter', sans-serif;
     font-size: 14px;
     color: #374151;
     font-weight: 500;
@@ -678,7 +678,7 @@
   }
 
   .category-count {
-    font-family: 'Inter', sans-serif;
+    font-family: 'Outfit', 'Inter', sans-serif;
     font-size: 13px;
     color: #6b7280;
     font-weight: 500;
@@ -716,7 +716,7 @@
   .search-item {
     padding: 14px 16px;
     margin: 4px 0;
-    font-family: 'Inter', sans-serif;
+    font-family: 'Outfit', 'Inter', sans-serif;
     font-size: 14px;
     color: #374151;
     cursor: pointer;
@@ -802,7 +802,7 @@
     display: flex;
     align-items: center;
     gap: 8px;
-    font-family: 'Inter', sans-serif;
+    font-family: 'Outfit', 'Inter', sans-serif;
     font-size: 14px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   }
@@ -931,7 +931,7 @@
 
   .sticky-filters-section .filter-select {
     width: 100%;
-    font-family: 'Inter', sans-serif;
+    font-family: 'Outfit', 'Inter', sans-serif;
     font-size: 13px;
     padding: 8px 12px;
     border: 1.5px solid #dbeafe;
@@ -983,7 +983,7 @@
 
   .sticky-filters-section .price-input {
     flex: 1;
-    font-family: 'Inter', sans-serif;
+    font-family: 'Outfit', 'Inter', sans-serif;
     font-size: 13px;
     padding: 8px 12px;
     border: 1.5px solid #dbeafe;
@@ -1018,7 +1018,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    font-family: 'Inter', sans-serif;
+    font-family: 'Outfit', 'Inter', sans-serif;
     font-size: 11px;
     color: #6b7280;
     font-weight: 600;
@@ -1034,7 +1034,7 @@
     border: 1.5px solid #dbeafe;
     border-radius: 10px;
     color: #205ED7;
-    font-family: 'Inter', sans-serif;
+    font-family: 'Outfit', 'Inter', sans-serif;
     font-size: 13px;
     font-weight: 600;
     cursor: pointer;
@@ -1072,7 +1072,7 @@
     justify-content: center;
     align-items: center;
     padding: 24px;
-    font-family: 'Inter', sans-serif;
+    font-family: 'Outfit', 'Inter', sans-serif;
     font-size: 14px;
     color: #6b7280;
   }
@@ -1141,7 +1141,7 @@
   }
 
   .desktop-filter-panel-title {
-    font-family: 'Inter', sans-serif;
+    font-family: 'Outfit', 'Inter', sans-serif;
     font-size: 16px;
     font-weight: 700;
     margin: 0;
@@ -1291,7 +1291,7 @@
 
   .main-search-input {
     width: 100%;
-    font-family: 'Inter', sans-serif;
+    font-family: 'Outfit', 'Inter', sans-serif;
     font-size: 15px;
     font-weight: 500;
     padding: 16px 20px 16px 52px;
@@ -1320,7 +1320,7 @@
   }
 
   .sort-dropdown-btn {
-    font-family: 'Inter', sans-serif;
+    font-family: 'Outfit', 'Inter', sans-serif;
     font-size: 14px;
     font-weight: 500;
     padding: 16px 20px;
@@ -1539,7 +1539,7 @@
     border: 1px solid #e5e7eb;
     background: #ffffff;
     border-radius: 50%;
-    font-family: 'Inter', sans-serif;
+    font-family: 'Outfit', 'Inter', sans-serif;
     font-size: 14px;
     color: #333;
     cursor: pointer;
@@ -1567,7 +1567,7 @@
   }
 
   .pagination-ellipsis {
-    font-family: 'Inter', sans-serif;
+    font-family: 'Outfit', 'Inter', sans-serif;
     font-size: 14px;
     color: #666;
     padding: 0 4px;
@@ -1584,7 +1584,7 @@
   }
 
   .no-results-title {
-    font-family: 'Montserrat', sans-serif;
+    font-family: 'Outfit', 'Montserrat', sans-serif;
     font-size: 28px;
     font-weight: 700;
     color: #205ED7;
@@ -1592,7 +1592,7 @@
   }
 
   .no-results-text {
-    font-family: 'Inter', sans-serif;
+    font-family: 'Outfit', 'Inter', sans-serif;
     font-size: 16px;
     color: #666;
     margin: 0;
@@ -1951,7 +1951,7 @@
     }
 
     .filter-dropdown-title {
-      font-family: 'Inter', sans-serif;
+      font-family: 'Outfit', 'Inter', sans-serif;
       font-size: 15px;
       font-weight: 700;
       margin: 0;
@@ -2170,7 +2170,7 @@
       border: 2px solid #205ED7;
       border-radius: 8px;
       color: #205ED7;
-      font-family: 'Inter', sans-serif;
+      font-family: 'Outfit', 'Inter', sans-serif;
       font-size: 14px;
       font-weight: 600;
       cursor: pointer;
@@ -2687,9 +2687,9 @@
   }
 
   .featured-properties-container {
-    max-width: 1280px;
+    max-width: var(--page-max-width);
     margin: 0 auto;
-    padding: 0 80px;
+    padding: 0 var(--page-padding-desktop);
   }
 
   .featured-properties-header {
@@ -2700,7 +2700,7 @@
   }
 
   .featured-properties-title {
-    font-family: 'Inter', sans-serif;
+    font-family: 'Outfit', 'Inter', sans-serif;
     font-size: 36px;
     font-weight: 700;
     color: #111827;
@@ -2714,7 +2714,7 @@
   }
 
   .featured-properties-subtitle {
-    font-family: 'Inter', sans-serif;
+    font-family: 'Outfit', 'Inter', sans-serif;
     font-size: 18px;
     color: #4B5563;
     line-height: 1.33;
@@ -2723,7 +2723,7 @@
   }
 
   .featured-properties-link {
-    font-family: 'Inter', sans-serif;
+    font-family: 'Outfit', 'Inter', sans-serif;
     font-size: 16px;
     font-weight: 500;
     color: #205ED7;
@@ -2876,13 +2876,13 @@
   }
 
   .short-term-rent-container {
-    max-width: 1280px;
+    max-width: var(--page-max-width);
     margin: 0 auto;
-    padding: 0 80px;
+    padding: 0 var(--page-padding-desktop);
   }
 
   .short-term-rent-title {
-    font-family: 'Inter', sans-serif;
+    font-family: 'Outfit', 'Inter', sans-serif;
     font-size: 28px;
     font-weight: 700;
     color: #111827;

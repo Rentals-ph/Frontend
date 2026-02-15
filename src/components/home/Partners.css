@@ -1,24 +1,60 @@
+.partners-carousel {
+  overflow: hidden;
+  width: 100%;
+  position: relative;
+  height: 30vh; /* Adjust as needed */
+}
+
+.partners-track {
+  display: flex;
+  width: max-content;
+  animation: partners-scroll 18s linear infinite;
+  align-items: center;
+  gap: 3rem; /* Adjust spacing as needed */
+}
+
+.partner-logo {
+  height: 80px; /* Adjust as needed */
+  width: auto;
+  object-fit: contain;
+  filter: grayscale(0.2);
+  opacity: 0.85;
+  transition: filter 0.2s, opacity 0.2s;
+}
+
+.partner-logo:hover {
+  filter: grayscale(0);
+  opacity: 1;
+}
+
+@keyframes partners-scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
 /* Partners Section */
 .partners-section {
   background: #ffffff;
-  padding: 120px 0;
+  padding: 50px 0;
   position: relative;
 }
 
 .partners-container {
-  max-width: var(--page-max-width);
+  width: 100%;
   margin: 0 auto;
-  padding: 0 var(--page-padding-desktop);
 }
 
 .partners-title {
-  color: #111827;
+  color: #205ED7;
   font-family: 'Outfit', 'Inter', sans-serif;
-  font-size: 48px;
+  font-size: 38px;
   font-weight: 700;
   line-height: 1.2;
   letter-spacing: 0.5px;
-  margin-bottom: 10px;
+  margin: 30px 0;
   text-align: center;
   text-transform: uppercase;
 }
@@ -50,7 +86,7 @@
 
 .partner-logo {
   width: 350px;
-  height: 350px;
+  height: 250px;
   max-width: 100%;
   object-fit: contain;
   object-position: center;

@@ -9,6 +9,8 @@ import PageHeader from '../../components/layout/PageHeader'
 import { blogsApi } from '../../api'
 import type { Blog } from '../../types'
 import { ASSETS } from '@/utils/assets'
+import { BlogCard } from '../../components/common'
+import { HiUser, HiCalendar } from 'react-icons/hi'
 
 export default function BlogPage() {
   const [currentPage, setCurrentPage] = useState(1)
@@ -71,70 +73,43 @@ export default function BlogPage() {
           </div>
         ) : (
           <>
-            <div className="blog-content-layout">
-              <div className="blog-featured-column">
-                {featuredPost && (
-                  <Link href={`/blog/${featuredPost.id}`} style={{ textDecoration: 'none' }}>
-                    <article className="featured-article-card">
-                      <div className="featured-article-image">
-                        <img src={getImageUrl(featuredPost.image)} alt={featuredPost.title} />
-                      </div>
-                      <div className="featured-article-content">
-                        <h2 className="featured-article-title">{featuredPost.title}</h2>
-                        <p className="featured-article-excerpt">{featuredPost.excerpt}</p>
-                        <div className="featured-article-meta">
-                          <div className="article-author">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                              <path d="M20 21V19C20 17.9391 19.5786 16.9217 18.8284 16.1716C18.0783 15.4214 17.0609 15 16 15H8C6.93913 15 5.92172 15.4214 5.17157 16.1716C4.42143 16.9217 4 17.9391 4 19V21M16 7C16 9.20914 14.2091 11 12 11C9.79086 11 8 9.20914 8 7C8 4.79086 9.79086 3 12 3C14.2091 3 16 4.79086 16 7Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                            </svg>
-                            <span>{featuredPost.author}</span>
-                          </div>
-                          <div className="article-date">
-                            <svg width="16" height="16" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                              <path d="M6 2V6M14 2V6M3 10H17M5 4H15C16.1046 4 17 4.89543 17 6V16C17 17.1046 16.1046 18 15 18H5C3.89543 18 3 17.1046 3 16V6C3 4.89543 3.89543 4 5 4Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                            </svg>
-                            <span>{formatDate(featuredPost.published_at)}</span>
-                          </div>
-                        </div>
-                      </div>
-                    </article>
-                  </Link>
-                )}
-              </div>
 
-              <div className="blog-trending-column">
-                <div className="trending-header">
-                  <h3 className="trending-title">TRENDINGS</h3>
-                </div>
-                <div className="trending-articles">
-                  {trendingPosts.map((post) => (
-                    <Link key={post.id} href={`/blog/${post.id}`} style={{ textDecoration: 'none' }}>
-                      <article className="trending-article-card">
-                        <div className="trending-article-image">
-                          <img src={getImageUrl(post.image)} alt={post.title} />
-                        </div>
-                        <div className="trending-article-content">
-                          <h4 className="trending-article-title">{post.title}</h4>
-                          <div className="trending-article-meta">
-                            <div className="article-author">
-                              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M20 21V19C20 17.9391 19.5786 16.9217 18.8284 16.1716C18.0783 15.4214 17.0609 15 16 15H8C6.93913 15 5.92172 15.4214 5.17157 16.1716C4.42143 16.9217 4 17.9391 4 19V21M16 7C16 9.20914 14.2091 11 12 11C9.79086 11 8 9.20914 8 7C8 4.79086 9.79086 3 12 3C14.2091 3 16 4.79086 16 7Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                              </svg>
-                              <span>{post.author}</span>
-                            </div>
-                            <div className="article-date">
-                              <svg width="16" height="16" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M6 2V6M14 2V6M3 10H17M5 4H15C16.1046 4 17 4.89543 17 6V16C17 17.1046 16.1046 18 15 18H5C3.89543 18 3 17.1046 3 16V6C3 4.89543 3.89543 4 5 4Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                              </svg>
-                              <span>{formatDate(post.published_at)}</span>
-                            </div>
-                          </div>
-                        </div>
-                      </article>
-                    </Link>
-                  ))}
-                </div>
-              </div>
+            {/* Custom 3-card layout: small - large - small */}
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'stretch', gap: 24, marginBottom: 40 }}>
+              {/* Always render 3 cards, fallback to first/empty if not enough blogs */}
+              <BlogCard
+                image={getImageUrl(blogs[1]?.image || blogs[0]?.image || ASSETS.PLACEHOLDER_PROPERTY_MAIN)}
+                category={blogs[1]?.category || blogs[0]?.category || ''}
+                title={blogs[1]?.title || blogs[0]?.title || ''}
+                excerpt={blogs[1]?.excerpt || blogs[0]?.excerpt || ''}
+                author={<><HiUser style={{verticalAlign:'middle',marginRight:6}}/>{blogs[1]?.author || blogs[0]?.author || ''}</>}
+                date={<><HiCalendar style={{verticalAlign:'middle',marginRight:6}}/>{formatDate(blogs[1]?.published_at || blogs[0]?.published_at || null)}</>}
+                readTime={formatReadTime(blogs[1]?.read_time || blogs[0]?.read_time || 1)}
+                link={blogs[1] ? `/blog/${blogs[1].id}` : blogs[0] ? `/blog/${blogs[0].id}` : '#'}
+                size="small"
+              />
+              <BlogCard
+                image={getImageUrl(blogs[0]?.image || ASSETS.PLACEHOLDER_PROPERTY_MAIN)}
+                category={blogs[0]?.category || ''}
+                title={blogs[0]?.title || ''}
+                excerpt={blogs[0]?.excerpt || ''}
+                author={<><HiUser style={{verticalAlign:'middle',marginRight:6}}/>{blogs[0]?.author || ''}</>}
+                date={<><HiCalendar style={{verticalAlign:'middle',marginRight:6}}/>{formatDate(blogs[0]?.published_at || null)}</>}
+                readTime={formatReadTime(blogs[0]?.read_time || 1)}
+                link={blogs[0] ? `/blog/${blogs[0].id}` : '#'}
+                size="large"
+              />
+              <BlogCard
+                image={getImageUrl(blogs[2]?.image || blogs[0]?.image || ASSETS.PLACEHOLDER_PROPERTY_MAIN)}
+                category={blogs[2]?.category || blogs[0]?.category || ''}
+                title={blogs[2]?.title || blogs[0]?.title || ''}
+                excerpt={blogs[2]?.excerpt || blogs[0]?.excerpt || ''}
+                author={<><HiUser style={{verticalAlign:'middle',marginRight:6}}/>{blogs[2]?.author || blogs[0]?.author || ''}</>}
+                date={<><HiCalendar style={{verticalAlign:'middle',marginRight:6}}/>{formatDate(blogs[2]?.published_at || blogs[0]?.published_at || null)}</>}
+                readTime={formatReadTime(blogs[2]?.read_time || blogs[0]?.read_time || 1)}
+                link={blogs[2] ? `/blog/${blogs[2].id}` : blogs[0] ? `/blog/${blogs[0].id}` : '#'}
+                size="small"
+              />
             </div>
 
             <div className="blog-articles-grid">

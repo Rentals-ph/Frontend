@@ -70,6 +70,7 @@ const formatAIMessage = (text: string): string => {
 
 function Hero() {
   const [searchQuery, setSearchQuery] = useState('')
+  const [showAdvancedOptions, setShowAdvancedOptions] = useState(false)
   const [propertyType, setPropertyType] = useState('')
   const [location, setLocation] = useState('')
   const [minBeds, setMinBeds] = useState('')
@@ -635,7 +636,7 @@ function Hero() {
                     {isLoading && (
                       <div className="chat-message assistant-message">
                         <div className="chat-message-content">
-                          <span className="chat-loading">Searching...</span>
+                          <span className="chat-loading">Thinking...</span>
                         </div>
                       </div>
                     )}
@@ -682,117 +683,132 @@ function Hero() {
           ) : (
             <>
               <div className="search-input-wrapper">
-                <input 
-                  type="text" 
-                  className="search-inputs" 
-                  placeholder="What are you looking for?"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  onKeyPress={handleKeyPress}
-                />
+                  <input 
+                    type="text" 
+                    className="search-inputs" 
+                    placeholder="What are you looking for?"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    onKeyPress={handleKeyPress}
+                  />
 
-                <div className="search-divider" />
+                  <div className="search-divider" />
 
-                <select 
-                  className="search-dropdown"
-                  value={propertyType}
-                  onChange={(e) => setPropertyType(e.target.value)}
-                >
-                  <option value="">Property Type</option>
-                  <option value="condominium">Condominium</option>
-                  <option value="apartment">Apartment</option>
-                  <option value="bedspace">Bed Space</option>
-                  <option value="commercial">Commercial Spaces</option>
-                  <option value="office">Office Spaces</option>
-                </select>
+                  <select 
+                    className="search-dropdown"
+                    value={propertyType}
+                    onChange={(e) => setPropertyType(e.target.value)}
+                  >
+                    <option value="">Property Type</option>
+                    <option value="condominium">Condominium</option>
+                    <option value="apartment">Apartment</option>
+                    <option value="bedspace">Bed Space</option>
+                    <option value="commercial">Commercial Spaces</option>
+                    <option value="office">Office Spaces</option>
+                  </select>
                   
-                <div className="search-divider" />
+                  <div className="search-divider" />
                   
-                <select 
-                  className="search-dropdown"
-                  value={location}
-                  onChange={(e) => setLocation(e.target.value)}
-                >
-                  <option value="">Location</option>
-                  <option value="metro-manila">Metro Manila</option>
-                  <option value="makati">Makati City</option>
-                  <option value="bgc">BGC</option>
-                  <option value="quezon">Quezon City</option>
-                  <option value="mandaluyong">Mandaluyong</option>
-                  <option value="pasig">Pasig</option>
-                  <option value="cebu">Cebu City</option>
-                  <option value="davao">Davao City</option>
-                  <option value="lapulapu">Lapulapu</option>
-                  <option value="manila">Manila</option>
-                </select>
+                  <select 
+                    className="search-dropdown"
+                    value={location}
+                    onChange={(e) => setLocation(e.target.value)}
+                  >
+                    <option value="">Location</option>
+                    <option value="metro-manila">Metro Manila</option>
+                    <option value="makati">Makati City</option>
+                    <option value="bgc">BGC</option>
+                    <option value="quezon">Quezon City</option>
+                    <option value="mandaluyong">Mandaluyong</option>
+                    <option value="pasig">Pasig</option>
+                    <option value="cebu">Cebu City</option>
+                    <option value="davao">Davao City</option>
+                    <option value="lapulapu">Lapulapu</option>
+                    <option value="manila">Manila</option>
+                  </select>
 
-                <button 
-                  className="search-button"
-                  onClick={handleSearch}
-                >
-                  <span className="sr-only">Search</span>
-                  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <circle cx="11" cy="11" r="6" stroke="white" strokeWidth="2.5"/>
-                    <line x1="15.5" y1="15.5" x2="20" y2="20" stroke="white" strokeWidth="2.5" strokeLinecap="round"/>
-                  </svg>
-                </button>
-              </div>
+                  <button 
+                    className={`filter-button improved-filter-button${showAdvancedOptions ? ' active' : ''}`}
+                    type="button"
+                    onClick={() => setShowAdvancedOptions((prev) => !prev)}
+                    aria-label="Show filters"
+                    title="Show filters"
+                  >
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M4 6h16M6 12h12M10 18h4" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                    </svg>
+                    <span className="filter-label">Filters</span>
+                  </button>
 
-              {/* Advanced Options - Inside search container */}
-              <div className="advanced-options-panel">
-                <div className="advanced-options-grid">
-                  <div className="advanced-option-group">
-                    <label className="advanced-option-label">Min. Bedrooms</label>
-                    <select 
-                      className="advanced-option-select"
-                      value={minBeds}
-                      onChange={(e) => setMinBeds(e.target.value)}
-                    >
-                      <option value="">Any</option>
-                      <option value="1">1+</option>
-                      <option value="2">2+</option>
-                      <option value="3">3+</option>
-                      <option value="4">4+</option>
-                    </select>
-                  </div>
+                  <button 
+                    className="search-button"
+                    onClick={handleSearch}
+                  >
+                    <span className="sr-only">Search</span>
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <circle cx="11" cy="11" r="6" stroke="white" strokeWidth="2.5"/>
+                      <line x1="15.5" y1="15.5" x2="20" y2="20" stroke="white" strokeWidth="2.5" strokeLinecap="round"/>
+                    </svg>
+                  </button>
+                </div>
 
-                  <div className="advanced-option-group">
-                    <label className="advanced-option-label">Min. Bathrooms</label>
-                    <select 
-                      className="advanced-option-select"
-                      value={minBaths}
-                      onChange={(e) => setMinBaths(e.target.value)}
-                    >
-                      <option value="">Any</option>
-                      <option value="1">1+</option>
-                      <option value="2">2+</option>
-                      <option value="3">3+</option>
-                      <option value="4">4+</option>
-                    </select>
-                  </div>
+                {/* Advanced Options - Inside search container, toggled by filter button */}
+                {showAdvancedOptions && (
+                  <div className="advanced-options-panel">
+                    <div className="advanced-options-grid">
+                      <div className="advanced-option-group">
+                        <label className="advanced-option-label">Min. Bedrooms</label>
+                        <select 
+                          className="advanced-option-select"
+                          value={minBeds}
+                          onChange={(e) => setMinBeds(e.target.value)}
+                        >
+                          <option value="">Any</option>
+                          <option value="1">1+</option>
+                          <option value="2">2+</option>
+                          <option value="3">3+</option>
+                          <option value="4">4+</option>
+                        </select>
+                      </div>
 
-                  <div className="advanced-option-group price-range-group">
-                    <label className="advanced-option-label">Price Range</label>
-                    <div className="price-range-inputs-wrapper">
-                      <input
-                        type="number"
-                        className="price-range-input"
-                        placeholder="Min"
-                        value={priceMin}
-                        onChange={(e) => setPriceMin(e.target.value)}
-                      />
-                      <span className="price-range-separator">to</span>
-                      <input
-                        type="number"
-                        className="price-range-input"
-                        placeholder="Max"
-                        value={priceMax}
-                        onChange={(e) => setPriceMax(e.target.value)}
-                      />
+                      <div className="advanced-option-group">
+                        <label className="advanced-option-label">Min. Bathrooms</label>
+                        <select 
+                          className="advanced-option-select"
+                          value={minBaths}
+                          onChange={(e) => setMinBaths(e.target.value)}
+                        >
+                          <option value="">Any</option>
+                          <option value="1">1+</option>
+                          <option value="2">2+</option>
+                          <option value="3">3+</option>
+                          <option value="4">4+</option>
+                        </select>
+                      </div>
+
+                      <div className="advanced-option-group price-range-group">
+                        <label className="advanced-option-label">Price Range</label>
+                        <div className="price-range-inputs-wrapper">
+                          <input
+                            type="number"
+                            className="price-range-input"
+                            placeholder="Min"
+                            value={priceMin}
+                            onChange={(e) => setPriceMin(e.target.value)}
+                          />
+                          <span className="price-range-separator">to</span>
+                          <input
+                            type="number"
+                            className="price-range-input"
+                            placeholder="Max"
+                            value={priceMax}
+                            onChange={(e) => setPriceMax(e.target.value)}
+                          />
+                        </div>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </div>
+                )}
             </>
           )}
         </div>

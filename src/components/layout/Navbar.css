@@ -1,3 +1,70 @@
+    /* Ensure navbar-wrapper uses flex and aligns items center */
+    .navbar-wrapper {
+      display: flex;
+      align-items: center;
+      width: 100%;
+    }
+
+    /* Center block for navbar links */
+    .navbar-center-block {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-width: 0;
+    }
+
+    .navbar-center-nav {
+      display: flex;
+      gap: 2rem;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+    }
+
+    /* Profile block right-aligned */
+    .navbar-profile-block {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+    }
+
+    @media (max-width: 1024px) {
+      .navbar-center-block {
+        justify-content: flex-start;
+      }
+      .navbar-center-nav {
+        gap: 1rem;
+      }
+    }
+    /* Center block for navbar links */
+    .navbar-center-block {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .navbar-center-nav {
+      display: flex;
+      gap: 2rem;
+    }
+
+    /* Profile block right-aligned */
+    .navbar-profile-block {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+    }
+
+    @media (max-width: 1024px) {
+      .navbar-center-block {
+        justify-content: flex-start;
+      }
+      .navbar-center-nav {
+        gap: 1rem;
+      }
+    }
     /* Navigation */
     .navbar-container {
       position: relative;
@@ -33,10 +100,10 @@
     .nav-link {
       color: #205ed7;
       font-family: 'Outfit', 'Inter', sans-serif;
-      font-size: 14px;
-      font-weight: 500;
+      font-size: 16px;
+      font-weight: 400;
       text-decoration: none;
-      margin-right: 30px;
+      padding: 0 10px;
       white-space: nowrap;
       transition: color 0.2s;
     }
@@ -46,7 +113,8 @@
     }
 
     .nav-link.active {
-      font-weight: 700;
+      font-weight: 800;
+      letter-spacing: 0.15em;
     }
 
     /* Nav Dropdown (Blog -> News) */
@@ -63,7 +131,7 @@
     }
 
     .nav-dropdown-chevron {
-      font-size: 12px;
+      font-size: 15px;
       transition: transform 0.2s;
     }
 
@@ -97,7 +165,7 @@
       padding: 10px 20px;
       color: #205ed7;
       font-family: 'Outfit', 'Inter', sans-serif;
-      font-size: 14px;
+      font-size: 15px;
       font-weight: 500;
       text-decoration: none;
       white-space: nowrap;
@@ -114,7 +182,7 @@
     /* Mobile sub-link */
     .nav-link-sub {
       padding-left: 100px !important;
-      font-size: 13px;
+      font-size: 15px;
       color: #205ed7;
     }
 
@@ -182,7 +250,7 @@
       border: none;
       text-align: left;
       cursor: pointer;
-      font-size: 14px;
+      font-size: 15px;
       color: #111827;
       font-family: 'Outfit', 'Inter', sans-serif;
       transition: color 0.2s;
@@ -206,14 +274,13 @@
     }
 
     .login-button {
-      background: #fe8e0a;
-      border-radius: 10px;
+      border-radius: 40px;
       border: 1px solid #fe8e0a;
-      color: #ffffff;
+      color: #fe8e0a;
       padding: 0 20px;
       height: 48px;
       font-family: 'Outfit', 'Inter', sans-serif;
-      font-size: 14px;
+      font-size: 16px;
       font-weight: 500;
       cursor: pointer;
       display: inline-flex;
@@ -275,7 +342,7 @@
       background: linear-gradient(135deg, #3B82F6 0%, #8B5CF6 100%);
       color: white;
       font-weight: 600;
-      font-size: 14px;
+      font-size: 15px;
     }
 
     .navbar-avatar-fallback.hidden {
@@ -290,14 +357,14 @@
     }
 
     .navbar-user-name {
-      font-size: 14px;
+      font-size: 15px;
       font-weight: 600;
       color: #111827;
       font-family: 'Outfit', 'Inter', sans-serif;
     }
 
     .navbar-user-role {
-      font-size: 12px;
+      font-size: 15px;
       color: #6B7280;
       font-family: 'Outfit', 'Inter', sans-serif;
     }
@@ -341,7 +408,7 @@
       text-align: left;
       cursor: pointer;
       transition: background-color 0.2s;
-      font-size: 14px;
+      font-size: 15px;
       color: #111827;
       font-family: 'Outfit', 'Inter', sans-serif;
     }
@@ -407,7 +474,7 @@
 
       .navbar-mobile .nav-link {
         padding: 16px 24px;
-        font-size: 13px;
+        font-size: 15px;
       }
 
       .navbar-mobile-user-section {
@@ -452,21 +519,21 @@
       }
 
       .navbar-mobile-menu-item {
-        font-size: 13px;
+        font-size: 15px;
       }
 
       .navbar-user-name {
-        font-size: 13px;
+        font-size: 15px;
       }
 
       .navbar-user-role {
-        font-size: 11px;
+        font-size: 15px;
       }
 
       .mobile-login-button {
         margin: 16px;
         width: calc(100% - 32px);
-        font-size: 12px;
+        font-size: 15px;
         padding: 0 16px;
         height: 44px;
       }

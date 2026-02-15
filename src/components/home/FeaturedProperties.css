@@ -1,13 +1,12 @@
 /* SECTION */
 .featured-section {
-  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
-  padding: 60px 0;
+  background: linear-gradient(180deg, #e8f0ff 0%, #ffffff 100%);
   border-top: none;
   overflow: hidden;
   position: relative;
-  margin-top: 0;
-  min-height: 80vh;
+  min-height: 60vh;
   display: flex;
+  padding: 0 150px;
   flex-direction: column;
   justify-content: center;
 }
@@ -36,7 +35,7 @@
 /* CONTAINER */
 .featured-container {
   width: 100%;
-  margin: 0 auto;
+
 }
 
 /* HEADER */
@@ -58,7 +57,7 @@
 
 .featured-section .section-title {
   font-family: 'Outfit', 'Inter', sans-serif;
-  font-size: 36px;
+  font-size: 32px;
   font-weight: 700;
   color: #111827;
   margin: 0;
@@ -336,7 +335,7 @@
 }
 
 .featured-section .section-subheader {
-  margin-top: 20px;
+  margin-top: 50px;
 }
 
 /* RESPONSIVE */

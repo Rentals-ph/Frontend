@@ -6,43 +6,20 @@ function Partners() {
     <section className="partners-section">
       <div className="partners-container">
         <h2 className="partners-title">Our Partners</h2>
-        <div className="partners-grid">
-          <div >
-            <img
-              src={ASSETS.PARTNER_1}
-              alt="Partner 1"
-              className="partner-logo"
-            />
-          </div>
-          <div>
-            <img
-              src={ASSETS.PARTNER_2}
-              alt="Partner 2"
-              className="partner-logo"
-            />
-          </div>
-          <div >
-            <img
-              src={ASSETS.PARTNER_3}
-              alt="Partner 3"
-              className="partner-logo"
-            />
-          </div>
-          <div >
-            <img
-              src={ASSETS.PARTNER_1}
-              alt="Partner 4"
-              className="partner-logo"
-            />
+        <div className="partners-carousel">
+          <div className="partners-track">
+            <img src={ASSETS.PARTNER_1} alt="Partner 1" className="partner-logo" />
+            <img src={ASSETS.PARTNER_2} alt="Partner 2" className="partner-logo" />
+            <img src={ASSETS.PARTNER_3} alt="Partner 3" className="partner-logo" />
+            <img src={ASSETS.PARTNER_1} alt="Partner 4" className="partner-logo" />
+            {/* Duplicate for seamless loop */}
+            <img src={ASSETS.PARTNER_1} alt="Partner 1" className="partner-logo" />
+            <img src={ASSETS.PARTNER_2} alt="Partner 2" className="partner-logo" />
+            <img src={ASSETS.PARTNER_3} alt="Partner 3" className="partner-logo" />
+            <img src={ASSETS.PARTNER_1} alt="Partner 4" className="partner-logo" />
           </div>
         </div>
-        <div className="partner5-container">
-          <img
-            src={ASSETS.PARTNER_5}
-            alt="Partner 5"
-            className="partner5-image"
-          />
-        </div>
+        
       </div>
     </section>
   )

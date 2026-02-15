@@ -75,11 +75,11 @@
 .testimonial-text {
   color: #374151;
   font-family: 'Outfit', 'Inter', sans-serif;
-  font-size: 13px;
+  font-size: 18px;
   font-weight: 400;
+  font-style: italic;
   line-height: 1.6;
   margin: 0;
-  margin-bottom: 16px;
   text-align: justify;
   flex: 1;
 }

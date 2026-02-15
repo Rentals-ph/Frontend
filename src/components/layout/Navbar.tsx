@@ -174,29 +174,34 @@ function Navbar() {
             </Link>
           </div>
 
-          {/* Desktop Navigation */}
-          <nav className="navbar-desktop">
-            <Link href="/" className={`nav-link ${pathname === '/' ? 'active' : ''}`}>
-              HOME
-            </Link>
-            <Link href="/about" className={`nav-link ${pathname === '/about' ? 'active' : ''}`}>
-              ABOUT US
-            </Link>
-            <Link href="/properties" className={`nav-link ${pathname === '/properties' ? 'active' : ''}`}>
-              PROPERTIES
-            </Link>
-            <Link href="/rent-managers" className={`nav-link ${pathname === '/rent-managers' ? 'active' : ''}`}>
-              RENT MANAGERS
-            </Link>
-            <Link href="/blog" className={`nav-link ${pathname === '/blog' ? 'active' : ''}`}>
-              BLOG  
-            </Link>
-            <Link href="/news" className={`nav-link ${pathname === '/news' ? 'active' : ''}`}>
-              NEWS
-            </Link>
-            <Link href="/contact" className={`nav-link ${pathname === '/contact' ? 'active' : ''}`}>
-              CONTACT US
-            </Link>
+          {/* Desktop Navigation Centered */}
+          <div className="navbar-center-block">
+            <nav className="navbar-desktop navbar-center-nav">
+              <Link href="/" className={`nav-link ${pathname === '/' ? 'active' : ''}`}>
+                HOME
+              </Link>
+              <Link href="/about" className={`nav-link ${pathname === '/about' ? 'active' : ''}`}>
+                ABOUT US
+              </Link>
+              <Link href="/properties" className={`nav-link ${pathname === '/properties' ? 'active' : ''}`}>
+                PROPERTIES
+              </Link>
+              <Link href="/rent-managers" className={`nav-link ${pathname === '/rent-managers' ? 'active' : ''}`}>
+                RENT MANAGERS
+              </Link>
+              <Link href="/blog" className={`nav-link ${pathname === '/blog' ? 'active' : ''}`}>
+                BLOG  
+              </Link>
+              <Link href="/news" className={`nav-link ${pathname === '/news' ? 'active' : ''}`}>
+                NEWS
+              </Link>
+              <Link href="/contact" className={`nav-link ${pathname === '/contact' ? 'active' : ''}`}>
+                CONTACT US
+              </Link>
+            </nav>
+          </div>
+          {/* User/Profile section remains right-aligned */}
+          <div className="navbar-profile-block">
             {isUserLoggedIn ? (
               <div className="navbar-user-profile-wrapper" ref={userMenuRef}>
                 <button 
@@ -265,10 +270,10 @@ function Navbar() {
               </div>
             ) : (
               <button className="login-button" onClick={handleLoginClick}>
-                Login/Register
+                Login / Register
               </button>
             )}
-          </nav>
+          </div>
 
           {/* Mobile Menu Button */}
           <button 

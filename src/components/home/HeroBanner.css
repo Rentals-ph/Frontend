@@ -38,7 +38,7 @@
 /* Left Section - Blue Panel */
 .hero-banner-left {
   flex: 1;
-  background-color: rgba(32, 94, 215, 0.8);
+  background-color: rgba(32, 94, 215, 0.9);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -82,7 +82,7 @@
 /* Right Section - Orange Panel */
 .hero-banner-right {
   flex: 1;
-  background-color: rgba(254, 142, 10, 0.7);
+  background-color: rgba(254, 142, 10, 0.9);
   display: flex;
   align-items: center;
   justify-content: center;

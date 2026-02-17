@@ -4,7 +4,6 @@ import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { ASSETS } from '@/utils/assets'
-import './AppSidebar.css'
 import {
   FiMail,
   FiDownload,
@@ -174,76 +173,76 @@ function AppSidebar() {
     <>
       {/*<Link
         href="/"
-        className={`nav-item ${isActive('/') && !pathname?.includes('//') ? 'active' : ''}`}
+        className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg no-underline text-gray-500 text-[13px] font-medium transition-all ${isActive('/') && !pathname?.includes('//') ? 'bg-blue-50 text-blue-500' : 'hover:bg-gray-50 hover:text-gray-900'}`}
       >
-        <FiLayout className="nav-icon" />
+        <FiLayout className="text-lg" />
         <span>Home</span>
       </Link>*/}
       <Link
         href="/agent"
-        className={`nav-item ${isActive('/agent') && !pathname?.includes('/agent/') ? 'active' : ''}`}
+        className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg no-underline text-gray-500 text-[13px] font-medium transition-all ${isActive('/agent') && !pathname?.includes('/agent/') ? 'bg-blue-50 text-blue-500' : 'hover:bg-gray-50 hover:text-gray-900'}`}
       >
-        <FiHome className="nav-icon" />
+        <FiHome className="text-lg" />
         <span>Dashboard</span>
       </Link>
       <Link
         href="/agent/inbox"
-        className={`nav-item ${isActive('/agent/inbox') ? 'active' : ''}`}
+        className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg no-underline text-gray-500 text-[13px] font-medium transition-all ${isActive('/agent/inbox') ? 'bg-blue-50 text-blue-500' : 'hover:bg-gray-50 hover:text-gray-900'}`}
       >
-        <div className="nav-icon-wrapper">
-          <FiMail className="nav-icon" />
-          {hasUnreadMessages && <span className="inbox-indicator"></span>}
+        <div className="relative inline-flex items-center justify-center">
+          <FiMail className="text-lg" />
+          {hasUnreadMessages && <span className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white shadow-[0_0_0_1px_rgba(0,0,0,0.1)]"></span>}
         </div>
         <span>Inbox</span>
       </Link>
       {/* <Link
         href="/agent/downloadables"
-        className={`nav-item ${isActive('/agent/downloadables') ? 'active' : ''}`}
+        className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg no-underline text-gray-500 text-[13px] font-medium transition-all ${isActive('/agent/downloadables') ? 'bg-blue-50 text-blue-500' : 'hover:bg-gray-50 hover:text-gray-900'}`}
       >
-        <FiDownload className="nav-icon" />
+        <FiDownload className="text-lg" />
         <span>Downloadables</span>
       </Link> 
       <Link
         href="/agent/digital-card"
-        className={`nav-item ${isActive('/agent/digital-card') ? 'active' : ''}`}
+        className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg no-underline text-gray-500 text-[13px] font-medium transition-all ${isActive('/agent/digital-card') ? 'bg-blue-50 text-blue-500' : 'hover:bg-gray-50 hover:text-gray-900'}`}
       >
-        <FiCreditCard className="nav-icon" />
+        <FiCreditCard className="text-lg" />
         <span>Digital Business Card</span>
       </Link>*/}
       <Link
         href="/agent/page-builder"
-        className={`nav-item ${isActive('/agent/page-builder') ? 'active' : ''}`}
+        className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg no-underline text-gray-500 text-[13px] font-medium transition-all ${isActive('/agent/page-builder') ? 'bg-blue-50 text-blue-500' : 'hover:bg-gray-50 hover:text-gray-900'}`}
       >
-        <FiSettings className="nav-icon" />
+        <FiSettings className="text-lg" />
         <span>Page Builder</span>
       </Link> 
 
       <Link
           href="/agent/listings"
-          className={`nav-item ${isActive('/agent/listings') ? 'active' : ''}`}
+          className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg no-underline text-gray-500 text-[13px] font-medium transition-all ${isActive('/agent/listings') ? 'bg-blue-50 text-blue-500' : 'hover:bg-gray-50 hover:text-gray-900'}`}
         >
-          <FiList className="nav-icon" />
+          <FiList className="text-lg" />
           <span>My Listings</span>
         </Link>
         {/* <Link
           href="/agent/tracker"
-          className={`nav-item ${isActive('/agent/tracker') ? 'active' : ''}`}
+          className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg no-underline text-gray-500 text-[13px] font-medium transition-all ${isActive('/agent/tracker') ? 'bg-blue-50 text-blue-500' : 'hover:bg-gray-50 hover:text-gray-900'}`}
         >
-          <FiBarChart2 className="nav-icon" />
+          <FiBarChart2 className="text-lg" />
           <span>Rental Tracker</span>
         </Link>
         <Link
           href="/agent/rent-estimate"
-          className={`nav-item ${isActive('/agent/rent-estimate') ? 'active' : ''}`}
+          className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg no-underline text-gray-500 text-[13px] font-medium transition-all ${isActive('/agent/rent-estimate') ? 'bg-blue-50 text-blue-500' : 'hover:bg-gray-50 hover:text-gray-900'}`}
         >
-          <FiFileText className="nav-icon" />
+          <FiFileText className="text-lg" />
           <span>Rent Estimate</span>
         </Link>
         <Link
           href="/agent/blogs"
-          className={`nav-item ${isActive('/agent/blogs') ? 'active' : ''}`}
+          className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg no-underline text-gray-500 text-[13px] font-medium transition-all ${isActive('/agent/blogs') ? 'bg-blue-50 text-blue-500' : 'hover:bg-gray-50 hover:text-gray-900'}`}
         >
-          <FiBookOpen className="nav-icon" />
+          <FiBookOpen className="text-lg" />
           <span>Share Blogs</span>
         </Link>*/}
     </>
@@ -254,82 +253,82 @@ function AppSidebar() {
     <>
       <Link
         href="/broker"
-        className={`nav-item ${isActive('/broker') ? 'active' : ''}`}
+        className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg no-underline text-gray-500 text-[13px] font-medium transition-all ${isActive('/broker') ? 'bg-blue-50 text-blue-500' : 'hover:bg-gray-50 hover:text-gray-900'}`}
       >
-        <FiGrid className="nav-icon" />
+        <FiGrid className="text-lg" />
         <span>Dashboard</span>
       </Link>
       <Link
         href="/broker/company-profile"
-        className={`nav-item ${isActive('/broker/company-profile') ? 'active' : ''}`}
+        className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg no-underline text-gray-500 text-[13px] font-medium transition-all ${isActive('/broker/company-profile') ? 'bg-blue-50 text-blue-500' : 'hover:bg-gray-50 hover:text-gray-900'}`}
       >
-        <FiLayout className="nav-icon" />
+        <FiLayout className="text-lg" />
         <span>Company Profile</span>
       </Link>
       <Link
         href="/broker/team"
-        className={`nav-item ${isActive('/broker/team') ? 'active' : ''}`}
+        className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg no-underline text-gray-500 text-[13px] font-medium transition-all ${isActive('/broker/team') ? 'bg-blue-50 text-blue-500' : 'hover:bg-gray-50 hover:text-gray-900'}`}
       >
-        <FiUsers className="nav-icon" />
+        <FiUsers className="text-lg" />
         <span>Team Management</span>
       </Link>
       <Link
         href="/broker/listings"
-        className={`nav-item ${isActive('/broker/listings') ? 'active' : ''}`}
+        className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg no-underline text-gray-500 text-[13px] font-medium transition-all ${isActive('/broker/listings') ? 'bg-blue-50 text-blue-500' : 'hover:bg-gray-50 hover:text-gray-900'}`}
       >
-        <FiHome className="nav-icon" />
+        <FiHome className="text-lg" />
         <span>Listings</span>
       </Link>
       <Link
         href="/broker/approvals"
-        className={`nav-item ${isActive('/broker/approvals') ? 'active' : ''}`}
+        className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg no-underline text-gray-500 text-[13px] font-medium transition-all ${isActive('/broker/approvals') ? 'bg-blue-50 text-blue-500' : 'hover:bg-gray-50 hover:text-gray-900'}`}
       >
-        <FiCheckSquare className="nav-icon" />
+        <FiCheckSquare className="text-lg" />
         <span>Agent Approvals</span>
       </Link>
       <Link
         href="/broker/page-builder"
-        className={`nav-item ${isActive('/broker/page-builder') ? 'active' : ''}`}
+        className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg no-underline text-gray-500 text-[13px] font-medium transition-all ${isActive('/broker/page-builder') ? 'bg-blue-50 text-blue-500' : 'hover:bg-gray-50 hover:text-gray-900'}`}
       >
-        <FiFileText className="nav-icon" />
+        <FiFileText className="text-lg" />
         <span>Page Builder</span>
       </Link>
       <Link
         href="/broker/reports"
-        className={`nav-item ${isActive('/broker/reports') ? 'active' : ''}`}
+        className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg no-underline text-gray-500 text-[13px] font-medium transition-all ${isActive('/broker/reports') ? 'bg-blue-50 text-blue-500' : 'hover:bg-gray-50 hover:text-gray-900'}`}
       >
-        <FiBarChart2 className="nav-icon" />
+        <FiBarChart2 className="text-lg" />
         <span>Reports</span>
       </Link>
       <Link
         href="/broker/inbox"
-        className={`nav-item ${isActive('/broker/inbox') ? 'active' : ''}`}
+        className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg no-underline text-gray-500 text-[13px] font-medium transition-all ${isActive('/broker/inbox') ? 'bg-blue-50 text-blue-500' : 'hover:bg-gray-50 hover:text-gray-900'}`}
       >
-        <div className="nav-icon-wrapper">
-          <FiMail className="nav-icon" />
-          {hasUnreadMessages && <span className="inbox-indicator"></span>}
+        <div className="relative inline-flex items-center justify-center">
+          <FiMail className="text-lg" />
+          {hasUnreadMessages && <span className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white shadow-[0_0_0_1px_rgba(0,0,0,0.1)]"></span>}
         </div>
         <span>Inbox</span>
       </Link>
       <Link
         href="/broker/downloadables"
-        className={`nav-item ${isActive('/broker/downloadables') ? 'active' : ''}`}
+        className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg no-underline text-gray-500 text-[13px] font-medium transition-all ${isActive('/broker/downloadables') ? 'bg-blue-50 text-blue-500' : 'hover:bg-gray-50 hover:text-gray-900'}`}
       >
-        <FiDownload className="nav-icon" />
+        <FiDownload className="text-lg" />
         <span>Downloadables</span>
       </Link>
       <Link
         href="/broker/digital-card"
-        className={`nav-item ${isActive('/broker/digital-card') ? 'active' : ''}`}
+        className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg no-underline text-gray-500 text-[13px] font-medium transition-all ${isActive('/broker/digital-card') ? 'bg-blue-50 text-blue-500' : 'hover:bg-gray-50 hover:text-gray-900'}`}
       >
-        <FiCreditCard className="nav-icon" />
+        <FiCreditCard className="text-lg" />
         <span>Digital Business Card</span>
       </Link>
       <Link
         href="/broker/settings"
-        className={`nav-item ${isActive('/broker/settings') ? 'active' : ''}`}
+        className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg no-underline text-gray-500 text-[13px] font-medium transition-all ${isActive('/broker/settings') ? 'bg-blue-50 text-blue-500' : 'hover:bg-gray-50 hover:text-gray-900'}`}
       >
-        <FiSettings className="nav-icon" />
+        <FiSettings className="text-lg" />
         <span>Settings</span>
       </Link>
     </>
@@ -340,44 +339,44 @@ function AppSidebar() {
     <>
       <Link
         href="/"
-        className={`nav-item ${isActive('/') && !pathname?.includes('//') ? 'active' : ''}`}
+        className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg no-underline text-gray-500 text-[13px] font-medium transition-all ${isActive('/') && !pathname?.includes('//') ? 'bg-blue-50 text-blue-500' : 'hover:bg-gray-50 hover:text-gray-900'}`}
       >
-        <FiLayout className="nav-icon" />
+        <FiLayout className="text-lg" />
         <span>Home</span>
       </Link>
       <Link
         href="/admin"
-        className={`nav-item ${isActive('/admin') ? 'active' : ''}`}
+        className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg no-underline text-gray-500 text-[13px] font-medium transition-all ${isActive('/admin') ? 'bg-blue-50 text-blue-500' : 'hover:bg-gray-50 hover:text-gray-900'}`}
       >
-        <FiHome className="nav-icon" />
+        <FiHome className="text-lg" />
         <span>Dashboard</span>
       </Link>
       <Link
         href="/admin/agents"
-        className={`nav-item ${isActive('/admin/agents') ? 'active' : ''}`}
+        className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg no-underline text-gray-500 text-[13px] font-medium transition-all ${isActive('/admin/agents') ? 'bg-blue-50 text-blue-500' : 'hover:bg-gray-50 hover:text-gray-900'}`}
       >
-        <FiUsers className="nav-icon" />
+        <FiUsers className="text-lg" />
         <span>Agents</span>
       </Link>
       <Link
         href="/admin/properties"
-        className={`nav-item ${isActive('/admin/properties') ? 'active' : ''}`}
+        className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg no-underline text-gray-500 text-[13px] font-medium transition-all ${isActive('/admin/properties') ? 'bg-blue-50 text-blue-500' : 'hover:bg-gray-50 hover:text-gray-900'}`}
       >
-        <FiLayers className="nav-icon" />
+        <FiLayers className="text-lg" />
         <span>Properties</span>
       </Link>
       <Link
         href="/admin/revenue"
-        className={`nav-item ${isActive('/admin/revenue') ? 'active' : ''}`}
+        className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg no-underline text-gray-500 text-[13px] font-medium transition-all ${isActive('/admin/revenue') ? 'bg-blue-50 text-blue-500' : 'hover:bg-gray-50 hover:text-gray-900'}`}
       >
-        <FiDollarSign className="nav-icon" />
+        <FiDollarSign className="text-lg" />
         <span>Revenue</span>
       </Link>
       <Link
         href="/admin/users"
-        className={`nav-item ${isActive('/admin/users') ? 'active' : ''}`}
+        className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg no-underline text-gray-500 text-[13px] font-medium transition-all ${isActive('/admin/users') ? 'bg-blue-50 text-blue-500' : 'hover:bg-gray-50 hover:text-gray-900'}`}
       >
-        <FiUsers className="nav-icon" />
+        <FiUsers className="text-lg" />
         <span>Users</span>
       </Link>
     </>
@@ -391,7 +390,7 @@ function AppSidebar() {
     <>
       {/* Mobile Menu Toggle Button */}
       <button 
-        className="mobile-menu-toggle"
+        className="hidden fixed top-4 left-4 z-[1001] bg-white border border-gray-200 rounded-lg p-2.5 cursor-pointer text-gray-900 shadow-[0_2px_4px_rgba(0,0,0,0.1)] transition-all md:flex md:items-center md:justify-center hover:bg-gray-50 hover:shadow-[0_4px_6px_rgba(0,0,0,0.15)] max-[480px]:top-3 max-[480px]:left-3 max-[480px]:p-2"
         onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
         aria-label="Toggle menu"
       >
@@ -401,7 +400,7 @@ function AppSidebar() {
       {/* Mobile Overlay */}
       {isMobileMenuOpen && (
         <div 
-          className="mobile-sidebar-overlay"
+          className="hidden fixed inset-0 bg-black/50 z-[999] md:block"
           onClick={() => setIsMobileMenuOpen(false)}
         />
       )}
@@ -409,43 +408,43 @@ function AppSidebar() {
       {/* Sidebar */}
       <aside 
         ref={sidebarRef}
-        className={`app-sidebar ${isAdminRoute ? 'admin-sidebar' : isBrokerRoute ? 'broker-sidebar' : 'agent-sidebar'} ${isMobileMenuOpen ? 'mobile-open' : ''}`}
+        className={`w-[280px] lg:w-60 bg-white border-r border-gray-200 flex flex-col fixed h-screen overflow-hidden z-[1000] md:-translate-x-full md:transition-transform md:duration-300 md:ease-in-out max-[480px]:w-[260px] ${isMobileMenuOpen ? 'md:translate-x-0' : ''}`}
       >
-        <div className="sidebar-logo">
-          <div className="logo-container">
+        <div className="p-2.5 border-b border-gray-200 flex-shrink-0">
+          <div className="flex items-center justify-center w-full mb-1">
             <Link href="/">
               <img
                 src={ASSETS.LOGO_HERO_MAIN}
                 alt="Rentals.ph logo"
-                className="logo-image"
+                className="w-auto h-[60px] md:h-[50px] max-w-full object-contain"
               />
             </Link>
           </div>
         </div>
 
-        <nav className="sidebar-nav" onClick={handleNavClick}>
+        <nav className="p-3 lg:py-2.5 lg:px-2 md:p-3 flex flex-col gap-4 lg:gap-3 md:gap-4 flex-1 overflow-y-auto overflow-x-hidden min-h-0 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-gray-300 [&::-webkit-scrollbar-thumb]:rounded [&::-webkit-scrollbar-thumb:hover]:bg-gray-400" onClick={handleNavClick}>
           {isAdminRoute ? renderAdminSidebar() : isBrokerRoute ? renderBrokerSidebar() : renderAgentSidebar()}
         </nav>
 
         {isBrokerRoute && (
-          <div className="sidebar-user-profile-wrapper" ref={logoutRef}>
+          <div className="relative flex-shrink-0" ref={logoutRef}>
             {showLogoutDropdown && (
-              <div className="sidebar-logout-dropdown">
-                <button className="sidebar-logout-btn" onClick={handleLogout}>
-                  <FiLogOut className="logout-icon" />
+              <div className="absolute bottom-full left-3 right-3 bg-white border border-gray-200 rounded-[10px] shadow-[0_-4px_16px_rgba(0,0,0,0.12)] p-1.5 mb-1.5 z-[100] animate-[slideUpFade_0.15s_ease-out]">
+                <button className="flex items-center gap-2.5 w-full px-3.5 py-2.5 bg-transparent border-none rounded-lg text-sm font-medium text-red-500 cursor-pointer transition-colors hover:bg-red-50" onClick={handleLogout}>
+                  <FiLogOut className="text-lg flex-shrink-0" />
                   <span>Logout</span>
                 </button>
               </div>
             )}
             <div 
-              className="sidebar-user-profile" 
+              className="flex items-center gap-2.5 px-5 py-4 border-t border-gray-200 flex-shrink-0 transition-colors cursor-pointer hover:bg-gray-100" 
               onClick={() => setShowLogoutDropdown(!showLogoutDropdown)}
-              style={{ cursor: 'pointer' }}
             >
-              <div className="sidebar-user-avatar">
+              <div className="w-9 h-9 rounded-full overflow-hidden flex-shrink-0 bg-gray-200">
                 <img
                   src={ASSETS.PLACEHOLDER_PROFILE}
                   alt="User"
+                  className="w-full h-full object-cover"
                   onError={(e) => {
                     const target = e.target as HTMLImageElement
                     target.style.display = 'none'
@@ -454,11 +453,11 @@ function AppSidebar() {
                     }
                   }}
                 />
-                <div className="sidebar-user-fallback" style={{ display: 'none' }}>JA</div>
+                <div className="w-full h-full hidden items-center justify-center bg-gradient-to-br from-blue-500 to-purple-600 text-white font-semibold text-[13px]">JA</div>
               </div>
-              <div className="sidebar-user-details">
-                <span className="sidebar-user-name">John Anderson</span>
-                <span className="sidebar-user-role">Broker</span>
+              <div className="flex flex-col gap-px flex-1 min-w-0">
+                <span className="text-[13px] font-semibold text-gray-900 whitespace-nowrap overflow-hidden text-ellipsis">John Anderson</span>
+                <span className="text-[11px] text-gray-400">Broker</span>
               </div>
             </div>
           </div>

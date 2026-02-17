@@ -9,7 +9,6 @@ import {
   FiChevronDown,
   FiArrowRight
 } from 'react-icons/fi'
-import '../AgentCreateListingCategory.css'
 
 function ProgressRing({ percent }: { percent: number }) {
   const { radius, stroke, normalizedRadius, circumference, strokeDashoffset } = useMemo(() => {
@@ -28,8 +27,8 @@ function ProgressRing({ percent }: { percent: number }) {
   }, [percent])
 
   return (
-    <div className="aclc-progress">
-      <svg height={radius * 2} width={radius * 2} className="aclc-progress-svg">
+    <div className="relative w-[52px] h-[52px] flex-shrink-0">
+      <svg height={radius * 2} width={radius * 2} className="-rotate-90">
         <circle
           stroke="#E5E7EB"
           fill="transparent"
@@ -48,10 +47,10 @@ function ProgressRing({ percent }: { percent: number }) {
           r={normalizedRadius}
           cx={radius}
           cy={radius}
-          className="aclc-progress-ring"
+          className="transition-[stroke-dashoffset] duration-[250ms] ease-out"
         />
       </svg>
-      <div className="aclc-progress-text">{percent}%</div>
+      <div className="absolute inset-0 flex items-center justify-center text-xs font-bold text-gray-900">{percent}%</div>
     </div>
   )
 }
@@ -82,59 +81,65 @@ export default function AgentCreateListingCategory() {
   const stepLabels = ['Category', 'Details', 'Location', 'Property Images', 'Pricing', 'Attributes', 'Owner Info', 'Publish']
 
   return (
-    <div className="agent-dashboard">
+    <div className="flex min-h-screen bg-gray-100 font-outfit">
       <AppSidebar />
-      <main className="agent-main">
+      <main className="ml-[280px] flex-1 w-[calc(100%-280px)] p-8 min-h-screen lg:ml-60 lg:w-[calc(100%-240px)] lg:p-6 md:ml-[200px] md:w-[calc(100%-200px)] md:p-4">
         <AgentHeader 
           title="Create Listing" 
           subtitle="Add a new property to your portfolio." 
         />
 
-        <div className="aclc-breadcrumb">
-          <span className="aclc-breadcrumb-strong">Create Listing</span>
-          <span className="aclc-breadcrumb-sep">&gt;</span>
-          <span className="aclc-breadcrumb-muted">Category</span>
+        <div className="flex items-center gap-2 text-xl font-semibold text-gray-900 my-1.5 mb-[18px]">
+          <span className="text-gray-900">Create Listing</span>
+          <span className="text-gray-400 font-medium">&gt;</span>
+          <span className="text-gray-400 font-semibold">Category</span>
         </div>
 
-        <div className="section-card aclc-stepper-card">
-          <div className="aclc-stepper-left">
+        <div className="section-card flex items-center gap-[18px] p-5 px-[22px] mb-6 lg:flex-col lg:items-start">
+          <div className="flex items-center gap-3.5 min-w-[220px]">
             <ProgressRing percent={10} />
-            <div className="aclc-stepper-left-text">
-              <div className="aclc-stepper-left-title">Completion Status</div>
+            <div className="flex flex-col">
+              <div className="text-sm font-semibold text-gray-500">Completion Status</div>
             </div>
           </div>
 
-          <div className="aclc-steps">
+          <div className="flex-1 grid grid-cols-4 items-start gap-0 lg:w-full lg:overflow-x-auto lg:pb-1.5 lg:justify-start">
             {stepLabels.map((label, idx) => {
               const step = idx + 1
               const isActive = step === 1
               const isDone = step < 1
               return (
-                <div className="aclc-step" key={label}>
-                  <div className="aclc-step-top">
-                    <div className={`aclc-step-circle ${isActive ? 'active' : ''} ${isDone ? 'done' : ''}`}>
+                <div className="flex flex-col items-center min-w-0 lg:flex-[0_0_auto]" key={label}>
+                  <div className="w-full flex items-center relative">
+                    <div className={`w-11 h-11 rounded-full flex items-center justify-center font-bold text-base flex-shrink-0 relative z-[2] ${
+                      isActive ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-400'
+                    }`}>
                       {step}
                     </div>
-                    {step !== stepLabels.length && <div className={`aclc-step-line ${step < 1 ? 'done' : ''}`} />}
+                    {step !== stepLabels.length && <div className={`h-1.5 rounded-full flex-1 ml-2 mr-2 min-w-0 lg:w-9 lg:flex-[0_0_auto] ${
+                      step < 1 ? 'bg-blue-600' : 'bg-gray-200'
+                    }`} />}
                   </div>
-                  <div className={`aclc-step-label ${isActive ? 'active' : ''}`}>{label}</div>
+                  <div className={`mt-2 text-xs font-semibold text-center leading-tight ${
+                    isActive ? 'text-blue-600' : 'text-gray-400'
+                  }`}>{label}</div>
                 </div>
               )
             })}
           </div>
         </div>
 
-        <div className="section-card aclc-form-card">
-          <h2 className="aclc-form-title">Property Category</h2>
+        <div className="section-card p-[26px] max-w-full">
+          <h2 className="m-0 mb-[18px] text-[28px] font-bold text-gray-900">Property Category</h2>
 
-          <label className="aclc-label" htmlFor="propertyCategory">
+          <label className="block text-sm font-semibold text-blue-600 mb-2" htmlFor="propertyCategory">
             Property Category
           </label>
 
-          <div className="aclc-select-wrap">
+          <div className="relative w-full">
             <select
               id="propertyCategory"
-              className="aclc-select"
+              className="w-full h-12 px-4 pr-11 border border-gray-300 rounded-lg bg-white text-gray-900 text-sm outline-none appearance-none focus:border-blue-600 focus:shadow-[0_0_0_3px_rgba(37,99,235,0.18)]"
               value={category}
               onChange={(e) => setCategory(e.target.value)}
             >
@@ -147,11 +152,11 @@ export default function AgentCreateListingCategory() {
                 </option>
               ))}
             </select>
-            <FiChevronDown className="aclc-select-caret" />
+            <FiChevronDown className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none text-lg" />
           </div>
 
           <button
-            className="aclc-next-btn"
+            className="mt-[18px] h-[46px] px-[22px] rounded-lg border-none bg-blue-600 text-white font-bold text-sm inline-flex items-center gap-2.5 cursor-pointer shadow-[0_6px_12px_rgba(37,99,235,0.22)] transition-all duration-150 ease-out hover:bg-blue-700 hover:-translate-y-px hover:shadow-[0_10px_18px_rgba(37,99,235,0.25)] disabled:bg-blue-300 disabled:cursor-not-allowed disabled:shadow-none disabled:transform-none"
             disabled={!category}
             onClick={() => {
               updateData({ category })

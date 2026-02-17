@@ -1,7 +1,6 @@
 'use client'
 
 import { useRef, useEffect } from 'react'
-import './SharePopup.css'
 
 export type SharePlatform = 'facebook' | 'whatsapp' | 'gmail' | 'twitter' | 'email' | 'copy' | 'print'
 
@@ -128,19 +127,29 @@ export default function SharePopup({
   return (
     <div
       ref={popupRef}
-      className={`share-popup share-popup--${position} share-popup--${align}`}
+      className={`absolute z-[1000] flex min-w-[160px] flex-col gap-1 overflow-visible rounded-xl border border-gray-200 bg-white p-2 shadow-[0_4px_20px_rgba(0,0,0,0.15),0_2px_8px_rgba(0,0,0,0.1)] md:min-w-[140px] md:gap-0.75 md:p-1.5 xs:min-w-[130px] xs:gap-0.5 xs:p-1.25 ${
+        position === 'top' 
+          ? `bottom-[calc(100%+8px)] before:absolute before:bottom-[-6px] before:h-3 before:w-3 before:rotate-45 before:border-b before:border-l before:border-gray-200 before:bg-white before:content-['']` 
+          : `top-[calc(100%+8px)] before:absolute before:top-[-6px] before:h-3 before:w-3 before:rotate-45 before:border-l before:border-t before:border-gray-200 before:bg-white before:content-['']`
+      } ${
+        align === 'right' 
+          ? 'right-0 before:right-3' 
+          : 'left-0 before:left-3'
+      }`}
     >
       {options.map((option) => (
         <button
           key={option.platform}
-          className="share-popup__option"
+          className="flex w-full cursor-pointer items-center gap-3 rounded-lg border-0 bg-transparent px-3 py-2.5 text-left font-outfit text-sm font-medium text-gray-700 transition-all hover:bg-gray-100 md:gap-2.5 md:px-2.5 md:py-2 md:text-xs xs:gap-2 xs:px-2.25 xs:py-1.75 xs:text-xs"
           onClick={(e) => {
             e.stopPropagation()
             handleOptionClick(option.platform)
           }}
         >
-          {option.icon}
-          <span>{option.label}</span>
+          <span className="h-5 w-5 flex-shrink-0 md:h-4.5 md:w-4.5 xs:h-4 xs:w-4">
+            {option.icon}
+          </span>
+          <span className="flex-1">{option.label}</span>
         </button>
       ))}
     </div>

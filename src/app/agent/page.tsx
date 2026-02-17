@@ -25,7 +25,7 @@ import {
   FiBookOpen,
   FiX
 } from 'react-icons/fi'
-import './page.css'
+// import './page.css' // Removed - converted to Tailwind
 
 interface ListingData {
   id?: number
@@ -138,101 +138,106 @@ export default function AgentDashboard() {
     setPreviewListing(null)
   }
   return (
-    <div className="agent-dashboard">
+    <div className="flex min-h-screen bg-gray-100 font-outfit">
       <AppSidebar/>
 
-      <main className="agent-main">
+      <main className="ml-[280px] flex-1 w-[calc(100%-280px)] p-8 min-h-screen lg:ml-[240px] lg:w-[calc(100%-240px)] lg:p-6 md:ml-0 md:w-full md:p-4 md:pt-15">
         <AgentHeader 
           title="Dashboard" 
           subtitle="Welcome back, manage your rental properties." 
         />
 
-        <div className="metrics-grid">
-          <div className="metric-card orange">
-            <div className="metric-icon">
+        <div className="grid grid-cols-4 gap-6 mb-8 lg:grid-cols-2 md:grid-cols-1">
+          <div className="bg-white rounded-2xl p-6 flex items-start gap-4 shadow-sm transition-all duration-200 hover:shadow-md">
+            <div className="w-14 h-14 rounded-xl flex items-center justify-center text-2xl flex-shrink-0 bg-orange-100 text-orange-600">
               <FiHome />
             </div>
-            <div className="metric-content">
-              <h3>Total Listings</h3>
-              <p className="metric-value">{statsLoading ? '...' : stats.totalListings}</p>
-              <p className="metric-change positive">+12%</p>
+            <div className="flex-1">
+              <h3 className="text-sm font-medium text-gray-600 mb-2">Total Listings</h3>
+              <p className="text-3xl font-bold text-gray-900 mb-1">{statsLoading ? '...' : stats.totalListings}</p>
+              <p className="text-xs font-medium text-emerald-600">+12%</p>
             </div>
           </div>
 
-          <div className="metric-card blue">
-            <div className="metric-icon">
+          <div className="bg-white rounded-2xl p-6 flex items-start gap-4 shadow-sm transition-all duration-200 hover:shadow-md">
+            <div className="w-14 h-14 rounded-xl flex items-center justify-center text-2xl flex-shrink-0 bg-blue-100 text-blue-600">
               <FiCheckCircle />
             </div>
-            <div className="metric-content">
-              <h3>Active Properties</h3>
-              <p className="metric-value">{statsLoading ? '...' : stats.activeListings}</p>
-              <p className="metric-status active">Active</p>
+            <div className="flex-1">
+              <h3 className="text-sm font-medium text-gray-600 mb-2">Active Properties</h3>
+              <p className="text-3xl font-bold text-gray-900 mb-1">{statsLoading ? '...' : stats.activeListings}</p>
+              <p className="text-xs font-medium text-emerald-600">Active</p>
             </div>
           </div>
 
-          <div className="metric-card green">
-            <div className="metric-icon">
+          <div className="bg-white rounded-2xl p-6 flex items-start gap-4 shadow-sm transition-all duration-200 hover:shadow-md">
+            <div className="w-14 h-14 rounded-xl flex items-center justify-center text-2xl flex-shrink-0 bg-emerald-100 text-emerald-600">
               <FiDollarSign />
             </div>
-            <div className="metric-content">
-              <h3>Total Revenue</h3>
-              <p className="metric-value">
+            <div className="flex-1">
+              <h3 className="text-sm font-medium text-gray-600 mb-2">Total Revenue</h3>
+              <p className="text-3xl font-bold text-gray-900 mb-1">
                 {statsLoading ? '...' : stats.totalRevenue >= 1000 
                   ? `₱${(stats.totalRevenue / 1000).toFixed(0)}K`
                   : `₱${stats.totalRevenue.toLocaleString()}`}
               </p>
-              <p className="metric-frequency">Monthly</p>
+              <p className="text-xs font-medium text-gray-500">Monthly</p>
             </div>
           </div>
 
-          <div className="metric-card purple">
-            <div className="metric-icon">
+          <div className="bg-white rounded-2xl p-6 flex items-start gap-4 shadow-sm transition-all duration-200 hover:shadow-md">
+            <div className="w-14 h-14 rounded-xl flex items-center justify-center text-2xl flex-shrink-0 bg-purple-100 text-purple-600">
               <FiMail />
             </div>
-            <div className="metric-content">
-              <h3>Unread Messages</h3>
-              <p className="metric-value">{statsLoading ? '...' : stats.unreadMessages}</p>
-              <p className="metric-status new">{stats.unreadMessages > 0 ? 'New' : 'None'}</p>
+            <div className="flex-1">
+              <h3 className="text-sm font-medium text-gray-600 mb-2">Unread Messages</h3>
+              <p className="text-3xl font-bold text-gray-900 mb-1">{statsLoading ? '...' : stats.unreadMessages}</p>
+              <p className="text-xs font-medium text-blue-600">{stats.unreadMessages > 0 ? 'New' : 'None'}</p>
             </div>
           </div>
         </div>
 
-        <div className="content-grid">
-          <div className="content-column left">
-            <div className="section-card">
-              <div className="section-header">
-                <h2>Recent Listings</h2>
-                <Link href="/agent/listings" className="view-all-link">View All</Link>
+        <div className="grid grid-cols-[1fr_400px] gap-6 lg:grid-cols-1">
+          <div>
+            <div className="bg-white rounded-2xl p-6 shadow-sm">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-xl font-bold text-gray-900">Recent Listings</h2>
+                <Link href="/agent/listings" className="text-sm text-blue-600 font-medium hover:underline">View All</Link>
               </div>
-              <div className="listings-list">
+              <div className="flex flex-col gap-4">
                 {loading ? (
                   <div style={{ padding: '2rem', textAlign: 'center' }}>Loading listings...</div>
                 ) : listings.length === 0 ? (
                   <div style={{ padding: '2rem', textAlign: 'center' }}>No listings yet. Create your first listing!</div>
                 ) : (
                   listings.map((listing) => (
-                    <div key={listing.id || listing.title} className="listing-item">
-                      <div className="listing-image">
-                        <img src={listing.image} alt={listing.title} onError={(e) => {
-                          const target = e.target as HTMLImageElement
-                          target.src = ASSETS.PLACEHOLDER_PROPERTY_MAIN
-                        }} />
+                    <div key={listing.id || listing.title} className="flex gap-4 p-4 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors duration-200">
+                      <div className="w-32 h-24 rounded-lg overflow-hidden flex-shrink-0">
+                        <img 
+                          src={listing.image} 
+                          alt={listing.title} 
+                          className="w-full h-full object-cover"
+                          onError={(e) => {
+                            const target = e.target as HTMLImageElement
+                            target.src = ASSETS.PLACEHOLDER_PROPERTY_MAIN
+                          }} 
+                        />
                       </div>
-                      <div className="listing-info">
-                        <h4>{listing.title}</h4>
-                        <p className="listing-details">{listing.details}</p>
-                        <p className="listing-price">{listing.price}</p>
+                      <div className="flex-1 min-w-0">
+                        <h4 className="text-base font-semibold text-gray-900 mb-1">{listing.title}</h4>
+                        <p className="text-sm text-gray-600 mb-1">{listing.details}</p>
+                        <p className="text-base font-bold text-blue-600">{listing.price}</p>
                       </div>
-                      <div className="listing-right">
-                        <span className={`status-badge ${listing.status}`}>
+                      <div className="flex flex-col items-end justify-between gap-2">
+                        <span className={`px-3 py-1 rounded-full text-xs font-medium ${listing.status === 'active' ? 'bg-emerald-100 text-emerald-700' : 'bg-yellow-100 text-yellow-700'}`}>
                           {listing.status === 'active' ? 'Active' : 'Pending'}
                         </span>
-                        <div className="listing-actions">
-                          <button className="action-btn" title="Edit">
+                        <div className="flex gap-2">
+                          <button className="w-8 h-8 rounded-lg bg-white hover:bg-blue-50 flex items-center justify-center text-gray-600 hover:text-blue-600 transition-colors duration-200 border border-gray-200" title="Edit">
                             <FiEdit3 />
                           </button>
                           <button 
-                            className="action-btn" 
+                            className="w-8 h-8 rounded-lg bg-white hover:bg-blue-50 flex items-center justify-center text-gray-600 hover:text-blue-600 transition-colors duration-200 border border-gray-200" 
                             title="View"
                             onClick={() => handleViewClick(listing)}
                           >
@@ -247,17 +252,17 @@ export default function AgentDashboard() {
             </div>
           </div>
 
-          <div className="content-column right">
-            <div className="section-card create-listing-card">
-              <div className="create-listing-content">
-                <div className="create-listing-icon-wrapper">
-                  <FiPlus className="create-listing-icon" />
+          <div>
+            <div className="bg-gradient-to-br from-blue-600 to-purple-700 rounded-2xl p-8 shadow-lg text-white mb-6">
+              <div className="flex flex-col items-center text-center gap-6">
+                <div className="w-16 h-16 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center">
+                  <FiPlus className="text-white text-3xl" />
                 </div>
-                <div className="create-listing-text">
-                  <h2>Create New Listing</h2>
-                  <p>Add a new property to your portfolio and reach thousands of potential tenants.</p>
+                <div>
+                  <h2 className="text-2xl font-bold mb-2">Create New Listing</h2>
+                  <p className="text-blue-100">Add a new property to your portfolio and reach thousands of potential tenants.</p>
                 </div>
-                <Link href="/agent/create-listing" className="create-listing-button">
+                <Link href="/agent/create-listing" className="px-8 py-3 bg-white text-blue-600 rounded-xl font-semibold hover:bg-blue-50 transition-all duration-200 flex items-center gap-2 shadow-md hover:shadow-lg">
                   Get Started
                   <FiArrowRight />
                 </Link>
@@ -292,12 +297,12 @@ export default function AgentDashboard() {
               </div>
             </div>*/}
 
-            <div className="section-card">
-              <div className="section-header">
-                <h2>Recent Messages</h2>
-                <Link href="/agent/inbox" className="view-all-link">View All Messages</Link>
+            <div className="bg-white rounded-2xl p-6 shadow-sm">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-xl font-bold text-gray-900">Recent Messages</h2>
+                <Link href="/agent/inbox" className="text-sm text-blue-600 font-medium hover:underline">View All Messages</Link>
               </div>
-              <div className="messages-list">
+              <div>
                 {stats.unreadMessages === 0 ? (
                   <div style={{ padding: '2rem', textAlign: 'center', color: '#666' }}>
                     No new messages
@@ -323,18 +328,18 @@ export default function AgentDashboard() {
           </div>
         </div>
 
-        <div className="tools-section">
-          <h2 className="tools-title">Rental Management Tools</h2>
-          <div className="tools-grid">
-            <Link href="/agent/create-listing" className="tool-card orange">
-              <FiPlus className="tool-icon" />
-              <h3>Create Listing</h3>
-              <p>Add new property</p>
+        <div className="mt-8">
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">Rental Management Tools</h2>
+          <div className="grid grid-cols-2 gap-4 lg:grid-cols-1">
+            <Link href="/agent/create-listing" className="bg-gradient-to-br from-orange-500 to-orange-600 rounded-2xl p-6 text-white hover:shadow-lg transition-all duration-200 flex flex-col items-center text-center gap-3">
+              <FiPlus className="text-4xl" />
+              <h3 className="text-lg font-bold">Create Listing</h3>
+              <p className="text-orange-100 text-sm">Add new property</p>
             </Link>
-            <Link href="/agent/listings" className="tool-card light-blue">
-              <FiList className="tool-icon" />
-              <h3>My Listings</h3>
-              <p>Manage properties</p>
+            <Link href="/agent/listings" className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl p-6 text-white hover:shadow-lg transition-all duration-200 flex flex-col items-center text-center gap-3">
+              <FiList className="text-4xl" />
+              <h3 className="text-lg font-bold">My Listings</h3>
+              <p className="text-blue-100 text-sm">Manage properties</p>
             </Link>
             {/*<Link href="/agent/tracker" className="tool-card light-green">
               <FiBarChart2 className="tool-icon" />
@@ -350,24 +355,24 @@ export default function AgentDashboard() {
         </div>
       </main>
 
-      {/* Preview Modal */}
+     
       {previewListing && (
-        <div className="preview-modal-overlay" onClick={handleClosePreview}>
-          <div className="preview-modal-content" onClick={(e) => e.stopPropagation()}>
-            <button className="preview-modal-close" onClick={handleClosePreview}>
-              <FiX />
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4" onClick={handleClosePreview}>
+          <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl" onClick={(e) => e.stopPropagation()}>
+            <button className="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center hover:bg-white transition-colors duration-200 shadow-lg" onClick={handleClosePreview}>
+              <FiX className="text-xl text-gray-700" />
             </button>
-            <div className="preview-modal-image">
-              <img src={previewListing.image} alt={previewListing.title} />
+            <div className="w-full h-64 rounded-t-2xl overflow-hidden">
+              <img src={previewListing.image} alt={previewListing.title} className="w-full h-full object-cover" />
             </div>
-            <div className="preview-modal-info">
-              <h3>{previewListing.title}</h3>
-              <p className="preview-details">{previewListing.details}</p>
-              <p className="preview-price">
+            <div className="p-8">
+              <h3 className="text-2xl font-bold text-gray-900 mb-3">{previewListing.title}</h3>
+              <p className="text-base text-gray-600 mb-4">{previewListing.details}</p>
+              <p className="text-3xl font-bold text-blue-600 mb-4">
                 {previewListing.price}
-                <span className="price-period">/month</span>
+                <span className="text-lg text-gray-500 font-normal">/month</span>
               </p>
-              <span className={`status-badge ${previewListing.status}`}>
+              <span className={`inline-block px-4 py-2 rounded-full text-sm font-medium ${previewListing.status === 'active' ? 'bg-emerald-100 text-emerald-700' : 'bg-yellow-100 text-yellow-700'}`}>
                 {previewListing.status === 'active' ? 'Active' : 'Pending'}
               </span>
             </div>

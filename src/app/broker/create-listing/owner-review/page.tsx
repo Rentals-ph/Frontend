@@ -15,8 +15,8 @@ import {
   FiArrowLeft,
   FiUpload
 } from 'react-icons/fi'
-import '../../broker-shared.css'
-import '../../../agent/create-listing/AgentCreateListingCategory.css'
+// import '../../broker-shared.css' // Removed - converted to Tailwind
+// import '../../../agent/create-listing/AgentCreateListingCategory.css' // Removed - converted to Tailwind
 import '../../../agent/create-listing/publish/page.css'
 
 function ProgressRing({ percent }: { percent: number }) {
@@ -25,12 +25,12 @@ function ProgressRing({ percent }: { percent: number }) {
     return { radius: r, stroke: s, normalizedRadius: nr, circumference: c, strokeDashoffset: offset }
   }, [percent])
   return (
-    <div className="aclc-progress">
-      <svg height={radius * 2} width={radius * 2} className="aclc-progress-svg">
+    <div className="relative w-13 h-13 flex-shrink-0"> {/* aclc-progress */}
+      <svg height={radius * 2} width={radius * 2} className="-rotate-90"> {/* aclc-progress-svg */}
         <circle stroke="#E5E7EB" fill="transparent" strokeWidth={stroke} r={normalizedRadius} cx={radius} cy={radius} />
-        <circle stroke="#2563EB" fill="transparent" strokeWidth={stroke} strokeLinecap="round" strokeDasharray={`${circumference} ${circumference}`} style={{ strokeDashoffset }} r={normalizedRadius} cx={radius} cy={radius} className="aclc-progress-ring" />
+        <circle stroke="#2563EB" fill="transparent" strokeWidth={stroke} strokeLinecap="round" strokeDasharray={`${circumference} ${circumference}`} style={{ strokeDashoffset }} r={normalizedRadius} cx={radius} cy={radius} className="transition-all duration-250 ease-in" /> {/* aclc-progress-ring */}
       </svg>
-      <div className="aclc-progress-text">{percent}%</div>
+      <div className="absolute inset-0 flex items-center justify-center text-xs font-bold text-gray-900">{percent}%</div> {/* aclc-progress-text */}
     </div>
   )
 }

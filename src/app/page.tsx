@@ -10,7 +10,7 @@ import Footer from '../components/layout/Footer'
 
 export default function HomePage() {
   return (
-    <div className="landing-page">
+    <div className="min-h-screen bg-white flex flex-col">
       <Navbar />
       <Hero />
       <FeaturedProperties />

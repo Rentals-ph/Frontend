@@ -16,8 +16,6 @@ import {
   FiDollarSign,
   FiEdit
 } from 'react-icons/fi'
-import '../AgentCreateListingCategory.css'
-import './page.css'
 
 function ProgressRing({ percent }: { percent: number }) {
   const { radius, stroke, normalizedRadius, circumference, strokeDashoffset } = useMemo(() => {
@@ -242,68 +240,42 @@ export default function AgentCreateListingPricing() {
           </div>
         </div>
 
-        <div className="section-card aclc-form-card">
+        <div className="section-card aclc-form-card px-7 pb-6 pt-7">
           <h2 className="aclc-form-title">Pricing</h2>
 
           {submitError && (
-            <div style={{
-              padding: '1rem',
-              marginBottom: '1rem',
-              backgroundColor: '#FEE2E2',
-              border: '1px solid #FCA5A5',
-              borderRadius: '8px',
-              color: '#991B1B'
-            }}>
+            <div className="mb-4 rounded-lg border border-red-300 bg-red-50 p-4 text-red-900">
               {submitError}
             </div>
           )}
 
           {(isSubmitting || isCompressing) && (
-            <div style={{
-              marginBottom: '1rem',
-              padding: '1rem',
-              backgroundColor: '#F3F4F6',
-              borderRadius: '8px',
-            }}>
-              <div style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                marginBottom: '0.5rem',
-                fontSize: '0.875rem',
-                color: '#6B7280'
-              }}>
+            <div className="mb-4 rounded-lg bg-gray-100 p-4">
+              <div className="mb-2 flex justify-between text-sm text-gray-600">
                 <span>{isCompressing ? 'Compressing images...' : 'Uploading listing...'}</span>
                 <span>{uploadProgress}%</span>
               </div>
-              <div style={{
-                width: '100%',
-                height: '8px',
-                backgroundColor: '#E5E7EB',
-                borderRadius: '4px',
-                overflow: 'hidden'
-              }}>
-                <div style={{
-                  width: `${uploadProgress}%`,
-                  height: '100%',
-                  backgroundColor: '#2563EB',
-                  transition: 'width 0.3s ease',
-                }} />
+              <div className="h-2 w-full overflow-hidden rounded bg-gray-200">
+                <div 
+                  className="h-full bg-blue-600 transition-all duration-300"
+                  style={{ width: `${uploadProgress}%` }}
+                />
               </div>
             </div>
           )}
 
-          <div className="acpr-row">
-            <div className="acpr-column">
-              <div className="acpr-column-label">Price</div>
-              <div className="acpr-form-group">
-                <div className="acpr-price-input-wrapper">
-                  <div className="acpr-price-icon">
+          <div className="mt-3 grid grid-cols-[1.1fr_0.9fr] gap-6 lg:grid-cols-1">
+            <div className="flex flex-col">
+              <div className="mb-3 text-base font-semibold text-gray-900">Price</div>
+              <div className="mb-0">
+                <div className="relative flex max-w-full items-center">
+                  <div className="pointer-events-none absolute left-4 z-10 flex items-center justify-center text-xl text-gray-500">
                     <FiDollarSign />
                   </div>
                   <input
                     id="price"
                     type="text"
-                    className="acpr-price-input"
+                    className="h-12 w-full rounded-lg border border-gray-300 bg-white px-4 pl-12 text-sm text-gray-900 outline-none transition-all placeholder:text-gray-400 focus:border-blue-600 focus:shadow-[0_0_0_3px_rgba(37,99,235,0.18)]"
                     placeholder="Price"
                     value={price}
                     onChange={(e) => setPrice(e.target.value)}
@@ -312,9 +284,9 @@ export default function AgentCreateListingPricing() {
               </div>
             </div>
 
-            <div className="acpr-column">
-              <div className="acpr-column-label">Price Type</div>
-              <div className="acpr-form-group">
+            <div className="flex flex-col">
+              <div className="mb-3 text-base font-semibold text-gray-900">Price Type</div>
+              <div className="mb-0">
                 <div className="aclc-select-wrap">
                   <select
                     id="price-type"
@@ -333,9 +305,9 @@ export default function AgentCreateListingPricing() {
             </div>
           </div>
 
-          <div className="acpr-footer-actions">
+          <div className="mt-6 flex justify-between gap-3 md:flex-col md:items-stretch">
             <button
-              className="acld-prev-btn"
+              className="acld-prev-btn md:w-full md:justify-center"
               onClick={() => router.push('/agent/create-listing/owner-review')}
               type="button"
             >
@@ -343,7 +315,7 @@ export default function AgentCreateListingPricing() {
               <span>Previous</span>
             </button>
             <button
-              className="aclc-next-btn"
+              className="aclc-next-btn md:w-full md:justify-center"
               onClick={handlePublish}
               type="button"
               disabled={isSubmitting || isCompressing || !price}

@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Navbar from '../../components/layout/Navbar'
 import Footer from '../../components/layout/Footer'
-import './page.css'
 import PageHeader from '../../components/layout/PageHeader'
 import { blogsApi } from '../../api'
 import type { Blog } from '../../types'
@@ -63,33 +62,31 @@ export default function BlogPage() {
   const regularPosts = blogs.slice(4)
 
   return (
-    <div className="blog-page">
+    <div className="flex min-h-screen flex-col bg-white">
       <Navbar />
       <PageHeader title="BLOG" />
-      <main className="blog-main-content">
+      <main className="mx-auto w-full max-w-7xl">
         {loading ? (
-          <div style={{ textAlign: 'center' }}>
+          <div className="text-center">
             <p>Loading blogs...</p>
           </div>
         ) : (
           <>
-            {/* Custom 3-card layout: small - large - small */}
-            
-
-            <div className="blog-articles-grid">
+            {/* Articles Grid */}
+            <div className="mb-15 grid grid-cols-1 gap-3.5 md:grid-cols-2 lg:grid-cols-3">
               {regularPosts.map((post) => (
-                <Link key={post.id} href={`/blog/${post.id}`} style={{ textDecoration: 'none' }}>
-                  <article className="blog-article-card">
-                    <div className="blog-article-image">
-                      <img src={getImageUrl(post.image)} alt={post.title} />
+                <Link key={post.id} href={`/blog/${post.id}`} className="no-underline">
+                  <article className="flex flex-col overflow-hidden rounded bg-white shadow-md transition-all hover:-translate-y-1 hover:shadow-lg">
+                    <div className="h-50 w-full overflow-hidden">
+                      <img src={getImageUrl(post.image)} alt={post.title} className="h-full w-full object-cover" />
                     </div>
-                    <div className="blog-article-content">
-                      <div className="article-tags">
-                        <span className="article-category-tag">{post.category}</span>
-                        <span className="article-read-time">{formatReadTime(post.read_time)}</span>
+                    <div className="flex flex-col gap-2.5 p-6">
+                      <div className="mb-2 flex items-center gap-2.5">
+                        <span className="rounded bg-green-600 px-3 py-1 font-outfit text-xs font-semibold text-white">{post.category}</span>
+                        <span className="font-outfit text-xs text-gray-600">{formatReadTime(post.read_time)}</span>
                       </div>
-                      <h3 className="blog-article-title">{post.title}</h3>
-                      <span className="read-more-link">Read More →</span>
+                      <h3 className="m-0 font-outfit text-lg font-semibold leading-snug text-black">{post.title}</h3>
+                      <span className="ml-auto mt-auto self-end font-outfit text-sm font-semibold text-rental-blue-600 transition-colors hover:text-rental-orange-500">Read More →</span>
                     </div>
                   </article>
                 </Link>
@@ -98,20 +95,21 @@ export default function BlogPage() {
           </>
         )}
 
-        <div className="blog-pagination">
-          <button className="pagination-btn pagination-prev" aria-label="Previous page">
+        {/* Pagination */}
+        <div className="mx-auto mb-2.5 flex w-full max-w-7xl items-center justify-center gap-2.5">
+          <button className="flex h-10 w-10 items-center justify-center rounded border-2 border-gray-200 bg-white text-gray-600 transition-all hover:border-rental-blue-600 hover:bg-blue-50 hover:text-rental-blue-600" aria-label="Previous page">
             <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M12.5 15L7.5 10L12.5 5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </button>
-          <div className="pagination-numbers">
-            <button className={`pagination-number ${currentPage === 1 ? 'active' : ''}`} onClick={() => setCurrentPage(1)}>1</button>
-            <button className={`pagination-number ${currentPage === 2 ? 'active' : ''}`} onClick={() => setCurrentPage(2)}>2</button>
-            <button className={`pagination-number ${currentPage === 3 ? 'active' : ''}`} onClick={() => setCurrentPage(3)}>3</button>
-            <span className="pagination-ellipsis">...</span>
-            <button className={`pagination-number ${currentPage === 50 ? 'active' : ''}`} onClick={() => setCurrentPage(50)}>50</button>
+          <div className="flex items-center gap-1.5">
+            <button className={`flex h-10 w-10 items-center justify-center rounded border-2 font-outfit text-base font-semibold transition-all ${currentPage === 1 ? 'border-rental-blue-600 bg-rental-blue-600 text-white' : 'border-gray-200 bg-white text-gray-600 hover:border-rental-blue-600 hover:text-rental-blue-600'}`} onClick={() => setCurrentPage(1)}>1</button>
+            <button className={`flex h-10 w-10 items-center justify-center rounded border-2 font-outfit text-base font-semibold transition-all ${currentPage === 2 ? 'border-rental-blue-600 bg-rental-blue-600 text-white' : 'border-gray-200 bg-white text-gray-600 hover:border-rental-blue-600 hover:text-rental-blue-600'}`} onClick={() => setCurrentPage(2)}>2</button>
+            <button className={`flex h-10 w-10 items-center justify-center rounded border-2 font-outfit text-base font-semibold transition-all ${currentPage === 3 ? 'border-rental-blue-600 bg-rental-blue-600 text-white' : 'border-gray-200 bg-white text-gray-600 hover:border-rental-blue-600 hover:text-rental-blue-600'}`} onClick={() => setCurrentPage(3)}>3</button>
+            <span className="px-1 font-outfit text-base text-gray-600">...</span>
+            <button className={`flex h-10 w-10 items-center justify-center rounded border-2 font-outfit text-base font-semibold transition-all ${currentPage === 50 ? 'border-rental-blue-600 bg-rental-blue-600 text-white' : 'border-gray-200 bg-white text-gray-600 hover:border-rental-blue-600 hover:text-rental-blue-600'}`} onClick={() => setCurrentPage(50)}>50</button>
           </div>
-          <button className="pagination-btn pagination-next" aria-label="Next page">
+          <button className="flex h-10 w-10 items-center justify-center rounded border-2 border-gray-200 bg-white text-gray-600 transition-all hover:border-rental-blue-600 hover:bg-blue-50 hover:text-rental-blue-600" aria-label="Next page">
             <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M7.5 15L12.5 10L7.5 5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
@@ -119,20 +117,21 @@ export default function BlogPage() {
         </div>
       </main>
 
-      <div className="blog-newsletter-section">
-        <div className="newsletter-container">
-          <h2 className="newsletter-title">Subscribe to Our Newsletter</h2>
-          <p className="newsletter-text">
+      {/* Newsletter Section */}
+      <div className="mt-2.5 w-full bg-rental-blue-600 px-0 py-15 text-center">
+        <div className="mx-auto max-w-7xl px-4 md:px-8 lg:px-16">
+          <h2 className="mb-4 font-outfit text-4xl font-bold text-white md:text-3xl">Subscribe to Our Newsletter</h2>
+          <p className="mb-8 font-outfit text-lg leading-relaxed text-white opacity-95">
             Get the latest rental tips, market insights, and property updates delivered to your inbox.
           </p>
-          <form className="newsletter-form">
+          <form className="mx-auto flex max-w-2xl justify-center gap-2.5 md:flex-col">
             <input
               type="email"
               placeholder="Enter your email"
-              className="newsletter-input"
+              className="max-w-md flex-1 rounded-xl border-0 bg-white px-6 py-4 font-outfit text-base text-black outline-none placeholder:text-gray-500 md:max-w-full"
               required
             />
-            <button type="submit" className="newsletter-btn">Subscribe</button>
+            <button type="submit" className="whitespace-nowrap rounded-xl border-0 bg-white px-8 py-4 font-outfit text-base font-semibold text-teal-800 transition-all hover:-translate-y-0.5 hover:bg-gray-100 hover:shadow-md">Subscribe</button>
           </form>
         </div>
       </div>

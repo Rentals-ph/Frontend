@@ -17,9 +17,7 @@ import {
   FiUpload,
   FiDollarSign
 } from 'react-icons/fi'
-import '../AgentCreateListingCategory.css'
-import '../publish/page.css'
-import '../pricing/page.css'
+// Converted to Tailwind CSS
 
 function ProgressRing({ percent }: { percent: number }) {
   const { radius, stroke, normalizedRadius, circumference, strokeDashoffset } = useMemo(() => {
@@ -38,8 +36,8 @@ function ProgressRing({ percent }: { percent: number }) {
   }, [percent])
 
   return (
-    <div className="aclc-progress">
-      <svg height={radius * 2} width={radius * 2} className="aclc-progress-svg">
+    <div className="relative w-13 h-13 flex-shrink-0"> {/* aclc-progress */}
+      <svg height={radius * 2} width={radius * 2} className="-rotate-90"> {/* aclc-progress-svg */}
         <circle
           stroke="#E5E7EB"
           fill="transparent"
@@ -58,10 +56,10 @@ function ProgressRing({ percent }: { percent: number }) {
           r={normalizedRadius}
           cx={radius}
           cy={radius}
-          className="aclc-progress-ring"
+          className="transition-all duration-250 ease-in" // aclc-progress-ring
         />
       </svg>
-      <div className="aclc-progress-text">{percent}%</div>
+      <div className="absolute inset-0 flex items-center justify-center text-xs font-bold text-gray-900">{percent}%</div> {/* aclc-progress-text */}
     </div>
   )
 }
@@ -299,36 +297,34 @@ export default function AgentCreateListingOwnerReview() {
           subtitle="Add owner information and review your listing." 
         />
 
-        <div className="aclc-breadcrumb">
-          <span className="aclc-breadcrumb-strong">Create Listing</span>
-          <span className="aclc-breadcrumb-sep">&gt;</span>
-          <span className="aclc-breadcrumb-muted">Owner Info & Review</span>
+        <div className="flex items-center gap-2 text-xl font-semibold text-gray-900 my-1.5 mx-0 mb-4"> {/* aclc-breadcrumb */}
+          <span className="text-gray-900">Create Listing</span> {/* aclc-breadcrumb-strong */}
+          <span className="text-gray-400 font-medium">&gt;</span> {/* aclc-breadcrumb-sep */}
+          <span className="text-gray-400 font-semibold">Owner Info & Review</span> {/* aclc-breadcrumb-muted */}
         </div>
 
-        <div className="section-card aclc-stepper-card">
-          <div className="aclc-stepper-left">
+        <div className="flex items-center gap-4 p-5 mb-6 bg-white rounded-xl shadow-sm md:flex-col md:items-start"> {/* section-card aclc-stepper-card */}
+          <div className="flex items-center gap-3 min-w-[220px]"> {/* aclc-stepper-left */}
             <ProgressRing percent={100} />
-            <div className="aclc-stepper-left-text">
-              <div className="aclc-stepper-left-title">Completion Status</div>
-            </div>
+            <div className="text-sm font-semibold text-gray-600">Completion Status</div> {/* aclc-stepper-left-title */}
           </div>
 
-          <div className="aclc-steps">
+          <div className="flex-1 grid grid-cols-4 items-start gap-0 md:w-full md:overflow-x-auto md:pb-1.5 md:justify-start"> {/* aclc-steps */}
             {stepLabels.map((label, idx) => {
               const step = idx + 1
               const isActive = step === 3
               const isDone = step < 3
               return (
-                <div className="aclc-step" key={label}>
-                  <div className="aclc-step-top">
-                    <div className={`aclc-step-circle ${isActive ? 'active' : ''} ${isDone ? 'done' : ''}`}>
-                      {isDone ? <FiCheck /> : step}
+                <div className="flex flex-col items-center min-w-0 flex-shrink-0" key={label}> {/* aclc-step */}
+                  <div className="w-full flex items-center relative"> {/* aclc-step-top */}
+                    <div className={`w-11 h-11 rounded-full flex items-center justify-center font-bold text-base flex-shrink-0 relative z-10 ${isActive ? 'bg-blue-600 text-white' : isDone ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-400'}`}> {/* aclc-step-circle */}
+                      {isDone ? <FiCheck className="text-lg" /> : step}
                     </div>
                     {step !== stepLabels.length && (
-                      <div className={`aclc-step-line ${step < 3 ? 'done' : ''}`} />
+                      <div className={`h-1.5 rounded-full flex-1 ml-2 mr-2 min-w-0 ${step < 3 ? 'bg-blue-600' : 'bg-gray-200'}`} /> // aclc-step-line
                     )}
                   </div>
-                  <div className={`aclc-step-label ${isActive ? 'active' : ''}`}>{label}</div>
+                  <div className={`mt-2 text-xs font-semibold text-center leading-tight ${isActive ? 'text-blue-600' : 'text-gray-400'}`}>{label}</div> {/* aclc-step-label */}
                 </div>
               )
             })}

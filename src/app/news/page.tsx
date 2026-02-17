@@ -8,7 +8,6 @@ import PageHeader from '../../components/layout/PageHeader'
 import { newsApi } from '../../api'
 import type { News } from '../../api/endpoints/news'
 import { ASSETS } from '@/utils/assets'
-import './page.css'
 
 export default function NewsPage() {
   const [news, setNews] = useState<News[]>([])
@@ -81,64 +80,64 @@ export default function NewsPage() {
   }
 
   return (
-    <div className="news-page">
+    <div className="flex min-h-screen flex-col bg-white">
       <Navbar />
 
       {/* Page Header */}
       <PageHeader title="NEWS" />
 
       {/* Main Content */}
-      <main className="news-main-content">
-        <div className="news-content-layout">
+      <main className="mx-auto w-full max-w-7xl px-4 py-10 md:px-8 lg:px-16">
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-[1.4fr_3.5fr_1.6fr]">
           {loading ? (
-            <div style={{ textAlign: 'center', padding: '40px' }}>
+            <div className="p-10 text-center">
               <p>Loading news...</p>
             </div>
           ) : (
             <>
               {/* Left Column - Featured News */}
-              <div className="news-featured-column">
-                <h2 className="news-section-title">Featured News</h2>
-                <div className="featured-news-list">
+              <div className="flex h-full flex-col justify-start">
+                <h2 className="mb-6 font-outfit text-2xl font-bold text-rental-blue-800 md:text-lg">Featured News</h2>
+                <div className="mb-6 flex flex-col gap-5">
                   {featuredNews.slice(0, 3).map((article) => (
-                    <article key={article.id} className="featured-news-item">
-                      <div className="featured-news-image">
-                        <img src={getImageUrl(article.image)} alt={article.title} />
+                    <article key={article.id} className="flex flex-col gap-4 md:flex-row md:items-start">
+                      <div className="h-60 w-full flex-shrink-0 overflow-hidden rounded md:h-30 md:w-30">
+                        <img src={getImageUrl(article.image)} alt={article.title} className="h-full w-full object-cover" />
                       </div>
-                      <div className="featured-news-content">
-                        <h3 className="featured-news-title">{article.title}</h3>
-                        <div className="featured-news-meta">
-                          <span className="news-author">{article.author}</span>
-                          <span className="news-date">{formatDate(article.published_at)}</span>
+                      <div className="flex flex-1 flex-col gap-2">
+                        <h3 className="m-0 font-outfit text-base font-semibold leading-snug text-black md:text-sm">{article.title}</h3>
+                        <div className="flex items-center gap-3 font-outfit text-sm text-gray-600">
+                          <span>{article.author}</span>
+                          <span>{formatDate(article.published_at)}</span>
                         </div>
                       </div>
                     </article>
                   ))}
-                  <Link href="/news" className="news-see-more-link">
+                  <Link href="/news" className="mt-6 inline-block self-start py-3 font-outfit text-base font-semibold text-rental-blue-800 transition-colors hover:text-rental-orange-500">
                     View More News →
                   </Link>
                 </div>
                 
-                <div className="news-advertisement">
-                  <span className="ad-text">ADVERTISEMENT</span>
+                <div className="flex h-full items-center justify-center rounded bg-gradient-to-b from-rental-orange-500 to-rental-blue-800 px-5 py-15">
+                  <span className="font-outfit text-3xl font-bold uppercase tracking-wider text-white md:text-2xl">ADVERTISEMENT</span>
                 </div>
               </div>
 
               {/* Second Column - Large Card, Two Medium Cards, Smaller Articles */}
-              <div className="news-column-2">
-                <h2 className="news-section-title">Editors Choice</h2>
+              <div className="flex h-full flex-col justify-start gap-5">
+                <h2 className="font-outfit text-2xl font-bold text-rental-blue-800 md:text-lg">Editors Choice</h2>
                 
                 {/* Large Featured Card */}
                 {column2Data.largeCard && (
-                  <article className="column2-large-card">
-                    <div className="column2-large-image">
-                      <img src={getImageUrl(column2Data.largeCard.image)} alt={column2Data.largeCard.title} />
-                      <div className="column2-large-overlay">
-                        <span className="column2-category" style={{ color: getCategoryColor(column2Data.largeCard.category) }}>• {column2Data.largeCard.category}</span>
-                        <h3 className="column2-large-title">{column2Data.largeCard.title}</h3>
-                        <div className="column2-large-meta">
-                          <span className="news-author">{column2Data.largeCard.author}</span>
-                          <span className="news-date">{formatDate(column2Data.largeCard.published_at)}</span>
+                  <article className="mb-2 overflow-hidden rounded">
+                    <div className="relative h-96 w-full overflow-hidden md:h-64">
+                      <img src={getImageUrl(column2Data.largeCard.image)} alt={column2Data.largeCard.title} className="h-full w-full object-cover" />
+                      <div className="absolute bottom-0 left-0 right-0 flex flex-col gap-3 bg-gradient-to-t from-black/80 to-transparent p-6">
+                        <span className="mb-1 font-outfit text-sm font-medium text-white" style={{ color: getCategoryColor(column2Data.largeCard.category) }}>• {column2Data.largeCard.category}</span>
+                        <h3 className="m-0 font-outfit text-xl font-semibold leading-snug text-white">{column2Data.largeCard.title}</h3>
+                        <div className="flex items-center gap-3 font-outfit text-sm text-white">
+                          <span>{column2Data.largeCard.author}</span>
+                          <span>{formatDate(column2Data.largeCard.published_at)}</span>
                         </div>
                       </div>
                     </div>
@@ -146,17 +145,17 @@ export default function NewsPage() {
                 )}
 
                 {/* Two Medium Cards Side by Side */}
-                <div className="column2-medium-cards">
+                <div className="mb-2 grid grid-cols-1 gap-4 md:grid-cols-2">
                   {column2Data.mediumCards.map((article) => (
-                    <article key={article.id} className="column2-medium-card">
-                      <div className="column2-medium-image">
-                        <img src={getImageUrl(article.image)} alt={article.title} />
+                    <article key={article.id} className="flex flex-col overflow-hidden rounded bg-white shadow-md">
+                      <div className="h-40 w-full overflow-hidden md:h-36">
+                        <img src={getImageUrl(article.image)} alt={article.title} className="h-full w-full object-cover" />
                       </div>
-                      <div className="column2-medium-content">
-                        <h4 className="column2-medium-title">{article.title}</h4>
-                        <div className="column2-medium-meta">
-                          <span className="news-author">{article.author}</span>
-                          <span className="news-date">{formatDate(article.published_at)}</span>
+                      <div className="flex flex-col gap-2 p-4">
+                        <h4 className="m-0 font-outfit text-sm font-semibold leading-snug text-black">{article.title}</h4>
+                        <div className="flex items-center gap-2 font-outfit text-xs text-gray-600">
+                          <span>{article.author}</span>
+                          <span>{formatDate(article.published_at)}</span>
                         </div>
                       </div>
                     </article>
@@ -164,67 +163,67 @@ export default function NewsPage() {
                 </div>
 
                 {/* Smaller Articles */}
-                <div className="column2-small-articles">
+                <div className="flex flex-col gap-4">
                   {column2Data.smallerArticles.slice(0, 3).map((article) => (
-                    <article key={article.id} className="column2-small-article">
-                      <div className="column2-small-content">
-                        <span className="column2-small-category" style={{ color: getCategoryColor(article.category) }}>• {article.category}</span>
-                        <h5 className="column2-small-title">{article.title}</h5>
-                        <div className="column2-small-meta">
-                          <span className="news-author">{article.author}</span>
-                          <span className="news-date">{formatDate(article.published_at)}</span>
+                    <article key={article.id} className="flex flex-row-reverse items-start gap-3 md:flex-row">
+                      <div className="flex flex-1 flex-col gap-1.5">
+                        <span className="font-outfit text-xs font-medium text-gray-500" style={{ color: getCategoryColor(article.category) }}>• {article.category}</span>
+                        <h5 className="m-0 font-outfit text-sm font-semibold leading-snug text-black">{article.title}</h5>
+                        <div className="flex items-center gap-2 font-outfit text-xs text-gray-600">
+                          <span>{article.author}</span>
+                          <span>{formatDate(article.published_at)}</span>
                         </div>
                       </div>
-                      <div className="column2-small-image">
-                        <img src={getImageUrl(article.image)} alt={article.title} />
+                      <div className="h-16 w-20 flex-shrink-0 overflow-hidden rounded md:h-18">
+                        <img src={getImageUrl(article.image)} alt={article.title} className="h-full w-full object-cover" />
                       </div>
                     </article>
                   ))}
                 </div>
-                <Link href="/blog" className="news-see-more-link">
+                <Link href="/blog" className="mt-6 inline-block self-start py-3 font-outfit text-base font-semibold text-rental-blue-800 transition-colors hover:text-rental-orange-500">
                   View More News →
                 </Link>
               </div>
 
               {/* Third Column - Medium Card and Smaller Articles */}
-              <div className="news-column-3">
-                <h2 className="news-section-title">Trending</h2>
+              <div className="flex h-full flex-col justify-start gap-5">
+                <h2 className="font-outfit text-2xl font-bold text-rental-blue-800 md:text-lg">Trending</h2>
                 
                 {/* Medium Card */}
                 {column3Data.mediumCard && (
-                  <article className="column3-medium-card">
-                    <div className="column3-medium-image">
-                      <img src={getImageUrl(column3Data.mediumCard.image)} alt={column3Data.mediumCard.title} />
+                  <article className="mb-2 flex flex-col overflow-hidden rounded">
+                    <div className="h-60 w-full overflow-hidden md:h-56">
+                      <img src={getImageUrl(column3Data.mediumCard.image)} alt={column3Data.mediumCard.title} className="h-full w-full object-cover" />
                     </div>
-                    <div className="column3-medium-content">
-                      <h4 className="column3-medium-title">{column3Data.mediumCard.title}</h4>
-                      <div className="column3-medium-meta">
-                        <span className="news-author">{column3Data.mediumCard.author}</span>
-                        <span className="news-date">{formatDate(column3Data.mediumCard.published_at)}</span>
+                    <div className="flex flex-col gap-2 pt-4">
+                      <h4 className="m-0 font-outfit text-base font-semibold leading-snug text-black">{column3Data.mediumCard.title}</h4>
+                      <div className="flex items-center gap-2 font-outfit text-xs text-gray-600">
+                        <span>{column3Data.mediumCard.author}</span>
+                        <span>{formatDate(column3Data.mediumCard.published_at)}</span>
                       </div>
                     </div>
                   </article>
                 )}
 
                 {/* Smaller Articles */}
-                <div className="column3-small-articles">
+                <div className="flex flex-col gap-4">
                   {column3Data.smallerArticles.slice(0, 3).map((article) => (
-                    <article key={article.id} className="column3-small-article">
-                      <div className="column3-small-content">
-                        <span className="column3-small-category" style={{ color: getCategoryColor(article.category) }}>• {article.category}</span>
-                        <h5 className="column3-small-title">{article.title}</h5>
-                        <div className="column3-small-meta">
-                          <span className="news-author">{article.author}</span>
-                          <span className="news-date">{formatDate(article.published_at)}</span>
+                    <article key={article.id} className="flex flex-row-reverse items-start gap-3 md:flex-row">
+                      <div className="flex flex-1 flex-col gap-1.5">
+                        <span className="font-outfit text-xs font-medium text-gray-500" style={{ color: getCategoryColor(article.category) }}>• {article.category}</span>
+                        <h5 className="m-0 font-outfit text-sm font-semibold leading-snug text-black">{article.title}</h5>
+                        <div className="flex items-center gap-2 font-outfit text-xs text-gray-600">
+                          <span>{article.author}</span>
+                          <span>{formatDate(article.published_at)}</span>
                         </div>
                       </div>
-                      <div className="column3-small-image">
-                        <img src={getImageUrl(article.image)} alt={article.title} />
+                      <div className="h-16 w-20 flex-shrink-0 overflow-hidden rounded md:h-36">
+                        <img src={getImageUrl(article.image)} alt={article.title} className="h-full w-full object-cover" />
                       </div>
                     </article>
                   ))}
                 </div>
-                <Link href="/blog" className="news-see-more-link">
+                <Link href="/blog" className="mt-6 inline-block self-start py-3 font-outfit text-base font-semibold text-rental-blue-800 transition-colors hover:text-rental-orange-500">
                   View More News →
                 </Link>
               </div>

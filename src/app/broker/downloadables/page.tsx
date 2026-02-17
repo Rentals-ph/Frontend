@@ -10,7 +10,7 @@ import {
   FiImage
 } from 'react-icons/fi'
 import '../../agent/downloadables/page.css'
-import '../broker-shared.css'
+// import '../broker-shared.css' // Removed - converted to Tailwind
 
 export default function BrokerDownloadables() {
   const handleDownload = (type: string) => {
@@ -18,10 +18,10 @@ export default function BrokerDownloadables() {
   }
 
   return (
-    <div className="broker-dashboard">
+    <div className="flex min-h-screen bg-gray-100 font-outfit"> {/* broker-dashboard */}
       <AppSidebar />
 
-      <main className="broker-main">
+      <main className="ml-[280px] flex-1 w-[calc(100%-280px)] p-8 min-h-screen lg:ml-[240px] lg:w-[calc(100%-240px)] lg:p-6 md:ml-0 md:w-full md:p-4 md:pt-15"> {/* broker-main */}
         {/* Broker Header */}
         <header className="broker-header">
           <div className="broker-header-left">

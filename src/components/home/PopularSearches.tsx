@@ -3,7 +3,6 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { FiChevronDown } from 'react-icons/fi'
-import './PopularSearches.css'
 
 // Data for popular searches
 const propertyTypeSearches = {
@@ -113,20 +112,26 @@ export default function PopularSearches() {
   const INITIAL_VISIBLE = 5
 
   return (
-    <section className="popular-searches-section">
-      <div className="popular-searches-container">
-        <h2 className="popular-searches-title">Popular Real Estate Searches</h2>
+    <section className="bg-white min-h-[50vh] flex px-6 sm:px-10 md:px-20 lg:px-[150px] py-12 flex-col justify-center">
+      <div className="w-full mx-auto">
+        <h2 className="text-center font-outfit text-2xl md:text-3xl font-bold text-gray-900 mb-8">
+          Popular Real Estate Searches
+        </h2>
 
         {/* Tabs */}
-        <div className="popular-searches-tabs">
+        <div className="flex justify-center gap-0 mb-10 border-b border-gray-200">
           <button
-            className={`popular-searches-tab ${activeTab === 'type' ? 'active' : ''}`}
+            className={`px-6 md:px-8 py-3 bg-transparent border-none font-outfit text-base md:text-lg font-medium cursor-pointer relative transition-colors ${
+              activeTab === 'type' ? 'text-rental-blue-600 font-semibold after:content-[""] after:absolute after:bottom-[-1px] after:left-0 after:right-0 after:h-[3px] after:bg-rental-blue-600 after:rounded-t-[3px]' : 'text-gray-500 hover:text-rental-blue-600'
+            }`}
             onClick={() => setActiveTab('type')}
           >
             By Property Type
           </button>
           <button
-            className={`popular-searches-tab ${activeTab === 'location' ? 'active' : ''}`}
+            className={`px-6 md:px-8 py-3 bg-transparent border-none font-outfit text-base md:text-lg font-medium cursor-pointer relative transition-colors ${
+              activeTab === 'location' ? 'text-rental-blue-600 font-semibold after:content-[""] after:absolute after:bottom-[-1px] after:left-0 after:right-0 after:h-[3px] after:bg-rental-blue-600 after:rounded-t-[3px]' : 'text-gray-500 hover:text-rental-blue-600'
+            }`}
             onClick={() => setActiveTab('location')}
           >
             By Location
@@ -134,21 +139,23 @@ export default function PopularSearches() {
         </div>
 
         {/* Grid of categories */}
-        <div className="popular-searches-grid">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 md:gap-x-[60px] md:gap-y-10">
           {categories.map(category => {
             const items = (data as any)[category] as { label: string; type: string; location: string }[]
             const isExpanded = showMore[category]
             const visibleItems = isExpanded ? items : items.slice(0, INITIAL_VISIBLE)
 
             return (
-              <div key={category} className="popular-searches-column">
-                <h3 className="popular-searches-category">{category.toUpperCase()}</h3>
-                <ul className="popular-searches-list">
+              <div key={category} className="flex flex-col">
+                <h3 className="font-outfit text-lg font-bold text-gray-700 tracking-wide mb-4 pb-2">
+                  {category.toUpperCase()}
+                </h3>
+                <ul className="list-none p-0 m-0 flex flex-col gap-3">
                   {visibleItems.map((item, idx) => (
                     <li key={idx}>
                       <Link
                         href={buildSearchUrl(item.type, item.location)}
-                        className="popular-searches-link"
+                        className="font-outfit text-[15px] font-light text-gray-600 no-underline transition-colors hover:text-rental-blue-600 hover:underline"
                       >
                         {item.label}
                       </Link>
@@ -157,11 +164,11 @@ export default function PopularSearches() {
                 </ul>
                 {items.length > INITIAL_VISIBLE && (
                   <button
-                    className="popular-searches-view-more"
+                    className="flex items-center gap-2 mt-4 px-0 py-2 bg-transparent border-none font-outfit text-sm font-medium text-rental-blue-600 cursor-pointer transition-colors hover:text-rental-blue-700"
                     onClick={() => toggleShowMore(category)}
                   >
                     {isExpanded ? 'View Less' : 'View More'}
-                    <FiChevronDown className={`view-more-chevron ${isExpanded ? 'expanded' : ''}`} />
+                    <FiChevronDown className={`text-base transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
                   </button>
                 )}
               </div>

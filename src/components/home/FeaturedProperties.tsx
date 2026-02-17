@@ -7,9 +7,8 @@ import { propertiesApi } from '../../api'
 import type { Property } from '../../types'
 import type { PaginatedResponse } from '../../api/types'
 import { ASSETS } from '@/utils/assets'
-import './FeaturedProperties.css'
 
-function FeaturedProperties() {
+const FeaturedProperties = () => {
   const [selectedLocation, setSelectedLocation] = useState('All Locations')
   const propertyCarouselRef = useRef<HTMLDivElement>(null)
   const [isPaused, setIsPaused] = useState(false)
@@ -159,31 +158,33 @@ function FeaturedProperties() {
   }, [isPaused])
 
   return (
-    <section id="properties" className="featured-section">
-      <div className="featured-container">
-        <div className="section-header">
-          <div className="section-subheader">
-            <h2 className="section-title">Featured Properties</h2>
-            <p className="section-subtitle">
+    <section id="properties" className="bg-gradient-to-b from-[#e8f0ff] to-white border-t-0 overflow-hidden relative min-h-[60vh] flex px-6 md:px-10 lg:px-[150px] flex-col justify-center py-12 before:content-[''] before:absolute before:top-0 before:left-0 before:right-0 before:h-px before:bg-gradient-to-r before:from-transparent before:via-gray-200 before:to-transparent after:content-[''] after:absolute after:bottom-0 after:left-0 after:right-0 after:h-px after:bg-gradient-to-r after:from-transparent after:via-gray-200 after:to-transparent">
+      <div className="w-full">
+        <div className="flex justify-between items-end mb-4 relative">
+          <div>
+            <h2 className="font-outfit text-3xl font-bold text-gray-900 m-0 leading-tight tracking-tight">
+              Featured Properties
+            </h2>
+            <p className="text-gray-600 font-outfit text-base font-light mt-2">
               Handpicked properties from our verified agents
             </p>
           </div>
 
-          <Link href="/properties" className="section-link">
+          <Link href="/properties" className="text-rental-blue-600 font-outfit text-base font-medium no-underline flex items-center gap-2 hover:text-rental-orange-500 transition-colors">
             View All Properties <span>→</span>
           </Link>
         </div>
       </div>
 
-      <div className="carousel-wrapper">
+      <div className="relative w-full overflow-hidden mt-6">
         <div 
-          className="property-carousel"
+          className="flex gap-7 overflow-x-auto scrollbar-hide scroll-smooth"
           ref={propertyCarouselRef}
           onMouseEnter={() => setIsPaused(true)}
           onMouseLeave={() => setIsPaused(false)}
         >
           {loading ? (
-            <div style={{ padding: '2rem', textAlign: 'center' }}>Loading properties...</div>
+            <div className="p-8 text-center w-full">Loading properties...</div>
           ) : featuredProperties.length > 0 ? (
             // Render items multiple times for seamless infinite loop
             Array.from({ length: 4 }).map((_, setIndex) => (
@@ -213,7 +214,7 @@ function FeaturedProperties() {
               })
             ))
           ) : (
-            <div style={{ padding: '2rem', textAlign: 'center' }}>No featured properties available</div>
+            <div className="p-8 text-center w-full">No featured properties available</div>
           )}
         </div>
       </div>

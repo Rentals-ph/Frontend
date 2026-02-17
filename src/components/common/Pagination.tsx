@@ -1,7 +1,6 @@
 'use client'
 
 import React from 'react'
-import './Pagination.css'
 
 export interface PaginationProps {
   currentPage: number
@@ -99,22 +98,22 @@ function Pagination({
   }
 
   return (
-    <div className={`pagination-wrapper ${className}`}>
+    <div className={`mt-10 flex w-full flex-col items-center gap-4 pb-5 md:mt-8 md:gap-3 md:pb-4 xs:mt-6 xs:gap-2.5 xs:pb-3 ${className}`}>
       {showInfo && resultsInfo && (
-        <div className="pagination-info">
-          Showing <strong>{resultsInfo.start}</strong> to <strong>{resultsInfo.end}</strong> of <strong>{resultsInfo.total}</strong> results
+        <div className="text-center font-outfit text-sm font-normal text-gray-500 md:text-xs xs:text-xs">
+          Showing <strong className="font-semibold text-gray-900">{resultsInfo.start}</strong> to <strong className="font-semibold text-gray-900">{resultsInfo.end}</strong> of <strong className="font-semibold text-gray-900">{resultsInfo.total}</strong> results
         </div>
       )}
       
-      <div className="pagination">
+      <div className="flex flex-wrap items-center justify-center gap-2 md:gap-1.5 xs:gap-1">
         {/* Previous Button */}
         <button
-          className="pagination-arrow pagination-prev"
+          className="flex h-10 w-10 items-center justify-center rounded-full border-1.5 border-gray-200 bg-white p-0 font-outfit text-sm text-gray-700 shadow-sm transition-all hover:enabled:-translate-y-0.5 hover:enabled:border-rental-blue-600 hover:enabled:bg-blue-50 hover:enabled:text-rental-blue-600 hover:enabled:shadow-[0_2px_8px_rgba(32,94,215,0.2)] active:enabled:translate-y-0 active:enabled:shadow-[0_1px_4px_rgba(32,94,215,0.15)] disabled:cursor-not-allowed disabled:bg-gray-50 disabled:opacity-40 md:h-9 md:w-9 md:text-xs xs:h-8 xs:w-8 xs:text-xs"
           onClick={handlePrevious}
           disabled={currentPage === 1}
           aria-label="Previous page"
         >
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="md:h-3.5 md:w-3.5 xs:h-3 xs:w-3">
             <path d="M15 18L9 12L15 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         </button>
@@ -125,7 +124,7 @@ function Pagination({
             {visiblePages.map((page, index) => {
               if (page === 'ellipsis') {
                 return (
-                  <span key={`ellipsis-${index}`} className="pagination-ellipsis" aria-hidden="true">
+                  <span key={`ellipsis-${index}`} className="flex select-none items-center px-1 font-outfit text-sm text-gray-400 md:px-0.5 md:text-xs xs:px-0.5 xs:text-xs" aria-hidden="true">
                     ...
                   </span>
                 )
@@ -137,7 +136,11 @@ function Pagination({
               return (
                 <button
                   key={pageNumber}
-                  className={`pagination-number ${isActive ? 'active' : ''}`}
+                  className={`flex h-10 w-10 items-center justify-center rounded-full border-1.5 p-0 font-outfit text-sm font-medium shadow-sm transition-all md:h-9 md:w-9 md:text-xs xs:h-8 xs:w-8 xs:text-xs ${
+                    isActive
+                      ? 'scale-105 border-rental-blue-600 bg-gradient-to-br from-rental-blue-600 to-rental-blue-700 font-semibold text-white shadow-[0_4px_12px_rgba(32,94,215,0.3)] hover:from-rental-blue-700 hover:to-rental-blue-800 hover:shadow-[0_6px_16px_rgba(32,94,215,0.4)]'
+                      : 'border-gray-200 bg-white text-gray-700 hover:-translate-y-0.5 hover:border-rental-blue-600 hover:bg-blue-50 hover:text-rental-blue-600 hover:shadow-[0_2px_8px_rgba(32,94,215,0.2)] active:translate-y-0 active:shadow-[0_1px_4px_rgba(32,94,215,0.15)]'
+                  }`}
                   onClick={() => handlePageClick(pageNumber)}
                   aria-label={`Go to page ${pageNumber}`}
                   aria-current={isActive ? 'page' : undefined}
@@ -151,21 +154,18 @@ function Pagination({
 
         {/* Next Button */}
         <button
-          className="pagination-arrow pagination-next"
+          className="flex h-10 w-10 items-center justify-center rounded-full border-1.5 border-gray-200 bg-white p-0 font-outfit text-sm text-gray-700 shadow-sm transition-all hover:enabled:-translate-y-0.5 hover:enabled:border-rental-blue-600 hover:enabled:bg-blue-50 hover:enabled:text-rental-blue-600 hover:enabled:shadow-[0_2px_8px_rgba(32,94,215,0.2)] active:enabled:translate-y-0 active:enabled:shadow-[0_1px_4px_rgba(32,94,215,0.15)] disabled:cursor-not-allowed disabled:bg-gray-50 disabled:opacity-40 md:h-9 md:w-9 md:text-xs xs:h-8 xs:w-8 xs:text-xs"
           onClick={handleNext}
           disabled={currentPage === totalPages}
           aria-label="Next page"
         >
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="md:h-3.5 md:w-3.5 xs:h-3 xs:w-3">
             <path d="M9 18L15 12L9 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         </button>
       </div>
-
-      
     </div>
   )
 }
 
 export default Pagination
-

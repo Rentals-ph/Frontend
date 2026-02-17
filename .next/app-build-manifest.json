@@ -3,7 +3,6 @@
     "/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/css/app/page.css",
       "static/chunks/app/page.js"
     ],
     "/layout": [
@@ -15,7 +14,6 @@
     "/about/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/css/app/about/page.css",
       "static/chunks/app/about/page.js"
     ],
     "/properties/page": [
@@ -27,43 +25,48 @@
     "/rent-managers/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/css/app/rent-managers/page.css",
       "static/chunks/app/rent-managers/page.js"
     ],
-    "/property/[id]/page": [
+    "/blog/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/css/app/property/[id]/page.css",
-      "static/chunks/app/property/[id]/page.js"
+      "static/chunks/app/blog/page.js"
+    ],
+    "/news/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/news/page.js"
+    ],
+    "/contact/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/contact/page.js"
     ],
     "/agent/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/css/app/agent/page.css",
       "static/chunks/app/agent/page.js"
     ],
     "/agent/layout": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/css/app/agent/layout.css",
       "static/chunks/app/agent/layout.js"
     ],
-    "/agent/create-listing/page": [
+    "/agent/inbox/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/css/app/agent/create-listing/page.css",
-      "static/chunks/app/agent/create-listing/page.js"
+      "static/chunks/app/agent/inbox/page.js"
     ],
-    "/agent/create-listing/layout": [
+    "/agent/page-builder/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/agent/create-listing/layout.js"
+      "static/chunks/app/agent/page-builder/page.js"
     ],
-    "/agent/listing-assistant/page": [
+    "/agent/listings/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/css/app/agent/listing-assistant/page.css",
-      "static/chunks/app/agent/listing-assistant/page.js"
+      "static/css/app/agent/listings/page.css",
+      "static/chunks/app/agent/listings/page.js"
     ],
     "/_not-found/page": [
       "static/chunks/webpack.js",

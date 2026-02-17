@@ -17,7 +17,7 @@ import {
   FiAlertCircle,
   FiCreditCard,
 } from 'react-icons/fi'
-import './page.css'
+// import './page.css' // Removed - converted to Tailwind
 
 interface Applicant {
   id: number
@@ -133,20 +133,20 @@ export default function AgentApprovalsPage() {
   const isVerified = (percentage: number) => percentage >= 100
 
   return (
-    <div className="broker-dashboard">
+    <div className="flex min-h-screen bg-gray-100 font-outfit"> {/* broker-dashboard */}
       <AppSidebar />
-      <main className="broker-main">
+      <main className="ml-[280px] flex-1 w-[calc(100%-280px)] p-8 min-h-screen lg:ml-[240px] lg:w-[calc(100%-240px)] lg:p-6 md:ml-0 md:w-full md:p-4 md:pt-15"> {/* broker-main */}
         {/* Header */}
-        <header className="broker-header">
-          <div className="broker-header-left">
-            <h1>Agent Approvals</h1>
-            <p>A dedicated space to review agent&apos;s professional profiles.</p>
+        <header className="flex items-center justify-between mb-7 md:flex-col md:items-start md:gap-3.5"> {/* broker-header */}
+          <div className="flex flex-col gap-1"> {/* broker-header-left */}
+            <h1 className="text-2xl font-bold text-gray-900 m-0 mb-1 md:text-xl">Agent Approvals</h1>
+            <p className="text-sm text-gray-400 m-0">A dedicated space to review agent&apos;s professional profiles.</p>
           </div>
-          <div className="broker-header-right">
-            <button className="broker-notification-btn">
+          <div className="flex items-center gap-3.5 md:w-full md:justify-between md:gap-2.5"> {/* broker-header-right */}
+            <button className="w-11 h-11 rounded-xl border-0 bg-white flex items-center justify-center text-gray-600 text-xl cursor-pointer transition-all duration-200 shadow-sm hover:bg-gray-50 hover:text-blue-600"> {/* broker-notification-btn */}
               <FiBell />
             </button>
-            <a href="/broker/create-listing" className="broker-add-listing-btn">
+            <a href="/broker/create-listing" className="inline-flex items-center gap-2 py-2.5 px-5 bg-blue-600 text-white text-sm font-semibold rounded-xl border-0 no-underline cursor-pointer transition-all duration-200 shadow-sm hover:bg-blue-700 active:scale-[0.98]"> {/* broker-add-listing-btn */}
               <FiPlus />
               Add Listing
             </a>
@@ -154,62 +154,62 @@ export default function AgentApprovalsPage() {
         </header>
 
         {/* Approvals Table */}
-        <div className="ba-table-card">
-          <div className="ba-table-header">
-            <h3 className="ba-table-title">Agent Approvals Table</h3>
-            <button className="ba-filter-btn">
+        <div className="bg-white rounded-[14px] p-6 shadow-sm mb-6 md:p-4"> {/* ba-table-card */}
+          <div className="flex items-center justify-between mb-5 md:flex-col md:items-start md:gap-3"> {/* ba-table-header */}
+            <h3 className="text-base font-bold text-gray-900 m-0">Agent Approvals Table</h3> {/* ba-table-title */}
+            <button className="inline-flex items-center gap-2 py-2 px-4 bg-gray-100 text-gray-700 text-sm font-medium rounded-lg border-0 cursor-pointer transition-all duration-200 hover:bg-gray-200 active:scale-[0.98]"> {/* ba-filter-btn */}
               Filter <FiChevronDown />
             </button>
           </div>
 
           {/* Desktop Table */}
-          <div className="ba-table-wrapper">
-            <table className="ba-table">
+          <div className="overflow-x-auto md:hidden"> {/* ba-table-wrapper */}
+            <table className="w-full border-collapse min-w-[900px]"> {/* ba-table */}
               <thead>
                 <tr>
-                  <th className="ba-th-check">
+                  <th className="py-3 px-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider border-b border-gray-200 w-12"> {/* ba-th-check */}
                     <input
                       type="checkbox"
                       checked={allSelected}
                       onChange={toggleSelectAll}
-                      className="ba-checkbox"
+                      className="w-4 h-4 rounded border-gray-300 text-blue-600 cursor-pointer focus:ring-2 focus:ring-blue-500 md:w-5 md:h-5" /* ba-checkbox */
                     />
                   </th>
-                  <th>Applicant Name</th>
-                  <th>Requested Role</th>
-                  <th>Assigned Manager</th>
-                  <th>Profile Completion</th>
-                  <th>Design Theme</th>
-                  <th>Actions</th>
+                  <th className="py-3 px-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider border-b border-gray-200">Applicant Name</th>
+                  <th className="py-3 px-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider border-b border-gray-200">Requested Role</th>
+                  <th className="py-3 px-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider border-b border-gray-200">Assigned Manager</th>
+                  <th className="py-3 px-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider border-b border-gray-200">Profile Completion</th>
+                  <th className="py-3 px-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider border-b border-gray-200">Design Theme</th>
+                  <th className="py-3 px-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider border-b border-gray-200">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {applicantsData.map((applicant) => (
-                  <tr key={applicant.id}>
-                    <td className="ba-td-check">
+                  <tr key={applicant.id} className="hover:bg-gray-50">
+                    <td className="py-3 px-4 border-b border-gray-100 w-12"> {/* ba-td-check */}
                       <input
                         type="checkbox"
                         checked={selectedApplicants.includes(applicant.id)}
                         onChange={() => toggleSelect(applicant.id)}
-                        className="ba-checkbox"
+                        className="w-4 h-4 rounded border-gray-300 text-blue-600 cursor-pointer focus:ring-2 focus:ring-blue-500 md:w-5 md:h-5" /* ba-checkbox */
                       />
                     </td>
-                    <td className="ba-td-name">{applicant.name}</td>
-                    <td className="ba-td-role">{applicant.requestedRole}</td>
-                    <td className="ba-td-manager">
+                    <td className="py-3 px-4 border-b border-gray-100 font-semibold text-gray-900">{applicant.name}</td> {/* ba-td-name */}
+                    <td className="py-3 px-4 border-b border-gray-100 text-gray-700">{applicant.requestedRole}</td> {/* ba-td-role */}
+                    <td className="py-3 px-4 border-b border-gray-100 text-gray-600"> {/* ba-td-manager */}
                       {applicant.assignedManager || (
-                        <span className="ba-dash">&mdash;</span>
+                        <span className="text-gray-400">&mdash;</span> /* ba-dash */
                       )}
                     </td>
-                    <td className="ba-td-completion">{applicant.profileCompletion}</td>
-                    <td className="ba-td-theme">{applicant.designTheme}</td>
-                    <td className="ba-td-actions">
-                      <div className="ba-actions-row">
-                        <button className="ba-action-btn approve" title="Approve">
+                    <td className="py-3 px-4 border-b border-gray-100 text-gray-700">{applicant.profileCompletion}</td> {/* ba-td-completion */}
+                    <td className="py-3 px-4 border-b border-gray-100 text-gray-700">{applicant.designTheme}</td> {/* ba-td-theme */}
+                    <td className="py-3 px-4 border-b border-gray-100"> {/* ba-td-actions */}
+                      <div className="flex items-center gap-2"> {/* ba-actions-row */}
+                        <button className="w-8 h-8 rounded-lg border-0 flex items-center justify-center text-emerald-600 bg-emerald-50 cursor-pointer transition-all duration-200 hover:bg-emerald-100 active:scale-95" title="Approve"> {/* ba-action-btn approve */}
                           <FiCheck />
                         </button>
                         <button 
-                          className="ba-action-btn settings" 
+                          className="w-8 h-8 rounded-lg border-0 flex items-center justify-center text-gray-600 bg-gray-100 cursor-pointer transition-all duration-200 hover:bg-gray-200 active:scale-95" /* ba-action-btn settings */
                           title="Settings"
                           onClick={() => handleSettingsClick(applicant)}
                         >
@@ -224,41 +224,41 @@ export default function AgentApprovalsPage() {
           </div>
 
           {/* Mobile Card Layout */}
-          <div className="ba-mobile-cards">
+          <div className="hidden md:flex flex-col gap-3"> {/* ba-mobile-cards */}
             {applicantsData.map((applicant) => (
-              <div key={applicant.id} className="ba-mobile-card">
-                <div className="ba-mobile-card-header">
-                  <div className="ba-mobile-card-name">
+              <div key={applicant.id} className="bg-gray-50 rounded-lg p-4 border border-gray-200 transition-all duration-200 active:bg-gray-100"> {/* ba-mobile-card */}
+                <div className="flex items-center justify-between mb-3 pb-3 border-b border-gray-200"> {/* ba-mobile-card-header */}
+                  <div className="flex items-center gap-3"> {/* ba-mobile-card-name */}
                     <input
                       type="checkbox"
                       checked={selectedApplicants.includes(applicant.id)}
                       onChange={() => toggleSelect(applicant.id)}
-                      className="ba-mobile-card-checkbox"
+                      className="w-5 h-5 rounded border-gray-300 text-blue-600 cursor-pointer focus:ring-2 focus:ring-blue-500" /* ba-mobile-card-checkbox */
                     />
-                    <span>{applicant.name}</span>
+                    <span className="text-base font-bold text-gray-900">{applicant.name}</span>
                   </div>
                 </div>
-                <div className="ba-mobile-card-row">
-                  <span className="ba-mobile-card-label">Requested Role</span>
-                  <span className="ba-mobile-card-value">{applicant.requestedRole}</span>
+                <div className="flex items-center justify-between mb-2"> {/* ba-mobile-card-row */}
+                  <span className="text-xs font-medium text-gray-500 uppercase">Requested Role</span> {/* ba-mobile-card-label */}
+                  <span className="text-sm font-semibold text-gray-900">{applicant.requestedRole}</span> {/* ba-mobile-card-value */}
                 </div>
-                <div className="ba-mobile-card-row">
-                  <span className="ba-mobile-card-label">Assigned Manager</span>
-                  <span className="ba-mobile-card-value">
-                    {applicant.assignedManager || <span className="ba-dash">&mdash;</span>}
+                <div className="flex items-center justify-between mb-2"> {/* ba-mobile-card-row */}
+                  <span className="text-xs font-medium text-gray-500 uppercase">Assigned Manager</span> {/* ba-mobile-card-label */}
+                  <span className="text-sm font-semibold text-gray-900"> {/* ba-mobile-card-value */}
+                    {applicant.assignedManager || <span className="text-gray-400">&mdash;</span>} {/* ba-dash */}
                   </span>
                 </div>
-                <div className="ba-mobile-card-row">
-                  <span className="ba-mobile-card-label">Profile Completion</span>
-                  <span className="ba-mobile-card-value">{applicant.profileCompletion}</span>
+                <div className="flex items-center justify-between mb-2"> {/* ba-mobile-card-row */}
+                  <span className="text-xs font-medium text-gray-500 uppercase">Profile Completion</span> {/* ba-mobile-card-label */}
+                  <span className="text-sm font-semibold text-gray-900">{applicant.profileCompletion}</span> {/* ba-mobile-card-value */}
                 </div>
-                <div className="ba-mobile-card-row">
-                  <span className="ba-mobile-card-label">Design Theme</span>
-                  <span className="ba-mobile-card-value">{applicant.designTheme}</span>
+                <div className="flex items-center justify-between mb-2"> {/* ba-mobile-card-row */}
+                  <span className="text-xs font-medium text-gray-500 uppercase">Design Theme</span> {/* ba-mobile-card-label */}
+                  <span className="text-sm font-semibold text-gray-900">{applicant.designTheme}</span> {/* ba-mobile-card-value */}
                 </div>
-                <div className="ba-mobile-card-actions">
+                <div className="flex items-center gap-2 pt-3 border-t border-gray-200 mt-3"> {/* ba-mobile-card-actions */}
                   <button 
-                    className="ba-action-btn approve" 
+                    className="w-8 h-8 rounded-lg border-0 flex items-center justify-center text-emerald-600 bg-emerald-50 cursor-pointer transition-all duration-200 hover:bg-emerald-100 active:scale-95" /* ba-action-btn approve */
                     title="Approve"
                     onClick={() => {
                       // Handle approve for mobile
@@ -268,7 +268,7 @@ export default function AgentApprovalsPage() {
                     <FiCheck />
                   </button>
                   <button 
-                    className="ba-action-btn settings" 
+                    className="w-8 h-8 rounded-lg border-0 flex items-center justify-center text-gray-600 bg-gray-100 cursor-pointer transition-all duration-200 hover:bg-gray-200 active:scale-95" /* ba-action-btn settings */
                     title="Settings"
                     onClick={() => handleSettingsClick(applicant)}
                   >
@@ -283,86 +283,87 @@ export default function AgentApprovalsPage() {
 
       {/* Agent Details Modal */}
       {showModal && selectedApplicant && (
-        <div className="ba-modal-overlay" onClick={handleCloseModal}>
-          <div className="ba-modal-content" onClick={(e) => e.stopPropagation()}>
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={handleCloseModal}> {/* ba-modal-overlay */}
+          <div className="bg-white rounded-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto relative" onClick={(e) => e.stopPropagation()}> {/* ba-modal-content */}
             {/* Modal Header */}
-            <div className="ba-modal-header">
-              <button className="ba-modal-close" onClick={handleCloseModal}>
+            <div className="sticky top-0 bg-white z-10 p-4 flex justify-end border-b border-gray-200"> {/* ba-modal-header */}
+              <button className="w-10 h-10 rounded-full border-0 bg-gray-100 flex items-center justify-center text-gray-600 cursor-pointer transition-all duration-200 hover:bg-gray-200" onClick={handleCloseModal}> {/* ba-modal-close */}
                 <FiX />
               </button>
             </div>
 
             {/* Modal Body */}
-            <div className="ba-modal-body">
+            <div className="p-6"> {/* ba-modal-body */}
               {/* Profile Section */}
-              <div className="ba-modal-profile">
-                <div className="ba-profile-image">
+              <div className="flex flex-col items-center"> {/* ba-modal-profile */}
+                <div className="w-[120px] h-[120px] rounded-full overflow-hidden mb-4 border-4 border-blue-100"> {/* ba-profile-image */}
                   <img 
                     src={selectedApplicant.photo || `https://ui-avatars.com/api/?name=${encodeURIComponent(selectedApplicant.name)}&size=120&background=3b82f6&color=fff&bold=true`}
                     alt={selectedApplicant.name}
+                    className="w-full h-full object-cover"
                     onError={(e) => {
                       const target = e.target as HTMLImageElement
                       target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(selectedApplicant.name)}&size=120&background=3b82f6&color=fff&bold=true`
                     }}
                   />
                 </div>
-                <h2 className="ba-profile-name">{selectedApplicant.name}</h2>
-                <p className="ba-profile-role">{selectedApplicant.requestedRole}</p>
+                <h2 className="text-2xl font-bold text-gray-900 mb-1">{selectedApplicant.name}</h2> {/* ba-profile-name */}
+                <p className="text-sm text-gray-500 mb-5">{selectedApplicant.requestedRole}</p> {/* ba-profile-role */}
 
                 {/* Verification Status */}
-                <div className="ba-verification-status">
-                  <div className="ba-verification-item verified">
-                    <FiUser className="ba-verification-icon" />
-                    <span>Profile Verification is at {selectedApplicant.profileCompletion}</span>
+                <div className="w-full flex flex-col gap-2 mb-5"> {/* ba-verification-status */}
+                  <div className="flex items-center gap-2 py-2 px-3 rounded-lg bg-emerald-50 text-emerald-700"> {/* ba-verification-item verified */}
+                    <FiUser className="text-base" /> {/* ba-verification-icon */}
+                    <span className="text-sm font-medium">Profile Verification is at {selectedApplicant.profileCompletion}</span>
                   </div>
-                  <div className={`ba-verification-item ${isVerified(getVerificationPercentage(selectedApplicant.profileCompletion)) ? 'verified' : 'not-verified'}`}>
+                  <div className={`flex items-center gap-2 py-2 px-3 rounded-lg ${isVerified(getVerificationPercentage(selectedApplicant.profileCompletion)) ? 'bg-emerald-50 text-emerald-700' : 'bg-red-50 text-red-700'}`}> {/* ba-verification-item verified/not-verified */}
                     {isVerified(getVerificationPercentage(selectedApplicant.profileCompletion)) ? (
-                      <FiCheck className="ba-verification-icon" />
+                      <FiCheck className="text-base" /> /* ba-verification-icon */
                     ) : (
-                      <FiX className="ba-verification-icon" />
+                      <FiX className="text-base" /> /* ba-verification-icon */
                     )}
-                    <span>{isVerified(getVerificationPercentage(selectedApplicant.profileCompletion)) ? 'Verified' : 'Not Verified'}</span>
+                    <span className="text-sm font-medium">{isVerified(getVerificationPercentage(selectedApplicant.profileCompletion)) ? 'Verified' : 'Not Verified'}</span>
                   </div>
                 </div>
 
                 {/* Profile Details Links */}
-                <div className="ba-profile-details">
-                  <div className="ba-detail-item">
-                    <div className="ba-detail-left">
-                      <FiCreditCard className="ba-detail-icon" />
-                      <span>PRC ID</span>
+                <div className="w-full flex flex-col gap-2 mb-5"> {/* ba-profile-details */}
+                  <div className="flex items-center justify-between py-3 px-4 bg-gray-50 rounded-lg"> {/* ba-detail-item */}
+                    <div className="flex items-center gap-2"> {/* ba-detail-left */}
+                      <FiCreditCard className="text-gray-600" /> {/* ba-detail-icon */}
+                      <span className="text-sm font-medium text-gray-900">PRC ID</span>
                     </div>
-                    <button className="ba-view-btn">
+                    <button className="inline-flex items-center gap-1 py-1.5 px-3 bg-blue-600 text-white text-xs font-medium rounded-lg border-0 cursor-pointer transition-all duration-200 hover:bg-blue-700"> {/* ba-view-btn */}
                       <FiEye />
                       View
                     </button>
                   </div>
-                  <div className="ba-detail-item">
-                    <div className="ba-detail-left">
-                      <FiPhone className="ba-detail-icon" />
-                      <span>Contact</span>
+                  <div className="flex items-center justify-between py-3 px-4 bg-gray-50 rounded-lg"> {/* ba-detail-item */}
+                    <div className="flex items-center gap-2"> {/* ba-detail-left */}
+                      <FiPhone className="text-gray-600" /> {/* ba-detail-icon */}
+                      <span className="text-sm font-medium text-gray-900">Contact</span>
                     </div>
-                    <button className="ba-view-btn">
+                    <button className="inline-flex items-center gap-1 py-1.5 px-3 bg-blue-600 text-white text-xs font-medium rounded-lg border-0 cursor-pointer transition-all duration-200 hover:bg-blue-700"> {/* ba-view-btn */}
                       <FiEye />
                       View
                     </button>
                   </div>
-                  <div className="ba-detail-item">
-                    <div className="ba-detail-left">
-                      <FiUser className="ba-detail-icon" />
-                      <span>Profile Photo</span>
+                  <div className="flex items-center justify-between py-3 px-4 bg-gray-50 rounded-lg"> {/* ba-detail-item */}
+                    <div className="flex items-center gap-2"> {/* ba-detail-left */}
+                      <FiUser className="text-gray-600" /> {/* ba-detail-icon */}
+                      <span className="text-sm font-medium text-gray-900">Profile Photo</span>
                     </div>
-                    <button className="ba-view-btn">
+                    <button className="inline-flex items-center gap-1 py-1.5 px-3 bg-blue-600 text-white text-xs font-medium rounded-lg border-0 cursor-pointer transition-all duration-200 hover:bg-blue-700"> {/* ba-view-btn */}
                       <FiEye />
                       View
                     </button>
                   </div>
-                  <div className="ba-detail-item">
-                    <div className="ba-detail-left">
-                      <FiGlobe className="ba-detail-icon" />
-                      <span>View Page</span>
+                  <div className="flex items-center justify-between py-3 px-4 bg-gray-50 rounded-lg"> {/* ba-detail-item */}
+                    <div className="flex items-center gap-2"> {/* ba-detail-left */}
+                      <FiGlobe className="text-gray-600" /> {/* ba-detail-icon */}
+                      <span className="text-sm font-medium text-gray-900">View Page</span>
                     </div>
-                    <button className="ba-view-btn">
+                    <button className="inline-flex items-center gap-1 py-1.5 px-3 bg-blue-600 text-white text-xs font-medium rounded-lg border-0 cursor-pointer transition-all duration-200 hover:bg-blue-700"> {/* ba-view-btn */}
                       <FiEye />
                       View
                     </button>
@@ -370,21 +371,21 @@ export default function AgentApprovalsPage() {
                 </div>
 
                 {/* Send Message Section */}
-                <div className="ba-message-section">
-                  <h3 className="ba-message-title">Send a message</h3>
+                <div className="w-full mb-5"> {/* ba-message-section */}
+                  <h3 className="text-base font-bold text-gray-900 mb-3">Send a message</h3> {/* ba-message-title */}
                   <textarea
-                    className="ba-message-textarea"
+                    className="w-full py-2.5 px-4 border border-gray-300 rounded-lg text-sm text-gray-900 resize-none outline-none transition-all duration-200 focus:border-blue-600 focus:ring-2 focus:ring-blue-100" /* ba-message-textarea */
                     placeholder="Send a message to this agent..."
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
                     rows={4}
                   />
-                  <div className="ba-message-buttons">
-                    <button className="ba-send-message-btn" onClick={handleSendMessage}>
+                  <div className="flex gap-2 mt-3"> {/* ba-message-buttons */}
+                    <button className="flex-1 inline-flex items-center justify-center gap-2 py-2.5 px-4 bg-blue-600 text-white text-sm font-semibold rounded-lg border-0 cursor-pointer transition-all duration-200 hover:bg-blue-700" onClick={handleSendMessage}> {/* ba-send-message-btn */}
                       <FiSend />
                       Send Message
                     </button>
-                    <button className="ba-request-completion-btn" onClick={handleRequestCompletion}>
+                    <button className="flex-1 inline-flex items-center justify-center gap-2 py-2.5 px-4 bg-amber-600 text-white text-sm font-semibold rounded-lg border-0 cursor-pointer transition-all duration-200 hover:bg-amber-700" onClick={handleRequestCompletion}> {/* ba-request-completion-btn */}
                       <FiAlertCircle />
                       Send request
                     </button>
@@ -392,11 +393,11 @@ export default function AgentApprovalsPage() {
                 </div>
 
                 {/* Action Buttons */}
-                <div className="ba-action-buttons">
-                  <button className="ba-approve-btn" onClick={handleApprove}>
+                <div className="w-full flex gap-3"> {/* ba-action-buttons */}
+                  <button className="flex-1 py-3 px-4 bg-emerald-600 text-white text-base font-semibold rounded-lg border-0 cursor-pointer transition-all duration-200 hover:bg-emerald-700" onClick={handleApprove}> {/* ba-approve-btn */}
                     Approve
                   </button>
-                  <button className="ba-reject-btn" onClick={handleReject}>
+                  <button className="flex-1 py-3 px-4 bg-red-600 text-white text-base font-semibold rounded-lg border-0 cursor-pointer transition-all duration-200 hover:bg-red-700" onClick={handleReject}> {/* ba-reject-btn */}
                     Reject
                   </button>
                 </div>

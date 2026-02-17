@@ -16,8 +16,7 @@ import {
   FiEdit,
   FiArrowLeft
 } from 'react-icons/fi'
-import '../AgentCreateListingCategory.css'
-import './page.css'
+// import '../AgentCreateListingCategory.css' // Converted to Tailwind
 
 function ProgressRing({ percent }: { percent: number }) {
   const { radius, stroke, normalizedRadius, circumference, strokeDashoffset } = useMemo(() => {
@@ -36,8 +35,8 @@ function ProgressRing({ percent }: { percent: number }) {
   }, [percent])
 
   return (
-    <div className="aclc-progress">
-      <svg height={radius * 2} width={radius * 2} className="aclc-progress-svg">
+    <div className="relative w-13 h-13 flex-shrink-0"> {/* aclc-progress */}
+      <svg height={radius * 2} width={radius * 2} className="-rotate-90"> {/* aclc-progress-svg */}
         <circle
           stroke="#E5E7EB"
           fill="transparent"
@@ -56,10 +55,10 @@ function ProgressRing({ percent }: { percent: number }) {
           r={normalizedRadius}
           cx={radius}
           cy={radius}
-          className="aclc-progress-ring"
+          className="transition-all duration-250 ease-in" // aclc-progress-ring
         />
       </svg>
-      <div className="aclc-progress-text">{percent}%</div>
+      <div className="absolute inset-0 flex items-center justify-center text-xs font-bold text-gray-900">{percent}%</div> {/* aclc-progress-text */}
     </div>
   )
 }
@@ -137,230 +136,202 @@ export default function AgentCreateListingPublish() {
           subtitle="Review and publish your listing." 
         />
 
-        <div className="aclc-breadcrumb">
-          <span className="aclc-breadcrumb-strong">Create Listing</span>
-          <span className="aclc-breadcrumb-sep">&gt;</span>
-          <span className="aclc-breadcrumb-muted">Publish</span>
+        <div className="flex items-center gap-2 text-xl font-semibold text-gray-900 my-1.5 mx-0 mb-4"> {/* aclc-breadcrumb */}
+          <span className="text-gray-900">Create Listing</span> {/* aclc-breadcrumb-strong */}
+          <span className="text-gray-400 font-medium">&gt;</span> {/* aclc-breadcrumb-sep */}
+          <span className="text-gray-400 font-semibold">Publish</span> {/* aclc-breadcrumb-muted */}
         </div>
 
-        <div className="section-card aclc-stepper-card">
-          <div className="aclc-stepper-left">
+        <div className="flex items-center gap-4 p-5 mb-6 bg-white rounded-xl shadow-sm md:flex-col md:items-start"> {/* section-card aclc-stepper-card */}
+          <div className="flex items-center gap-3 min-w-[220px]"> {/* aclc-stepper-left */}
             <ProgressRing percent={90} />
-            <div className="aclc-stepper-left-text">
-              <div className="aclc-stepper-left-title">Completion Status</div>
-            </div>
+            <div className="text-sm font-semibold text-gray-600">Completion Status</div> {/* aclc-stepper-left-title */}
           </div>
 
-          <div className="aclc-steps">
+          <div className="flex-1 grid grid-cols-4 items-start gap-0 md:w-full md:overflow-x-auto md:pb-1.5 md:justify-start"> {/* aclc-steps */}
             {stepLabels.map((label, idx) => {
               const step = idx + 1
               const isActive = step === 8
               const isDone = step < 8
               return (
-                <div className="aclc-step" key={label}>
-                  <div className="aclc-step-top">
-                    <div className={`aclc-step-circle ${isActive ? 'active' : ''} ${isDone ? 'done' : ''}`}>
-                      {isDone ? <FiCheck /> : step}
+                <div className="flex flex-col items-center min-w-0 flex-shrink-0" key={label}> {/* aclc-step */}
+                  <div className="w-full flex items-center relative"> {/* aclc-step-top */}
+                    <div className={`w-11 h-11 rounded-full flex items-center justify-center font-bold text-base flex-shrink-0 relative z-10 ${isActive ? 'bg-blue-600 text-white' : isDone ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-400'}`}> {/* aclc-step-circle */}
+                      {isDone ? <FiCheck className="text-lg" /> : step}
                     </div>
                     {step !== stepLabels.length && (
-                      <div className={`aclc-step-line ${step < 8 ? 'done' : ''}`} />
+                      <div className={`h-1.5 rounded-full flex-1 ml-2 mr-2 min-w-0 ${step < 8 ? 'bg-blue-600' : 'bg-gray-200'}`} /> // aclc-step-line
                     )}
                   </div>
-                  <div className={`aclc-step-label ${isActive ? 'active' : ''}`}>{label}</div>
+                  <div className={`mt-2 text-xs font-semibold text-center leading-tight ${isActive ? 'text-blue-600' : 'text-gray-400'}`}>{label}</div> {/* aclc-step-label */}
                 </div>
               )
             })}
           </div>
         </div>
 
-        <div className="section-card aclc-form-card">
-          <h2 className="aclc-form-title">Review and Publish</h2>
+        <div className="p-7 pb-6 bg-white rounded-xl shadow-sm max-w-full"> {/* section-card aclc-form-card */}
+          <h2 className="m-0 mb-4 text-3xl font-bold text-gray-900">Review and Publish</h2> {/* aclc-form-title */}
           
           {/* Error Message */}
           {submitError && (
-            <div style={{
-              padding: '1rem',
-              marginBottom: '1rem',
-              backgroundColor: '#FEE2E2',
-              border: '1px solid #FCA5A5',
-              borderRadius: '8px',
-              color: '#991B1B'
-            }}>
+            <div className="p-4 mb-4 bg-red-100 border border-red-300 rounded-lg text-red-800">
               {submitError}
             </div>
           )}
 
           {/* Upload Progress Bar */}
           {(isSubmitting || isCompressing) && (
-            <div style={{
-              marginBottom: '1rem',
-              padding: '1rem',
-              backgroundColor: '#F3F4F6',
-              borderRadius: '8px',
-            }}>
-              <div style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                marginBottom: '0.5rem',
-                fontSize: '0.875rem',
-                color: '#6B7280'
-              }}>
+            <div className="mb-4 p-4 bg-gray-100 rounded-lg">
+              <div className="flex justify-between mb-2 text-sm text-gray-500">
                 <span>{isCompressing ? 'Compressing images...' : 'Uploading listing...'}</span>
                 <span>{uploadProgress}%</span>
               </div>
-              <div style={{
-                width: '100%',
-                height: '8px',
-                backgroundColor: '#E5E7EB',
-                borderRadius: '4px',
-                overflow: 'hidden'
-              }}>
-                <div style={{
-                  width: `${uploadProgress}%`,
-                  height: '100%',
-                  backgroundColor: '#2563EB',
-                  transition: 'width 0.3s ease',
-                }} />
+              <div className="w-full h-2 bg-gray-200 rounded overflow-hidden">
+                <div 
+                  className="h-full bg-blue-600 transition-all duration-300 ease-in-out"
+                  style={{ width: `${uploadProgress}%` }}
+                />
               </div>
             </div>
           )}
           
           {/* Processing Account Notice */}
           {isProcessing && (
-            <div className="acpu-processing-notice">
-              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <div className="bg-rental-orange-50 border border-rental-orange-400 rounded-lg p-4 px-5 my-6 flex items-start gap-3"> {/* acpu-processing-notice */}
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" className="flex-shrink-0 mt-0.5">
                 <path d="M10 18C14.4183 18 18 14.4183 18 10C18 5.58172 14.4183 2 10 2C5.58172 2 2 5.58172 2 10C2 14.4183 5.58172 18 10 18Z" stroke="#FE8E0A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                 <path d="M10 6V10M10 14H10.01" stroke="#FE8E0A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
-              <div>
-                <strong>Note:</strong> Your account is currently under review. Your listing will be saved but won't be visible to users until your account is approved by our admin team.
+              <div className="text-rental-orange-900 font-outfit text-sm font-normal leading-relaxed">
+                <strong className="text-rental-orange-400 font-semibold">Note:</strong> Your account is currently under review. Your listing will be saved but won't be visible to users until your account is approved by our admin team.
               </div>
             </div>
           )}
 
-          <div className="acpu-summary-section">
-            <div className="acpu-summary-header">
-              <h3 className="acpu-summary-title">Property & Summary</h3>
+          <div className="mt-6 rounded-lg overflow-hidden border border-gray-200"> {/* acpu-summary-section */}
+            <div className="bg-blue-600 p-4 px-5"> {/* acpu-summary-header */}
+              <h3 className="m-0 text-base font-bold text-white">Property & Summary</h3> {/* acpu-summary-title */}
             </div>
 
-            <div className="acpu-summary-content">
-              <div className="acpu-summary-row">
-                <div className="acpu-summary-label">Category</div>
-                <div className="acpu-summary-value-group">
-                  <div className="acpu-summary-value">{propertyData.category}</div>
+            <div className="p-5 bg-white"> {/* acpu-summary-content */}
+              <div className="grid grid-cols-[200px_1fr] gap-5 items-center py-4 border-b border-gray-100 last:border-b-0"> {/* acpu-summary-row */}
+                <div className="text-sm font-semibold text-gray-900">Category</div> {/* acpu-summary-label */}
+                <div className="flex items-center gap-3"> {/* acpu-summary-value-group */}
+                  <div className="flex-1 p-2.5 px-3.5 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-900 min-h-[40px] flex items-center">{propertyData.category}</div> {/* acpu-summary-value */}
                   <button
-                    className="acpu-edit-btn"
+                    className="inline-flex items-center gap-1.5 py-2 px-4 bg-blue-600 text-white border-none rounded-lg text-sm font-semibold cursor-pointer transition-all duration-150 ease-in-out whitespace-nowrap hover:bg-blue-700 hover:-translate-y-px hover:shadow-[0_4px_6px_rgba(37,99,235,0.2)]" // acpu-edit-btn
                     onClick={() => handleEdit('category')}
                     type="button"
                   >
-                    <FiEdit className="acpu-edit-icon" />
+                    <FiEdit className="text-base" /> {/* acpu-edit-icon */}
                     <span>Edit</span>
                   </button>
                 </div>
               </div>
 
-              <div className="acpu-summary-row">
-                <div className="acpu-summary-label">Title</div>
-                <div className="acpu-summary-value-group">
-                  <div className="acpu-summary-value">{propertyData.title}</div>
+              <div className="grid grid-cols-[200px_1fr] gap-5 items-center py-4 border-b border-gray-100 last:border-b-0"> {/* acpu-summary-row */}
+                <div className="text-sm font-semibold text-gray-900">Title</div> {/* acpu-summary-label */}
+                <div className="flex items-center gap-3"> {/* acpu-summary-value-group */}
+                  <div className="flex-1 p-2.5 px-3.5 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-900 min-h-[40px] flex items-center">{propertyData.title}</div> {/* acpu-summary-value */}
                   <button
-                    className="acpu-edit-btn"
+                    className="inline-flex items-center gap-1.5 py-2 px-4 bg-blue-600 text-white border-none rounded-lg text-sm font-semibold cursor-pointer transition-all duration-150 ease-in-out whitespace-nowrap hover:bg-blue-700 hover:-translate-y-px hover:shadow-[0_4px_6px_rgba(37,99,235,0.2)]" // acpu-edit-btn
                     onClick={() => handleEdit('title')}
                     type="button"
                   >
-                    <FiEdit className="acpu-edit-icon" />
+                    <FiEdit className="text-base" /> {/* acpu-edit-icon */}
                     <span>Edit</span>
                   </button>
                 </div>
               </div>
 
-              <div className="acpu-summary-row">
-                <div className="acpu-summary-label">Price</div>
-                <div className="acpu-summary-value-group">
-                  <div className="acpu-summary-value">
+              <div className="grid grid-cols-[200px_1fr] gap-5 items-center py-4 border-b border-gray-100 last:border-b-0"> {/* acpu-summary-row */}
+                <div className="text-sm font-semibold text-gray-900">Price</div> {/* acpu-summary-label */}
+                <div className="flex items-center gap-3"> {/* acpu-summary-value-group */}
+                  <div className="flex-1 p-2.5 px-3.5 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-900 min-h-[40px] flex items-center">
                     {propertyData.price} ({propertyData.priceType})
-                  </div>
+                  </div> {/* acpu-summary-value */}
                   <button
-                    className="acpu-edit-btn"
+                    className="inline-flex items-center gap-1.5 py-2 px-4 bg-blue-600 text-white border-none rounded-lg text-sm font-semibold cursor-pointer transition-all duration-150 ease-in-out whitespace-nowrap hover:bg-blue-700 hover:-translate-y-px hover:shadow-[0_4px_6px_rgba(37,99,235,0.2)]" // acpu-edit-btn
                     onClick={() => handleEdit('price')}
                     type="button"
                   >
-                    <FiEdit className="acpu-edit-icon" />
+                    <FiEdit className="text-base" /> {/* acpu-edit-icon */}
                     <span>Edit</span>
                   </button>
                 </div>
               </div>
 
-              <div className="acpu-summary-row">
-                <div className="acpu-summary-label">Location</div>
-                <div className="acpu-summary-value-group">
-                  <div className="acpu-summary-value">{propertyData.location}</div>
+              <div className="grid grid-cols-[200px_1fr] gap-5 items-center py-4 border-b border-gray-100 last:border-b-0"> {/* acpu-summary-row */}
+                <div className="text-sm font-semibold text-gray-900">Location</div> {/* acpu-summary-label */}
+                <div className="flex items-center gap-3"> {/* acpu-summary-value-group */}
+                  <div className="flex-1 p-2.5 px-3.5 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-900 min-h-[40px] flex items-center">{propertyData.location}</div> {/* acpu-summary-value */}
                   <button
-                    className="acpu-edit-btn"
+                    className="inline-flex items-center gap-1.5 py-2 px-4 bg-blue-600 text-white border-none rounded-lg text-sm font-semibold cursor-pointer transition-all duration-150 ease-in-out whitespace-nowrap hover:bg-blue-700 hover:-translate-y-px hover:shadow-[0_4px_6px_rgba(37,99,235,0.2)]" // acpu-edit-btn
                     onClick={() => handleEdit('location')}
                     type="button"
                   >
-                    <FiEdit className="acpu-edit-icon" />
+                    <FiEdit className="text-base" /> {/* acpu-edit-icon */}
                     <span>Edit</span>
                   </button>
                 </div>
               </div>
 
-              <div className="acpu-summary-row">
-                <div className="acpu-summary-label">Bedrooms</div>
-                <div className="acpu-summary-value-group">
-                  <div className="acpu-summary-value">{propertyData.bedrooms}</div>
+              <div className="grid grid-cols-[200px_1fr] gap-5 items-center py-4 border-b border-gray-100 last:border-b-0"> {/* acpu-summary-row */}
+                <div className="text-sm font-semibold text-gray-900">Bedrooms</div> {/* acpu-summary-label */}
+                <div className="flex items-center gap-3"> {/* acpu-summary-value-group */}
+                  <div className="flex-1 p-2.5 px-3.5 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-900 min-h-[40px] flex items-center">{propertyData.bedrooms}</div> {/* acpu-summary-value */}
                   <button
-                    className="acpu-edit-btn"
+                    className="inline-flex items-center gap-1.5 py-2 px-4 bg-blue-600 text-white border-none rounded-lg text-sm font-semibold cursor-pointer transition-all duration-150 ease-in-out whitespace-nowrap hover:bg-blue-700 hover:-translate-y-px hover:shadow-[0_4px_6px_rgba(37,99,235,0.2)]" // acpu-edit-btn
                     onClick={() => handleEdit('bedrooms')}
                     type="button"
                   >
-                    <FiEdit className="acpu-edit-icon" />
+                    <FiEdit className="text-base" /> {/* acpu-edit-icon */}
                     <span>Edit</span>
                   </button>
                 </div>
               </div>
 
-              <div className="acpu-summary-row">
-                <div className="acpu-summary-label">Bathrooms</div>
-                <div className="acpu-summary-value-group">
-                  <div className="acpu-summary-value">{propertyData.bathrooms}</div>
+              <div className="grid grid-cols-[200px_1fr] gap-5 items-center py-4 border-b border-gray-100 last:border-b-0"> {/* acpu-summary-row */}
+                <div className="text-sm font-semibold text-gray-900">Bathrooms</div> {/* acpu-summary-label */}
+                <div className="flex items-center gap-3"> {/* acpu-summary-value-group */}
+                  <div className="flex-1 p-2.5 px-3.5 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-900 min-h-[40px] flex items-center">{propertyData.bathrooms}</div> {/* acpu-summary-value */}
                   <button
-                    className="acpu-edit-btn"
+                    className="inline-flex items-center gap-1.5 py-2 px-4 bg-blue-600 text-white border-none rounded-lg text-sm font-semibold cursor-pointer transition-all duration-150 ease-in-out whitespace-nowrap hover:bg-blue-700 hover:-translate-y-px hover:shadow-[0_4px_6px_rgba(37,99,235,0.2)]" // acpu-edit-btn
                     onClick={() => handleEdit('bathrooms')}
                     type="button"
                   >
-                    <FiEdit className="acpu-edit-icon" />
+                    <FiEdit className="text-base" /> {/* acpu-edit-icon */}
                     <span>Edit</span>
                   </button>
                 </div>
               </div>
 
-              <div className="acpu-summary-row">
-                <div className="acpu-summary-label">Floor Area</div>
-                <div className="acpu-summary-value-group">
-                  <div className="acpu-summary-value">{propertyData.floorArea}</div>
+              <div className="grid grid-cols-[200px_1fr] gap-5 items-center py-4 border-b border-gray-100 last:border-b-0"> {/* acpu-summary-row */}
+                <div className="text-sm font-semibold text-gray-900">Floor Area</div> {/* acpu-summary-label */}
+                <div className="flex items-center gap-3"> {/* acpu-summary-value-group */}
+                  <div className="flex-1 p-2.5 px-3.5 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-900 min-h-[40px] flex items-center">{propertyData.floorArea}</div> {/* acpu-summary-value */}
                   <button
-                    className="acpu-edit-btn"
+                    className="inline-flex items-center gap-1.5 py-2 px-4 bg-blue-600 text-white border-none rounded-lg text-sm font-semibold cursor-pointer transition-all duration-150 ease-in-out whitespace-nowrap hover:bg-blue-700 hover:-translate-y-px hover:shadow-[0_4px_6px_rgba(37,99,235,0.2)]" // acpu-edit-btn
                     onClick={() => handleEdit('floorArea')}
                     type="button"
                   >
-                    <FiEdit className="acpu-edit-icon" />
+                    <FiEdit className="text-base" /> {/* acpu-edit-icon */}
                     <span>Edit</span>
                   </button>
                 </div>
               </div>
 
-              <div className="acpu-summary-row">
-                <div className="acpu-summary-label">Video</div>
-                <div className="acpu-summary-value-group">
-                  <div className="acpu-summary-value">{propertyData.video}</div>
+              <div className="grid grid-cols-[200px_1fr] gap-5 items-center py-4 border-b border-gray-100 last:border-b-0 md:grid-cols-1 md:gap-3"> {/* acpu-summary-row */}
+                <div className="text-sm font-semibold text-gray-900">Video</div> {/* acpu-summary-label */}
+                <div className="flex items-center gap-3 md:flex-col md:items-stretch"> {/* acpu-summary-value-group */}
+                  <div className="flex-1 p-2.5 px-3.5 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-900 min-h-[40px] flex items-center">{propertyData.video}</div> {/* acpu-summary-value */}
                   <button
-                    className="acpu-edit-btn"
+                    className="inline-flex items-center gap-1.5 py-2 px-4 bg-blue-600 text-white border-none rounded-lg text-sm font-semibold cursor-pointer transition-all duration-150 ease-in-out whitespace-nowrap hover:bg-blue-700 hover:-translate-y-px hover:shadow-[0_4px_6px_rgba(37,99,235,0.2)] md:w-full md:justify-center" // acpu-edit-btn
                     onClick={() => handleEdit('video')}
                     type="button"
                   >
-                    <FiEdit className="acpu-edit-icon" />
+                    <FiEdit className="text-base" /> {/* acpu-edit-icon */}
                     <span>Edit</span>
                   </button>
                 </div>
@@ -368,7 +339,7 @@ export default function AgentCreateListingPublish() {
             </div>
           </div>
 
-          <div className="acpu-footer-actions">
+          <div className="mt-8 flex justify-between gap-3 md:flex-col md:items-stretch"> {/* acpu-footer-actions */}
             <button
               className="acld-prev-btn"
               onClick={() => router.push('/agent/create-listing/owner-info')}
@@ -378,7 +349,7 @@ export default function AgentCreateListingPublish() {
               <span>Previous</span>
             </button>
             <button
-              className="acpu-publish-btn"
+              className="py-3 px-6 bg-blue-600 text-white border-none rounded-lg text-sm font-bold cursor-pointer transition-all duration-150 ease-in-out shadow-lg shadow-blue-600/20 hover:bg-blue-700 hover:-translate-y-px hover:shadow-xl hover:shadow-blue-600/25 md:w-full md:justify-center" // acpu-publish-btn
               onClick={async () => {
                 setIsSubmitting(true)
                 setIsCompressing(true)

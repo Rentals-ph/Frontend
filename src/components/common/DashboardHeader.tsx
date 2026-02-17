@@ -4,7 +4,6 @@ import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { FiLogOut, FiChevronDown, FiUser, FiBell } from 'react-icons/fi'
 import { ASSETS } from '@/utils/assets'
-import './DashboardHeader.css'
 
 interface DashboardHeaderProps {
   title?: string
@@ -85,59 +84,60 @@ function DashboardHeader({
   }
 
   return (
-    <header className="dashboard-header">
-      <div className="header-content">
+    <header className="mb-8 md:mb-6">
+      <div className="flex justify-between items-start flex-col gap-4 md:flex-row">
         <div>
-          <h1>{title}</h1>
-          <p className="welcome-text">{subtitle}</p>
+          <h1 className="m-0 mb-2 text-[28px] md:text-[22px] sm:text-lg font-bold text-gray-900">{title}</h1>
+          <p className="m-0 text-sm md:text-xs text-gray-500">{subtitle}</p>
         </div>
-        <div className="header-right">
+        <div className="flex items-center gap-5 md:w-full md:justify-between">
           {showNotifications && (
-            <FiBell className="notification-icon" />
+            <FiBell className="text-2xl text-gray-500 cursor-pointer transition-colors hover:text-gray-900" />
           )}
-          <div className="user-profile-wrapper" ref={userMenuRef}>
+          <div className="relative" ref={userMenuRef}>
             <button 
-              className="user-profile-btn"
+              className="bg-transparent border-none p-0 cursor-pointer transition-all group"
               onClick={() => setShowUserMenu(!showUserMenu)}
               aria-label="User menu"
             >
-              <div className="user-profile">
-                <div className="profile-avatar">
+              <div className="flex items-center gap-3 sm:gap-0 px-2 py-1 transition-colors group-hover:bg-gray-100 group-hover:rounded-lg">
+                <div className="w-12 h-12 md:w-10 md:h-10 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden">
                   <img 
                     src={avatarImage || ASSETS.PLACEHOLDER_PROFILE} 
-                    alt={userName} 
+                    alt={userName}
+                    className="w-full h-full object-cover"
                     onError={(e) => {
                       const target = e.target as HTMLImageElement
                       target.style.display = 'none'
                       target.nextElementSibling?.classList.remove('hidden')
                     }} 
                   />
-                  <div className="avatar-fallback hidden">{getAvatarFallback()}</div>
+                  <div className="w-full h-full hidden flex items-center justify-center bg-gradient-to-br from-blue-500 to-purple-600 text-white font-semibold text-sm">{getAvatarFallback()}</div>
                 </div>
-                <div className="user-info">
-                  <span className="user-name">{userName}</span>
-                  {userRole && <span className="user-role">{userRole}</span>}
+                <div className="flex flex-col gap-0.5 sm:hidden">
+                  <span className="text-sm md:text-xs font-semibold text-gray-900">{userName}</span>
+                  {userRole && <span className="text-xs md:text-[10px] text-gray-500">{userRole}</span>}
                 </div>
-                <FiChevronDown className={`user-menu-chevron ${showUserMenu ? 'open' : ''}`} />
+                <FiChevronDown className={`text-base text-gray-500 transition-all group-hover:text-gray-900 sm:hidden ${showUserMenu ? 'rotate-180' : ''}`} />
               </div>
             </button>
             
             {showUserMenu && (
-              <div className="user-menu-dropdown">
+              <div className="absolute top-[calc(100%+8px)] right-0 min-w-[180px] bg-white border border-gray-200 rounded-lg shadow-[0_4px_12px_rgba(0,0,0,0.1)] z-[1000] overflow-hidden md:left-auto">
                 {accountRoute && (
                   <button 
-                    className="user-menu-item" 
+                    className="w-full flex items-center gap-3 px-4 py-3 bg-transparent border-none text-left cursor-pointer transition-colors text-sm text-gray-900 hover:bg-gray-50" 
                     onClick={() => {
                       router.push(accountRoute)
                       setShowUserMenu(false)
                     }}
                   >
-                    <FiUser className="user-menu-icon" />
+                    <FiUser className="text-lg flex-shrink-0" />
                     <span>Account</span>
                   </button>
                 )}
-                <button className="user-menu-item logout" onClick={handleLogout}>
-                  <FiLogOut className="user-menu-icon" />
+                <button className="w-full flex items-center gap-3 px-4 py-3 bg-transparent border-none text-left cursor-pointer transition-colors text-sm text-red-600 hover:bg-red-50" onClick={handleLogout}>
+                  <FiLogOut className="text-lg flex-shrink-0" />
                   <span>Logout</span>
                 </button>
               </div>

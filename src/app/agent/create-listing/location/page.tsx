@@ -13,8 +13,7 @@ import {
   FiCheck
 } from 'react-icons/fi'
 import { philippinesProvinces, getCitiesByProvince } from '../../../../data/philippinesLocations'
-import '../AgentCreateListingCategory.css'
-import './page.css'
+// import '../AgentCreateListingCategory.css' // Converted to Tailwind
 
 function ProgressRing({ percent }: { percent: number }) {
   const { radius, stroke, normalizedRadius, circumference, strokeDashoffset } = useMemo(() => {
@@ -33,8 +32,8 @@ function ProgressRing({ percent }: { percent: number }) {
   }, [percent])
 
   return (
-    <div className="aclc-progress">
-      <svg height={radius * 2} width={radius * 2} className="aclc-progress-svg">
+    <div className="relative w-13 h-13 flex-shrink-0"> {/* aclc-progress */}
+      <svg height={radius * 2} width={radius * 2} className="-rotate-90"> {/* aclc-progress-svg */}
         <circle
           stroke="#E5E7EB"
           fill="transparent"
@@ -53,10 +52,10 @@ function ProgressRing({ percent }: { percent: number }) {
           r={normalizedRadius}
           cx={radius}
           cy={radius}
-          className="aclc-progress-ring"
+          className="transition-all duration-250 ease-in" // aclc-progress-ring
         />
       </svg>
-      <div className="aclc-progress-text">{percent}%</div>
+      <div className="absolute inset-0 flex items-center justify-center text-xs font-bold text-gray-900">{percent}%</div> {/* aclc-progress-text */}
     </div>
   )
 }
@@ -175,46 +174,44 @@ export default function AgentCreateListingLocation() {
           subtitle="Add property location." 
         />
 
-        <div className="aclc-breadcrumb">
-          <span className="aclc-breadcrumb-strong">Create Listing</span>
-          <span className="aclc-breadcrumb-sep">&gt;</span>
-          <span className="aclc-breadcrumb-muted">Location</span>
+        <div className="flex items-center gap-2 text-xl font-semibold text-gray-900 my-1.5 mx-0 mb-4"> {/* aclc-breadcrumb */}
+          <span className="text-gray-900">Create Listing</span> {/* aclc-breadcrumb-strong */}
+          <span className="text-gray-400 font-medium">&gt;</span> {/* aclc-breadcrumb-sep */}
+          <span className="text-gray-400 font-semibold">Location</span> {/* aclc-breadcrumb-muted */}
         </div>
 
-        <div className="section-card aclc-stepper-card">
-          <div className="aclc-stepper-left">
+        <div className="flex items-center gap-4 p-5 mb-6 bg-white rounded-xl shadow-sm md:flex-col md:items-start"> {/* section-card aclc-stepper-card */}
+          <div className="flex items-center gap-3 min-w-[220px]"> {/* aclc-stepper-left */}
             <ProgressRing percent={30} />
-            <div className="aclc-stepper-left-text">
-              <div className="aclc-stepper-left-title">Completion Status</div>
-            </div>
+            <div className="text-sm font-semibold text-gray-600">Completion Status</div> {/* aclc-stepper-left-title */}
           </div>
 
-          <div className="aclc-steps">
+          <div className="flex-1 grid grid-cols-4 items-start gap-0 md:w-full md:overflow-x-auto md:pb-1.5 md:justify-start"> {/* aclc-steps */}
             {stepLabels.map((label, idx) => {
               const step = idx + 1
               const isActive = step === 3
               const isDone = step < 3
               return (
-                <div className="aclc-step" key={label}>
-                  <div className="aclc-step-top">
-                    <div className={`aclc-step-circle ${isActive ? 'active' : ''} ${isDone ? 'done' : ''}`}>
-                      {isDone ? <FiCheck /> : step}
+                <div className="flex flex-col items-center min-w-0 flex-shrink-0" key={label}> {/* aclc-step */}
+                  <div className="w-full flex items-center relative"> {/* aclc-step-top */}
+                    <div className={`w-11 h-11 rounded-full flex items-center justify-center font-bold text-base flex-shrink-0 relative z-10 ${isActive ? 'bg-blue-600 text-white' : isDone ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-400'}`}> {/* aclc-step-circle */}
+                      {isDone ? <FiCheck className="text-lg" /> : step}
                     </div>
                     {step !== stepLabels.length && (
-                      <div className={`aclc-step-line ${step < 3 ? 'done' : ''}`} />
+                      <div className={`h-1.5 rounded-full flex-1 ml-2 mr-2 min-w-0 ${step < 3 ? 'bg-blue-600' : 'bg-gray-200'}`} /> // aclc-step-line
                     )}
                   </div>
-                  <div className={`aclc-step-label ${isActive ? 'active' : ''}`}>{label}</div>
+                  <div className={`mt-2 text-xs font-semibold text-center leading-tight ${isActive ? 'text-blue-600' : 'text-gray-400'}`}>{label}</div> {/* aclc-step-label */}
                 </div>
               )
             })}
           </div>
         </div>
 
-        <div className="section-card aclc-form-card">
-          <h2 className="aclc-form-title">Property Location</h2>
+        <div className="p-7 pb-6 bg-white rounded-xl shadow-sm max-w-full"> {/* section-card aclc-form-card */}
+          <h2 className="m-0 mb-4 text-3xl font-bold text-gray-900">Property Location</h2> {/* aclc-form-title */}
 
-          <div className="acll-grid-3">
+          <div className="grid grid-cols-3 gap-4 max-w-full mb-4 lg:grid-cols-1"> {/* acll-grid-3 */}
             <div>
               <label className="aclc-label" htmlFor="country">
                 Country
@@ -278,33 +275,33 @@ export default function AgentCreateListingLocation() {
             </div>
           </div>
 
-          <div className="acll-street-section">
-            <label className="aclc-label" htmlFor="street">
+          <div className="w-full mt-0 mb-4"> {/* acll-street-section */}
+            <label className="block text-sm font-semibold text-blue-600 mb-2" htmlFor="street"> {/* aclc-label */}
               Street Address
             </label>
             <input
               id="street"
-              className="acld-input"
+              className="w-full h-11 px-3.5 border border-gray-300 rounded-lg text-sm outline-none focus:border-blue-600 focus:shadow-[0_0_0_3px_rgba(37,99,235,0.1)]" // acld-input
               placeholder="Enter street address, building name, etc. (Location will be auto-detected)"
               value={street}
               onChange={(e) => handleStreetChange(e.target.value)}
             />
             {isGeocoding && (
-              <div className="acll-geocoding-indicator">
+              <div className="mt-2 py-2 px-3 bg-green-50 border border-green-200 rounded-md text-green-800 text-sm flex items-center gap-2 before:content-[''] before:w-3 before:h-3 before:border-2 before:border-green-800 before:border-t-transparent before:rounded-full before:animate-spin"> {/* acll-geocoding-indicator */}
                 <span>Detecting location...</span>
               </div>
             )}
-            <div className="acll-info-banner">
-              <span className="acll-info-icon">i</span>
-              <p className="acll-info-text">
+            <div className="mt-3 flex items-start gap-2.5 py-2.5 px-3 rounded-lg bg-blue-50 border border-blue-200"> {/* acll-info-banner */}
+              <span className="w-5.5 h-5.5 rounded-full border border-blue-300 inline-flex items-center justify-center text-xs font-bold text-blue-600 flex-shrink-0">i</span> {/* acll-info-icon */}
+              <p className="m-0 text-xs text-gray-600 leading-relaxed">
                 If you don&apos;t want to pinpoint the exact location of the property, you may leave the
                 street address blank and just select the country, state/province, and city to indicate
                 the general area.
-              </p>
+              </p> {/* acll-info-text */}
             </div>
           </div>
 
-          <div className="acll-map-section">
+          <div className="mt-0"> {/* acll-map-section */}
             <LocationMap
               latitude={latitude || null}
               longitude={longitude || null}
@@ -319,7 +316,7 @@ export default function AgentCreateListingLocation() {
           <input type="hidden" name="latitude" value={latitude} />
           <input type="hidden" name="longitude" value={longitude} />
 
-          <div className="acld-footer-actions acll-footer-actions">
+          <div className="mt-5 flex justify-between gap-3 md:flex-col md:items-stretch"> {/* acld-footer-actions acll-footer-actions */}
             <button
               className="acld-prev-btn"
               onClick={() => router.push('/agent/create-listing/details')}

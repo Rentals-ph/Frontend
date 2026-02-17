@@ -1,6 +1,5 @@
 import type { Metadata, Viewport } from 'next'
 import '../index.css'
-import '../styles/landing.css'
 
 export const metadata: Metadata = {
   title: 'Rentals.ph - Your Trusted Property Rental Platform',

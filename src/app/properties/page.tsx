@@ -8,7 +8,7 @@ import Footer from '../../components/layout/Footer'
 import VerticalPropertyCard from '../../components/common/VerticalPropertyCard'
 import HorizontalPropertyCard from '../../components/common/HorizontalPropertyCard'
 import PublicPropertiesMap from '../../components/common/PublicPropertiesMap'
-import './page.css'
+// import './page.css' // Removed - converted to Tailwind
 import PageHeader from '../../components/layout/PageHeader'
 import { propertiesApi } from '../../api/endpoints/properties'
 import type { Property } from '../../types'

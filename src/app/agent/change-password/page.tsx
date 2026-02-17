@@ -16,13 +16,7 @@ export default function AgentChangePassword() {
   }, [router])
 
   return (
-    <div style={{ 
-      display: 'flex', 
-      justifyContent: 'center', 
-      alignItems: 'center', 
-      height: '100vh',
-      fontFamily: 'Inter, sans-serif'
-    }}>
+    <div className="flex justify-center items-center h-screen font-inter">
       <p>Redirecting to Account Settings...</p>
     </div>
   )

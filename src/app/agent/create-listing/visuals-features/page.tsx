@@ -14,9 +14,7 @@ import {
   FiUploadCloud,
   FiPlayCircle
 } from 'react-icons/fi'
-import '../AgentCreateListingCategory.css'
-import '../property-images/page.css'
-import '../attributes/page.css'
+// Converted to Tailwind CSS
 
 function ProgressRing({ percent }: { percent: number }) {
   const { radius, stroke, normalizedRadius, circumference, strokeDashoffset } = useMemo(() => {
@@ -35,8 +33,8 @@ function ProgressRing({ percent }: { percent: number }) {
   }, [percent])
 
   return (
-    <div className="aclc-progress">
-      <svg height={radius * 2} width={radius * 2} className="aclc-progress-svg">
+    <div className="relative w-13 h-13 flex-shrink-0"> {/* aclc-progress */}
+      <svg height={radius * 2} width={radius * 2} className="-rotate-90"> {/* aclc-progress-svg */}
         <circle
           stroke="#E5E7EB"
           fill="transparent"
@@ -55,10 +53,10 @@ function ProgressRing({ percent }: { percent: number }) {
           r={normalizedRadius}
           cx={radius}
           cy={radius}
-          className="aclc-progress-ring"
+          className="transition-all duration-250 ease-in" // aclc-progress-ring
         />
       </svg>
-      <div className="aclc-progress-text">{percent}%</div>
+      <div className="absolute inset-0 flex items-center justify-center text-xs font-bold text-gray-900">{percent}%</div> {/* aclc-progress-text */}
     </div>
   )
 }

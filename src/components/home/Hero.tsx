@@ -7,7 +7,6 @@ import { api, type PropertySearchResponse, type ConversationMessage } from '@/li
 import { Property } from '@/types'
 import { getImageUrl } from '@/utils/storage'
 import SimplePropertyCard from '@/components/common/SimplePropertyCard'
-import './Hero.css'
 import HeroBanner from './HeroBanner'
 
 const CONVERSATION_ID_KEY = 'rentals_ph_conversation_id'
@@ -496,61 +495,76 @@ function Hero() {
   }, [showMenu])
 
   return (
-    <section id="home" className={`hero-section ${isChatMode ? 'chat-mode-active' : ''}`}>
+    <section 
+      id="home" 
+      className={`relative overflow-hidden pb-[200px] mt-0 transition-all duration-500 ease-in-out flex flex-col justify-center items-center ${
+        isChatMode 
+          ? 'max-h-[1100px] min-h-[900px] pb-[200px]' 
+          : 'max-h-[800px] min-h-[800px]'
+      }`}
+    >
       {/* Background images with smooth transitions */}
-      <div className="hero-background-container">
+      <div className={`absolute top-0 left-0 w-full h-full z-0 overflow-hidden transition-all duration-300 ${
+        isChatMode ? 'min-h-[900px] h-full' : 'min-h-[700px]'
+      }`}>
         {backgroundImages.map((imageSrc, index) => (
           <img
             key={index}
             src={imageSrc}
             alt={`Hero background ${index + 1}`}
-            className={`hero-background ${index === currentImageIndex ? 'active' : ''}`}
+            className={`w-full h-full object-cover object-center absolute top-0 left-0 transition-all duration-[2000ms] ease-in-out animate-[heroBackgroundAnimation_20s_ease-in-out_infinite] ${
+              isChatMode ? 'min-h-[900px]' : 'min-h-[700px]'
+            } ${
+              index === currentImageIndex ? 'opacity-100 z-[1]' : 'opacity-0'
+            }`}
           />
         ))}
       </div>
 
       {/* Hero content */}
-      <div className="hero-content-wrapper relative z-10 px-4">
-        <h2 className="hero-title">
+      <div className="flex mt-12 flex-col items-center justify-center w-full h-full min-h-[600px] text-center relative z-10 px-4">
+        <h2 className="font-outfit text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-0 tracking-tight leading-tight drop-shadow-[0_4px_12px_rgba(0,0,0,0.3)]">
           FIND YOUR HOME IN THE PHILIPPINES
         </h2>
-        <p className="hero-subtitle mt-3 max-w-3xl">
-          <span className="hero-subtitle-text">Trusted Rentals, simplified. Start your journey with </span>
-          <span className="hero-subtitle-brand">Rentals.ph.</span>
+        <p className="mt-3 max-w-3xl font-outfit text-base md:text-lg text-white/95 drop-shadow-[0_2px_8px_rgba(0,0,0,0.3)]">
+          <span>Trusted Rentals, simplified. Start your journey with </span>
+          <span className="font-bold">Rentals.ph.</span>
         </p>
 
         {/* AI Assistant Button */}
         <button 
-          className="ai-assistant-button"
+          className="mt-6 px-6 py-3 bg-gradient-to-r from-rental-blue-600 to-rental-blue-500 text-white rounded-full font-outfit text-base font-medium flex items-center gap-2 shadow-lg hover:shadow-xl transition-all hover:scale-105"
           onClick={() => setIsChatMode(!isChatMode)}
         >
-          <svg className="ai-assistant-sparkle" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <svg className="w-5 h-5 animate-pulse" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M12 2L13.09 8.26L18 6L14.74 10.91L21 12L14.74 13.09L18 18L13.09 15.74L12 22L10.91 15.74L6 18L9.26 13.09L3 12L9.26 10.91L6 6L10.91 8.26L12 2Z" fill="currentColor"/>
           </svg>
           Try our A.I. assistant
         </button>
 
         {/* Search bar and filters or Chat container */}
-        <div className={`search-container ${isChatMode ? 'chat-mode' : ''}`}>
+        <div className={`mt-8 w-full max-w-4xl mx-auto transition-all duration-500 ${
+          isChatMode ? 'max-h-[600px]' : 'max-h-[400px]'
+        }`}>
           {isChatMode ? (
             <>
             {/* Chat Interface */}
-            <div className="chat-container">
-              <div className="chat-header">
-                <div className="chat-header-info">
-                  <div className="chat-avatar">
+            <div className="bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl overflow-hidden">
+              <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-rental-blue-50 to-white">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-rental-blue-600 flex items-center justify-center">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" fill="currentColor"/>
+                      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" fill="currentColor" className="text-white"/>
                     </svg>
                   </div>
                   <div>
-                    <h3 className="chat-title">RentalsGroq</h3>
+                    <h3 className="font-outfit text-lg font-semibold text-gray-900">RentalsGroq</h3>
                   </div>
                 </div>
-                <div className="chat-header-actions">
-                  <div className="chat-menu-container">
+                <div className="flex items-center gap-2">
+                  <div className="relative">
                     <button 
-                      className="chat-menu-button"
+                      className="p-2 hover:bg-white rounded-lg transition-colors text-gray-600 hover:text-gray-900"
                       onClick={() => setShowMenu(!showMenu)}
                       aria-label="More options"
                       title="More options"
@@ -562,9 +576,9 @@ function Hero() {
                       </svg>
                     </button>
                     {showMenu && (
-                      <div className="chat-menu-dropdown">
+                      <div className="absolute top-full right-0 mt-2 w-56 bg-white rounded-lg shadow-xl border border-gray-200 py-2 z-50">
                         <button 
-                          className="chat-menu-item"
+                          className="w-full flex items-center gap-3 px-4 py-2 text-left text-gray-700 hover:bg-gray-50 transition-colors font-outfit text-sm"
                           onClick={() => {
                             setShowHistory(true)
                             setShowMenu(false)
@@ -579,7 +593,7 @@ function Hero() {
                           <>
                             
                             <button 
-                              className="chat-menu-item chat-menu-item-danger"
+                              className="w-full flex items-center gap-3 px-4 py-2 text-left text-red-600 hover:bg-red-50 transition-colors font-outfit text-sm"
                               onClick={() => handleDeleteConversation()}
                             >
                               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -590,7 +604,7 @@ function Hero() {
                           </>
                         )}
                         <button 
-                          className="chat-menu-item"
+                          className="w-full flex items-center gap-3 px-4 py-2 text-left text-gray-700 hover:bg-gray-50 transition-colors font-outfit text-sm"
                           onClick={handleNewConversation}
                         >
                           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -602,7 +616,7 @@ function Hero() {
                     )}
                   </div>
                   <button 
-                    className="chat-close-button"
+                    className="p-2 hover:bg-white rounded-lg transition-colors text-gray-600 hover:text-gray-900"
                     onClick={() => setIsChatMode(false)}
                     aria-label="Close chat"
                   >
@@ -612,7 +626,7 @@ function Hero() {
                   </button>
                 </div>
               </div>
-              <div className="chat-messages">
+              <div className="h-96 overflow-y-auto p-6 space-y-4 bg-gray-50 scrollbar-hide">
                 {isLoadingHistory ? (
                   <div className="chat-message assistant-message">
                     <div className="chat-message-content">

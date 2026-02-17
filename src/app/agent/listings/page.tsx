@@ -17,7 +17,7 @@ import {
 import { ASSETS } from '@/utils/assets'
 import { resolvePropertyImage } from '@/utils/imageResolver'
 import PropertiesMap from '../../../components/agent/PropertiesMap'
-import './page.css'
+// import './page.css' // Removed - converted to Tailwind
 
 type ListingStatus = 'active' | 'rented' | 'hidden'
 
@@ -236,13 +236,13 @@ export default function AgentMyListings() {
 
   const renderStars = (rating: number) => {
     return (
-      <div className="aml-rating">
+      <div className="flex gap-0.5"> {/* aml-rating */}
         {Array.from({ length: 5 }).map((_, idx) => {
           const starNumber = idx + 1
           return (
             <span
               key={starNumber}
-              className={`aml-star ${starNumber <= rating ? 'filled' : ''}`}
+              className={`text-lg leading-none ${starNumber <= rating ? 'text-[#FFC107]' : 'text-gray-300'}`} /* aml-star */
               aria-hidden="true"
             >
               ★
@@ -254,93 +254,94 @@ export default function AgentMyListings() {
   }
 
   return (
-    <div className="agent-my-listings agent-dashboard">
+    <div className="flex min-h-screen bg-gray-100 font-outfit"> {/* agent-dashboard */}
       <AppSidebar/>
 
-      <main className="agent-main">
+      <main className="ml-[280px] flex-1 w-[calc(100%-280px)] p-8 min-h-screen lg:ml-[240px] lg:w-[calc(100%-240px)] lg:p-6 md:ml-0 md:w-full md:p-4 md:pt-20"> {/* agent-main */}
         <AgentHeader 
           title="My Listings" 
           subtitle="Manage and track all your property listings." 
         />
 
-        <div className="aml-page">
+        <div className="flex flex-col gap-4.5"> {/* aml-page */}
           
 
-          <div className="aml-stats">
-            <div className="metric-card orange">
-              <div className="metric-icon">
+          <div className="grid grid-cols-4 gap-6 lg:grid-cols-2 md:grid-cols-1"> {/* aml-stats */}
+            <div className="bg-white rounded-xl p-6 flex items-start gap-4 shadow-sm border border-gray-100"> {/* metric-card orange */}
+              <div className="w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0 text-xl bg-orange-100 text-orange-600"> {/* metric-icon */}
                 <FiHome />
               </div>
-              <div className="metric-content">
-                <div className="aml-stat-top">
-                  <h3>Total Properties</h3>
-                  <span className="aml-stat-delta positive">&nbsp;</span>
+              <div className="flex-1 flex flex-col gap-1"> {/* metric-content */}
+                <div className="flex justify-between items-baseline gap-3"> {/* aml-stat-top */}
+                  <h3 className="text-sm font-semibold text-gray-700 m-0">Total Properties</h3>
+                  <span className="text-xs font-semibold whitespace-nowrap text-green-600">&nbsp;</span> {/* aml-stat-delta positive */}
                 </div>
-                <p className="metric-value">{loading ? '...' : totalProperties}</p>
+                <p className="text-3xl font-bold text-gray-900 m-0 leading-none">{loading ? '...' : totalProperties}</p> {/* metric-value */}
               </div>
             </div>
 
-            <div className="metric-card blue">
-              <div className="metric-icon">
+            <div className="bg-white rounded-xl p-6 flex items-start gap-4 shadow-sm border border-gray-100"> {/* metric-card blue */}
+              <div className="w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0 text-xl bg-blue-100 text-blue-600"> {/* metric-icon */}
                 <FiCheckCircle />
               </div>
-              <div className="metric-content">
-                <div className="aml-stat-top">
-                  <h3>Total Active</h3>
-                  <span className="aml-stat-delta positive">&nbsp;</span>
+              <div className="flex-1 flex flex-col gap-1"> {/* metric-content */}
+                <div className="flex justify-between items-baseline gap-3"> {/* aml-stat-top */}
+                  <h3 className="text-sm font-semibold text-gray-700 m-0">Total Active</h3>
+                  <span className="text-xs font-semibold whitespace-nowrap text-green-600">&nbsp;</span> {/* aml-stat-delta positive */}
                 </div>
-                <p className="metric-value">{loading ? '...' : activeProperties}</p>
+                <p className="text-3xl font-bold text-gray-900 m-0 leading-none">{loading ? '...' : activeProperties}</p> {/* metric-value */}
               </div>
             </div>
 
-            <div className="metric-card green">
-              <div className="metric-icon">
+            <div className="bg-white rounded-xl p-6 flex items-start gap-4 shadow-sm border border-gray-100"> {/* metric-card green */}
+              <div className="w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0 text-xl bg-emerald-100 text-emerald-600"> {/* metric-icon */}
                 <FiCheckCircle />
               </div>
-              <div className="metric-content">
-                <div className="aml-stat-top">
-                  <h3>Total Rented</h3>
-                  <span className="aml-stat-delta muted">&nbsp;</span>
+              <div className="flex-1 flex flex-col gap-1"> {/* metric-content */}
+                <div className="flex justify-between items-baseline gap-3"> {/* aml-stat-top */}
+                  <h3 className="text-sm font-semibold text-gray-700 m-0">Total Rented</h3>
+                  <span className="text-xs font-medium whitespace-nowrap text-gray-500">&nbsp;</span> {/* aml-stat-delta muted */}
                 </div>
-                <p className="metric-value">{loading ? '...' : rentedProperties}</p>
+                <p className="text-3xl font-bold text-gray-900 m-0 leading-none">{loading ? '...' : rentedProperties}</p> {/* metric-value */}
               </div>
             </div>
 
-            <div className="metric-card red">
-              <div className="metric-icon">
+            <div className="bg-white rounded-xl p-6 flex items-start gap-4 shadow-sm border border-gray-100"> {/* metric-card red */}
+              <div className="w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0 text-xl bg-red-100 text-red-600"> {/* metric-icon */}
                 <FiSlash />
               </div>
-              <div className="metric-content">
-                <div className="aml-stat-top">
-                  <h3>Total Hide</h3>
-                  <span className="aml-stat-delta muted">&nbsp;</span>
+              <div className="flex-1 flex flex-col gap-1"> {/* metric-content */}
+                <div className="flex justify-between items-baseline gap-3"> {/* aml-stat-top */}
+                  <h3 className="text-sm font-semibold text-gray-700 m-0">Total Hide</h3>
+                  <span className="text-xs font-medium whitespace-nowrap text-gray-500">&nbsp;</span> {/* aml-stat-delta muted */}
                 </div>
-                <p className="metric-value">{loading ? '...' : hiddenProperties}</p>
+                <p className="text-3xl font-bold text-gray-900 m-0 leading-none">{loading ? '...' : hiddenProperties}</p> {/* metric-value */}
               </div>
             </div>
           </div>
 
-          <div className="aml-search-map">
-            <div className="aml-search-row">
-              <div className="aml-search">
-                <FiSearch className="aml-search-icon" />
-                <input className="aml-search-input" placeholder="Search Location..." />
+          <div className="flex flex-col gap-3.5"> {/* aml-search-map */}
+            <div className="flex gap-3 items-stretch"> {/* aml-search-row */}
+              <div className="flex-1 flex items-center gap-2.5 bg-white border border-gray-200 rounded-[10px] py-3.5 px-4"> {/* aml-search */}
+                <FiSearch className="text-gray-400 text-lg" /> {/* aml-search-icon */}
+                <input className="border-0 outline-0 w-full text-[15px] text-gray-900 bg-transparent placeholder:text-gray-400" placeholder="Search Location..." /> {/* aml-search-input */}
               </div>
-              <button className="aml-find-btn" type="button">
+              <button className="inline-flex items-center gap-2.5 px-4.5 min-w-[120px] border-0 rounded-[10px] bg-blue-600 text-white font-bold cursor-pointer shadow-sm transition-all duration-200 hover:bg-blue-700 active:scale-[0.98]" type="button"> {/* aml-find-btn */}
                 <FiSearch />
                 <span>Find</span>
               </button>
             </div>
 
-            <div className="aml-map">
+            <div className="bg-white rounded-xl overflow-hidden border border-gray-200 h-90"> {/* aml-map */}
               <PropertiesMap 
                 properties={properties}
                 agentId={currentAgentId}
+                className="w-full h-full border-0"
               />
             </div>
           </div>
 
-          <div className="aml-filters">
+          <div className="flex items-center gap-4.5 text-gray-500 text-[13px] py-1 px-0.5 overflow-x-auto scrollbar-none"> {/* aml-filters */}
             {(() => {
               // Calculate property type counts
               const typeCounts: Record<string, number> = {}
@@ -354,11 +355,12 @@ export default function AgentMyListings() {
               
               return (
                 <>
-                  <label className="aml-filter">
+                  <label className="inline-flex items-center gap-2.5 cursor-pointer"> {/* aml-filter */}
                     <input 
                       type="checkbox" 
                       checked={selectedFilter === 'all'}
                       onChange={() => setSelectedFilter('all')}
+                      className="w-4 h-4 accent-blue-600"
                     />
                     <span>All({totalProperties})</span>
                   </label>
@@ -366,7 +368,7 @@ export default function AgentMyListings() {
                     <button
                       key={type}
                       type="button"
-                      className={`aml-filter-pill ${selectedFilter === type ? 'active' : ''}`}
+                      className={`bg-transparent border-0 text-gray-500 text-[13px] cursor-pointer py-1.5 px-2 rounded-lg whitespace-nowrap flex-shrink-0 transition-all duration-200 hover:bg-gray-100 hover:text-gray-900 ${selectedFilter === type ? 'bg-blue-50 text-blue-600 font-semibold' : ''}`} /* aml-filter-pill */
                       onClick={() => setSelectedFilter(type)}
                     >
                       {type}({typeCounts[type]})
@@ -377,9 +379,9 @@ export default function AgentMyListings() {
             })()}
           </div>
 
-          <div className="aml-grid">
+          <div className="grid grid-cols-2 gap-5.5 mt-1.5 lg:grid-cols-1"> {/* aml-grid */}
             {loading ? (
-              <div style={{ padding: '2rem', textAlign: 'center', gridColumn: '1 / -1' }}>Loading listings...</div>
+              <div className="p-8 text-center col-span-full">Loading listings...</div>
             ) : (() => {
               // Filter listings based on selected filter
               const filteredListings = selectedFilter === 'all' 
@@ -390,7 +392,7 @@ export default function AgentMyListings() {
                   })
               
               return filteredListings.length === 0 ? (
-                <div style={{ padding: '2rem', textAlign: 'center', gridColumn: '1 / -1' }}>
+                <div className="p-8 text-center col-span-full">
                   {selectedFilter === 'all' 
                     ? 'No listings yet. Create your first listing!'
                     : `No ${selectedFilter} properties found.`
@@ -398,39 +400,40 @@ export default function AgentMyListings() {
                 </div>
               ) : (
                 filteredListings.map((l) => (
-                <div key={l.id} className="aml-card">
-                <div className="aml-card-media">
+                <div key={l.id} className="bg-white rounded-[14px] border border-gray-200 overflow-hidden shadow-sm flex gap-0"> {/* aml-card */}
+                <div className="relative w-[190px] min-w-[190px] bg-gray-100"> {/* aml-card-media */}
                   <img
                     src={l.image}
                     alt={l.title}
+                    className="w-full h-full object-cover"
                     onError={(e) => {
                       const target = e.target as HTMLImageElement
                       target.src = ASSETS.PLACEHOLDER_PROPERTY_MAIN
                     }}
                   />
-                  <div className="aml-pin" title="Pinned">
+                  <div className="absolute top-2.5 left-2.5 bg-white/90 backdrop-blur-sm rounded-full w-7 h-7 flex items-center justify-center text-blue-600 text-sm shadow-sm" title="Pinned"> {/* aml-pin */}
                     <FiMapPin />
                   </div>
                   <button 
-                    className="aml-edit-btn" 
+                    className="absolute bottom-2.5 right-2.5 bg-blue-600 text-white text-xs font-semibold py-1.5 px-3.5 rounded-lg border-0 cursor-pointer transition-all duration-200 hover:bg-blue-700 active:scale-95" 
                     type="button"
                     onClick={() => handleEditClick(l.id)}
-                  >
+                  > {/* aml-edit-btn */}
                     Edit
                   </button>
                 </div>
 
-                <div className="aml-card-body">
-                  <div className="aml-card-title">{l.title}</div>
-                  <div className="aml-card-address">
-                    <FiMapPin className="aml-address-icon" />
-                    <span>{l.address}</span>
+                <div className="flex-1 p-4 flex flex-col gap-2.5"> {/* aml-card-body */}
+                  <div className="font-semibold text-base text-gray-900 leading-snug line-clamp-2">{l.title}</div> {/* aml-card-title */}
+                  <div className="flex items-start gap-1.5 text-gray-600 text-sm"> {/* aml-card-address */}
+                    <FiMapPin className="flex-shrink-0 mt-0.5 text-base" /> {/* aml-address-icon */}
+                    <span className="line-clamp-2">{l.address}</span>
                   </div>
 
-                  <div className="aml-card-meta">
+                  <div className="flex items-center justify-between gap-3 mt-auto pt-2 border-t border-gray-100"> {/* aml-card-meta */}
                     {renderStars(l.rating)}
-                    <div className="aml-views">
-                      <FiEye />
+                    <div className="flex items-center gap-1.5 text-gray-600 text-xs"> {/* aml-views */}
+                      <FiEye className="text-sm" />
                       <span>Viewed({l.views})</span>
                     </div>
                   </div>

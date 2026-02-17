@@ -16,7 +16,7 @@ import {
   FiMail,
   FiHome
 } from 'react-icons/fi'
-import './page.css'
+// import './page.css' // Removed - converted to Tailwind
 
 type MessageTypeFilter = 'all' | 'contact' | 'property_inquiry' | 'general'
 
@@ -169,31 +169,31 @@ export default function AgentInbox() {
 
 
   return (
-    <div className="agent-inbox">
+    <div className="flex min-h-screen bg-gray-100 font-outfit"> {/* agent-inbox */}
       <AppSidebar/>
 
-      <main className="agent-main">
+      <main className="ml-[280px] flex-1 w-[calc(100%-280px)] p-8 min-h-screen lg:ml-[240px] lg:w-[calc(100%-240px)] lg:p-6 md:ml-0 md:w-full md:p-4 md:pt-15"> {/* agent-main */}
         <AgentHeader 
           title="Inbox" 
           subtitle="Manage your messages and inquiries." 
         />
 
-        <div className="inbox-container">
-          <h2 className="inbox-title">Inbox</h2>
+        <div className="bg-white rounded-2xl p-6 shadow-sm"> {/* inbox-container */}
+          <h2 className="text-xl font-bold text-gray-900 mb-5">Inbox</h2> {/* inbox-title */}
 
           {isProcessing && showProcessingBanner && (
-            <div className="processing-banner">
-              <div className="processing-banner-content">
-                <div className="processing-banner-icon">
+            <div className="relative flex items-start gap-4 p-4 mb-5 bg-amber-50 border border-amber-200 rounded-xl"> {/* processing-banner */}
+              <div className="flex items-start gap-3 flex-1"> {/* processing-banner-content */}
+                <div className="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center text-amber-600 flex-shrink-0"> {/* processing-banner-icon */}
                   <FiAlertCircle />
                 </div>
-                <div className="processing-banner-text">
-                  <h3>Account Under Review</h3>
-                  <p>Your account is currently being processed by our admin team. Your listings won't be visible to users until your account is approved.</p>
+                <div className="flex-1"> {/* processing-banner-text */}
+                  <h3 className="text-base font-bold text-amber-900 mb-1">Account Under Review</h3>
+                  <p className="text-sm text-amber-700 m-0">Your account is currently being processed by our admin team. Your listings won't be visible to users until your account is approved.</p>
                 </div>
               </div>
               <button 
-                className="processing-banner-close"
+                className="w-8 h-8 rounded-lg border-0 bg-transparent flex items-center justify-center text-amber-600 cursor-pointer transition-all duration-200 hover:bg-amber-100" /* processing-banner-close */
                 onClick={() => setShowProcessingBanner(false)}
                 aria-label="Close banner"
               >
@@ -202,147 +202,149 @@ export default function AgentInbox() {
             </div>
           )}
 
-          <div className="inbox-search">
-            <FiSearch className="search-icon" />
+          <div className="relative mb-5"> {/* inbox-search */}
+            <FiSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-lg" /> {/* search-icon */}
             <input
               type="text"
               placeholder="Search"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="search-input"
+              className="w-full py-3 pl-12 pr-4 border border-gray-300 rounded-xl text-sm text-gray-900 outline-none transition-all duration-200 focus:border-blue-600 focus:ring-2 focus:ring-blue-100" /* search-input */
             />
           </div>
 
-          <div className="inbox-filters">
+          <div className="flex items-center gap-2 mb-5 overflow-x-auto pb-2 md:flex-wrap"> {/* inbox-filters */}
             <button
-              className={`filter-tab ${activeFilter === 'all' ? 'active' : ''}`}
+              className={`inline-flex items-center gap-2 py-2 px-4 rounded-lg border-0 text-sm font-medium cursor-pointer transition-all duration-200 ${activeFilter === 'all' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`} /* filter-tab active */
               onClick={() => setActiveFilter('all')}
             >
-              <FiCheckSquare className="filter-checkbox" />
+              <FiCheckSquare className="text-base" /> {/* filter-checkbox */}
               <span>All({messages.length})</span>
             </button>
             <button
-              className={`filter-tab ${activeFilter === 'property_inquiry' ? 'active' : ''}`}
+              className={`inline-flex items-center gap-2 py-2 px-4 rounded-lg border-0 text-sm font-medium cursor-pointer transition-all duration-200 ${activeFilter === 'property_inquiry' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`} /* filter-tab active */
               onClick={() => setActiveFilter('property_inquiry')}
             >
-              <span className="filter-dot" style={{ backgroundColor: '#F97316' }}></span>
+              <span className="w-2 h-2 rounded-full" style={{ backgroundColor: '#F97316' }}></span> {/* filter-dot */}
               <span>Property Inquiries({messages.filter(m => m.type === 'property_inquiry').length})</span>
             </button>
             <button
-              className={`filter-tab ${activeFilter === 'contact' ? 'active' : ''}`}
+              className={`inline-flex items-center gap-2 py-2 px-4 rounded-lg border-0 text-sm font-medium cursor-pointer transition-all duration-200 ${activeFilter === 'contact' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`} /* filter-tab active */
               onClick={() => setActiveFilter('contact')}
             >
-              <span className="filter-dot" style={{ backgroundColor: '#10B981' }}></span>
+              <span className="w-2 h-2 rounded-full" style={{ backgroundColor: '#10B981' }}></span> {/* filter-dot */}
               <span>Contacts({messages.filter(m => m.type === 'contact').length})</span>
             </button>
             <button
-              className={`filter-tab ${activeFilter === 'general' ? 'active' : ''}`}
+              className={`inline-flex items-center gap-2 py-2 px-4 rounded-lg border-0 text-sm font-medium cursor-pointer transition-all duration-200 ${activeFilter === 'general' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`} /* filter-tab active */
               onClick={() => setActiveFilter('general')}
             >
-              <span className="filter-dot" style={{ backgroundColor: '#6B7280' }}></span>
+              <span className="w-2 h-2 rounded-full" style={{ backgroundColor: '#6B7280' }}></span> {/* filter-dot */}
               <span>General({messages.filter(m => m.type === 'general').length})</span>
             </button>
-            <button className="refresh-button" onClick={fetchMessages} title="Refresh">
-              <FiRefreshCw className="refresh-icon" />
+            <button className="w-10 h-10 rounded-lg border-0 bg-gray-100 flex items-center justify-center text-gray-600 cursor-pointer transition-all duration-200 hover:bg-gray-200 ml-auto" onClick={fetchMessages} title="Refresh"> {/* refresh-button */}
+              <FiRefreshCw className="text-base" /> {/* refresh-icon */}
             </button>
           </div>
 
           {loading ? (
-            <div style={{ padding: '2rem', textAlign: 'center' }}>Loading messages...</div>
+            <div className="p-8 text-center text-gray-500">Loading messages...</div>
           ) : filteredMessages.length === 0 ? (
-            <div style={{ padding: '2rem', textAlign: 'center' }}>No messages found.</div>
+            <div className="p-8 text-center text-gray-500">No messages found.</div>
           ) : (
-            <div className="inbox-table-container">
-              <table className="inbox-table">
+            <div className="overflow-x-auto"> {/* inbox-table-container */}
+              <table className="w-full border-collapse min-w-[900px]"> {/* inbox-table */}
                 <thead>
                   <tr>
-                    <th>Sender</th>
-                    <th>Type</th>
-                    <th>Property</th>
-                    <th>Message</th>
-                    <th>Date</th>
-                    <th>Status</th>
-                    <th>Actions</th>
+                    <th className="py-3 px-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider border-b border-gray-200">Sender</th>
+                    <th className="py-3 px-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider border-b border-gray-200">Type</th>
+                    <th className="py-3 px-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider border-b border-gray-200">Property</th>
+                    <th className="py-3 px-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider border-b border-gray-200">Message</th>
+                    <th className="py-3 px-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider border-b border-gray-200">Date</th>
+                    <th className="py-3 px-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider border-b border-gray-200">Status</th>
+                    <th className="py-3 px-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider border-b border-gray-200">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   {filteredMessages.map((msg) => (
                     <tr 
                       key={msg.id} 
-                      className={msg.is_read ? 'read' : 'unread'}
+                      className={`cursor-pointer transition-all duration-200 hover:bg-gray-50 ${msg.is_read ? 'bg-white' : 'bg-blue-50/30'}`} /* read/unread */
                       onClick={() => handleViewMessage(msg)}
                     >
-                      <td>
-                        <div className="table-sender">
-                          <div className="table-avatar">
+                      <td className="py-3 px-4 border-b border-gray-100">
+                        <div className="flex items-center gap-3"> {/* table-sender */}
+                          <div className="w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center text-sm font-semibold flex-shrink-0"> {/* table-avatar */}
                             {getInitials(msg.sender_name)}
                           </div>
-                          <div className="table-sender-info">
-                            <div className="table-sender-name">{msg.sender_name}</div>
-                            <div className="table-sender-email">{msg.sender_email}</div>
+                          <div className="flex flex-col"> {/* table-sender-info */}
+                            <div className="text-sm font-semibold text-gray-900">{msg.sender_name}</div> {/* table-sender-name */}
+                            <div className="text-xs text-gray-500">{msg.sender_email}</div> {/* table-sender-email */}
                           </div>
                         </div>
                       </td>
-                      <td>
+                      <td className="py-3 px-4 border-b border-gray-100">
                         <span 
-                          className="table-type-badge"
+                          className="inline-block py-1 px-2.5 rounded-md text-xs font-semibold text-white" /* table-type-badge */
                           style={{ backgroundColor: getMessageTypeColor(msg.type) }}
                         >
                           {getMessageTypeLabel(msg.type)}
                         </span>
                       </td>
-                      <td>
+                      <td className="py-3 px-4 border-b border-gray-100">
                         {msg.property ? (
-                          <div className="table-property">
-                            <FiHome className="table-property-icon" />
-                            <span className="table-property-title">{msg.property.title}</span>
+                          <div className="flex items-center gap-2"> {/* table-property */}
+                            <FiHome className="text-gray-400 text-sm" /> {/* table-property-icon */}
+                            <span className="text-sm text-gray-700 truncate max-w-[200px]">{msg.property.title}</span> {/* table-property-title */}
                           </div>
                         ) : (
-                          <span className="table-no-property">—</span>
+                          <span className="text-gray-400">—</span> /* table-no-property */
                         )}
                       </td>
-                      <td>
-                        <div className="table-message">
+                      <td className="py-3 px-4 border-b border-gray-100">
+                        <div className="flex flex-col gap-1 max-w-[300px]"> {/* table-message */}
                           {msg.subject && (
-                            <div className="table-message-subject">{msg.subject}</div>
+                            <div className="text-sm font-semibold text-gray-900 truncate">{msg.subject}</div> /* table-message-subject */
                           )}
-                          <div className="table-message-text">
+                          <div className="text-sm text-gray-600 truncate"> {/* table-message-text */}
                             {msg.message.length > 100 ? `${msg.message.substring(0, 100)}...` : msg.message}
                           </div>
                         </div>
                       </td>
-                      <td className="table-date">{formatDate(msg.created_at)}</td>
-                      <td>
+                      <td className="py-3 px-4 border-b border-gray-100 text-sm text-gray-600">{formatDate(msg.created_at)}</td> {/* table-date */}
+                      <td className="py-3 px-4 border-b border-gray-100">
                         {msg.is_read ? (
-                          <span className="table-status read">Read</span>
+                          <span className="inline-block py-1 px-2.5 rounded-md text-xs font-semibold bg-gray-100 text-gray-600">Read</span> /* table-status read */
                         ) : (
-                          <span className="table-status unread">New</span>
+                          <span className="inline-block py-1 px-2.5 rounded-md text-xs font-semibold bg-blue-100 text-blue-700">New</span> /* table-status unread */
                         )}
                       </td>
-                      <td className="table-actions" onClick={(e) => e.stopPropagation()}>
-                        <button
-                          className="table-action-btn view"
-                          onClick={() => handleViewMessage(msg)}
-                          title="View"
-                        >
-                          <FiEye />
-                        </button>
-                        {!msg.is_read && (
+                      <td className="py-3 px-4 border-b border-gray-100" onClick={(e) => e.stopPropagation()}> {/* table-actions */}
+                        <div className="flex items-center gap-2">
                           <button
-                            className="table-action-btn mark-read"
-                            onClick={() => handleMarkAsRead(msg.id)}
-                            title="Mark as read"
+                            className="w-8 h-8 rounded-lg border-0 flex items-center justify-center text-blue-600 bg-blue-50 cursor-pointer transition-all duration-200 hover:bg-blue-100" /* table-action-btn view */
+                            onClick={() => handleViewMessage(msg)}
+                            title="View"
                           >
-                            <FiMail />
+                            <FiEye />
                           </button>
-                        )}
-                        <button
-                          className="table-action-btn delete"
-                          onClick={() => handleDelete(msg.id)}
-                          title="Delete"
-                        >
-                          <FiTrash2 />
-                        </button>
+                          {!msg.is_read && (
+                            <button
+                              className="w-8 h-8 rounded-lg border-0 flex items-center justify-center text-emerald-600 bg-emerald-50 cursor-pointer transition-all duration-200 hover:bg-emerald-100" /* table-action-btn mark-read */
+                              onClick={() => handleMarkAsRead(msg.id)}
+                              title="Mark as read"
+                            >
+                              <FiMail />
+                            </button>
+                          )}
+                          <button
+                            className="w-8 h-8 rounded-lg border-0 flex items-center justify-center text-red-600 bg-red-50 cursor-pointer transition-all duration-200 hover:bg-red-100" /* table-action-btn delete */
+                            onClick={() => handleDelete(msg.id)}
+                            title="Delete"
+                          >
+                            <FiTrash2 />
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))}
@@ -353,65 +355,65 @@ export default function AgentInbox() {
 
           {/* Message Detail Modal */}
           {showMessageModal && selectedMessage && (
-            <div className="message-modal-overlay" onClick={() => setShowMessageModal(false)}>
-              <div className="message-modal" onClick={(e) => e.stopPropagation()}>
-                <div className="message-modal-header">
-                  <h2>Message Details</h2>
-                  <button className="message-modal-close" onClick={() => setShowMessageModal(false)}>
+            <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={() => setShowMessageModal(false)}> {/* message-modal-overlay */}
+              <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}> {/* message-modal */}
+                <div className="flex items-center justify-between p-6 border-b border-gray-200"> {/* message-modal-header */}
+                  <h2 className="text-xl font-bold text-gray-900 m-0">Message Details</h2>
+                  <button className="w-10 h-10 rounded-full border-0 bg-gray-100 flex items-center justify-center text-gray-600 cursor-pointer transition-all duration-200 hover:bg-gray-200" onClick={() => setShowMessageModal(false)}> {/* message-modal-close */}
                     <FiX />
                   </button>
                 </div>
-                <div className="message-modal-content">
-                  <div className="message-detail-row">
-                    <strong>From:</strong>
-                    <span>{selectedMessage.sender_name} ({selectedMessage.sender_email})</span>
+                <div className="p-6 flex flex-col gap-4"> {/* message-modal-content */}
+                  <div className="flex gap-3"> {/* message-detail-row */}
+                    <strong className="text-sm font-semibold text-gray-700 min-w-[80px]">From:</strong>
+                    <span className="text-sm text-gray-900">{selectedMessage.sender_name} ({selectedMessage.sender_email})</span>
                   </div>
                   {selectedMessage.sender_phone && (
-                    <div className="message-detail-row">
-                      <strong>Phone:</strong>
-                      <span>{selectedMessage.sender_phone}</span>
+                    <div className="flex gap-3"> {/* message-detail-row */}
+                      <strong className="text-sm font-semibold text-gray-700 min-w-[80px]">Phone:</strong>
+                      <span className="text-sm text-gray-900">{selectedMessage.sender_phone}</span>
                     </div>
                   )}
                   {selectedMessage.property && (
-                    <div className="message-detail-row">
-                      <strong>Property:</strong>
-                      <span>{selectedMessage.property.title}</span>
+                    <div className="flex gap-3"> {/* message-detail-row */}
+                      <strong className="text-sm font-semibold text-gray-700 min-w-[80px]">Property:</strong>
+                      <span className="text-sm text-gray-900">{selectedMessage.property.title}</span>
                     </div>
                   )}
                   {selectedMessage.subject && (
-                    <div className="message-detail-row">
-                      <strong>Subject:</strong>
-                      <span>{selectedMessage.subject}</span>
+                    <div className="flex gap-3"> {/* message-detail-row */}
+                      <strong className="text-sm font-semibold text-gray-700 min-w-[80px]">Subject:</strong>
+                      <span className="text-sm text-gray-900">{selectedMessage.subject}</span>
                     </div>
                   )}
-                  <div className="message-detail-row">
-                    <strong>Type:</strong>
+                  <div className="flex gap-3"> {/* message-detail-row */}
+                    <strong className="text-sm font-semibold text-gray-700 min-w-[80px]">Type:</strong>
                     <span 
-                      className="message-type-badge"
+                      className="inline-block py-1 px-2.5 rounded-md text-xs font-semibold text-white" /* message-type-badge */
                       style={{ backgroundColor: getMessageTypeColor(selectedMessage.type) }}
                     >
                       {getMessageTypeLabel(selectedMessage.type)}
                     </span>
                   </div>
-                  <div className="message-detail-row">
-                    <strong>Date:</strong>
-                    <span>{new Date(selectedMessage.created_at).toLocaleString()}</span>
+                  <div className="flex gap-3"> {/* message-detail-row */}
+                    <strong className="text-sm font-semibold text-gray-700 min-w-[80px]">Date:</strong>
+                    <span className="text-sm text-gray-900">{new Date(selectedMessage.created_at).toLocaleString()}</span>
                   </div>
-                  <div className="message-detail-message">
-                    <strong>Message:</strong>
-                    <p>{selectedMessage.message}</p>
+                  <div className="flex flex-col gap-2"> {/* message-detail-message */}
+                    <strong className="text-sm font-semibold text-gray-700">Message:</strong>
+                    <p className="text-sm text-gray-900 leading-relaxed m-0">{selectedMessage.message}</p>
                   </div>
                 </div>
-                <div className="message-modal-footer">
+                <div className="flex items-center justify-end gap-3 p-6 border-t border-gray-200"> {/* message-modal-footer */}
                   <button
-                    className="message-modal-btn close"
+                    className="py-2.5 px-5 bg-gray-100 text-gray-700 text-sm font-semibold rounded-lg border-0 cursor-pointer transition-all duration-200 hover:bg-gray-200" /* message-modal-btn close */
                     onClick={() => setShowMessageModal(false)}
                   >
                     Close
                   </button>
                   {!selectedMessage.is_read && (
                     <button
-                      className="message-modal-btn mark-read"
+                      className="py-2.5 px-5 bg-blue-600 text-white text-sm font-semibold rounded-lg border-0 cursor-pointer transition-all duration-200 hover:bg-blue-700" /* message-modal-btn mark-read */
                       onClick={() => {
                         handleMarkAsRead(selectedMessage.id)
                         setShowMessageModal(false)
@@ -421,7 +423,7 @@ export default function AgentInbox() {
                     </button>
                   )}
                   <button
-                    className="message-modal-btn delete"
+                    className="py-2.5 px-5 bg-red-600 text-white text-sm font-semibold rounded-lg border-0 cursor-pointer transition-all duration-200 hover:bg-red-700" /* message-modal-btn delete */
                     onClick={() => {
                       handleDelete(selectedMessage.id)
                       setShowMessageModal(false)

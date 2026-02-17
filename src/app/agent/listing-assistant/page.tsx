@@ -5,7 +5,6 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import AppSidebar from '../../../components/common/AppSidebar'
 import AgentHeader from '../../../components/agent/AgentHeader'
 import { ListingAssistantChat } from '../../../components/listing-assistant'
-import './page.css'
 
 export default function ListingAssistantPage() {
   const router = useRouter()
@@ -27,43 +26,42 @@ export default function ListingAssistantPage() {
   }
 
   return (
-    <div className="agent-dashboard">
+    <div className="flex min-h-screen bg-gray-100 font-outfit">
       <AppSidebar />
-      <main className="agent-main">
+      <main className="ml-[280px] flex-1 w-[calc(100%-280px)] p-8 min-h-screen lg:ml-[240px] lg:w-[calc(100%-240px)] lg:p-6 md:ml-[200px] md:w-[calc(100%-200px)] md:p-4">
         <AgentHeader 
           title="AI Listing Assistant" 
           subtitle="Create property listings with the help of AI" 
         />
 
-
-        <div className="listing-assistant-intro">
-          <div className="intro-content">
-            <div className="intro-icon">
-              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <div className="bg-gradient-to-br from-indigo-50 to-indigo-100 rounded-2xl p-6 mb-6 border border-indigo-200 sm:p-4">
+          <div className="flex items-start gap-4 mb-4 lg:flex-col lg:items-start sm:flex-col sm:items-start">
+            <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center text-indigo-600 flex-shrink-0 shadow-[0_1px_3px_rgba(0,0,0,0.1)] sm:w-10 sm:h-10">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="sm:w-6 sm:h-6">
                 <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                 <path d="M2 17L12 22L22 17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                 <path d="M2 12L12 17L22 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
             </div>
-            <div className="intro-text">
-              <h2>Create Your Listing Naturally</h2>
-              <p>
+            <div>
+              <h2 className="text-lg font-semibold text-gray-800 m-0 mb-1">Create Your Listing Naturally</h2>
+              <p className="text-sm text-gray-600 m-0 leading-relaxed">
                 Just describe your property in natural language - the AI will extract all the details 
                 and help you create a professional listing in minutes.
               </p>
             </div>
           </div>
-          <div className="intro-examples">
-            <span className="example-label">Try saying:</span>
-            <div className="example-chips">
-              <span className="example-chip">"3BR house in QC, 7.5M"</span>
-              <span className="example-chip">"Condo in BGC with pool and gym"</span>
-              <span className="example-chip">"120sqm apartment for rent, 50k monthly"</span>
+          <div className="flex items-center gap-3 flex-wrap sm:flex-col sm:items-start">
+            <span className="text-xs font-medium text-indigo-600 uppercase tracking-wider">Try saying:</span>
+            <div className="flex gap-2 flex-wrap sm:w-full sm:overflow-x-auto sm:flex-nowrap sm:pb-2">
+              <span className="bg-white px-3 py-1.5 rounded-full text-xs text-indigo-600 border border-indigo-200 cursor-default sm:whitespace-nowrap sm:flex-shrink-0">"3BR house in QC, 7.5M"</span>
+              <span className="bg-white px-3 py-1.5 rounded-full text-xs text-indigo-600 border border-indigo-200 cursor-default sm:whitespace-nowrap sm:flex-shrink-0">"Condo in BGC with pool and gym"</span>
+              <span className="bg-white px-3 py-1.5 rounded-full text-xs text-indigo-600 border border-indigo-200 cursor-default sm:whitespace-nowrap sm:flex-shrink-0">"120sqm apartment for rent, 50k monthly"</span>
             </div>
           </div>
         </div>
 
-        <div className="listing-assistant-container">
+        <div className="bg-white rounded-2xl border border-gray-200 p-6 h-[calc(100vh-200px)] max-h-[800px] min-h-[500px] overflow-hidden lg:p-4">
           <ListingAssistantChat
             initialConversationId={conversationId || undefined}
             onListingSubmitted={handleListingSubmitted}

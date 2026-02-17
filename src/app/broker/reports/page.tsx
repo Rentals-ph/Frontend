@@ -9,7 +9,7 @@ import {
   FiTrendingUp,
   FiMessageCircle,
 } from 'react-icons/fi'
-import './page.css'
+// import './page.css' // Removed - converted to Tailwind
 
 // Stats data
 const statsData = [
@@ -135,20 +135,20 @@ export default function ReportsPage() {
   }
 
   return (
-    <div className="broker-dashboard">
+    <div className="flex min-h-screen bg-gray-100 font-outfit"> {/* broker-dashboard */}
       <AppSidebar />
-      <main className="broker-main">
+      <main className="ml-[280px] flex-1 w-[calc(100%-280px)] p-8 min-h-screen lg:ml-[240px] lg:w-[calc(100%-240px)] lg:p-6 md:ml-0 md:w-full md:p-4 md:pt-15"> {/* broker-main */}
         {/* Header */}
-        <header className="broker-header">
-          <div className="broker-header-left">
-            <h1>Reports</h1>
-            <p>You can view your team&apos;s performance, lead conversion, and inventory health.</p>
+        <header className="flex items-center justify-between mb-7 md:flex-col md:items-start md:gap-3.5"> {/* broker-header */}
+          <div className="flex flex-col gap-1"> {/* broker-header-left */}
+            <h1 className="text-2xl font-bold text-gray-900 m-0 mb-1 md:text-xl">Reports</h1>
+            <p className="text-sm text-gray-400 m-0">You can view your team&apos;s performance, lead conversion, and inventory health.</p>
           </div>
-          <div className="broker-header-right">
-            <button className="broker-notification-btn">
+          <div className="flex items-center gap-3.5 md:w-full md:justify-between md:gap-2.5"> {/* broker-header-right */}
+            <button className="w-11 h-11 rounded-xl border-0 bg-white flex items-center justify-center text-gray-600 text-xl cursor-pointer transition-all duration-200 shadow-sm hover:bg-gray-50 hover:text-blue-600"> {/* broker-notification-btn */}
               <FiBell />
             </button>
-            <a href="/broker/create-listing" className="broker-add-listing-btn">
+            <a href="/broker/create-listing" className="inline-flex items-center gap-2 py-2.5 px-5 bg-blue-600 text-white text-sm font-semibold rounded-xl border-0 no-underline cursor-pointer transition-all duration-200 shadow-sm hover:bg-blue-700 active:scale-[0.98]"> {/* broker-add-listing-btn */}
               <FiPlus />
               Add Listing
             </a>
@@ -156,71 +156,71 @@ export default function ReportsPage() {
         </header>
 
         {/* Stats Row */}
-        <div className="rp-stats-grid">
+        <div className="grid grid-cols-4 gap-5 mb-6 lg:grid-cols-2 md:grid-cols-1"> {/* rp-stats-grid */}
           {statsData.map((stat, index) => (
-            <div className="rp-stat-card" key={index}>
+            <div className="bg-white rounded-[14px] py-5 px-6 flex items-center gap-4 shadow-sm" key={index}> {/* rp-stat-card */}
               <div
-                className="rp-stat-icon"
+                className="w-12 h-12 rounded-xl flex items-center justify-center text-[22px] flex-shrink-0" /* rp-stat-icon */
                 style={{ background: stat.iconBg, color: stat.iconColor }}
               >
                 <StatIcon type={stat.icon} />
               </div>
-              <div className="rp-stat-info">
-                <div className="rp-stat-top">
-                  <span className="rp-stat-label">{stat.label}</span>
-                  <span className="rp-stat-change">{stat.change}</span>
+              <div className="flex-1"> {/* rp-stat-info */}
+                <div className="flex items-center justify-between mb-1"> {/* rp-stat-top */}
+                  <span className="text-xs font-medium text-gray-400">{stat.label}</span> {/* rp-stat-label */}
+                  <span className="text-xs font-semibold text-emerald-600">{stat.change}</span> {/* rp-stat-change */}
                 </div>
-                <div className="rp-stat-value">{stat.value}</div>
+                <div className="text-[28px] font-bold text-gray-900 leading-tight">{stat.value}</div> {/* rp-stat-value */}
               </div>
             </div>
           ))}
         </div>
 
         {/* Team Productivity Report Table */}
-        <div className="rp-table-card">
-          <div className="rp-table-header">
-            <h3 className="rp-table-title">Team Productivity Report</h3>
-            <button className="rp-filter-btn">
+        <div className="bg-white rounded-[14px] p-6 shadow-sm mb-6"> {/* rp-table-card */}
+          <div className="flex items-center justify-between mb-5"> {/* rp-table-header */}
+            <h3 className="text-base font-bold text-gray-900 m-0">Team Productivity Report</h3> {/* rp-table-title */}
+            <button className="inline-flex items-center gap-2 py-2 px-4 bg-gray-100 text-gray-700 text-sm font-medium rounded-lg border-0 cursor-pointer transition-all duration-200 hover:bg-gray-200"> {/* rp-filter-btn */}
               Filter <FiChevronDown />
             </button>
           </div>
 
           {/* Desktop Table View */}
-          <div className="rp-table-wrapper rp-table-desktop">
-            <table className="rp-table">
+          <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 md:hidden"> {/* rp-table-wrapper rp-table-desktop */}
+            <table className="w-full border-collapse min-w-[900px]"> {/* rp-table */}
               <thead>
                 <tr>
-                  <th className="rp-th-check">
+                  <th className="py-3 px-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider border-b border-gray-200 w-12"> {/* rp-th-check */}
                     <input
                       type="checkbox"
                       checked={allSelected}
                       onChange={toggleSelectAll}
-                      className="rp-checkbox"
+                      className="w-4 h-4 rounded border-gray-300 text-blue-600 cursor-pointer focus:ring-2 focus:ring-blue-500 md:w-5 md:h-5" /* rp-checkbox */
                     />
                   </th>
-                  <th>Agent Name</th>
-                  <th>Total Listings</th>
-                  <th>Total Inquiries</th>
-                  <th>Most Popular Listing</th>
-                  <th>Inquiry-to-Listing Ratio</th>
+                  <th className="py-3 px-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider border-b border-gray-200">Agent Name</th>
+                  <th className="py-3 px-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider border-b border-gray-200">Total Listings</th>
+                  <th className="py-3 px-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider border-b border-gray-200">Total Inquiries</th>
+                  <th className="py-3 px-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider border-b border-gray-200">Most Popular Listing</th>
+                  <th className="py-3 px-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider border-b border-gray-200">Inquiry-to-Listing Ratio</th>
                 </tr>
               </thead>
               <tbody>
                 {productivityData.map((row, index) => (
-                  <tr key={index}>
-                    <td className="rp-td-check">
+                  <tr key={index} className="hover:bg-gray-50">
+                    <td className="py-3 px-4 border-b border-gray-100 w-12"> {/* rp-td-check */}
                       <input
                         type="checkbox"
                         checked={selectedRows.includes(index)}
                         onChange={() => toggleSelect(index)}
-                        className="rp-checkbox"
+                        className="w-4 h-4 rounded border-gray-300 text-blue-600 cursor-pointer focus:ring-2 focus:ring-blue-500 md:w-5 md:h-5" /* rp-checkbox */
                       />
                     </td>
-                    <td className="rp-td-name">{row.name}</td>
-                    <td className="rp-td-num">{row.totalListings}</td>
-                    <td className="rp-td-num">{row.totalInquiries}</td>
-                    <td className="rp-td-popular">{row.mostPopular}</td>
-                    <td className="rp-td-num">{row.ratio}</td>
+                    <td className="py-3 px-4 border-b border-gray-100 font-semibold text-gray-900">{row.name}</td> {/* rp-td-name */}
+                    <td className="py-3 px-4 border-b border-gray-100 text-gray-700 text-center">{row.totalListings}</td> {/* rp-td-num */}
+                    <td className="py-3 px-4 border-b border-gray-100 text-gray-700 text-center">{row.totalInquiries}</td> {/* rp-td-num */}
+                    <td className="py-3 px-4 border-b border-gray-100 text-gray-600 italic">{row.mostPopular}</td> {/* rp-td-popular */}
+                    <td className="py-3 px-4 border-b border-gray-100 text-gray-700 text-center">{row.ratio}</td> {/* rp-td-num */}
                   </tr>
                 ))}
               </tbody>
@@ -228,43 +228,43 @@ export default function ReportsPage() {
           </div>
 
           {/* Mobile Card View */}
-          <div className="rp-table-mobile">
-            <div className="rp-mobile-select-all">
+          <div className="hidden md:block"> {/* rp-table-mobile */}
+            <div className="flex items-center gap-2 py-3 px-4 bg-gray-50 rounded-lg mb-3"> {/* rp-mobile-select-all */}
               <input
                 type="checkbox"
                 checked={allSelected}
                 onChange={toggleSelectAll}
-                className="rp-checkbox"
+                className="w-4 h-4 rounded border-gray-300 text-blue-600 cursor-pointer focus:ring-2 focus:ring-blue-500 md:w-5 md:h-5" /* rp-checkbox */
               />
-              <span>Select All</span>
+              <span className="text-sm font-medium text-gray-700">Select All</span>
             </div>
             {productivityData.map((row, index) => (
-              <div className="rp-mobile-card" key={index}>
-                <div className="rp-mobile-card-header">
+              <div className="bg-gray-50 rounded-lg p-4 mb-3 border border-gray-200 transition-all duration-200 hover:border-blue-300 hover:shadow-sm" key={index}> {/* rp-mobile-card */}
+                <div className="flex items-center justify-between mb-3 pb-3 border-b border-gray-200"> {/* rp-mobile-card-header */}
                   <input
                     type="checkbox"
                     checked={selectedRows.includes(index)}
                     onChange={() => toggleSelect(index)}
-                    className="rp-checkbox"
+                    className="w-4 h-4 rounded border-gray-300 text-blue-600 cursor-pointer focus:ring-2 focus:ring-blue-500 md:w-5 md:h-5" /* rp-checkbox */
                   />
-                  <h4 className="rp-mobile-card-name">{row.name}</h4>
+                  <h4 className="text-base font-bold text-gray-900 m-0">{row.name}</h4> {/* rp-mobile-card-name */}
                 </div>
-                <div className="rp-mobile-card-body">
-                  <div className="rp-mobile-card-row">
-                    <span className="rp-mobile-label">Total Listings</span>
-                    <span className="rp-mobile-value">{row.totalListings}</span>
+                <div className="flex flex-col gap-2.5"> {/* rp-mobile-card-body */}
+                  <div className="flex items-center justify-between"> {/* rp-mobile-card-row */}
+                    <span className="text-xs font-medium text-gray-500 uppercase">Total Listings</span> {/* rp-mobile-label */}
+                    <span className="text-sm font-semibold text-gray-900">{row.totalListings}</span> {/* rp-mobile-value */}
                   </div>
-                  <div className="rp-mobile-card-row">
-                    <span className="rp-mobile-label">Total Inquiries</span>
-                    <span className="rp-mobile-value">{row.totalInquiries}</span>
+                  <div className="flex items-center justify-between"> {/* rp-mobile-card-row */}
+                    <span className="text-xs font-medium text-gray-500 uppercase">Total Inquiries</span> {/* rp-mobile-label */}
+                    <span className="text-sm font-semibold text-gray-900">{row.totalInquiries}</span> {/* rp-mobile-value */}
                   </div>
-                  <div className="rp-mobile-card-row">
-                    <span className="rp-mobile-label">Most Popular Listing</span>
-                    <span className="rp-mobile-value-popular">{row.mostPopular}</span>
+                  <div className="flex items-center justify-between"> {/* rp-mobile-card-row */}
+                    <span className="text-xs font-medium text-gray-500 uppercase">Most Popular Listing</span> {/* rp-mobile-label */}
+                    <span className="text-sm text-gray-600 italic text-right">{row.mostPopular}</span> {/* rp-mobile-value-popular */}
                   </div>
-                  <div className="rp-mobile-card-row">
-                    <span className="rp-mobile-label">Inquiry-to-Listing Ratio</span>
-                    <span className="rp-mobile-value">{row.ratio}</span>
+                  <div className="flex items-center justify-between"> {/* rp-mobile-card-row */}
+                    <span className="text-xs font-medium text-gray-500 uppercase">Inquiry-to-Listing Ratio</span> {/* rp-mobile-label */}
+                    <span className="text-sm font-semibold text-gray-900">{row.ratio}</span> {/* rp-mobile-value */}
                   </div>
                 </div>
               </div>
@@ -273,13 +273,13 @@ export default function ReportsPage() {
         </div>
 
         {/* Inventory Insights */}
-        <h3 className="rp-section-title">Inventory Insights</h3>
-        <div className="rp-insights-grid">
+        <h3 className="text-xl font-bold text-gray-900 mb-5 mt-8">Inventory Insights</h3> {/* rp-section-title */}
+        <div className="grid grid-cols-2 gap-5 mb-6 lg:grid-cols-1"> {/* rp-insights-grid */}
           {/* Listing Distribution - Pie Chart */}
-          <div className="rp-chart-card">
-            <h4 className="rp-chart-title">Listing Distribution</h4>
-            <div className="rp-pie-container">
-              <svg viewBox="0 0 200 200" className="rp-pie-chart">
+          <div className="bg-white rounded-[14px] p-6 shadow-sm"> {/* rp-chart-card */}
+            <h4 className="text-base font-bold text-gray-900 mb-5 m-0">Listing Distribution</h4> {/* rp-chart-title */}
+            <div className="flex items-center justify-center"> {/* rp-pie-container */}
+              <svg viewBox="0 0 200 200" className="w-[200px] h-[200px]"> {/* rp-pie-chart */}
                 {/* Condos - 50% - Blue */}
                 <circle cx="100" cy="100" r="70" fill="none" stroke="#3B82F6" strokeWidth="35"
                   strokeDasharray={`${0.50 * 439.82} 439.82`}
@@ -310,31 +310,31 @@ export default function ReportsPage() {
                 <text x="110" y="183" fontSize="5" fill="#fff">8.82%</text>
               </svg>
             </div>
-            <div className="rp-pie-legend">
-              <div className="rp-legend-item">
-                <span className="rp-legend-dot" style={{ background: '#3B82F6' }}></span>
+            <div className="mt-5 flex flex-col gap-2.5"> {/* rp-pie-legend */}
+              <div className="flex items-center gap-2 text-sm text-gray-700"> {/* rp-legend-item */}
+                <span className="w-3 h-3 rounded-full" style={{ background: '#3B82F6' }}></span> {/* rp-legend-dot */}
                 Condos
               </div>
-              <div className="rp-legend-item">
-                <span className="rp-legend-dot" style={{ background: '#10B981' }}></span>
+              <div className="flex items-center gap-2 text-sm text-gray-700"> {/* rp-legend-item */}
+                <span className="w-3 h-3 rounded-full" style={{ background: '#10B981' }}></span> {/* rp-legend-dot */}
                 Houses
               </div>
-              <div className="rp-legend-item">
-                <span className="rp-legend-dot" style={{ background: '#F59E0B' }}></span>
+              <div className="flex items-center gap-2 text-sm text-gray-700"> {/* rp-legend-item */}
+                <span className="w-3 h-3 rounded-full" style={{ background: '#F59E0B' }}></span> {/* rp-legend-dot */}
                 Studios
               </div>
-              <div className="rp-legend-item">
-                <span className="rp-legend-dot" style={{ background: '#EF4444' }}></span>
+              <div className="flex items-center gap-2 text-sm text-gray-700"> {/* rp-legend-item */}
+                <span className="w-3 h-3 rounded-full" style={{ background: '#EF4444' }}></span> {/* rp-legend-dot */}
                 Apartments
               </div>
             </div>
           </div>
 
           {/* Location Performance - Bar Chart */}
-          <div className="rp-chart-card">
-            <h4 className="rp-chart-title">Location Performance</h4>
-            <div className="rp-bar-container">
-              <svg viewBox="0 0 400 260" className="rp-bar-chart">
+          <div className="bg-white rounded-[14px] p-6 shadow-sm"> {/* rp-chart-card */}
+            <h4 className="text-base font-bold text-gray-900 mb-5 m-0">Location Performance</h4> {/* rp-chart-title */}
+            <div className="flex items-center justify-center"> {/* rp-bar-container */}
+              <svg viewBox="0 0 400 260" className="w-full h-auto max-w-[400px]"> {/* rp-bar-chart */}
                 {/* Y-axis labels */}
                 <text x="35" y="30" fontSize="11" fill="#9CA3AF" textAnchor="end">4000</text>
                 <text x="35" y="80" fontSize="11" fill="#9CA3AF" textAnchor="end">3000</text>

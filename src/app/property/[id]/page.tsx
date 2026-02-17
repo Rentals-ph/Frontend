@@ -12,7 +12,7 @@ import PropertyLocationMap from '../../../components/common/PropertyLocationMap'
 import { propertiesApi, messagesApi } from '../../../api'
 import type { Property } from '../../../types'
 import { ASSETS } from '@/utils/assets'
-import './page.css'
+// import './page.css' // Removed - converted to Tailwind
 
 export default function PropertyDetailsPage() {
   const params = useParams()

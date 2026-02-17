@@ -5,108 +5,139 @@ import Testimonials from '../../components/home/Testimonials'
 import Footer from '../../components/layout/Footer'
 import Partners from '../../components/home/Partners'
 import { ASSETS } from '@/utils/assets'
-import './page.css'
 
 export default function AboutPage() {
   return (
-    <div className="about-page">
+    <div className="min-h-screen bg-white flex flex-col flex-1 w-full">
       <Navbar />
 
-      
       {/* Hero Section */}
-      <section className="about-hero-section">
-        <div className="about-hero-background-wrapper">
+      <section className="w-full relative min-h-[500px] flex flex-col overflow-hidden">
+        <div className="absolute top-0 left-0 w-full h-full z-[1]">
           <img
             src={ASSETS.ABOUT_BACKGROUND}
             alt="About Us background"
-            className="about-hero-background-image"
+            className="w-full h-full object-cover object-center"
           />
-          <div className="about-hero-overlay"></div>
+          <div 
+            className="absolute top-0 left-0 w-full h-full z-[2]"
+            style={{ 
+              background: 'linear-gradient(135deg, rgba(32, 94, 215, 0.85) 0%, rgba(32, 94, 215, 0.75) 50%, rgba(254, 142, 10, 0.85) 100%)' 
+            }}
+          />
         </div>
-        <div className="about-hero-container">
-          <div className="about-hero-content">
-            <h1 className="about-hero-title">About Rentals.ph</h1>
-            <p className="about-hero-subtitle">We provide full service at every step.</p>
+        <div className="relative z-[3] max-w-[var(--page-max-width)] mx-auto px-6 md:px-10 lg:px-[var(--page-padding-desktop)] py-[120px] md:py-32 w-full flex items-center justify-center flex-1">
+          <div className="text-center flex flex-col items-center justify-center max-w-[800px]">
+            <h1 className="font-outfit font-bold text-4xl md:text-[55px] leading-tight text-white m-0 mb-6">
+              About Rentals.ph
+            </h1>
+            <p className="font-outfit text-lg md:text-xl font-light leading-relaxed text-white/95 m-0">
+              We provide full service at every step.
+            </p>
           </div>
         </div>
-        <div className="about-hero-orange-bar"></div>
+        <div className="relative z-[3] w-full h-3 bg-rental-orange-500" />
       </section>
 
       {/* Main Content Section */}
-      <section className="about-main-section">
-        <div className="about-main-content">
-          <div className="about-main-text">
-            <h2 className="about-main-title">OUR STORY</h2>
+      <section className="bg-white py-12 md:py-16 px-6 md:px-10 lg:px-20">
+        <div className="max-w-6xl mx-auto">
+          <div className="w-full">
+            <h2 className="font-outfit text-2xl md:text-3xl font-bold text-gray-900 text-center mb-8">
+              OUR STORY
+            </h2>
             
-            <p className="about-main-paragraph">
+            <p className="font-outfit text-base md:text-lg font-light leading-relaxed text-gray-700 text-center mb-12 max-w-4xl mx-auto">
               Established in 2014 under Philippine Real Estate Management Solutions Inc., Rentals.ph was organized with one clear goal: to serve as the vehicle in translating real estate investments into productive assets. Today, we stand as the only rental portal backed by realtors, rent managers, and licensed real estate professionals.
             </p>
 
-            <div className="about-main-grid">
-              <div className="about-main-item">
-                <h3 className="about-main-item-title">OUR MISSION</h3>
-                <p className="about-main-item-text">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+              <div className="bg-gray-50 p-8 rounded-lg">
+                <h3 className="font-outfit text-xl font-bold text-rental-blue-600 mb-4">
+                  OUR MISSION
+                </h3>
+                <p className="font-outfit text-base font-light leading-relaxed text-gray-700">
                   To transform real estate investments into productive assets while providing exceptional service to property owners and tenants across the Philippines.
                 </p>
               </div>
-              <div className="about-main-item">
-                <h3 className="about-main-item-title">OUR VISION</h3>
-                <p className="about-main-item-text">
+              <div className="bg-gray-50 p-8 rounded-lg">
+                <h3 className="font-outfit text-xl font-bold text-rental-blue-600 mb-4">
+                  OUR VISION
+                </h3>
+                <p className="font-outfit text-base font-light leading-relaxed text-gray-700">
                   To be the leading rental platform that connects property owners with quality tenants through innovative technology and trusted professional networks.
                 </p>
               </div>
             </div>
 
-            <div className="about-main-services">
-              <h3 className="about-main-services-title">WHAT WE OFFER</h3>
-              <div className="about-main-services-grid">
-                <div className="about-main-service-item">
-                  <div className="about-main-service-icon">
+            <div className="mt-12">
+              <h3 className="font-outfit text-2xl font-bold text-gray-900 text-center mb-8">
+                WHAT WE OFFER
+              </h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div className="text-center">
+                  <div className="w-24 h-24 mx-auto mb-4 flex items-center justify-center">
                     <img 
                       src={ASSETS.ABOUT_RENTPH_CARES} 
                       alt="Rent.ph Cares" 
-                      className="about-main-service-icon-img"
+                      className="w-full h-full object-contain"
                       onError={(e) => { e.currentTarget.style.display = 'none' }}
                     />
                   </div>
-                  <h4 className="about-main-service-name">Rent.ph Cares</h4>
-                  <p className="about-main-service-desc">Your Rentals, Their Hope—every transaction becomes an opportunity to give back to communities in need.</p>
+                  <h4 className="font-outfit text-lg font-semibold text-gray-900 mb-3">
+                    Rent.ph Cares
+                  </h4>
+                  <p className="font-outfit text-sm font-light leading-relaxed text-gray-600">
+                    Your Rentals, Their Hope—every transaction becomes an opportunity to give back to communities in need.
+                  </p>
                 </div>
-                <div className="about-main-service-item">
-                  <div className="about-main-service-icon">
+                <div className="text-center">
+                  <div className="w-24 h-24 mx-auto mb-4 flex items-center justify-center">
                     <img 
                       src={ASSETS.ABOUT_TRUSTED_PARTNER} 
                       alt="Trusted Partner" 
-                      className="about-main-service-icon-img"
+                      className="w-full h-full object-contain"
                       onError={(e) => { e.currentTarget.style.display = 'none' }}
                     />
                   </div>
-                  <h4 className="about-main-service-name">Trusted Partner</h4>
-                  <p className="about-main-service-desc">Backed by certified real estate professionals ensuring expertise, integrity, and personalized service.</p>
+                  <h4 className="font-outfit text-lg font-semibold text-gray-900 mb-3">
+                    Trusted Partner
+                  </h4>
+                  <p className="font-outfit text-sm font-light leading-relaxed text-gray-600">
+                    Backed by certified real estate professionals ensuring expertise, integrity, and personalized service.
+                  </p>
                 </div>
-                <div className="about-main-service-item">
-                  <div className="about-main-service-icon">
+                <div className="text-center">
+                  <div className="w-24 h-24 mx-auto mb-4 flex items-center justify-center">
                     <img 
                       src={ASSETS.ABOUT_TRANSFORMING} 
                       alt="Transforming Investment" 
-                      className="about-main-service-icon-img"
+                      className="w-full h-full object-contain"
                       onError={(e) => { e.currentTarget.style.display = 'none' }}
                     />
                   </div>
-                  <h4 className="about-main-service-name">Productive Assets</h4>
-                  <p className="about-main-service-desc">Transforming real estate investments into productive assets through comprehensive rental solutions.</p>
+                  <h4 className="font-outfit text-lg font-semibold text-gray-900 mb-3">
+                    Productive Assets
+                  </h4>
+                  <p className="font-outfit text-sm font-light leading-relaxed text-gray-600">
+                    Transforming real estate investments into productive assets through comprehensive rental solutions.
+                  </p>
                 </div>
-                <div className="about-main-service-item">
-                  <div className="about-main-service-icon">
+                <div className="text-center">
+                  <div className="w-24 h-24 mx-auto mb-4 flex items-center justify-center">
                     <img 
                       src={ASSETS.ABOUT_COMPREHENSIVE} 
                       alt="Nationwide Solution" 
-                      className="about-main-service-icon-img"
+                      className="w-full h-full object-contain"
                       onError={(e) => { e.currentTarget.style.display = 'none' }}
                     />
                   </div>
-                  <h4 className="about-main-service-name">Nationwide Coverage</h4>
-                  <p className="about-main-service-desc">Comprehensive rental solutions across the Philippines through our network of rent professionals.</p>
+                  <h4 className="font-outfit text-lg font-semibold text-gray-900 mb-3">
+                    Nationwide Coverage
+                  </h4>
+                  <p className="font-outfit text-sm font-light leading-relaxed text-gray-600">
+                    Comprehensive rental solutions across the Philippines through our network of rent professionals.
+                  </p>
                 </div>
               </div>
             </div>
@@ -114,13 +145,11 @@ export default function AboutPage() {
         </div>
       </section>
 
-      
-
       {/* Social Proof Section */}
-      <section className="about-social-proof-section">
+      <section className="bg-gray-50 py-12">
         <Testimonials />
-        <div className="about-social-proof-container">
-          <div className="about-partners-compact">
+        <div className="max-w-7xl mx-auto px-6 md:px-10">
+          <div className="mt-12">
             <Partners />
           </div>
         </div>

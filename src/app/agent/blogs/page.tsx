@@ -4,8 +4,6 @@ import { useMemo, useState } from 'react'
 import AppSidebar from '../../../components/common/AppSidebar'
 import AgentHeader from '../../../components/agent/AgentHeader'
 import { ASSETS } from '@/utils/assets'
-import '../page.css'
-import './page.css'
 
 type AgentBlogCard = {
   id: number
@@ -29,72 +27,72 @@ export default function AgentShareBlogs() {
   )
 
   return (
-    <div className="agent-dashboard agent-share-blogs-page">
+    <div className="flex min-h-screen bg-gray-100 font-outfit">
       <AppSidebar />
 
-      <main className="agent-main">
-        <AgentHeader 
-          title="Share Blogs" 
-          subtitle="Create and share blog posts with the community." 
-        />
+      <main className="ml-[280px] flex-1 w-[calc(100%-280px)] p-0 min-h-screen lg:ml-[240px] lg:w-[calc(100%-240px)] md:ml-[200px] md:w-[calc(100%-200px)]">
+        <div className="pt-8 px-8 pb-0 mb-0 sm:pt-6 sm:px-[18px]">
+          <AgentHeader 
+            title="Share Blogs" 
+            subtitle="Create and share blog posts with the community." 
+          />
+        </div>
 
-        <section className="asb-content">
-     
-
-          <div className="asb-carousel">
-            <button className="asb-arrow asb-arrow-left" type="button" aria-label="Previous">
+        <section className="py-6 px-8 min-h-[600px] sm:p-[18px]">
+          <div className="relative mt-[18px]">
+            <button className="absolute top-1/2 -translate-y-1/2 left-1.5 w-11 h-11 rounded-full border-0 cursor-pointer bg-transparent text-gray-500 text-[42px] leading-none flex items-center justify-center hover:text-[#205ed7]" type="button" aria-label="Previous">
               ‹
             </button>
 
-            <div className="asb-grid" role="list">
+            <div className="w-full grid grid-cols-3 gap-[26px] py-2.5 px-11 md:grid-cols-2 sm:grid-cols-1 sm:px-8" role="list">
               {blogs.map((b) => (
-                <article key={b.id} className="asb-card" role="listitem">
-                  <div className="asb-card-image">
-                    <img src={b.image} alt={b.title} />
+                <article key={b.id} className="bg-transparent rounded-xl" role="listitem">
+                  <div className="rounded-xl overflow-hidden bg-white shadow-[0px_6px_16px_rgba(17,24,39,0.14)] h-[190px] flex items-center justify-center sm:h-[200px]">
+                    <img src={b.image} alt={b.title} className="w-full h-full object-cover block" />
                   </div>
                 </article>
               ))}
             </div>
 
-            <button className="asb-arrow asb-arrow-right" type="button" aria-label="Next">
+            <button className="absolute top-1/2 -translate-y-1/2 right-1.5 w-11 h-11 rounded-full border-0 cursor-pointer bg-transparent text-gray-500 text-[42px] leading-none flex items-center justify-center hover:text-[#205ed7]" type="button" aria-label="Next">
               ›
             </button>
           </div>
 
-          <div className="asb-pagination" aria-label="Pagination">
-            <button className="asb-page-btn asb-page-prev" type="button" aria-label="Previous page">
+          <div className="mt-[22px] flex justify-center items-center gap-2.5 pb-3" aria-label="Pagination">
+            <button className="w-[38px] h-[38px] rounded-full border-0 cursor-pointer font-outfit text-sm font-semibold inline-flex items-center justify-center bg-blue-700 text-white text-xl" type="button" aria-label="Previous page">
               ‹
             </button>
             <button
-              className={`asb-page-number ${currentPage === 1 ? 'active' : ''}`}
+              className={`w-[38px] h-[38px] rounded-full border-0 cursor-pointer font-outfit text-sm font-semibold inline-flex items-center justify-center ${currentPage === 1 ? 'bg-blue-700 text-white' : 'bg-blue-100 text-blue-700'}`}
               type="button"
               onClick={() => setCurrentPage(1)}
             >
               1
             </button>
             <button
-              className={`asb-page-number ${currentPage === 2 ? 'active' : ''}`}
+              className={`w-[38px] h-[38px] rounded-full border-0 cursor-pointer font-outfit text-sm font-semibold inline-flex items-center justify-center ${currentPage === 2 ? 'bg-blue-700 text-white' : 'bg-blue-100 text-blue-700'}`}
               type="button"
               onClick={() => setCurrentPage(2)}
             >
               2
             </button>
             <button
-              className={`asb-page-number ${currentPage === 3 ? 'active' : ''}`}
+              className={`w-[38px] h-[38px] rounded-full border-0 cursor-pointer font-outfit text-sm font-semibold inline-flex items-center justify-center ${currentPage === 3 ? 'bg-blue-700 text-white' : 'bg-blue-100 text-blue-700'}`}
               type="button"
               onClick={() => setCurrentPage(3)}
             >
               3
             </button>
-            <span className="asb-page-ellipsis">…</span>
+            <span className="text-blue-700 font-bold px-1.5">…</span>
             <button
-              className={`asb-page-number ${currentPage === 50 ? 'active' : ''}`}
+              className={`w-[38px] h-[38px] rounded-full border-0 cursor-pointer font-outfit text-sm font-semibold inline-flex items-center justify-center ${currentPage === 50 ? 'bg-blue-700 text-white' : 'bg-blue-100 text-blue-700'}`}
               type="button"
               onClick={() => setCurrentPage(50)}
             >
               50
             </button>
-            <button className="asb-page-btn asb-page-next" type="button" aria-label="Next page">
+            <button className="w-[38px] h-[38px] rounded-full border-0 cursor-pointer font-outfit text-sm font-semibold inline-flex items-center justify-center bg-blue-700 text-white text-xl" type="button" aria-label="Next page">
               ›
             </button>
           </div>

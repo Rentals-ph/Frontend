@@ -12,10 +12,7 @@ import {
   FiCheck
 } from 'react-icons/fi'
 import { generatePropertyDescription, getFallbackDescription } from '../../../../utils/aiDescription'
-import '../AgentCreateListingCategory.css'
-import '../details/page.css'
-import '../location/page.css'
-import '../ai-generate.css'
+// Converted to Tailwind CSS
 
 function ProgressRing({ percent }: { percent: number }) {
   const { radius, stroke, normalizedRadius, circumference, strokeDashoffset } = useMemo(() => {
@@ -34,8 +31,8 @@ function ProgressRing({ percent }: { percent: number }) {
   }, [percent])
 
   return (
-    <div className="aclc-progress">
-      <svg height={radius * 2} width={radius * 2} className="aclc-progress-svg">
+    <div className="relative w-13 h-13 flex-shrink-0"> {/* aclc-progress */}
+      <svg height={radius * 2} width={radius * 2} className="-rotate-90"> {/* aclc-progress-svg */}
         <circle
           stroke="#E5E7EB"
           fill="transparent"
@@ -54,10 +51,10 @@ function ProgressRing({ percent }: { percent: number }) {
           r={normalizedRadius}
           cx={radius}
           cy={radius}
-          className="aclc-progress-ring"
+          className="transition-all duration-250 ease-in" // aclc-progress-ring
         />
       </svg>
-      <div className="aclc-progress-text">{percent}%</div>
+      <div className="absolute inset-0 flex items-center justify-center text-xs font-bold text-gray-900">{percent}%</div> {/* aclc-progress-text */}
     </div>
   )
 }
@@ -139,42 +136,40 @@ export default function AgentCreateListingBasicInfo() {
           subtitle="Add basic property information." 
         />
 
-        <div className="aclc-breadcrumb">
-          <span className="aclc-breadcrumb-strong">Create Listing</span>
-          <span className="aclc-breadcrumb-sep">&gt;</span>
-          <span className="aclc-breadcrumb-muted">Basic Information</span>
+        <div className="flex items-center gap-2 text-xl font-semibold text-gray-900 my-1.5 mx-0 mb-4"> {/* aclc-breadcrumb */}
+          <span className="text-gray-900">Create Listing</span> {/* aclc-breadcrumb-strong */}
+          <span className="text-gray-400 font-medium">&gt;</span> {/* aclc-breadcrumb-sep */}
+          <span className="text-gray-400 font-semibold">Basic Information</span> {/* aclc-breadcrumb-muted */}
         </div>
 
-        <div className="section-card aclc-stepper-card">
-          <div className="aclc-stepper-left">
+        <div className="flex items-center gap-4 p-5 mb-6 bg-white rounded-xl shadow-sm md:flex-col md:items-start"> {/* section-card aclc-stepper-card */}
+          <div className="flex items-center gap-3 min-w-[220px]"> {/* aclc-stepper-left */}
             <ProgressRing percent={25} />
-            <div className="aclc-stepper-left-text">
-              <div className="aclc-stepper-left-title">Completion Status</div>
-            </div>
+            <div className="text-sm font-semibold text-gray-600">Completion Status</div> {/* aclc-stepper-left-title */}
           </div>
 
-          <div className="aclc-steps">
+          <div className="flex-1 grid grid-cols-4 items-start gap-0 md:w-full md:overflow-x-auto md:pb-1.5 md:justify-start"> {/* aclc-steps */}
             {stepLabels.map((label, idx) => {
               const step = idx + 1
               const isActive = step === 1
               const isDone = step < 1
               return (
-                <div className="aclc-step" key={label}>
-                  <div className="aclc-step-top">
-                    <div className={`aclc-step-circle ${isActive ? 'active' : ''} ${isDone ? 'done' : ''}`}>
-                      {isDone ? <FiCheck /> : step}
+                <div className="flex flex-col items-center min-w-0 flex-shrink-0" key={label}> {/* aclc-step */}
+                  <div className="w-full flex items-center relative"> {/* aclc-step-top */}
+                    <div className={`w-11 h-11 rounded-full flex items-center justify-center font-bold text-base flex-shrink-0 relative z-10 ${isActive ? 'bg-blue-600 text-white' : isDone ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-400'}`}> {/* aclc-step-circle */}
+                      {isDone ? <FiCheck className="text-lg" /> : step}
                     </div>
-                    {step !== stepLabels.length && <div className={`aclc-step-line ${step < 1 ? 'done' : ''}`} />}
+                    {step !== stepLabels.length && <div className={`h-1.5 rounded-full flex-1 ml-2 mr-2 min-w-0 ${step < 1 ? 'bg-blue-600' : 'bg-gray-200'}`} />} {/* aclc-step-line */}
                   </div>
-                  <div className={`aclc-step-label ${isActive ? 'active' : ''}`}>{label}</div>
+                  <div className={`mt-2 text-xs font-semibold text-center leading-tight ${isActive ? 'text-blue-600' : 'text-gray-400'}`}>{label}</div> {/* aclc-step-label */}
                 </div>
               )
             })}
           </div>
         </div>
 
-        <div className="section-card aclc-form-card">
-          <h2 className="aclc-form-title">Basic Property Information</h2>
+        <div className="p-6 bg-white rounded-xl shadow-sm max-w-full"> {/* section-card aclc-form-card */}
+          <h2 className="m-0 mb-4 text-3xl font-bold text-gray-900">Basic Property Information</h2> {/* aclc-form-title */}
 
           {/* Two Column Layout */}
           <div className="basic-info-two-column">
@@ -217,18 +212,18 @@ export default function AgentCreateListingBasicInfo() {
 
               {/* Description */}
               <div>
-                <div className="ai-generate-row">
+                <div className="flex items-center justify-between mb-1.5">
                   <label className="aclc-label" htmlFor="propertyDescription" style={{ marginBottom: 0 }}>
                     Property Description *
                   </label>
                   <button
                     type="button"
-                    className="ai-generate-btn"
+                    className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-lg border border-purple-600 bg-gradient-to-br from-purple-600 to-purple-700 px-3.5 py-1.5 text-xs font-semibold text-white transition-all hover:from-purple-700 hover:to-purple-800 hover:-translate-y-px hover:shadow-[0_2px_8px_rgba(124,58,237,0.35)] active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-55"
                     disabled={!category || !title || isGenerating}
                     onClick={handleAiGenerate}
                     title={!category || !title ? 'Select a category and enter a title first' : 'Generate description with AI'}
                   >
-                    {isGenerating ? <span className="ai-spinner" /> : <span className="ai-sparkle">✨</span>}
+                    {isGenerating ? <span className="inline-block h-3.5 w-3.5 animate-spin rounded-full border-2 border-white/30 border-t-white" /> : <span className="text-sm leading-none">✨</span>}
                     {isGenerating ? 'Generating...' : 'AI Generate'}
                   </button>
                 </div>

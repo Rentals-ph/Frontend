@@ -10,8 +10,6 @@ import {
   FiArrowRight,
   FiCheck
 } from 'react-icons/fi'
-import '../AgentCreateListingCategory.css'
-import './page.css'
 
 function ProgressRing({ percent }: { percent: number }) {
   const { radius, stroke, normalizedRadius, circumference, strokeDashoffset } = useMemo(() => {
@@ -143,18 +141,18 @@ export default function AgentCreateListingAttributes() {
         <div className="section-card aclc-form-card">
           <h2 className="aclc-form-title">Attributes</h2>
 
-          <div className="acat-section">
-            <h3 className="acat-section-title">Amenities</h3>
-            <div className="acat-checkbox-grid">
+          <div className="mb-6 last:mb-0">
+            <h3 className="mb-3 text-base font-semibold text-gray-900">Amenities</h3>
+            <div className="grid grid-cols-4 gap-4 xl:grid-cols-3 md:grid-cols-2 xs:grid-cols-1">
               {amenitiesList.map((amenity) => (
-                <label key={amenity} className="acat-checkbox-label">
+                <label key={amenity} className="flex cursor-pointer select-none items-center gap-2.5">
                   <input
                     type="checkbox"
-                    className="acat-checkbox"
+                    className="h-5 w-5 flex-shrink-0 cursor-pointer accent-blue-600"
                     checked={amenities.includes(amenity)}
                     onChange={() => handleAmenityChange(amenity)}
                   />
-                  <span className="acat-checkbox-text">{amenity}</span>
+                  <span className="text-sm font-medium text-gray-900">{amenity}</span>
                 </label>
               ))}
             </div>
@@ -162,9 +160,9 @@ export default function AgentCreateListingAttributes() {
 
     
 
-          <div className="acat-footer-actions">
+          <div className="mt-6 flex justify-between gap-3 md:flex-col md:items-stretch">
             <button
-              className="acld-prev-btn"
+              className="acld-prev-btn md:w-full md:justify-center"
               onClick={() => router.push('/agent/create-listing/pricing')}
               type="button"
             >
@@ -172,7 +170,7 @@ export default function AgentCreateListingAttributes() {
               <span>Previous</span>
             </button>
             <button
-              className="aclc-next-btn"
+              className="aclc-next-btn md:w-full md:justify-center"
               onClick={() => {
                 updateData({ amenities })
                 router.push('/agent/create-listing/owner-info')

@@ -6,7 +6,6 @@ import { propertiesApi } from '../../api'
 import type { Property } from '../../types'
 import type { PaginatedResponse } from '../../api/types'
 import { ASSETS } from '@/utils/assets'
-import './PropertiesForRent.css'
 
 function PropertiesForRent() {
   const [properties, setProperties] = useState<Property[]>([])
@@ -61,23 +60,25 @@ function PropertiesForRent() {
   }
 
   return (
-    <section id="properties-for-rent" className="properties-for-rent-section">
-      <div className="properties-for-rent-container">
-        <div className="section-header">
+    <section id="properties-for-rent" className="bg-white py-20 md:py-15">
+      <div className="mx-auto max-w-7xl px-16 lg:px-10 md:px-5">
+        <div className="mb-10 flex items-center justify-between md:mb-8">
           <div>
-            <h2 className="section-title">Properties for Rent</h2>
-            <p className="section-subtitle">
+            <h2 className="mb-2.5 font-outfit text-4xl font-bold leading-10 tracking-tight text-gray-900 md:text-3xl md:leading-8">
+              Properties for Rent
+            </h2>
+            <p className="font-outfit text-lg font-normal leading-6 tracking-tight text-gray-600 md:text-base md:leading-5.5">
               Explore our wide selection of rental properties
             </p>
           </div>
         </div>
 
         {loading ? (
-          <div style={{ textAlign: 'center', padding: '40px' }}>
+          <div className="p-10 text-center">
             <p>Loading properties...</p>
           </div>
         ) : properties.length > 0 ? (
-          <div className="property-cards-grid">
+          <div className="mx-auto grid w-full max-w-[1280px] grid-cols-3 justify-items-center gap-8 lg:grid-cols-2 lg:gap-6 md:grid-cols-1 md:gap-5">
             {properties.map((property) => {
               const propertySize = property.area 
                 ? `${property.area} sqft` 
@@ -104,7 +105,7 @@ function PropertiesForRent() {
             })}
           </div>
         ) : (
-          <div style={{ textAlign: 'center', padding: '40px' }}>
+          <div className="p-10 text-center">
             <p>No properties available at the moment.</p>
           </div>
         )}

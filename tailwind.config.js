@@ -7,6 +7,11 @@ export default {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        outfit: ['Outfit', 'Inter', 'sans-serif'],
+        inter: ['Inter', 'sans-serif'],
+        montserrat: ['Montserrat', 'sans-serif'],
+      },
       colors: {
         'rental-blue': {
           50: '#e6f2ff',
@@ -32,6 +37,21 @@ export default {
           800: '#663800',
           900: '#331c00',
         },
+      },
+      keyframes: {
+        'partners-scroll': {
+          '0%': { transform: 'translateX(0)' },
+          '100%': { transform: 'translateX(-50%)' },
+        },
+        'heroBackgroundAnimation': {
+          '0%': { transform: 'scale(1)' },
+          '50%': { transform: 'scale(1.05)' },
+          '100%': { transform: 'scale(1)' },
+        },
+      },
+      animation: {
+        'partners-scroll': 'partners-scroll 18s linear infinite',
+        'heroBackgroundAnimation': 'heroBackgroundAnimation 20s ease-in-out infinite',
       },
     },
   },

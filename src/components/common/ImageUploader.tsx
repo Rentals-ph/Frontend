@@ -12,7 +12,6 @@ import {
 } from '@/utils/imageUpload'
 import { StoragePaths, getImageUrl } from '@/utils/storage'
 import { ASSETS } from '@/utils/assets'
-import './ImageUploader.css'
 
 export interface ImageUploaderProps {
   entityType: 'users' | 'properties' | 'posts' | 'agents' | 'testimonials'
@@ -216,37 +215,37 @@ export default function ImageUploader({
   }
 
   return (
-    <div className={`image-uploader ${className}`}>
+    <div className={`flex flex-col gap-4 ${className}`}>
       <input
         ref={fileInputRef}
         type="file"
         accept="image/*"
         multiple={multiple}
         onChange={handleFileSelect}
-        className="image-uploader-input"
+        className="hidden"
         disabled={uploading}
         aria-label="Upload image"
       />
 
       {showPreview && (
-        <div className="image-uploader-preview">
+        <div className={`relative w-full max-w-md overflow-hidden rounded-lg border-2 border-dashed border-gray-300 bg-gray-100 ${imageType === 'avatar' ? 'aspect-square max-w-[200px] rounded-full' : 'aspect-video'}`}>
           <img
             src={preview || getPlaceholderImage()}
             alt="Preview"
-            className="image-uploader-preview-img"
+            className={`h-full w-full object-cover ${imageType === 'avatar' ? 'rounded-full' : ''}`}
             onError={(e) => {
               const target = e.target as HTMLImageElement
               target.src = getPlaceholderImage()
             }}
           />
           {uploading && (
-            <div className="image-uploader-overlay">
-              <div className="image-uploader-progress">
+            <div className="absolute inset-0 flex items-center justify-center bg-black/50">
+              <div className="flex w-4/5 max-w-xs flex-col gap-2 rounded-lg bg-white/90 p-4">
                 <div 
-                  className="image-uploader-progress-bar"
+                  className="h-2 rounded bg-blue-500 transition-all duration-300"
                   style={{ width: `${uploadProgress}%` }}
                 />
-                <span className="image-uploader-progress-text">
+                <span className="text-center text-sm font-semibold text-gray-800">
                   {uploadProgress}%
                 </span>
               </div>
@@ -259,16 +258,16 @@ export default function ImageUploader({
         type="button"
         onClick={handleClick}
         disabled={uploading}
-        className="image-uploader-button"
+        className="inline-flex items-center justify-center gap-2 rounded-md border-0 bg-blue-500 px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-blue-600 disabled:cursor-not-allowed disabled:opacity-60"
       >
         {uploading ? (
           <>
-            <span className="image-uploader-spinner" />
+            <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
             Uploading... {uploadProgress}%
           </>
         ) : (
           <>
-            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="h-5 w-5">
               <path
                 d="M12 5V19M5 12H19"
                 stroke="currentColor"
@@ -283,13 +282,13 @@ export default function ImageUploader({
       </button>
 
       {error && (
-        <div className="image-uploader-error" role="alert">
+        <div className="rounded-md border border-red-200 bg-red-50 px-3 py-3 text-sm text-red-800" role="alert">
           {error}
         </div>
       )}
 
       {multiple && (
-        <p className="image-uploader-hint">
+        <p className="m-0 text-xs text-gray-500">
           You can upload up to {maxFiles} images
         </p>
       )}

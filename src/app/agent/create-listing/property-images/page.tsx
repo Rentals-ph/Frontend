@@ -14,8 +14,7 @@ import {
   FiUploadCloud,
   FiPlayCircle
 } from 'react-icons/fi'
-import '../AgentCreateListingCategory.css'
-import './page.css'
+// import '../AgentCreateListingCategory.css' // Converted to Tailwind
 
 function ProgressRing({ percent }: { percent: number }) {
   const { radius, stroke, normalizedRadius, circumference, strokeDashoffset } = useMemo(() => {
@@ -34,8 +33,8 @@ function ProgressRing({ percent }: { percent: number }) {
   }, [percent])
 
   return (
-    <div className="aclc-progress">
-      <svg height={radius * 2} width={radius * 2} className="aclc-progress-svg">
+    <div className="relative w-13 h-13 flex-shrink-0"> {/* aclc-progress */}
+      <svg height={radius * 2} width={radius * 2} className="-rotate-90"> {/* aclc-progress-svg */}
         <circle
           stroke="#E5E7EB"
           fill="transparent"
@@ -54,10 +53,10 @@ function ProgressRing({ percent }: { percent: number }) {
           r={normalizedRadius}
           cx={radius}
           cy={radius}
-          className="aclc-progress-ring"
+          className="transition-all duration-250 ease-in" // aclc-progress-ring
         />
       </svg>
-      <div className="aclc-progress-text">{percent}%</div>
+      <div className="absolute inset-0 flex items-center justify-center text-xs font-bold text-gray-900">{percent}%</div> {/* aclc-progress-text */}
     </div>
   )
 }
@@ -164,46 +163,44 @@ export default function AgentCreateListingPropertyImages() {
           subtitle="Upload property images and videos." 
         />
 
-        <div className="aclc-breadcrumb">
-          <span className="aclc-breadcrumb-strong">Create Listing</span>
-          <span className="aclc-breadcrumb-sep">&gt;</span>
-          <span className="aclc-breadcrumb-muted">Property Images</span>
+        <div className="flex items-center gap-2 text-xl font-semibold text-gray-900 my-1.5 mx-0 mb-4"> {/* aclc-breadcrumb */}
+          <span className="text-gray-900">Create Listing</span> {/* aclc-breadcrumb-strong */}
+          <span className="text-gray-400 font-medium">&gt;</span> {/* aclc-breadcrumb-sep */}
+          <span className="text-gray-400 font-semibold">Property Images</span> {/* aclc-breadcrumb-muted */}
         </div>
 
-        <div className="section-card aclc-stepper-card">
-          <div className="aclc-stepper-left">
+        <div className="flex items-center gap-4 p-5 mb-6 bg-white rounded-xl shadow-sm md:flex-col md:items-start"> {/* section-card aclc-stepper-card */}
+          <div className="flex items-center gap-3 min-w-[220px]"> {/* aclc-stepper-left */}
             <ProgressRing percent={40} />
-            <div className="aclc-stepper-left-text">
-              <div className="aclc-stepper-left-title">Completion Status</div>
-            </div>
+            <div className="text-sm font-semibold text-gray-600">Completion Status</div> {/* aclc-stepper-left-title */}
           </div>
 
-          <div className="aclc-steps">
+          <div className="flex-1 grid grid-cols-4 items-start gap-0 md:w-full md:overflow-x-auto md:pb-1.5 md:justify-start"> {/* aclc-steps */}
             {stepLabels.map((label, idx) => {
               const step = idx + 1
               const isActive = step === 4
               const isDone = step < 4
               return (
-                <div className="aclc-step" key={label}>
-                  <div className="aclc-step-top">
-                    <div className={`aclc-step-circle ${isActive ? 'active' : ''} ${isDone ? 'done' : ''}`}>
-                      {isDone ? <FiCheck /> : step}
+                <div className="flex flex-col items-center min-w-0 flex-shrink-0" key={label}> {/* aclc-step */}
+                  <div className="w-full flex items-center relative"> {/* aclc-step-top */}
+                    <div className={`w-11 h-11 rounded-full flex items-center justify-center font-bold text-base flex-shrink-0 relative z-10 ${isActive ? 'bg-blue-600 text-white' : isDone ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-400'}`}> {/* aclc-step-circle */}
+                      {isDone ? <FiCheck className="text-lg" /> : step}
                     </div>
                     {step !== stepLabels.length && (
-                      <div className={`aclc-step-line ${step < 4 ? 'done' : ''}`} />
+                      <div className={`h-1.5 rounded-full flex-1 ml-2 mr-2 min-w-0 ${step < 4 ? 'bg-blue-600' : 'bg-gray-200'}`} /> // aclc-step-line
                     )}
                   </div>
-                  <div className={`aclc-step-label ${isActive ? 'active' : ''}`}>{label}</div>
+                  <div className={`mt-2 text-xs font-semibold text-center leading-tight ${isActive ? 'text-blue-600' : 'text-gray-400'}`}>{label}</div> {/* aclc-step-label */}
                 </div>
               )
             })}
           </div>
         </div>
 
-        <div className="section-card aclc-form-card">
-          <h2 className="aclc-form-title">Property Gallery</h2>
+        <div className="p-7 pb-6 bg-white rounded-xl shadow-sm max-w-full"> {/* section-card aclc-form-card */}
+          <h2 className="m-0 mb-4 text-3xl font-bold text-gray-900">Property Gallery</h2> {/* aclc-form-title */}
 
-          <div className="acpi-subtitle">Property Images</div>
+          <div className="mt-1 mb-4.5 text-base font-semibold text-gray-900">Property Images</div> {/* acpi-subtitle */}
 
           <input
             type="file"
@@ -214,53 +211,37 @@ export default function AgentCreateListingPropertyImages() {
             style={{ display: 'none' }}
           />
           <div
-            className="acpi-dropzone"
+            className="mb-5 rounded-2xl border-2 border-dashed border-blue-200 bg-blue-50 p-10 px-6 flex flex-col items-center text-center cursor-pointer transition-all duration-150 ease-in-out hover:bg-sky-100 hover:border-blue-400 hover:shadow-[0_10px_20px_rgba(37,99,235,0.09)] hover:-translate-y-px md:p-7 md:px-4.5" // acpi-dropzone
             onDrop={handleDrop}
             onDragOver={handleDragOver}
             onClick={() => fileInputRef.current?.click()}
             role="button"
             tabIndex={0}
           >
-            <FiUploadCloud className="acpi-dropzone-icon" />
-            <p className="acpi-dropzone-title">Drop files here or click to upload</p>
-            <p className="acpi-dropzone-text">
+            <FiUploadCloud className="text-[40px] text-blue-600 mb-2.5" /> {/* acpi-dropzone-icon */}
+            <p className="m-0 mb-1 text-lg font-semibold text-gray-900">Drop files here or click to upload</p> {/* acpi-dropzone-title */}
+            <p className="m-0 mb-2.5 text-sm text-gray-600">
               Upload high-quality images of your property (max 10mb each)
-            </p>
-            <p className="acpi-dropzone-helper">
+            </p> {/* acpi-dropzone-text */}
+            <p className="m-0 max-w-[540px] text-xs text-gray-500">
               You can drag and drop multiple files at once. The first image will be set as the default
               image. Drag images to reorder them.
-            </p>
+            </p> {/* acpi-dropzone-helper */}
           </div>
           {images.length > 0 && (
-            <div style={{ marginTop: '1rem', display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+            <div className="mt-4 flex flex-wrap gap-2">
               {images.map((image, index) => (
-                <div key={index} style={{ position: 'relative', display: 'inline-block' }}>
+                <div key={index} className="relative inline-block">
                   <img
                     src={thumbnails[index] || URL.createObjectURL(image)}
                     alt={`Preview ${index + 1}`}
-                    style={{ width: '100px', height: '100px', objectFit: 'cover', borderRadius: '8px' }}
+                    className="w-[100px] h-[100px] object-cover rounded-lg"
                     loading="lazy"
                   />
                   <button
                     type="button"
                     onClick={() => handleRemoveImage(index)}
-                    style={{
-                      position: 'absolute',
-                      top: '-8px',
-                      right: '-8px',
-                      background: 'red',
-                      color: 'white',
-                      border: 'none',
-                      borderRadius: '50%',
-                      width: '24px',
-                      height: '24px',
-                      cursor: 'pointer',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      fontSize: '18px',
-                      lineHeight: '1',
-                    }}
+                    className="absolute -top-2 -right-2 bg-red-500 text-white border-none rounded-full w-6 h-6 cursor-pointer flex items-center justify-center text-lg leading-none"
                   >
                     ×
                   </button>
@@ -269,31 +250,31 @@ export default function AgentCreateListingPropertyImages() {
             </div>
           )}
 
-          <div className="acpi-video-section">
-            <div className="acpi-video-label-row">
-              <span className="acpi-video-label">Video Link (Optional)</span>
+          <div className="mt-5"> {/* acpi-video-section */}
+            <div className="flex items-center justify-between mb-2"> {/* acpi-video-label-row */}
+              <span className="text-sm font-semibold text-gray-900">Video Link (Optional)</span> {/* acpi-video-label */}
             </div>
-            <div className="acpi-video-input-row">
-              <div className="acpi-video-icon-wrap">
-                <FiPlayCircle className="acpi-video-icon" />
+            <div className="flex items-stretch gap-0 md:flex-col md:items-stretch"> {/* acpi-video-input-row */}
+              <div className="flex items-center justify-center px-3.5 bg-blue-50 border border-gray-300 border-r-0 rounded-l-lg md:rounded-t-lg md:rounded-b-none md:border-r md:border-b-0"> {/* acpi-video-icon-wrap */}
+                <FiPlayCircle className="text-xl text-blue-600" /> {/* acpi-video-icon */}
               </div>
               <input
-                className="acpi-video-input"
+                className="flex-1 border border-gray-300 border-l-0 border-r-0 p-2.5 px-3 text-sm rounded-none outline-none placeholder:text-gray-400 md:rounded-none md:border-l md:border-t-0" // acpi-video-input
                 placeholder="Enter Youtube/video link"
                 value={videoUrl}
                 onChange={(e) => setVideoUrl(e.target.value)}
               />
-              <button className="acpi-video-preview-btn" type="button">
+              <button className="py-0 px-4.5 rounded-r-lg border border-blue-600 bg-blue-600 text-white text-sm font-semibold cursor-pointer transition-all duration-150 ease-in-out hover:bg-blue-700 hover:shadow-[0_8px_16px_rgba(37,99,235,0.18)] hover:-translate-y-px md:mt-1.5 md:rounded-lg md:w-full" type="button"> {/* acpi-video-preview-btn */}
                 Preview
               </button>
             </div>
-            <p className="acpi-video-helper">
+            <p className="mt-2 mb-0 text-xs text-gray-500">
               Paste a YouTube, YouTube Shorts, Vimeo, Facebook Reel, TikTok, or Google Drive link to your
               property video tour.
-            </p>
+            </p> {/* acpi-video-helper */}
           </div>
 
-          <div className="acpi-footer-actions">
+          <div className="mt-6 flex justify-between gap-3 md:flex-col md:items-stretch"> {/* acpi-footer-actions */}
             <button
               className="acld-prev-btn"
               onClick={() => router.push('/agent/create-listing/location')}

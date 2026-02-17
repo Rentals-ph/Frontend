@@ -14,7 +14,7 @@ import type { Agent } from '../../../api/endpoints/agents'
 import type { PaginatedResponse } from '../../../api/types'
 import { ASSETS } from '@/utils/assets'
 import PageHeader from '../../../components/layout/PageHeader'
-import './page.css'
+// import './page.css' // Removed - converted to Tailwind
 
 export default function RentManagerDetailsPage() {
   const params = useParams()

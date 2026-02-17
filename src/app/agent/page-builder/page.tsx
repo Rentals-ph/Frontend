@@ -28,7 +28,7 @@ import {
   FiX,
   FiExternalLink
 } from 'react-icons/fi'
-import './page.css'
+// import './page.css' // Removed - converted to Tailwind
 
 export default function PageBuilder() {
   const [selectedTheme, setSelectedTheme] = useState('white')
@@ -654,47 +654,47 @@ export default function PageBuilder() {
   }
 
   return (
-    <div className="agent-dashboard">
+    <div className="flex min-h-screen bg-gray-100 font-outfit"> {/* agent-dashboard */}
       <AppSidebar/>
 
-      <main className="agent-main">
+      <main className="ml-[280px] flex-1 w-[calc(100%-280px)] p-8 min-h-screen lg:ml-[240px] lg:w-[calc(100%-240px)] lg:p-6 md:ml-[200px] md:w-[calc(100%-200px)] md:p-4"> {/* agent-main */}
         <AgentHeader 
           title={activeTab === 'profile' ? "Page Builder > Profile" : "Page Builder > Property"} 
           subtitle={activeTab === 'profile' ? "Customize your public profile page" : "Customize your property page"} 
         />
         
         {/* Preview Button */}
-        <div className="preview-button-container">
+        <div className="flex justify-end mb-6"> {/* preview-button-container */}
           <button 
-            className="full-preview-button"
+            className="inline-flex items-center gap-2 py-2.5 px-5 bg-blue-600 text-white text-sm font-semibold rounded-xl border-0 cursor-pointer transition-all duration-200 shadow-sm hover:bg-blue-700" /* full-preview-button */
             onClick={() => setShowFullPreview(true)}
           >
-            <FiExternalLink className="preview-icon" />
+            <FiExternalLink className="text-base" /> {/* preview-icon */}
             <span>Preview Full Page</span>
           </button>
         </div>
 
-        <div className="page-builder-container">
+        <div className="grid grid-cols-[1fr_2fr] gap-6 lg:grid-cols-1"> {/* page-builder-container */}
           {/* Left Column - Customization */}
-          <div className="page-builder-left">
+          <div className="flex flex-col gap-6"> {/* page-builder-left */}
             {activeTab === 'profile' ? (
               <>
-                <div className="customize-section">
-                  <div className="customize-header">
-                    <div className="customize-icon-wrapper">
-                      <FiLayout className="customize-icon" />
+                <div className="bg-white rounded-2xl p-6 shadow-sm"> {/* customize-section */}
+                  <div className="flex items-start gap-4"> {/* customize-header */}
+                    <div className="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center text-blue-600 flex-shrink-0"> {/* customize-icon-wrapper */}
+                      <FiLayout className="text-xl" /> {/* customize-icon */}
                     </div>
-                    <div className="customize-content">
-                      <h2 className="customize-title">Customize your very own public page</h2>
-                      <p className="customize-subtitle">Showcase your public page to anyone.</p>
+                    <div className="flex-1"> {/* customize-content */}
+                      <h2 className="text-lg font-bold text-gray-900 mb-1">Customize your very own public page</h2> {/* customize-title */}
+                      <p className="text-sm text-gray-600">Showcase your public page to anyone.</p> {/* customize-subtitle */}
                     </div>
                   </div>
                 </div>
 
                 {/* Themes Section */}
-                <div className="builder-section">
-                  <h3 className="section-label">Themes</h3>
-                  <div className="themes-grid">
+                <div className="bg-white rounded-2xl p-6 shadow-sm"> {/* builder-section */}
+                  <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wider mb-4">Themes</h3> {/* section-label */}
+                  <div className="grid grid-cols-4 gap-4"> {/* themes-grid */}
                     {themes.map((theme) => (
                       <div key={theme.id} className="theme-item">
                         <button

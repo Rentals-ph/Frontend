@@ -11,7 +11,6 @@ import AccountSettings, {
 import { agentsApi } from '../../../api'
 import type { Agent } from '../../../api/endpoints/agents'
 import { ASSETS } from '@/utils/assets'
-import './page.css'
 
 export default function AgentAccount() {
   const [loading, setLoading] = useState(true)
@@ -227,30 +226,28 @@ export default function AgentAccount() {
   }
 
   return (
-    <div className="agent-account">
+    <div className="flex min-h-screen bg-gray-100 font-outfit">
       <AppSidebar/>
 
-      <main className="agent-main">
+      <main className="ml-[280px] flex-1 w-[calc(100%-280px)] p-8 min-h-screen lg:ml-[240px] lg:w-[calc(100%-240px)] lg:p-6 md:ml-[200px] md:w-[calc(100%-200px)] md:p-4">
         <AgentHeader 
           title="Account Settings" 
           subtitle="Manage your account information and preferences." 
         />
 
-        <div className="account-content">
-          <AccountSettings
-            userType="agent"
-            profileData={profileData}
-            editFormData={editFormData}
-            loading={loading}
-            uploading={uploading}
-            imagePreview={imagePreview}
-            onEditFormChange={handleEditChange}
-            onEditSubmit={handleEditSubmit}
-            onPasswordSubmit={handlePasswordSubmit}
-            onImageChange={handleImageChange}
-            cancelRoute="/agent"
-          />
-        </div>
+        <AccountSettings
+          userType="agent"
+          profileData={profileData}
+          editFormData={editFormData}
+          loading={loading}
+          uploading={uploading}
+          imagePreview={imagePreview}
+          onEditFormChange={handleEditChange}
+          onEditSubmit={handleEditSubmit}
+          onPasswordSubmit={handlePasswordSubmit}
+          onImageChange={handleImageChange}
+          cancelRoute="/agent"
+        />
       </main>
     </div>
   )

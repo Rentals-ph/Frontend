@@ -14,8 +14,8 @@ import {
   FiUploadCloud,
   FiPlayCircle
 } from 'react-icons/fi'
-import '../../broker-shared.css'
-import '../../../agent/create-listing/AgentCreateListingCategory.css'
+// import '../../broker-shared.css' // Removed - converted to Tailwind
+// import '../../../agent/create-listing/AgentCreateListingCategory.css' // Removed - converted to Tailwind
 import '../../../agent/create-listing/property-images/page.css'
 import '../../../agent/create-listing/attributes/page.css'
 
@@ -25,12 +25,12 @@ function ProgressRing({ percent }: { percent: number }) {
     return { radius: r, stroke: s, normalizedRadius: nr, circumference: c, strokeDashoffset: offset }
   }, [percent])
   return (
-    <div className="aclc-progress">
-      <svg height={radius * 2} width={radius * 2} className="aclc-progress-svg">
+    <div className="relative w-13 h-13 flex-shrink-0"> {/* aclc-progress */}
+      <svg height={radius * 2} width={radius * 2} className="-rotate-90"> {/* aclc-progress-svg */}
         <circle stroke="#E5E7EB" fill="transparent" strokeWidth={stroke} r={normalizedRadius} cx={radius} cy={radius} />
-        <circle stroke="#2563EB" fill="transparent" strokeWidth={stroke} strokeLinecap="round" strokeDasharray={`${circumference} ${circumference}`} style={{ strokeDashoffset }} r={normalizedRadius} cx={radius} cy={radius} className="aclc-progress-ring" />
+        <circle stroke="#2563EB" fill="transparent" strokeWidth={stroke} strokeLinecap="round" strokeDasharray={`${circumference} ${circumference}`} style={{ strokeDashoffset }} r={normalizedRadius} cx={radius} cy={radius} className="transition-all duration-250 ease-in" /> {/* aclc-progress-ring */}
       </svg>
-      <div className="aclc-progress-text">{percent}%</div>
+      <div className="absolute inset-0 flex items-center justify-center text-xs font-bold text-gray-900">{percent}%</div> {/* aclc-progress-text */}
     </div>
   )
 }
@@ -107,16 +107,16 @@ export default function BrokerCreateListingVisualsFeatures() {
   }
 
   return (
-    <div className="broker-dashboard">
+    <div className="flex min-h-screen bg-gray-100 font-outfit"> {/* broker-dashboard */}
       <AppSidebar />
-      <main className="broker-main">
-        <header className="broker-header">
-          <div className="broker-header-left">
-            <h1>Create Listing</h1>
-            <p>Add visuals and features.</p>
+      <main className="ml-[280px] flex-1 w-[calc(100%-280px)] p-8 min-h-screen lg:ml-[240px] lg:w-[calc(100%-240px)] lg:p-6 md:ml-0 md:w-full md:p-4 md:pt-15"> {/* broker-main */}
+        <header className="flex items-center justify-between mb-7 md:flex-col md:items-start md:gap-3.5"> {/* broker-header */}
+          <div> {/* broker-header-left */}
+            <h1 className="text-2xl font-bold text-gray-900 m-0 mb-1 md:text-xl">Create Listing</h1>
+            <p className="text-sm text-gray-400 m-0">Add visuals and features.</p>
           </div>
-          <div className="broker-header-right">
-            <button className="broker-notification-btn"><FiBell /></button>
+          <div className="flex items-center gap-3.5 md:w-full md:justify-between md:gap-2.5"> {/* broker-header-right */}
+            <button className="w-10.5 h-10.5 rounded-full border border-gray-200 bg-white flex items-center justify-center cursor-pointer text-gray-600 text-lg transition-all hover:bg-gray-50 hover:text-gray-900 md:w-9.5 md:h-9.5 md:text-base md:flex-shrink-0"><FiBell /></button> {/* broker-notification-btn */}
             <a href="/broker/create-listing" className="broker-add-listing-btn"><FiPlus /> Add Listing</a>
           </div>
         </header>

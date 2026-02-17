@@ -16,7 +16,7 @@ import {
   FiUser,
   FiAlertCircle,
 } from 'react-icons/fi'
-import './page.css'
+// import './page.css' // Removed - converted to Tailwind
 
 interface TeamMember {
   id: number
@@ -96,17 +96,17 @@ function ActionMenu({ memberId, onClose }: { memberId: number; onClose: () => vo
   }, [onClose])
 
   return (
-    <div className="tm-action-menu" ref={menuRef}>
-      <button className="tm-action-menu-item" onClick={onClose}>
-        <FiEdit className="tm-action-menu-icon edit" />
+    <div className="absolute right-0 top-full mt-1 bg-white rounded-lg shadow-lg border border-gray-200 py-1 min-w-[160px] z-50" ref={menuRef}> {/* tm-action-menu */}
+      <button className="w-full flex items-center gap-2.5 py-2.5 px-4 text-sm text-gray-700 bg-transparent border-0 cursor-pointer transition-colors duration-200 hover:bg-gray-100" onClick={onClose}> {/* tm-action-menu-item */}
+        <FiEdit className="text-base text-blue-600" /> {/* tm-action-menu-icon edit */}
         <span>Edit Profile</span>
       </button>
-      <button className="tm-action-menu-item" onClick={onClose}>
-        <FiRefreshCw className="tm-action-menu-icon reassign" />
+      <button className="w-full flex items-center gap-2.5 py-2.5 px-4 text-sm text-gray-700 bg-transparent border-0 cursor-pointer transition-colors duration-200 hover:bg-gray-100" onClick={onClose}> {/* tm-action-menu-item */}
+        <FiRefreshCw className="text-base text-amber-600" /> {/* tm-action-menu-icon reassign */}
         <span>Reassign</span>
       </button>
-      <button className="tm-action-menu-item danger" onClick={onClose}>
-        <FiAlertCircle className="tm-action-menu-icon deactivate" />
+      <button className="w-full flex items-center gap-2.5 py-2.5 px-4 text-sm text-red-600 bg-transparent border-0 cursor-pointer transition-colors duration-200 hover:bg-red-50" onClick={onClose}> {/* tm-action-menu-item danger */}
+        <FiAlertCircle className="text-base text-red-600" /> {/* tm-action-menu-icon deactivate */}
         <span>Deactivate</span>
       </button>
     </div>
@@ -138,20 +138,20 @@ export default function TeamManagementPage() {
   }
 
   return (
-    <div className="broker-dashboard">
+    <div className="flex min-h-screen bg-gray-100 font-outfit"> {/* broker-dashboard */}
       <AppSidebar />
-      <main className="broker-main">
+      <main className="ml-[280px] flex-1 w-[calc(100%-280px)] p-8 min-h-screen lg:ml-[240px] lg:w-[calc(100%-240px)] lg:p-6 md:ml-0 md:w-full md:p-4 md:pt-15"> {/* broker-main */}
         {/* Header */}
-        <header className="broker-header">
-          <div className="broker-header-left">
-            <h1>Team Management</h1>
-            <p>Manage your team members and their account permissions here.</p>
+        <header className="flex items-center justify-between mb-7 md:flex-col md:items-start md:gap-3.5"> {/* broker-header */}
+          <div className="flex flex-col gap-1"> {/* broker-header-left */}
+            <h1 className="text-2xl font-bold text-gray-900 m-0 mb-1 md:text-xl">Team Management</h1>
+            <p className="text-sm text-gray-400 m-0">Manage your team members and their account permissions here.</p>
           </div>
-          <div className="broker-header-right">
-            <button className="broker-notification-btn">
+          <div className="flex items-center gap-3.5 md:w-full md:justify-between md:gap-2.5"> {/* broker-header-right */}
+            <button className="w-11 h-11 rounded-xl border-0 bg-white flex items-center justify-center text-gray-600 text-xl cursor-pointer transition-all duration-200 shadow-sm hover:bg-gray-50 hover:text-blue-600"> {/* broker-notification-btn */}
               <FiBell />
             </button>
-            <a href="/broker/create-listing" className="broker-add-listing-btn">
+            <a href="/broker/create-listing" className="inline-flex items-center gap-2 py-2.5 px-5 bg-blue-600 text-white text-sm font-semibold rounded-xl border-0 no-underline cursor-pointer transition-all duration-200 shadow-sm hover:bg-blue-700 active:scale-[0.98]"> {/* broker-add-listing-btn */}
               <FiPlus />
               Add Listing
             </a>
@@ -159,23 +159,23 @@ export default function TeamManagementPage() {
         </header>
 
         {/* Team Table */}
-        <div className="tm-table-card">
-          <div className="tm-table-header">
-            <div className="tm-header-content">
+        <div className="bg-white rounded-[14px] p-6 shadow-sm"> {/* tm-table-card */}
+          <div className="flex items-center justify-between mb-5 md:flex-col md:items-start md:gap-4"> {/* tm-table-header */}
+            <div className="flex items-center justify-between w-full"> {/* tm-header-content */}
               <div>
-                <h3 className="tm-table-title">All users</h3>
+                <h3 className="text-lg font-bold text-gray-900 m-0">All users</h3> {/* tm-table-title */}
               </div>
-              <div className="tm-header-actions">
-                <button className="tm-add-user-btn">+ Add User</button>
-                <div className="tm-mobile-select-all">
+              <div className="flex items-center gap-3"> {/* tm-header-actions */}
+                <button className="inline-flex items-center gap-2 py-2.5 px-5 bg-blue-600 text-white text-sm font-semibold rounded-xl border-0 cursor-pointer transition-all duration-200 shadow-sm hover:bg-blue-700 active:translate-y-px">+ Add User</button> {/* tm-add-user-btn */}
+                <div className="hidden md:flex items-center gap-2"> {/* tm-mobile-select-all */}
                   <input
                     type="checkbox"
                     checked={allSelected}
                     onChange={toggleSelectAll}
-                    className="tm-mobile-card-checkbox"
+                    className="w-5 h-5 rounded border-gray-300 text-blue-600 cursor-pointer focus:ring-2 focus:ring-blue-500" /* tm-mobile-card-checkbox */
                     id="mobile-select-all"
                   />
-                  <label htmlFor="mobile-select-all" className="tm-mobile-select-all-label">
+                  <label htmlFor="mobile-select-all" className="text-sm font-medium text-gray-700 cursor-pointer"> {/* tm-mobile-select-all-label */}
                     Select all
                   </label>
                 </div>
@@ -184,66 +184,70 @@ export default function TeamManagementPage() {
           </div>
 
           {/* Desktop Table View */}
-          <div className="tm-table-wrapper">
-            <table className="tm-table">
-              <thead>
+          <div className="overflow-x-auto md:hidden"> {/* tm-table-wrapper */}
+            <table className="w-full border-collapse min-w-[1100px]"> {/* tm-table */}
+              <thead className="bg-gray-50">
                 <tr>
-                  <th className="tm-th-check">
+                  <th className="py-3 px-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider border-b border-gray-200 w-12"> {/* tm-th-check */}
                     <input
                       type="checkbox"
                       checked={allSelected}
                       onChange={toggleSelectAll}
-                      className="tm-checkbox"
+                      className="w-4 h-4 rounded border-gray-300 text-blue-600 cursor-pointer focus:ring-2 focus:ring-blue-500" /* tm-checkbox */
                     />
                   </th>
-                  <th>Name</th>
-                  <th>Role</th>
-                  <th>Reports to</th>
-                  <th>Listings</th>
-                  <th>Inquiry Channels</th>
-                  <th>Status</th>
-                  <th>Join Date</th>
-                  <th>Actions</th>
+                  <th className="py-3 px-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider border-b border-gray-200">Name</th>
+                  <th className="py-3 px-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider border-b border-gray-200">Role</th>
+                  <th className="py-3 px-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider border-b border-gray-200">Reports to</th>
+                  <th className="py-3 px-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider border-b border-gray-200">Listings</th>
+                  <th className="py-3 px-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider border-b border-gray-200">Inquiry Channels</th>
+                  <th className="py-3 px-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider border-b border-gray-200">Status</th>
+                  <th className="py-3 px-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider border-b border-gray-200">Join Date</th>
+                  <th className="py-3 px-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider border-b border-gray-200">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {teamData.map((member) => (
-                  <tr key={member.id}>
-                    <td className="tm-td-check">
+                  <tr key={member.id} className="hover:bg-gray-50">
+                    <td className="py-3 px-4 border-b border-gray-100 w-12"> {/* tm-td-check */}
                       <input
                         type="checkbox"
                         checked={selectedMembers.includes(member.id)}
                         onChange={() => toggleSelect(member.id)}
-                        className="tm-checkbox"
+                        className="w-4 h-4 rounded border-gray-300 text-blue-600 cursor-pointer focus:ring-2 focus:ring-blue-500" /* tm-checkbox */
                       />
                     </td>
-                    <td className="tm-td-name">{member.name}</td>
-                    <td className="tm-td-role">{member.role}</td>
-                    <td className="tm-td-reports">
-                      {member.reportsTo || <span className="tm-dash">&mdash;</span>}
+                    <td className="py-3 px-4 border-b border-gray-100 font-semibold text-gray-900">{member.name}</td> {/* tm-td-name */}
+                    <td className="py-3 px-4 border-b border-gray-100 text-gray-700">{member.role}</td> {/* tm-td-role */}
+                    <td className="py-3 px-4 border-b border-gray-100 text-gray-600"> {/* tm-td-reports */}
+                      {member.reportsTo || <span className="text-gray-400">&mdash;</span>} {/* tm-dash */}
                     </td>
-                    <td className="tm-td-listings">{member.listings}</td>
-                    <td className="tm-td-channels">{formatChannels(member.inquiryChannels)}</td>
-                    <td className="tm-td-status">
-                      <span className={`tm-status-badge ${member.status.toLowerCase()}`}>
+                    <td className="py-3 px-4 border-b border-gray-100 text-gray-700 text-center">{member.listings}</td> {/* tm-td-listings */}
+                    <td className="py-3 px-4 border-b border-gray-100 text-gray-600 text-sm">{formatChannels(member.inquiryChannels)}</td> {/* tm-td-channels */}
+                    <td className="py-3 px-4 border-b border-gray-100"> {/* tm-td-status */}
+                      <span className={`inline-block py-1 px-2.5 rounded-md text-xs font-semibold ${
+                        member.status.toLowerCase() === 'active' ? 'bg-emerald-100 text-emerald-700' :
+                        member.status.toLowerCase() === 'inactive' ? 'bg-gray-100 text-gray-600' :
+                        'bg-amber-100 text-amber-700'
+                      }`}> {/* tm-status-badge */}
                         {member.status}
                       </span>
                     </td>
-                    <td className="tm-td-date">{member.joinDate}</td>
-                    <td className="tm-td-actions">
-                      <div className="tm-actions-row">
-                        <button className="tm-action-btn edit" title="Edit">
+                    <td className="py-3 px-4 border-b border-gray-100 text-gray-600 text-sm">{member.joinDate}</td> {/* tm-td-date */}
+                    <td className="py-3 px-4 border-b border-gray-100"> {/* tm-td-actions */}
+                      <div className="flex items-center gap-2"> {/* tm-actions-row */}
+                        <button className="w-8 h-8 rounded-lg border-0 flex items-center justify-center text-blue-600 bg-blue-50 cursor-pointer transition-all duration-200 hover:bg-blue-100" title="Edit"> {/* tm-action-btn edit */}
                           <FiEdit />
                         </button>
-                        <button className="tm-action-btn delete" title="Delete">
+                        <button className="w-8 h-8 rounded-lg border-0 flex items-center justify-center text-red-600 bg-red-50 cursor-pointer transition-all duration-200 hover:bg-red-100" title="Delete"> {/* tm-action-btn delete */}
                           <FiTrash2 />
                         </button>
-                        <button className="tm-action-btn reassign" title="Reassign">
+                        <button className="w-8 h-8 rounded-lg border-0 flex items-center justify-center text-amber-600 bg-amber-50 cursor-pointer transition-all duration-200 hover:bg-amber-100" title="Reassign"> {/* tm-action-btn reassign */}
                           <FiRefreshCw />
                         </button>
-                        <div className="tm-more-wrapper">
+                        <div className="relative"> {/* tm-more-wrapper */}
                           <button
-                            className="tm-action-btn more"
+                            className="w-8 h-8 rounded-lg border-0 flex items-center justify-center text-gray-600 bg-gray-100 cursor-pointer transition-all duration-200 hover:bg-gray-200" /* tm-action-btn more */
                             title="More"
                             onClick={() =>
                               setOpenMenuId(openMenuId === member.id ? null : member.id)
@@ -267,65 +271,69 @@ export default function TeamManagementPage() {
           </div>
 
           {/* Mobile Card View */}
-          <div className="tm-mobile-card">
+          <div className="hidden md:flex flex-col gap-3"> {/* tm-mobile-card */}
             {teamData.map((member) => (
-              <div key={member.id} className="tm-mobile-card-item">
-                <div className="tm-mobile-card-header">
-                  <h3 className="tm-mobile-card-name">{member.name}</h3>
+              <div key={member.id} className="bg-gray-50 rounded-lg p-4 border border-gray-200"> {/* tm-mobile-card-item */}
+                <div className="flex items-center justify-between mb-3 pb-3 border-b border-gray-200"> {/* tm-mobile-card-header */}
+                  <h3 className="text-base font-bold text-gray-900 m-0">{member.name}</h3> {/* tm-mobile-card-name */}
                   <input
                     type="checkbox"
                     checked={selectedMembers.includes(member.id)}
                     onChange={() => toggleSelect(member.id)}
-                    className="tm-mobile-card-checkbox"
+                    className="w-5 h-5 rounded border-gray-300 text-blue-600 cursor-pointer focus:ring-2 focus:ring-blue-500" /* tm-mobile-card-checkbox */
                   />
                 </div>
-                <div className="tm-mobile-card-body">
-                  <div className="tm-mobile-card-row">
-                    <span className="tm-mobile-card-label">Role:</span>
-                    <span className="tm-mobile-card-value">{member.role}</span>
+                <div className="flex flex-col gap-2.5 mb-3"> {/* tm-mobile-card-body */}
+                  <div className="flex items-center justify-between"> {/* tm-mobile-card-row */}
+                    <span className="text-xs font-medium text-gray-500 uppercase">Role:</span> {/* tm-mobile-card-label */}
+                    <span className="text-sm font-semibold text-gray-900">{member.role}</span> {/* tm-mobile-card-value */}
                   </div>
-                  <div className="tm-mobile-card-row">
-                    <span className="tm-mobile-card-label">Reports to:</span>
-                    <span className="tm-mobile-card-value">
-                      {member.reportsTo || <span className="tm-dash">&mdash;</span>}
+                  <div className="flex items-center justify-between"> {/* tm-mobile-card-row */}
+                    <span className="text-xs font-medium text-gray-500 uppercase">Reports to:</span> {/* tm-mobile-card-label */}
+                    <span className="text-sm font-semibold text-gray-900"> {/* tm-mobile-card-value */}
+                      {member.reportsTo || <span className="text-gray-400">&mdash;</span>} {/* tm-dash */}
                     </span>
                   </div>
-                  <div className="tm-mobile-card-row">
-                    <span className="tm-mobile-card-label">Listings:</span>
-                    <span className="tm-mobile-card-value">{member.listings}</span>
+                  <div className="flex items-center justify-between"> {/* tm-mobile-card-row */}
+                    <span className="text-xs font-medium text-gray-500 uppercase">Listings:</span> {/* tm-mobile-card-label */}
+                    <span className="text-sm font-semibold text-gray-900">{member.listings}</span> {/* tm-mobile-card-value */}
                   </div>
-                  <div className="tm-mobile-card-row">
-                    <span className="tm-mobile-card-label">Channels:</span>
-                    <span className="tm-mobile-card-value tm-mobile-card-channels">
+                  <div className="flex items-center justify-between"> {/* tm-mobile-card-row */}
+                    <span className="text-xs font-medium text-gray-500 uppercase">Channels:</span> {/* tm-mobile-card-label */}
+                    <span className="text-sm text-gray-600"> {/* tm-mobile-card-value tm-mobile-card-channels */}
                       {formatChannels(member.inquiryChannels)}
                     </span>
                   </div>
-                  <div className="tm-mobile-card-row">
-                    <span className="tm-mobile-card-label">Status:</span>
-                    <span className="tm-mobile-card-value">
-                      <span className={`tm-status-badge ${member.status.toLowerCase()}`}>
+                  <div className="flex items-center justify-between"> {/* tm-mobile-card-row */}
+                    <span className="text-xs font-medium text-gray-500 uppercase">Status:</span> {/* tm-mobile-card-label */}
+                    <span className="text-sm font-semibold text-gray-900"> {/* tm-mobile-card-value */}
+                      <span className={`inline-block py-1 px-2.5 rounded-md text-xs font-semibold ${
+                        member.status.toLowerCase() === 'active' ? 'bg-emerald-100 text-emerald-700' :
+                        member.status.toLowerCase() === 'inactive' ? 'bg-gray-100 text-gray-600' :
+                        'bg-amber-100 text-amber-700'
+                      }`}> {/* tm-status-badge */}
                         {member.status}
                       </span>
                     </span>
                   </div>
-                  <div className="tm-mobile-card-row">
-                    <span className="tm-mobile-card-label">Join Date:</span>
-                    <span className="tm-mobile-card-value">{member.joinDate}</span>
+                  <div className="flex items-center justify-between"> {/* tm-mobile-card-row */}
+                    <span className="text-xs font-medium text-gray-500 uppercase">Join Date:</span> {/* tm-mobile-card-label */}
+                    <span className="text-sm font-semibold text-gray-900">{member.joinDate}</span> {/* tm-mobile-card-value */}
                   </div>
                 </div>
-                <div className="tm-mobile-card-actions">
-                  <button className="tm-mobile-action-btn edit" title="Edit">
+                <div className="flex items-center gap-2 pt-3 border-t border-gray-200"> {/* tm-mobile-card-actions */}
+                  <button className="flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-lg border-0 text-sm font-medium text-blue-600 bg-blue-50 cursor-pointer transition-all duration-200 hover:bg-blue-100" title="Edit"> {/* tm-mobile-action-btn edit */}
                     <FiEdit />
                   </button>
-                  <button className="tm-mobile-action-btn delete" title="Delete">
+                  <button className="flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-lg border-0 text-sm font-medium text-red-600 bg-red-50 cursor-pointer transition-all duration-200 hover:bg-red-100" title="Delete"> {/* tm-mobile-action-btn delete */}
                     <FiTrash2 />
                   </button>
-                  <button className="tm-mobile-action-btn reassign" title="Reassign">
+                  <button className="flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-lg border-0 text-sm font-medium text-amber-600 bg-amber-50 cursor-pointer transition-all duration-200 hover:bg-amber-100" title="Reassign"> {/* tm-mobile-action-btn reassign */}
                     <FiRefreshCw />
                   </button>
-                  <div className="tm-mobile-more-wrapper">
+                  <div className="relative"> {/* tm-mobile-more-wrapper */}
                     <button
-                      className="tm-mobile-action-btn more"
+                      className="flex items-center justify-center w-10 h-10 rounded-lg border-0 text-gray-600 bg-gray-100 cursor-pointer transition-all duration-200 hover:bg-gray-200" /* tm-mobile-action-btn more */
                       title="More"
                       onClick={() =>
                         setOpenMenuId(openMenuId === member.id ? null : member.id)

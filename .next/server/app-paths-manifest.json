@@ -1,9 +1,5 @@
 {
-  "/_not-found/page": "app/_not-found/page.js",
   "/page": "app/page.js",
-  "/properties/page": "app/properties/page.js",
-  "/agent/page-builder/page": "app/agent/page-builder/page.js",
-  "/agent/page": "app/agent/page.js",
-  "/agent/inbox/page": "app/agent/inbox/page.js",
-  "/agent/listings/page": "app/agent/listings/page.js"
+  "/about/page": "app/about/page.js",
+  "/properties/page": "app/properties/page.js"
 }

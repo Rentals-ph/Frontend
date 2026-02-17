@@ -110,9 +110,9 @@ function Hero() {
   const [isLoadingConversations, setIsLoadingConversations] = useState(false)
   const router = useRouter()
 
-  // Array of background images - all three backgrounds for rotation
+  // Array of background images - prioritize light blue with plant background
   const backgroundImages = [
-    ASSETS.BG_HERO_LANDING,
+    ASSETS.BG_HERO_LANDING, // Light blue with plant (primary design)
     getAsset('BG_HERO_LANDING_2') || ASSETS.BG_HERO_LANDING,
     getAsset('BG_HERO_LANDING_NEW') || ASSETS.BG_HERO_LANDING,
   ].filter(Boolean) // Remove any undefined values
@@ -523,17 +523,20 @@ function Hero() {
 
       {/* Hero content */}
       <div className="flex mt-12 flex-col items-center justify-center w-full h-full min-h-[600px] text-center relative z-10 px-4">
-        <h2 className="font-outfit text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-0 tracking-tight leading-tight drop-shadow-[0_4px_12px_rgba(0,0,0,0.3)]">
+        <h2 className="font-outfit text-4xl md:text-5xl lg:text-6xl font-bold text-[#205ED7] mb-0 tracking-tight leading-tight drop-shadow-[0_2px_8px_rgba(255,255,255,0.8)]">
           FIND YOUR HOME IN THE PHILIPPINES
         </h2>
-        <p className="mt-3 max-w-3xl font-outfit text-base md:text-lg text-white/95 drop-shadow-[0_2px_8px_rgba(0,0,0,0.3)]">
-          <span>Trusted Rentals, simplified. Start your journey with </span>
-          <span className="font-bold">Rentals.ph.</span>
+        <p className="mt-3 max-w-3xl font-outfit text-base md:text-lg drop-shadow-[0_1px_4px_rgba(255,255,255,0.8)]">
+          <span className="text-[#FE8E0A]">Trusted Rentals, simplified. Start your journey with </span>
+          <span className="font-bold text-[#205ED7]">Rentals.ph.</span>
         </p>
 
         {/* AI Assistant Button */}
         <button 
-          className="mt-6 px-6 py-3 bg-gradient-to-r from-rental-blue-600 to-rental-blue-500 text-white rounded-full font-outfit text-base font-medium flex items-center gap-2 shadow-lg hover:shadow-xl transition-all hover:scale-105"
+          className="mt-6 px-6 py-3 rounded-full font-outfit text-base font-medium flex items-center gap-2 shadow-lg hover:shadow-xl transition-all hover:scale-105 text-white"
+          style={{
+            background: 'linear-gradient(to right, #205ED7, #FE8E0A)'
+          }}
           onClick={() => setIsChatMode(!isChatMode)}
         >
           <svg className="w-5 h-5 animate-pulse" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -543,7 +546,7 @@ function Hero() {
         </button>
 
         {/* Search bar and filters or Chat container */}
-        <div className={`mt-8 w-full max-w-4xl mx-auto transition-all duration-500 ${
+        <div className={`mt-8 w-full max-w-6xl mx-auto transition-all duration-500 ${
           isChatMode ? 'max-h-[600px]' : 'max-h-[400px]'
         }`}>
           {isChatMode ? (
@@ -626,19 +629,23 @@ function Hero() {
                   </button>
                 </div>
               </div>
-              <div className="h-96 overflow-y-auto p-6 space-y-4 bg-gray-50 scrollbar-hide">
+              <div className="h-96 overflow-y-auto p-6 space-y-4 bg-gray-50 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
                 {isLoadingHistory ? (
-                  <div className="chat-message assistant-message">
-                    <div className="chat-message-content">
-                      <span className="chat-loading">Loading conversation...</span>
+                  <div className="flex flex-col w-full items-start">
+                    <div className="max-w-[75%] p-3 px-4 rounded-xl bg-gray-100 text-gray-900 rounded-bl-sm font-outfit text-sm leading-relaxed break-words text-left">
+                      <span className="inline-block text-gray-600 italic after:content-['...'] animate-pulse">Loading conversation</span>
                     </div>
                   </div>
                 ) : (
                   <>
                     {chatMessages.map((msg, index) => (
-                      <div key={index} className={`chat-message ${msg.role === 'user' ? 'user-message' : 'assistant-message'}`}>
+                      <div key={index} className={`flex flex-col w-full ${msg.role === 'user' ? 'items-end' : 'items-start'}`}>
                         <div 
-                          className="chat-message-content"
+                          className={`max-w-[75%] p-3 px-4 rounded-xl font-outfit text-sm leading-relaxed break-words text-left ${
+                            msg.role === 'user' 
+                              ? 'bg-[#205ED7] text-white rounded-br-sm' 
+                              : 'bg-gray-100 text-gray-900 rounded-bl-sm'
+                          }`}
                           dangerouslySetInnerHTML={{
                             __html: msg.role === 'assistant' 
                               ? formatAIMessage(msg.message)
@@ -648,25 +655,25 @@ function Hero() {
                       </div>
                     ))}
                     {isLoading && (
-                      <div className="chat-message assistant-message">
-                        <div className="chat-message-content">
-                          <span className="chat-loading">Thinking...</span>
+                      <div className="flex flex-col w-full items-start">
+                        <div className="max-w-[75%] p-3 px-4 rounded-xl bg-gray-100 text-gray-900 rounded-bl-sm font-outfit text-sm leading-relaxed break-words text-left">
+                          <span className="inline-block text-gray-600 italic after:content-['...'] animate-pulse">Thinking</span>
                         </div>
                       </div>
                     )}
                   </>
                 )}
               </div>
-              <form className="chat-input-form" onSubmit={handleChatSubmit}>
+              <form className="flex items-center gap-2 p-4 px-5 border-t border-gray-200/50 bg-white" onSubmit={handleChatSubmit}>
                 <input
                   type="text"
-                  className="chat-input"
+                  className="flex-1 p-3 px-4 border border-gray-300/65 rounded-lg font-outfit text-sm outline-none transition-colors focus:border-[#205ED7]"
                   placeholder={isLoading ? "Searching..." : "Type your message..."}
                   value={chatMessage}
                   onChange={(e) => setChatMessage(e.target.value)}
                   disabled={isLoading}
                 />
-                <button type="submit" className="chat-send-button">
+                <button type="submit" className="w-11 h-11 bg-[#205ED7] border-none rounded-lg text-white cursor-pointer flex items-center justify-center transition-all flex-shrink-0 hover:bg-[#1a4bb8] hover:scale-105 active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100">
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                   </svg>
@@ -675,11 +682,11 @@ function Hero() {
             </div>
             {/* Properties Panel - Right side when in chat mode - Only show when properties exist */}
             {latestProperties && (
-              <div className="properties-panel">
-                <div className="properties-panel-header">
-                  <h3 className="properties-panel-title">{latestProperties.title}</h3>
+              <div className="w-full md:w-[340px] md:max-w-[340px] bg-white rounded-2xl shadow-2xl overflow-hidden flex flex-col">
+                <div className="p-4 px-5 border-b border-gray-200 bg-gradient-to-r from-rental-blue-50 to-white">
+                  <h3 className="font-outfit text-base font-semibold text-gray-900 m-0">{latestProperties.title}</h3>
                 </div>
-                <div className="properties-panel-list">
+                <div className="flex-1 overflow-y-auto p-4 space-y-3 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
                   {latestProperties.properties.map((property) => (
                     <SimplePropertyCard
                       key={property.id}
@@ -696,144 +703,147 @@ function Hero() {
             </>
           ) : (
             <>
-              <div className="search-input-wrapper">
-                  <input 
-                    type="text" 
-                    className="search-inputs" 
-                    placeholder="What are you looking for?"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    onKeyPress={handleKeyPress}
-                  />
+              {/* White container with 80% opacity and rounded borders */}
+              <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 w-full shadow-lg">
+                <div className="bg-white rounded-xl w-full border-2 border-black flex items-center overflow-hidden transition-shadow hover:shadow-md md:flex-row flex-col md:h-auto">
+                    <input 
+                      type="text" 
+                      className="flex-1 border-none outline-none bg-transparent text-gray-900 font-outfit text-base font-normal px-8 min-w-[250px] md:h-[57px] h-auto py-4 md:py-0 w-full md:w-auto md:border-b-0 border-b border-gray-300/65" 
+                      placeholder="What are you looking for?"
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      onKeyPress={handleKeyPress}
+                    />
 
-                  <div className="search-divider" />
+                    <div className="md:block hidden w-px h-[67px] bg-black/30 flex-shrink-0" />
 
-                  <select 
-                    className="search-dropdown"
-                    value={propertyType}
-                    onChange={(e) => setPropertyType(e.target.value)}
-                  >
-                    <option value="">Property Type</option>
-                    <option value="condominium">Condominium</option>
-                    <option value="apartment">Apartment</option>
-                    <option value="bedspace">Bed Space</option>
-                    <option value="commercial">Commercial Spaces</option>
-                    <option value="office">Office Spaces</option>
-                  </select>
-                  
-                  <div className="search-divider" />
-                  
-                  <select 
-                    className="search-dropdown"
-                    value={location}
-                    onChange={(e) => setLocation(e.target.value)}
-                  >
-                    <option value="">Location</option>
-                    <option value="metro-manila">Metro Manila</option>
-                    <option value="makati">Makati City</option>
-                    <option value="bgc">BGC</option>
-                    <option value="quezon">Quezon City</option>
-                    <option value="mandaluyong">Mandaluyong</option>
-                    <option value="pasig">Pasig</option>
-                    <option value="cebu">Cebu City</option>
-                    <option value="davao">Davao City</option>
-                    <option value="lapulapu">Lapulapu</option>
-                    <option value="manila">Manila</option>
-                  </select>
+                    <select 
+                      className="text-gray-700 font-outfit text-base font-normal bg-transparent border-none outline-none cursor-pointer appearance-none md:py-5 py-4 pr-[50px] md:pl-9 pl-5 md:min-w-[180px] w-full md:w-auto transition-colors hover:text-[#205ED7] focus:text-[#205ED7] bg-[url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%229%22%20height%3D%226%22%20viewBox%3D%220%200%209%206%22%20fill%3D%22none%22%3E%3Cpath%20d%3D%22M1%201L4.5%205L8%201%22%20stroke%3D%22%23000000%22%20stroke-width%3D%221%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%2F%3E%3C%2Fsvg%3E')] bg-no-repeat md:bg-[right_36px_center] bg-[right_20px_center] bg-[length:9px_6px] md:border-b-0 border-b border-gray-300/65"
+                      value={propertyType}
+                      onChange={(e) => setPropertyType(e.target.value)}
+                    >
+                      <option value="">Property Type</option>
+                      <option value="condominium">Condominium</option>
+                      <option value="apartment">Apartment</option>
+                      <option value="bedspace">Bed Space</option>
+                      <option value="commercial">Commercial Spaces</option>
+                      <option value="office">Office Spaces</option>
+                    </select>
+                    
+                    <div className="md:block hidden w-px h-[67px] bg-black/30 flex-shrink-0" />
+                    
+                    <select 
+                      className="text-gray-700 font-outfit text-base font-normal bg-transparent border-none outline-none cursor-pointer appearance-none md:py-5 py-4 pr-[50px] md:pl-9 pl-5 md:min-w-[180px] w-full md:w-auto transition-colors hover:text-[#205ED7] focus:text-[#205ED7] bg-[url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%229%22%20height%3D%226%22%20viewBox%3D%220%200%209%206%22%20fill%3D%22none%22%3E%3Cpath%20d%3D%22M1%201L4.5%205L8%201%22%20stroke%3D%22%23000000%22%20stroke-width%3D%221%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%2F%3E%3C%2Fsvg%3E')] bg-no-repeat md:bg-[right_36px_center] bg-[right_20px_center] bg-[length:9px_6px]"
+                      value={location}
+                      onChange={(e) => setLocation(e.target.value)}
+                    >
+                      <option value="">Location</option>
+                      <option value="metro-manila">Metro Manila</option>
+                      <option value="makati">Makati City</option>
+                      <option value="bgc">BGC</option>
+                      <option value="quezon">Quezon City</option>
+                      <option value="mandaluyong">Mandaluyong</option>
+                      <option value="pasig">Pasig</option>
+                      <option value="cebu">Cebu City</option>
+                      <option value="davao">Davao City</option>
+                      <option value="lapulapu">Lapulapu</option>
+                      <option value="manila">Manila</option>
+                    </select>
 
-                  <button 
-                    className={`filter-button improved-filter-button${showAdvancedOptions ? ' active' : ''}`}
-                    type="button"
-                    onClick={() => setShowAdvancedOptions((prev) => !prev)}
-                    aria-label="Show filters"
-                    title="Show filters"
-                  >
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M4 6h16M6 12h12M10 18h4" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                    </svg>
-                    <span className="filter-label">Filters</span>
-                  </button>
+                    <button 
+                      className={`flex items-center bg-white border-2 border-indigo-500 rounded-full py-2 px-5 ml-2 mr-2 text-base text-indigo-700 font-medium shadow-sm transition-all hover:border-indigo-600 md:inline-flex hidden ${showAdvancedOptions ? 'border-indigo-600' : ''}`}
+                      type="button"
+                      onClick={() => setShowAdvancedOptions((prev) => !prev)}
+                      aria-label="Show filters"
+                      title="Show filters"
+                    >
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-2 text-indigo-500">
+                        <path d="M4 6h16M6 12h12M10 18h4" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                      </svg>
+                      <span className="font-semibold tracking-wider">Filters</span>
+                    </button>
 
-                  <button 
-                    className="search-button"
-                    onClick={handleSearch}
-                  >
-                    <span className="sr-only">Search</span>
-                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <circle cx="11" cy="11" r="6" stroke="white" strokeWidth="2.5"/>
-                      <line x1="15.5" y1="15.5" x2="20" y2="20" stroke="white" strokeWidth="2.5" strokeLinecap="round"/>
-                    </svg>
-                  </button>
-                </div>
+                    <button 
+                      className="bg-[#FE8E0A] md:rounded-r-xl md:rounded-l-none rounded-b-xl w-full md:w-[135px] md:h-[67px] h-[50px] border-none cursor-pointer flex items-center justify-center transition-all hover:bg-[#ff7700] hover:shadow-lg active:scale-[0.98] flex-shrink-0 relative overflow-hidden group"
+                      onClick={handleSearch}
+                    >
+                      <span className="sr-only">Search</span>
+                      <svg className="md:w-12 md:h-12 w-8 h-8" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="11" cy="11" r="6" stroke="white" strokeWidth="2.5"/>
+                        <line x1="15.5" y1="15.5" x2="20" y2="20" stroke="white" strokeWidth="2.5" strokeLinecap="round"/>
+                      </svg>
+                    </button>
+                  </div>
 
-                {/* Advanced Options - Inside search container, toggled by filter button */}
-                {showAdvancedOptions && (
-                  <div className="advanced-options-panel">
-                    <div className="advanced-options-grid">
-                      <div className="advanced-option-group">
-                        <label className="advanced-option-label">Min. Bedrooms</label>
-                        <select 
-                          className="advanced-option-select"
-                          value={minBeds}
-                          onChange={(e) => setMinBeds(e.target.value)}
-                        >
-                          <option value="">Any</option>
-                          <option value="1">1+</option>
-                          <option value="2">2+</option>
-                          <option value="3">3+</option>
-                          <option value="4">4+</option>
-                        </select>
-                      </div>
+                  {/* Advanced Options - Inside search container, toggled by filter button */}
+                  {showAdvancedOptions && (
+                    <div className="pt-1 w-full border-t border-gray-300/20 mt-5">
+                      <div className="grid grid-cols-3 gap-5 -mb-2.5">
+                        <div className="flex flex-col gap-1">
+                          <label className="font-outfit text-xs font-medium text-gray-700">Min. Bedrooms</label>
+                          <select 
+                            className="h-[38px] p-2 px-3 border border-gray-300/65 rounded-md bg-white text-gray-700 font-outfit text-xs cursor-pointer transition-colors appearance-none bg-[url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%229%22%20height%3D%226%22%20viewBox%3D%220%200%209%206%22%20fill%3D%22none%22%3E%3Cpath%20d%3D%22M1%201L4.5%205L8%201%22%20stroke%3D%22%23374151%22%20stroke-width%3D%221%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%2F%3E%3C%2Fsvg%3E')] bg-no-repeat bg-[right_12px_center] bg-[length:9px_6px] pr-8 hover:border-[#205ED7] focus:border-[#205ED7] focus:outline-none"
+                            value={minBeds}
+                            onChange={(e) => setMinBeds(e.target.value)}
+                          >
+                            <option value="">Any</option>
+                            <option value="1">1+</option>
+                            <option value="2">2+</option>
+                            <option value="3">3+</option>
+                            <option value="4">4+</option>
+                          </select>
+                        </div>
 
-                      <div className="advanced-option-group">
-                        <label className="advanced-option-label">Min. Bathrooms</label>
-                        <select 
-                          className="advanced-option-select"
-                          value={minBaths}
-                          onChange={(e) => setMinBaths(e.target.value)}
-                        >
-                          <option value="">Any</option>
-                          <option value="1">1+</option>
-                          <option value="2">2+</option>
-                          <option value="3">3+</option>
-                          <option value="4">4+</option>
-                        </select>
-                      </div>
+                        <div className="flex flex-col gap-1">
+                          <label className="font-outfit text-xs font-medium text-gray-700">Min. Bathrooms</label>
+                          <select 
+                            className="h-[38px] p-2 px-3 border border-gray-300/65 rounded-md bg-white text-gray-700 font-outfit text-xs cursor-pointer transition-colors appearance-none bg-[url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%229%22%20height%3D%226%22%20viewBox%3D%220%200%209%206%22%20fill%3D%22none%22%3E%3Cpath%20d%3D%22M1%201L4.5%205L8%201%22%20stroke%3D%22%23374151%22%20stroke-width%3D%221%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%2F%3E%3C%2Fsvg%3E')] bg-no-repeat bg-[right_12px_center] bg-[length:9px_6px] pr-8 hover:border-[#205ED7] focus:border-[#205ED7] focus:outline-none"
+                            value={minBaths}
+                            onChange={(e) => setMinBaths(e.target.value)}
+                          >
+                            <option value="">Any</option>
+                            <option value="1">1+</option>
+                            <option value="2">2+</option>
+                            <option value="3">3+</option>
+                            <option value="4">4+</option>
+                          </select>
+                        </div>
 
-                      <div className="advanced-option-group price-range-group">
-                        <label className="advanced-option-label">Price Range</label>
-                        <div className="price-range-inputs-wrapper">
-                          <input
-                            type="number"
-                            className="price-range-input"
-                            placeholder="Min"
-                            value={priceMin}
-                            onChange={(e) => setPriceMin(e.target.value)}
-                          />
-                          <span className="price-range-separator">to</span>
-                          <input
-                            type="number"
-                            className="price-range-input"
-                            placeholder="Max"
-                            value={priceMax}
-                            onChange={(e) => setPriceMax(e.target.value)}
-                          />
+                        <div className="flex flex-col gap-1">
+                          <label className="font-outfit text-xs font-medium text-gray-700">Price Range</label>
+                          <div className="flex items-center gap-2">
+                            <input
+                              type="number"
+                              className="flex-1 min-w-0 h-[38px] p-2 px-3 border border-gray-300/65 rounded-md bg-white text-gray-700 font-outfit text-xs transition-colors hover:border-[#205ED7] focus:border-[#205ED7] focus:outline-none"
+                              placeholder="Min"
+                              value={priceMin}
+                              onChange={(e) => setPriceMin(e.target.value)}
+                            />
+                            <span className="font-outfit text-xs text-gray-600 font-medium">to</span>
+                            <input
+                              type="number"
+                              className="flex-1 min-w-0 h-[38px] p-2 px-3 border border-gray-300/65 rounded-md bg-white text-gray-700 font-outfit text-xs transition-colors hover:border-[#205ED7] focus:border-[#205ED7] focus:outline-none"
+                              placeholder="Max"
+                              value={priceMax}
+                              onChange={(e) => setPriceMax(e.target.value)}
+                            />
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                )}
+                  )}
+              </div>
             </>
           )}
         </div>
 
         {/* Recommended Searches - Outside search container */}
-        <div className="recommended-searches">
-          <div className="recommended-searches-list">
+        <div className="relative z-10 mt-3.5 w-full max-w-4xl px-5">
+          <div className="flex flex-wrap gap-2 justify-center">
             {recommendedSearches.map((search, index) => (
               <button
                 key={index}
-                className="recommended-search-chip"
+                className="py-2 px-4 bg-white/95 border border-white/30 rounded-[20px] text-gray-700 font-outfit text-[13px] font-normal cursor-pointer transition-all hover:bg-[#205ED7] hover:text-white hover:border-[#205ED7] hover:-translate-y-px hover:shadow-md whitespace-normal break-words max-w-full"
                 onClick={() => handleRecommendedSearch(search)}
               >
                 {search}
@@ -848,12 +858,12 @@ function Hero() {
 
       {/* Conversation History Sidebar */}
       {showHistory && (
-        <div className="conversation-history-overlay" onClick={() => setShowHistory(false)}>
-          <div className="conversation-history-sidebar" onClick={(e) => e.stopPropagation()}>
-            <div className="conversation-history-header">
-              <h3 className="conversation-history-title">Conversation History</h3>
+        <div className="fixed inset-0 bg-black/50 z-[1000] flex items-center justify-end transition-opacity duration-300" onClick={() => setShowHistory(false)}>
+          <div className="w-full max-w-md h-full bg-white shadow-2xl flex flex-col animate-[slideInRight_0.3s_ease-out]" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center justify-between p-5 border-b border-gray-200 bg-gradient-to-r from-rental-blue-50 to-white">
+              <h3 className="font-outfit text-lg font-semibold text-gray-900 m-0">Conversation History</h3>
               <button
-                className="conversation-history-close"
+                className="p-2 hover:bg-white rounded-lg transition-colors text-gray-600 hover:text-gray-900 flex items-center justify-center cursor-pointer"
                 onClick={() => setShowHistory(false)}
                 aria-label="Close history"
               >
@@ -862,30 +872,34 @@ function Hero() {
                 </svg>
               </button>
             </div>
-            <div className="conversation-history-list">
+            <div className="flex-1 overflow-y-auto p-4 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
               {isLoadingConversations ? (
-                <div className="conversation-history-loading">Loading conversations...</div>
+                <div className="text-center py-8 text-gray-500 font-outfit text-sm">Loading conversations...</div>
               ) : conversations.length === 0 ? (
-                <div className="conversation-history-empty">No conversations yet</div>
+                <div className="text-center py-8 text-gray-500 font-outfit text-sm">No conversations yet</div>
               ) : (
                 conversations.map((conv) => (
                   <div
                     key={conv.conversation_id}
-                    className={`conversation-history-item ${conversationId === conv.conversation_id ? 'active' : ''}`}
+                    className={`mb-2 p-3 rounded-lg border transition-all flex items-center justify-between gap-2 ${
+                      conversationId === conv.conversation_id 
+                        ? 'bg-rental-blue-50 border-rental-blue-200' 
+                        : 'bg-white border-gray-200 hover:bg-gray-50'
+                    }`}
                   >
                     <button
-                      className="conversation-history-item-button"
+                      className="flex-1 text-left min-w-0 p-0 border-none bg-transparent cursor-pointer"
                       onClick={() => handleLoadConversation(conv.conversation_id)}
                     >
-                      <div className="conversation-history-item-content">
-                        <h4 className="conversation-history-item-title">{conv.title}</h4>
-                        <p className="conversation-history-item-meta">
+                      <div className="flex flex-col gap-1">
+                        <h4 className="font-outfit text-sm font-medium text-gray-900 m-0 truncate">{conv.title}</h4>
+                        <p className="font-outfit text-xs text-gray-500 m-0">
                           {conv.message_count} message{conv.message_count !== 1 ? 's' : ''} • {new Date(conv.last_message_at).toLocaleDateString()}
                         </p>
                       </div>
                     </button>
                     <button
-                      className="conversation-history-item-delete"
+                      className="w-8 h-8 flex items-center justify-center rounded-lg transition-colors text-gray-400 hover:text-red-600 hover:bg-red-50 p-0 border-none cursor-pointer flex-shrink-0"
                       onClick={(e) => {
                         e.stopPropagation()
                         handleDeleteConversation(conv.conversation_id)

@@ -85,3 +85,50 @@ img {
   height: auto;
   display: block;
 }
+
+/* AI Message Formatting in Chat */
+.bg-gray-100 p {
+  margin: 0 0 12px 0;
+  line-height: 1.6;
+  text-align: left;
+}
+
+.bg-gray-100 p:last-child {
+  margin-bottom: 0;
+}
+
+.bg-gray-100 strong {
+  font-weight: 600;
+  color: #111827;
+}
+
+.bg-gray-100 ul {
+  margin: 0 0 12px 0;
+  padding-left: 20px;
+  list-style-type: none;
+  counter-reset: list-counter;
+}
+
+.bg-gray-100 ul li {
+  margin: 0 0 8px 0;
+  padding-left: 24px;
+  position: relative;
+  line-height: 1.6;
+  counter-increment: list-counter;
+}
+
+.bg-gray-100 ul li::before {
+  content: counter(list-counter) ".";
+  position: absolute;
+  left: 0;
+  font-weight: 600;
+  color: #111827;
+}
+
+.bg-gray-100 ul li:last-child {
+  margin-bottom: 0;
+}
+
+.bg-gray-100 ul + p {
+  margin-top: 12px;
+}

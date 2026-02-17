@@ -98,7 +98,7 @@ const Blogs = () => {
             <h2 className="text-gray-900 font-outfit text-3xl font-bold leading-tight tracking-tight m-0 mb-2.5">
               Blogs
             </h2>
-            <p className="text-gray-600 font-outfit text-lg font-normal leading-snug tracking-tight m-0">
+            <p className="text-gray-600 font-outfit text-base font-light leading-snug tracking-tight m-0">
               We Share Our Knowledge
             </p>
           </div>

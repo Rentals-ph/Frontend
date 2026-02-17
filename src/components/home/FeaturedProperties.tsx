@@ -96,9 +96,9 @@ const FeaturedProperties = () => {
   // Auto-scroll property-carousel with seamless infinite loop
   useEffect(() => {
     const carousel = propertyCarouselRef.current
-    if (!carousel) return
+    if (!carousel || loading || featuredProperties.length === 0) return
 
-    const scrollSpeed = 0.5 // pixels per frame
+    const scrollSpeed = 1 // pixels per frame
     let animationFrameId: number | null = null
     let isRunning = true
 
@@ -116,20 +116,14 @@ const FeaturedProperties = () => {
           const gap = 28 // gap between cards (matches CSS)
           const itemWidth = cardWidth + gap
           const totalItems = 6 // original items count
-          const halfPoint = (itemWidth * totalItems) / 2
+          const resetPoint = itemWidth * totalItems
 
-          // Check if carousel is scrollable (has overflow)
-          const maxScroll = carousel.scrollWidth - carousel.clientWidth
-          
-          // Only animate if there's content to scroll
-          if (maxScroll >= 0) {
-            // Increment scroll position
-            carousel.scrollLeft += scrollSpeed
+          // Increment scroll position
+          carousel.scrollLeft += scrollSpeed
 
-            // When we've scrolled past half the original items, reset seamlessly
-            if (carousel.scrollLeft >= halfPoint) {
-              carousel.scrollLeft = carousel.scrollLeft - halfPoint
-            }
+          // When we've scrolled through one complete set, reset seamlessly
+          if (carousel.scrollLeft >= resetPoint) {
+            carousel.scrollLeft = 0
           }
         }
       }
@@ -139,7 +133,6 @@ const FeaturedProperties = () => {
     }
 
     // Start the animation after a delay to ensure DOM is ready
-    // Use a longer delay to ensure all items are rendered
     const timeoutId = setTimeout(() => {
       if (carousel) {
         // Force a reflow to ensure scrollWidth is calculated correctly
@@ -155,10 +148,10 @@ const FeaturedProperties = () => {
         cancelAnimationFrame(animationFrameId)
       }
     }
-  }, [isPaused])
+  }, [isPaused, loading, featuredProperties.length])
 
   return (
-    <section id="properties" className="bg-gradient-to-b from-[#e8f0ff] to-white border-t-0 overflow-hidden relative min-h-[60vh] flex px-6 md:px-10 lg:px-[150px] flex-col justify-center py-12 before:content-[''] before:absolute before:top-0 before:left-0 before:right-0 before:h-px before:bg-gradient-to-r before:from-transparent before:via-gray-200 before:to-transparent after:content-[''] after:absolute after:bottom-0 after:left-0 after:right-0 after:h-px after:bg-gradient-to-r after:from-transparent after:via-gray-200 after:to-transparent">
+    <section id="properties" className="bg-gradient-to-b from-[#e8f0ff] to-white border-t-0 relative min-h-[60vh] flex px-6 md:px-10 lg:px-[150px] flex-col justify-center py-12 pb-32 before:content-[''] before:absolute before:top-0 before:left-0 before:right-0 before:h-px before:bg-gradient-to-r before:from-transparent before:via-gray-200 before:to-transparent after:content-[''] after:absolute after:bottom-0 after:left-0 after:right-0 after:h-px after:bg-gradient-to-r after:from-transparent after:via-gray-200 after:to-transparent">
       <div className="w-full">
         <div className="flex justify-between items-end mb-4 relative">
           <div>
@@ -176,12 +169,13 @@ const FeaturedProperties = () => {
         </div>
       </div>
 
-      <div className="relative w-full overflow-hidden mt-6">
+      <div className="relative w-full mt-6" style={{ overflow: 'visible' }}>
         <div 
-          className="flex gap-7 overflow-x-auto scrollbar-hide scroll-smooth"
+          className="flex gap-7 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
           ref={propertyCarouselRef}
           onMouseEnter={() => setIsPaused(true)}
           onMouseLeave={() => setIsPaused(false)}
+          style={{ scrollBehavior: 'auto', overflowX: 'scroll', overflowY: 'visible' }}
         >
           {loading ? (
             <div className="p-8 text-center w-full">Loading properties...</div>

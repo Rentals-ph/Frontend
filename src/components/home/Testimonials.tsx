@@ -74,7 +74,7 @@ const Testimonials = () => {
               <h2 className="font-outfit text-2xl md:text-3xl font-semibold text-white mb-3 leading-tight">
                 Trusted By The Industry's Best
               </h2>
-              <p className="font-outfit text-base md:text-lg font-light leading-relaxed text-white/95 mb-6 max-w-md">
+              <p className="font-outfit text-base md:text-lg font-normal leading-relaxed text-white/95 mb-6 max-w-md">
                 Discover Why The Most Successful Property Managers In The Philippines Rely On Rentals.Ph To Streamline Their Operations, Verify Quality Tenants, And Maximize Their Portfolio's Reach.
               </p>
               <Link href="/contact" className="inline-flex items-center gap-3 px-8 py-4 bg-rental-orange-500 text-white font-outfit text-base font-semibold rounded-full transition-all hover:bg-rental-orange-600 hover:gap-4 w-fit">

@@ -19,11 +19,11 @@ export default {
           200: '#80bfff',
           300: '#4da6ff',
           400: '#1a8cff',
-          500: '#0073e6',
-          600: '#005cb3',
-          700: '#004580',
-          800: '#002e4d',
-          900: '#00171a',
+          500: '#205ED7', // Primary brand blue
+          600: '#205ED7', // Primary brand blue
+          700: '#1a4bb8',
+          800: '#153a99',
+          900: '#0f2a7a',
         },
         'rental-orange': {
           50: '#fff4e6',
@@ -31,11 +31,11 @@ export default {
           200: '#ffcc80',
           300: '#ffb84d',
           400: '#ffa31a',
-          500: '#ff8c00',
-          600: '#cc7000',
-          700: '#995400',
-          800: '#663800',
-          900: '#331c00',
+          500: '#FE8E0A', // Primary brand orange
+          600: '#ff7700',
+          700: '#cc6000',
+          800: '#995400',
+          900: '#663800',
         },
       },
       keyframes: {
@@ -48,10 +48,15 @@ export default {
           '50%': { transform: 'scale(1.05)' },
           '100%': { transform: 'scale(1)' },
         },
+        'slideInRight': {
+          '0%': { transform: 'translateX(100%)', opacity: '0' },
+          '100%': { transform: 'translateX(0)', opacity: '1' },
+        },
       },
       animation: {
         'partners-scroll': 'partners-scroll 18s linear infinite',
         'heroBackgroundAnimation': 'heroBackgroundAnimation 20s ease-in-out infinite',
+        'slideInRight': 'slideInRight 0.3s ease-out',
       },
     },
   },

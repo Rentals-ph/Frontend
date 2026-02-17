@@ -94,15 +94,15 @@ export default function NewsPage() {
       <Navbar />
 
       {/* Red Hero Banner */}
-      <section className="w-full bg-red-600 py-8 md:py-10">
-        <div className="px-6 md:px-10 lg:px-[150px] flex gap-8">
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white font-outfit uppercase text-start mb-4">
+      <section className="w-full bg-red-600 py-6 sm:py-8 md:py-10">
+        <div className="px-4 sm:px-6 md:px-10 lg:px-[150px] flex flex-col sm:flex-row gap-4 sm:gap-8">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white font-outfit uppercase text-start mb-0 sm:mb-4">
             NEWS
           </h1>
           
           {/* Headline Ticker Animation */}
           {headlineNews.length > 0 && (
-            <div className="relative overflow-hidden bg-black/20 py-3 h-13 rounded justify-center items-center flex">
+            <div className="relative overflow-hidden bg-black/20 py-2 sm:py-3 h-auto sm:h-13 rounded justify-center items-center flex flex-1 min-w-0">
               <div 
                 className="flex whitespace-nowrap"
                 style={{
@@ -153,7 +153,7 @@ export default function NewsPage() {
       >
         <div className="absolute inset-0 bg-white/90"></div>
         
-        <main className="relative z-10 mx-auto w-full px-6 md:px-10 lg:px-[150px] py-12">
+        <main className="relative z-10 mx-auto w-full px-4 sm:px-6 md:px-10 lg:px-[150px] py-8 sm:py-12">
           {loading ? (
             <div className="text-center py-20">
               <p className="text-gray-600">Loading news...</p>
@@ -161,7 +161,7 @@ export default function NewsPage() {
           ) : (
             <>
               {/* Header Section - Two Columns Layout */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12 items-stretch">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 mb-8 sm:mb-12 items-stretch">
                 {/* Left Column - Big News Box */}
                 <div className="lg:col-span-1 flex">
                   {bigNewsBox && (
@@ -255,13 +255,13 @@ export default function NewsPage() {
               </div>
 
               {/* Bottom Content Section */}
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8 mb-8 sm:mb-12">
                 {/* Left Column - Latest News */}
                 <div className="lg:col-span-2">
-                  <h2 className="text-2xl md:text-3xl font-bold text-gray-900 font-outfit mb-6 uppercase">
+                  <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 font-outfit mb-4 sm:mb-6 uppercase">
                     LATEST NEWS
                   </h2>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 h-[600px] overflow-y-auto">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 h-[400px] sm:h-[600px] overflow-y-auto">
                     {latestNews.map((article) => (
                       <Link key={article.id} href={`/news/${article.id}`} className="no-underline">
                         <article className="flex gap-4 pb-6 border-b border-gray-200 hover:opacity-80 transition-opacity">

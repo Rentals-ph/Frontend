@@ -88,29 +88,38 @@ const Navbar = () => {
   }, [pathname])
 
   useEffect(() => {
-    // Close user menu when clicking outside
+    // Close user menu when clicking outside (desktop only)
     const handleClickOutside = (event: MouseEvent) => {
       if (userMenuRef.current && !userMenuRef.current.contains(event.target as Node)) {
         setShowUserMenu(false)
       }
-      if (mobileMenuRef.current && !mobileMenuRef.current.contains(event.target as Node)) {
-        setIsMobileMenuOpen(false)
-      }
     }
 
-    if (showUserMenu || isMobileMenuOpen) {
+    if (showUserMenu) {
       document.addEventListener('mousedown', handleClickOutside)
     }
 
     return () => {
       document.removeEventListener('mousedown', handleClickOutside)
     }
-  }, [showUserMenu, isMobileMenuOpen])
+  }, [showUserMenu])
 
   // Close mobile menu when route changes
   useEffect(() => {
     setIsMobileMenuOpen(false)
   }, [pathname])
+
+  // Prevent body scroll when sidebar is open
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = ''
+    }
+    return () => {
+      document.body.style.overflow = ''
+    }
+  }, [isMobileMenuOpen])
 
   const handleLoginClick = () => {
     setIsLoginOpen(true)
@@ -162,13 +171,13 @@ const Navbar = () => {
   return (
     <>
       <header className="relative z-[1000] bg-white shadow-md">
-        <div className="flex items-center justify-between px-4 py-5 md:px-10 lg:px-20 max-w-full">
+        <div className="flex items-center justify-between px-3 sm:px-4 py-3 sm:py-5 md:px-10 lg:px-20 max-w-full">
           <div className="flex items-center">
             <Link href="/">
               <img
                 src={ASSETS.LOGO_HERO_MAIN}
                 alt="Rentals.ph logo"
-                className="h-12 md:h-[60px] w-auto"
+                className="h-10 sm:h-12 md:h-[60px] w-auto"
               />
             </Link>
           </div>
@@ -176,25 +185,25 @@ const Navbar = () => {
           {/* Desktop Navigation Centered */}
           <div className="hidden md:flex flex-1 justify-center items-center min-w-0">
             <nav className="flex items-center gap-0 lg:gap-8 justify-center w-full">
-              <Link href="/" className={`text-rental-blue-600 font-outfit text-base px-2 lg:px-2.5 whitespace-nowrap transition-colors hover:text-rental-orange-500 ${pathname === '/' ? 'font-extrabold tracking-[0.15em]' : 'font-normal'}`}>
+              <Link href="/" className={`text-rental-blue-600 font-outfit text-sm md:text-base px-1 md:px-2 lg:px-2.5 whitespace-nowrap transition-colors hover:text-rental-orange-500 ${pathname === '/' ? 'font-extrabold tracking-[0.15em]' : 'font-normal'}`}>
                 HOME
               </Link>
-              <Link href="/about" className={`text-rental-blue-600 font-outfit text-base px-2 lg:px-2.5 whitespace-nowrap transition-colors hover:text-rental-orange-500 ${pathname === '/about' ? 'font-extrabold tracking-[0.15em]' : 'font-normal'}`}>
+              <Link href="/about" className={`text-rental-blue-600 font-outfit text-sm md:text-base px-1 md:px-2 lg:px-2.5 whitespace-nowrap transition-colors hover:text-rental-orange-500 ${pathname === '/about' ? 'font-extrabold tracking-[0.15em]' : 'font-normal'}`}>
                 ABOUT US
               </Link>
-              <Link href="/properties" className={`text-rental-blue-600 font-outfit text-base px-2 lg:px-2.5 whitespace-nowrap transition-colors hover:text-rental-orange-500 ${pathname === '/properties' ? 'font-extrabold tracking-[0.15em]' : 'font-normal'}`}>
+              <Link href="/properties" className={`text-rental-blue-600 font-outfit text-sm md:text-base px-1 md:px-2 lg:px-2.5 whitespace-nowrap transition-colors hover:text-rental-orange-500 ${pathname === '/properties' ? 'font-extrabold tracking-[0.15em]' : 'font-normal'}`}>
                 PROPERTIES
               </Link>
-              <Link href="/rent-managers" className={`text-rental-blue-600 font-outfit text-base px-2 lg:px-2.5 whitespace-nowrap transition-colors hover:text-rental-orange-500 ${pathname === '/rent-managers' ? 'font-extrabold tracking-[0.15em]' : 'font-normal'}`}>
+              <Link href="/rent-managers" className={`text-rental-blue-600 font-outfit text-sm md:text-base px-1 md:px-2 lg:px-2.5 whitespace-nowrap transition-colors hover:text-rental-orange-500 ${pathname === '/rent-managers' ? 'font-extrabold tracking-[0.15em]' : 'font-normal'}`}>
                 RENT MANAGERS
               </Link>
-              <Link href="/blog" className={`text-rental-blue-600 font-outfit text-base px-2 lg:px-2.5 whitespace-nowrap transition-colors hover:text-rental-orange-500 ${pathname === '/blog' ? 'font-extrabold tracking-[0.15em]' : 'font-normal'}`}>
+              <Link href="/blog" className={`text-rental-blue-600 font-outfit text-sm md:text-base px-1 md:px-2 lg:px-2.5 whitespace-nowrap transition-colors hover:text-rental-orange-500 ${pathname === '/blog' ? 'font-extrabold tracking-[0.15em]' : 'font-normal'}`}>
                 BLOG  
               </Link>
-              <Link href="/news" className={`text-rental-blue-600 font-outfit text-base px-2 lg:px-2.5 whitespace-nowrap transition-colors hover:text-rental-orange-500 ${pathname === '/news' ? 'font-extrabold tracking-[0.15em]' : 'font-normal'}`}>
+              <Link href="/news" className={`text-rental-blue-600 font-outfit text-sm md:text-base px-1 md:px-2 lg:px-2.5 whitespace-nowrap transition-colors hover:text-rental-orange-500 ${pathname === '/news' ? 'font-extrabold tracking-[0.15em]' : 'font-normal'}`}>
                 NEWS
               </Link>
-              <Link href="/contact" className={`text-rental-blue-600 font-outfit text-base px-2 lg:px-2.5 whitespace-nowrap transition-colors hover:text-rental-orange-500 ${pathname === '/contact' ? 'font-extrabold tracking-[0.15em]' : 'font-normal'}`}>
+              <Link href="/contact" className={`text-rental-blue-600 font-outfit text-sm md:text-base px-1 md:px-2 lg:px-2.5 whitespace-nowrap transition-colors hover:text-rental-orange-500 ${pathname === '/contact' ? 'font-extrabold tracking-[0.15em]' : 'font-normal'}`}>
                 CONTACT US
               </Link>
             </nav>
@@ -269,8 +278,9 @@ const Navbar = () => {
                 )}
               </div>
             ) : (
-              <button className="rounded-full !border-2 !border-rental-orange-500 bg-transparent text-rental-orange-500 px-5 h-12 font-outfit text-base font-medium cursor-pointer inline-flex items-center justify-center hover:bg-rental-orange-500 hover:text-white transition-colors" onClick={handleLoginClick}>
-                Login / Register
+              <button className="rounded-full !border-2 !border-rental-orange-500 bg-transparent text-rental-orange-500 px-3 sm:px-5 h-10 sm:h-12 font-outfit text-xs sm:text-sm md:text-base font-medium cursor-pointer inline-flex items-center justify-center hover:bg-rental-orange-500 hover:text-white transition-colors" onClick={handleLoginClick}>
+                <span className="hidden sm:inline">Login / Register</span>
+                <span className="sm:hidden">Login</span>
               </button>
             )}
           </div>
@@ -285,31 +295,96 @@ const Navbar = () => {
           </button>
         </div>
 
-        {/* Mobile Navigation */}
-        <nav className={`md:hidden flex flex-col bg-white border-t border-gray-200 max-h-0 overflow-hidden transition-all duration-300 ease-out ${isMobileMenuOpen ? 'max-h-[1000px]' : ''}`} ref={mobileMenuRef}>
-          <Link href="/" className={`text-rental-blue-600 font-outfit text-[15px] px-6 py-4 border-b border-gray-100 block transition-colors hover:text-rental-orange-500 ${pathname === '/' ? 'font-extrabold tracking-[0.15em]' : 'font-normal'}`} onClick={() => setIsMobileMenuOpen(false)}>
-            HOME
-          </Link>
-          <Link href="/about" className={`text-rental-blue-600 font-outfit text-[15px] px-6 py-4 border-b border-gray-100 block transition-colors hover:text-rental-orange-500 ${pathname === '/about' ? 'font-extrabold tracking-[0.15em]' : 'font-normal'}`} onClick={() => setIsMobileMenuOpen(false)}>
-            ABOUT US
-          </Link>
-          <Link href="/properties" className={`text-rental-blue-600 font-outfit text-[15px] px-6 py-4 border-b border-gray-100 block transition-colors hover:text-rental-orange-500 ${pathname === '/properties' ? 'font-extrabold tracking-[0.15em]' : 'font-normal'}`} onClick={() => setIsMobileMenuOpen(false)}>
-            PROPERTIES
-          </Link>
-          <Link href="/rent-managers" className={`text-rental-blue-600 font-outfit text-[15px] px-6 py-4 border-b border-gray-100 block transition-colors hover:text-rental-orange-500 ${pathname === '/rent-managers' ? 'font-extrabold tracking-[0.15em]' : 'font-normal'}`} onClick={() => setIsMobileMenuOpen(false)}>
-            RENT MANAGERS
-          </Link>
-          <Link href={pathname === '/news' ? '/news' : '/blog'} className={`text-rental-blue-600 font-outfit text-[15px] px-6 py-4 border-b border-gray-100 block transition-colors hover:text-rental-orange-500 ${pathname === '/blog' || pathname === '/news' ? 'font-extrabold tracking-[0.15em]' : 'font-normal'}`} onClick={() => setIsMobileMenuOpen(false)}>
-            {pathname === '/news' ? 'NEWS' : 'BLOG'}
-          </Link>
-          <Link href={pathname === '/news' ? '/blog' : '/news'} className={`text-rental-blue-600 font-outfit text-[15px] pl-[100px] px-6 py-4 border-b border-gray-100 block transition-colors hover:text-rental-orange-500`} onClick={() => setIsMobileMenuOpen(false)}>
-            ↳ {pathname === '/news' ? 'BLOG' : 'NEWS'}
-          </Link>
-          <Link href="/contact" className={`text-rental-blue-600 font-outfit text-[15px] px-6 py-4 block transition-colors hover:text-rental-orange-500 ${pathname === '/contact' ? 'font-extrabold tracking-[0.15em]' : 'font-normal'}`} onClick={() => setIsMobileMenuOpen(false)}>
-            CONTACT US
-          </Link>
+        {/* Mobile Sidebar Overlay */}
+        {isMobileMenuOpen && (
+          <div 
+            className="md:hidden fixed inset-0 bg-black/50 z-[999] transition-opacity duration-300"
+            onClick={(e) => {
+              e.stopPropagation()
+              setIsMobileMenuOpen(false)
+            }}
+          />
+        )}
+
+        {/* Mobile Sidebar */}
+        <nav 
+          ref={mobileMenuRef}
+          className={`md:hidden fixed top-0 right-0 h-full w-[280px] sm:w-[320px] bg-white shadow-2xl z-[1000] transform transition-transform duration-300 ease-in-out overflow-y-auto translate-x-full ${
+            isMobileMenuOpen ? 'translate-x-0' : ''
+          }`}
+          onClick={(e) => e.stopPropagation()}
+        >
+          {/* Sidebar Header */}
+          <div className="flex items-center justify-between p-4 sm:p-6 border-b border-gray-200">
+            <h2 className="text-lg font-bold text-rental-blue-600 font-outfit">Menu</h2>
+            <button 
+              className="p-2 text-gray-600 hover:text-gray-900 transition-colors"
+              onClick={(e) => {
+                e.stopPropagation()
+                setIsMobileMenuOpen(false)
+              }}
+              aria-label="Close menu"
+            >
+              <FiX size={24} />
+            </button>
+          </div>
+
+          {/* Navigation Links */}
+          <div className="flex flex-col">
+            <Link 
+              href="/" 
+              className={`text-rental-blue-600 font-outfit text-[15px] px-6 py-4 border-b border-gray-100 block transition-colors hover:text-rental-orange-500 hover:bg-gray-50 ${pathname === '/' ? 'font-extrabold tracking-[0.15em] bg-gray-50' : 'font-normal'}`} 
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              HOME
+            </Link>
+            <Link 
+              href="/about" 
+              className={`text-rental-blue-600 font-outfit text-[15px] px-6 py-4 border-b border-gray-100 block transition-colors hover:text-rental-orange-500 hover:bg-gray-50 ${pathname === '/about' ? 'font-extrabold tracking-[0.15em] bg-gray-50' : 'font-normal'}`} 
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              ABOUT US
+            </Link>
+            <Link 
+              href="/properties" 
+              className={`text-rental-blue-600 font-outfit text-[15px] px-6 py-4 border-b border-gray-100 block transition-colors hover:text-rental-orange-500 hover:bg-gray-50 ${pathname === '/properties' ? 'font-extrabold tracking-[0.15em] bg-gray-50' : 'font-normal'}`} 
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              PROPERTIES
+            </Link>
+            <Link 
+              href="/rent-managers" 
+              className={`text-rental-blue-600 font-outfit text-[15px] px-6 py-4 border-b border-gray-100 block transition-colors hover:text-rental-orange-500 hover:bg-gray-50 ${pathname === '/rent-managers' ? 'font-extrabold tracking-[0.15em] bg-gray-50' : 'font-normal'}`} 
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              RENT MANAGERS
+            </Link>
+            <Link 
+              href="/blog" 
+              className={`text-rental-blue-600 font-outfit text-[15px] px-6 py-4 border-b border-gray-100 block transition-colors hover:text-rental-orange-500 hover:bg-gray-50 ${pathname === '/blog' ? 'font-extrabold tracking-[0.15em] bg-gray-50' : 'font-normal'}`} 
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              BLOG
+            </Link>
+            <Link 
+              href="/news" 
+              className={`text-rental-blue-600 font-outfit text-[15px] px-6 py-4 border-b border-gray-100 block transition-colors hover:text-rental-orange-500 hover:bg-gray-50 ${pathname === '/news' ? 'font-extrabold tracking-[0.15em] bg-gray-50' : 'font-normal'}`} 
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              NEWS
+            </Link>
+            <Link 
+              href="/contact" 
+              className={`text-rental-blue-600 font-outfit text-[15px] px-6 py-4 border-b border-gray-100 block transition-colors hover:text-rental-orange-500 hover:bg-gray-50 ${pathname === '/contact' ? 'font-extrabold tracking-[0.15em] bg-gray-50' : 'font-normal'}`} 
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              CONTACT US
+            </Link>
+          </div>
+
+          {/* User Section */}
           {isUserLoggedIn ? (
-            <div className="px-6 py-5 border-t border-gray-200 flex flex-col gap-3">
+            <div className="px-6 py-5 border-t border-gray-200 flex flex-col gap-3 mt-auto">
               <div className="flex items-center gap-3 pb-3 border-b border-gray-100">
                 <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden flex-shrink-0">
                   <img 
@@ -326,15 +401,15 @@ const Navbar = () => {
                     {getInitials(userName)}
                   </div>
                 </div>
-                <div className="flex flex-col gap-0.5">
-                  <span className="text-[13px] sm:text-[15px] font-semibold text-gray-900 font-outfit">{userName}</span>
+                <div className="flex flex-col gap-0.5 min-w-0">
+                  <span className="text-[13px] sm:text-[15px] font-semibold text-gray-900 font-outfit truncate">{userName}</span>
                   <span className="text-[11px] sm:text-[15px] text-gray-500 font-outfit">
                     {userRole === 'admin' ? 'Admin' : userRole === 'broker' ? 'Broker' : 'Agent'}
                   </span>
                 </div>
               </div>
               <button 
-                className="flex items-center gap-3 py-3 bg-transparent border-none text-left cursor-pointer text-[13px] sm:text-[15px] text-gray-900 font-outfit transition-colors hover:text-rental-blue-600" 
+                className="flex items-center gap-3 py-3 bg-transparent border-none text-left cursor-pointer text-[13px] sm:text-[15px] text-gray-900 font-outfit transition-colors hover:text-rental-blue-600 hover:bg-gray-50 rounded-lg px-2" 
                 onClick={() => {
                   router.push(userRole === 'admin' ? '/admin' : userRole === 'broker' ? '/broker' : '/agent')
                   setIsMobileMenuOpen(false)
@@ -345,7 +420,7 @@ const Navbar = () => {
               </button>
               {userRole === 'agent' && (
                 <button 
-                  className="flex items-center gap-3 py-3 bg-transparent border-none text-left cursor-pointer text-[13px] sm:text-[15px] text-gray-900 font-outfit transition-colors hover:text-rental-blue-600" 
+                  className="flex items-center gap-3 py-3 bg-transparent border-none text-left cursor-pointer text-[13px] sm:text-[15px] text-gray-900 font-outfit transition-colors hover:text-rental-blue-600 hover:bg-gray-50 rounded-lg px-2" 
                   onClick={() => {
                     router.push('/agent/account')
                     setIsMobileMenuOpen(false)
@@ -356,7 +431,7 @@ const Navbar = () => {
                 </button>
               )}
               <button 
-                className="flex items-center gap-3 py-3 bg-transparent border-none text-left cursor-pointer text-[13px] sm:text-[15px] text-red-600 font-outfit transition-colors hover:text-red-600" 
+                className="flex items-center gap-3 py-3 bg-transparent border-none text-left cursor-pointer text-[13px] sm:text-[15px] text-red-600 font-outfit transition-colors hover:text-red-700 hover:bg-red-50 rounded-lg px-2" 
                 onClick={() => {
                   handleLogout()
                   setIsMobileMenuOpen(false)
@@ -367,12 +442,17 @@ const Navbar = () => {
               </button>
             </div>
           ) : (
-            <button className="rounded-full !border-2 !border-rental-orange-500 bg-transparent text-rental-orange-500 px-5 h-12 sm:h-11 font-outfit text-[13px] sm:text-[15px] font-medium cursor-pointer inline-flex items-center justify-center mx-6 my-5 hover:bg-rental-orange-500 hover:text-white transition-colors" onClick={() => {
-              handleLoginClick()
-              setIsMobileMenuOpen(false)
-            }}>
-              Login/Register
-            </button>
+            <div className="px-6 py-5 border-t border-gray-200 mt-auto">
+              <button 
+                className="w-full rounded-full !border-2 !border-rental-orange-500 bg-transparent text-rental-orange-500 px-5 h-12 font-outfit text-[13px] sm:text-[15px] font-medium cursor-pointer inline-flex items-center justify-center hover:bg-rental-orange-500 hover:text-white transition-colors" 
+                onClick={() => {
+                  handleLoginClick()
+                  setIsMobileMenuOpen(false)
+                }}
+              >
+                Login/Register
+              </button>
+            </div>
           )}
         </nav>
       </header>

@@ -184,18 +184,38 @@ export const agentsApi = {
   }): Promise<Agent> => {
     const formData = new FormData()
     
-    if (data.first_name) formData.append('first_name', data.first_name)
-    if (data.last_name) formData.append('last_name', data.last_name)
-    if (data.phone) formData.append('phone', data.phone)
-    if (data.city) formData.append('city', data.city)
-    if (data.state) formData.append('state', data.state)
-    if (data.office_address) formData.append('office_address', data.office_address)
+    // Always send these fields, even if empty (backend handles null/empty)
+    formData.append('first_name', data.first_name !== undefined ? (data.first_name || '') : '')
+    formData.append('last_name', data.last_name !== undefined ? (data.last_name || '') : '')
+    formData.append('phone', data.phone !== undefined ? (data.phone || '') : '')
+    formData.append('city', data.city !== undefined ? (data.city || '') : '')
+    formData.append('state', data.state !== undefined ? (data.state || '') : '')
+    formData.append('office_address', data.office_address !== undefined ? (data.office_address || '') : '')
     if (data.image) formData.append('image', data.image)
+    
+    // Use POST with _method=PUT for FormData (Laravel method spoofing)
+    // This ensures FormData is parsed correctly, especially for file uploads
+    if (!formData.has('_method')) {
+      formData.append('_method', 'PUT')
+    }
+    
+    // Debug: Log what's being sent
+    console.log('FormData being sent:', {
+      first_name: formData.get('first_name'),
+      last_name: formData.get('last_name'),
+      phone: formData.get('phone'),
+      city: formData.get('city'),
+      state: formData.get('state'),
+      office_address: formData.get('office_address'),
+      hasImage: !!formData.get('image'),
+      allKeys: Array.from(formData.keys())
+    })
 
     try {
-      const response = await apiClient.put<{ success: boolean; data: Agent }>('/agents/me', formData, {
+      // Use POST with method spoofing for FormData (same as property update)
+      const response = await apiClient.post<{ success: boolean; data: Agent }>('/agents/me', formData, {
         headers: {
-          'Content-Type': 'multipart/form-data',
+          // Don't set Content-Type - let browser set it with boundary for multipart/form-data
         },
       })
       return response.data.data

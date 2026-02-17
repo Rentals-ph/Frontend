@@ -11,6 +11,7 @@ import AccountSettings, {
 import { agentsApi } from '../../../api'
 import type { Agent } from '../../../api/endpoints/agents'
 import { ASSETS } from '@/utils/assets'
+import { resolveAgentAvatar } from '@/utils/imageResolver'
 
 export default function AgentAccount() {
   const [loading, setLoading] = useState(true)
@@ -24,7 +25,7 @@ export default function AgentAccount() {
     email: '',
     phone: '',
     role: 'Property Agent',
-    avatar: ASSETS.PLACEHOLDER_PROFILE
+    avatar: resolveAgentAvatar(null, undefined)
   })
 
   const [editFormData, setEditFormData] = useState<EditFormData>({
@@ -71,7 +72,7 @@ export default function AgentAccount() {
           email: agentData.email || '',
           phone: agentData.phone ? '+63 ' + phoneClean : '',
           role: agentData.verified ? 'Rent Manager' : 'Property Agent',
-          avatar: agentData.image || agentData.avatar || agentData.profile_image || ASSETS.PLACEHOLDER_PROFILE
+          avatar: resolveAgentAvatar(agentData.image || agentData.avatar || agentData.profile_image, agentData.id)
         })
 
         const phoneNumber = agentData.phone || ''
@@ -84,10 +85,10 @@ export default function AgentAccount() {
           countryCode: 'PH+63',
           contactNumber: phoneWithoutCode,
           aboutYourself: '',
-          addressLine1: '',
+          addressLine1: agentData.office_address || '',
           country: 'Philippines',
           region: agentData.state || 'Region VII - Central Visayas',
-          province: agentData.city || 'Cebu',
+          province: 'Cebu', // Province is not stored in backend, keep default
           city: agentData.city || 'Cebu City'
         })
       } catch (error) {
@@ -119,7 +120,7 @@ export default function AgentAccount() {
               email: agentData.email || '',
               phone: agentData.phone ? '+63 ' + phoneClean : '',
               role: agentData.verified ? 'Rent Manager' : 'Property Agent',
-              avatar: agentData.image || agentData.avatar || agentData.profile_image || ASSETS.PLACEHOLDER_PROFILE
+              avatar: resolveAgentAvatar(agentData.image || agentData.avatar || agentData.profile_image, agentData.id)
             })
 
             const phoneNumber = agentData.phone || ''
@@ -132,10 +133,10 @@ export default function AgentAccount() {
               countryCode: 'PH+63',
               contactNumber: phoneWithoutCode,
               aboutYourself: '',
-              addressLine1: '',
+              addressLine1: agentData.office_address || '',
               country: 'Philippines',
               region: agentData.state || 'Region VII - Central Visayas',
-              province: agentData.city || 'Cebu',
+              province: 'Cebu', // Province is not stored in backend, keep default
               city: agentData.city || 'Cebu City'
             })
           }
@@ -175,6 +176,11 @@ export default function AgentAccount() {
     setUploading(true)
     
     try {
+      // Prepare phone number
+      const phoneNumber = editFormData.contactNumber 
+        ? '+63' + editFormData.contactNumber.replace(/\D/g, '') 
+        : ''
+      
       const updateData: {
         first_name?: string
         last_name?: string
@@ -184,29 +190,65 @@ export default function AgentAccount() {
         office_address?: string
         image?: File
       } = {
-        first_name: editFormData.firstName,
-        last_name: editFormData.lastName,
-        phone: editFormData.contactNumber ? '+63' + editFormData.contactNumber.replace(/\D/g, '') : undefined,
-        city: editFormData.city,
-        state: editFormData.region,
-        office_address: editFormData.addressLine1,
+        first_name: editFormData.firstName?.trim() || '',
+        last_name: editFormData.lastName?.trim() || '',
+        phone: phoneNumber,
+        city: editFormData.city?.trim() || '',
+        state: editFormData.region?.trim() || '',
+        office_address: editFormData.addressLine1?.trim() || '',
       }
       
+      // Always include image if selected
       if (imageFile) {
         updateData.image = imageFile
       }
       
+      console.log('Sending update data:', {
+        first_name: updateData.first_name,
+        last_name: updateData.last_name,
+        phone: updateData.phone,
+        city: updateData.city,
+        state: updateData.state,
+        office_address: updateData.office_address,
+        hasImage: !!updateData.image,
+        imageName: updateData.image?.name
+      })
+      
       const updatedAgent = await agentsApi.update(updateData)
       
-      setAgent(updatedAgent)
-      const updatedPhoneClean = updatedAgent.phone ? updatedAgent.phone.replace(/^\+?63\s?/, '') : ''
+      // Refresh agent data from server to get latest values
+      const refreshedAgent = await agentsApi.getCurrent()
+      setAgent(refreshedAgent)
+      
+      const updatedPhoneClean = refreshedAgent.phone ? refreshedAgent.phone.replace(/^\+?63\s?/, '') : ''
+      const agentName = refreshedAgent.full_name || 
+        (refreshedAgent.first_name && refreshedAgent.last_name 
+          ? refreshedAgent.first_name + ' ' + refreshedAgent.last_name
+          : refreshedAgent.first_name || refreshedAgent.last_name || 'Agent')
+      
       setProfileData({
-        name: updatedAgent.full_name || (updatedAgent.first_name + ' ' + updatedAgent.last_name),
-        email: updatedAgent.email || '',
-        phone: updatedAgent.phone ? '+63 ' + updatedPhoneClean : '',
-        role: updatedAgent.verified ? 'Rent Manager' : 'Property Agent',
-        avatar: updatedAgent.image || updatedAgent.avatar || updatedAgent.profile_image || ASSETS.PLACEHOLDER_PROFILE
+        name: agentName,
+        email: refreshedAgent.email || '',
+        phone: refreshedAgent.phone ? '+63 ' + updatedPhoneClean : '',
+        role: refreshedAgent.verified ? 'Rent Manager' : 'Property Agent',
+        avatar: resolveAgentAvatar(refreshedAgent.image || refreshedAgent.avatar || refreshedAgent.profile_image, refreshedAgent.id)
       })
+      
+      // Update edit form data with refreshed values
+      const refreshedPhoneNumber = refreshedAgent.phone || ''
+      const phoneWithoutCode = refreshedPhoneNumber.replace(/^\+?63\s?/, '')
+      
+      setEditFormData(prev => ({
+        ...prev,
+        firstName: refreshedAgent.first_name || '',
+        lastName: refreshedAgent.last_name || '',
+        email: refreshedAgent.email || '',
+        contactNumber: phoneWithoutCode,
+        addressLine1: refreshedAgent.office_address || prev.addressLine1,
+        region: refreshedAgent.state || prev.region,
+        province: prev.province, // Keep province as it's not stored in backend
+        city: refreshedAgent.city || prev.city,
+      }))
       
       setImageFile(null)
       setImagePreview(null)

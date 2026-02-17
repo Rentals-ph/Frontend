@@ -95,9 +95,9 @@ export default function BlogPage() {
             }}
           />
         </div>
-        <div className="relative z-[3] max-w-[var(--page-max-width)] mx-auto px-6 md:px-10 lg:px-[150px] py-[120px] md:py-32 w-full flex items-center justify-center flex-1">
+        <div className="relative z-[3] max-w-[var(--page-max-width)] mx-auto px-4 sm:px-6 md:px-10 lg:px-[150px] py-16 sm:py-24 md:py-32 w-full flex items-center justify-center flex-1">
           <div className="text-center flex flex-col items-center justify-center max-w-[800px]">
-            <h1 className="text-6xl md:text-8xl lg:text-9xl font-bold text-white font-outfit uppercase m-0">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-8xl xl:text-9xl font-bold text-white font-outfit uppercase m-0">
               BLOG
             </h1>
           </div>
@@ -105,7 +105,7 @@ export default function BlogPage() {
         <div className="relative z-[3] w-full h-3 bg-rental-orange-500" />
       </section>
 
-      <main className="mx-auto w-full px-6 md:px-10 lg:px-[150px] pt-12">
+      <main className="mx-auto w-full px-4 sm:px-6 md:px-10 lg:px-[150px] pt-8 sm:pt-12">
         {loading ? (
           <div className="text-center py-20">
             <p className="text-gray-600">Loading blogs...</p>
@@ -113,7 +113,7 @@ export default function BlogPage() {
         ) : (
           <>
             {/* Featured and Trending Section */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 mb-8 sm:mb-12">
               {/* Left Column - Featured Article */}
               <div className="lg:col-span-1">
                 {featuredPost && (
@@ -128,11 +128,11 @@ export default function BlogPage() {
                         />
                       </div>
                       {/* Content */}
-                      <div className="flex flex-col gap-3 p-6">
-                        <h2 className="text-2xl md:text-3xl font-bold text-black font-outfit leading-tight">
+                      <div className="flex flex-col gap-3 p-4 sm:p-6">
+                        <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-black font-outfit leading-tight">
                           {featuredPost.title}
                         </h2>
-                        <p className="text-base text-gray-700 font-outfit leading-relaxed">
+                        <p className="text-sm sm:text-base text-gray-700 font-outfit leading-relaxed">
                           {featuredPost.excerpt}
                         </p>
                         {/* Author and Date */}
@@ -177,9 +177,9 @@ export default function BlogPage() {
                   <div className="flex flex-col gap-4">
                     {trendingPosts.map((post) => (
                       <Link key={post.id} href={`/blog/${post.id}`} className="no-underline">
-                        <article className="flex gap-4 overflow-hidden rounded-lg bg-white shadow-md transition-all hover:-translate-y-1 hover:shadow-lg p-4">
+                        <article className="flex gap-3 sm:gap-4 overflow-hidden rounded-lg bg-white shadow-md transition-all hover:-translate-y-1 hover:shadow-lg p-3 sm:p-4">
                           {/* Image Thumbnail */}
-                          <div className="w-24 h-24 flex-shrink-0 overflow-hidden rounded-lg">
+                          <div className="w-20 h-20 sm:w-24 sm:h-24 flex-shrink-0 overflow-hidden rounded-lg">
                             <img 
                               src={getImageUrl(post.image)} 
                               alt={post.title} 
@@ -187,15 +187,15 @@ export default function BlogPage() {
                             />
                           </div>
                           {/* Content */}
-                          <div className="flex flex-col flex-1 gap-2">
-                            <h3 className="text-base md:text-lg font-bold text-black font-outfit leading-tight line-clamp-2">
+                          <div className="flex flex-col flex-1 gap-1.5 sm:gap-2 min-w-0">
+                            <h3 className="text-sm sm:text-base md:text-lg font-bold text-black font-outfit leading-tight line-clamp-2">
                               {post.title}
                             </h3>
-                            <div className="flex items-center justify-between">
-                              <span className="text-sm text-gray-600 font-outfit">
+                            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-1 sm:gap-0">
+                              <span className="text-xs sm:text-sm text-gray-600 font-outfit">
                                 {formatDateShort(post.published_at)} • {formatReadTime(post.read_time)}
                               </span>
-                              <span className="px-3 py-1 rounded bg-blue-100 text-blue-600 text-xs font-semibold font-outfit">
+                              <span className="px-2 sm:px-3 py-0.5 sm:py-1 rounded bg-blue-100 text-blue-600 text-[10px] sm:text-xs font-semibold font-outfit">
                                 Featured
                               </span>
                             </div>
@@ -209,13 +209,13 @@ export default function BlogPage() {
             </div>
 
             {/* Regular Blog Posts Grid */}
-            <div className="mb-12">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="mb-8 sm:mb-12">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                 {paginatedPosts.map((post) => (
                   <Link key={post.id} href={`/blog/${post.id}`} className="no-underline">
                     <article className="flex flex-col overflow-hidden rounded-lg bg-white shadow-md transition-all hover:-translate-y-1 hover:shadow-lg">
                       {/* Image */}
-                      <div className="h-48 w-full overflow-hidden">
+                      <div className="h-40 sm:h-48 w-full overflow-hidden">
                         <img 
                           src={getImageUrl(post.image)} 
                           alt={post.title} 
@@ -223,19 +223,19 @@ export default function BlogPage() {
                         />
                       </div>
                       {/* Content */}
-                      <div className="flex flex-col gap-2.5 p-6">
-                        <div className="mb-2 flex items-center gap-2.5">
-                          <span className="rounded bg-green-600 px-3 py-1 font-outfit text-xs font-semibold text-white uppercase">
+                      <div className="flex flex-col gap-2 sm:gap-2.5 p-4 sm:p-6">
+                        <div className="mb-1.5 sm:mb-2 flex items-center gap-2 sm:gap-2.5 flex-wrap">
+                          <span className="rounded bg-green-600 px-2 sm:px-3 py-0.5 sm:py-1 font-outfit text-[10px] sm:text-xs font-semibold text-white uppercase">
                             {post.category}
                           </span>
-                          <span className="font-outfit text-xs text-gray-600">
+                          <span className="font-outfit text-[10px] sm:text-xs text-gray-600">
                             {formatReadTime(post.read_time)} read
                           </span>
                         </div>
-                        <h3 className="m-0 font-outfit text-lg font-semibold leading-snug text-black">
+                        <h3 className="m-0 font-outfit text-base sm:text-lg font-semibold leading-snug text-black line-clamp-2">
                           {post.title}
                         </h3>
-                        <span className="ml-auto mt-auto self-end font-outfit text-sm font-semibold text-blue-600 transition-colors hover:text-orange-500">
+                        <span className="ml-auto mt-auto self-end font-outfit text-xs sm:text-sm font-semibold text-blue-600 transition-colors hover:text-orange-500">
                           Read More →
                         </span>
                       </div>
@@ -261,24 +261,24 @@ export default function BlogPage() {
       </main>
 
       {/* Newsletter Section */}
-      <div className="mt-2.5 w-full bg-blue-600 px-0 py-15 text-center">
-        <div className="mx-auto max-w-7xl py-10 px-6 md:px-10 lg:px-[150px]">
-          <h2 className="mb-4 font-outfit text-4xl font-bold text-white md:text-3xl">
+      <div className="mt-2.5 w-full bg-blue-600 px-0 py-8 sm:py-15 text-center">
+        <div className="mx-auto max-w-7xl py-6 sm:py-10 px-4 sm:px-6 md:px-10 lg:px-[150px]">
+          <h2 className="mb-3 sm:mb-4 font-outfit text-2xl sm:text-3xl md:text-4xl font-bold text-white">
             Subscribe to Our Newsletter
           </h2>
-          <p className="mb-8 font-outfit text-lg leading-relaxed text-white opacity-95">
+          <p className="mb-6 sm:mb-8 font-outfit text-sm sm:text-base md:text-lg leading-relaxed text-white opacity-95 px-2">
             Get the latest rental tips, market insights, and property updates delivered to your inbox.
           </p>
-          <form className="mx-auto flex max-w-2xl justify-center gap-2.5 items-center flex-row">
+          <form className="mx-auto flex max-w-2xl justify-center gap-2 sm:gap-2.5 items-stretch sm:items-center flex-col sm:flex-row px-4">
             <input
               type="email"
               placeholder="Enter your email"
-              className="flex-1 rounded-lg border-0 bg-white px-6 py-4 font-outfit text-base text-black outline-none placeholder:text-gray-500 min-w-0"
+              className="flex-1 rounded-lg border-0 bg-white px-4 sm:px-6 py-3 sm:py-4 font-outfit text-sm sm:text-base text-black outline-none placeholder:text-gray-500 min-w-0"
               required
             />
             <button 
               type="submit" 
-              className="whitespace-nowrap rounded-lg border-0 bg-rental-blue-600 px-8 py-4 font-outfit text-base font-semibold text-white transition-all hover:bg-rental-blue-700 hover:shadow-md flex-shrink-0"
+              className="whitespace-nowrap rounded-lg border-0 bg-rental-blue-600 px-6 sm:px-8 py-3 sm:py-4 font-outfit text-sm sm:text-base font-semibold text-white transition-all hover:bg-rental-blue-700 hover:shadow-md flex-shrink-0"
             >
               Subscribe
             </button>

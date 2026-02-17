@@ -461,24 +461,24 @@ function PropertiesContent() {
     <div className="properties-for-rent-page">
       <Navbar />
       
-        <div className="top-search-bar-container sticky top-0 z-30 bg-white border-b border-gray-200 py-5 px-6 md:px-10 lg:px-[150px]">
-             <div className="top-search-bar flex items-center gap-4 flex-wrap lg:flex-nowrap w-full">
-              <div className="search-input-container flex-1 min-w-[280px] relative">
-                <svg className="search-icon absolute left-4 top-3 w-5 h-5 text-gray-500 pointer-events-none" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <div className="top-search-bar-container sticky top-0 z-30 bg-white border-b border-gray-200 py-3 sm:py-5 px-4 sm:px-6 md:px-10 lg:px-[150px]">
+             <div className="top-search-bar flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 w-full">
+              <div className="search-input-container flex-1 w-full sm:min-w-[200px] relative">
+                <svg className="search-icon absolute left-3 sm:left-4 top-3 w-4 h-4 sm:w-5 sm:h-5 text-gray-500 pointer-events-none" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <circle cx="11" cy="11" r="8" stroke="currentColor" strokeWidth="2" />
                   <path d="m21 21-4.35-4.35" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
                 </svg>
                 <input
                   type="text"
-                  className="main-search-input w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="main-search-input w-full pl-10 sm:pl-12 pr-3 sm:pr-4 py-2.5 sm:py-3 border border-gray-300 rounded-lg bg-white text-sm sm:text-base text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   placeholder="Search here..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
               </div>
-              <div className="top-search-bar-controls flex items-center gap-3 flex-wrap lg:flex-nowrap">
+              <div className="top-search-bar-controls flex flex-wrap items-center gap-2 sm:gap-3 w-full sm:w-auto">
                 <select
-                  className="sort-dropdown-btn sort-by-relevance px-6 py-2.5 border border-gray-300 rounded-lg bg-white text-gray-700 text-sm font-medium cursor-pointer hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="sort-dropdown-btn sort-by-relevance px-3 sm:px-4 md:px-6 py-2 sm:py-2.5 border border-gray-300 rounded-lg bg-white text-gray-700 text-xs sm:text-sm font-medium cursor-pointer hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent flex-1 sm:flex-none min-w-0"
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value)}
                 >
@@ -486,7 +486,7 @@ function PropertiesContent() {
                   <option value="oldest">Oldest First</option>
                 </select>
                 <select
-                  className="sort-dropdown-btn sort-by-price px-4 py-2.5 border border-gray-300 rounded-lg bg-white text-gray-700 text-sm font-medium cursor-pointer hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="sort-dropdown-btn sort-by-price px-3 sm:px-4 py-2 sm:py-2.5 border border-gray-300 rounded-lg bg-white text-gray-700 text-xs sm:text-sm font-medium cursor-pointer hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent flex-1 sm:flex-none min-w-0"
                   value={sortByPrice}
                   onChange={(e) => setSortByPrice(e.target.value)}
                 >
@@ -495,7 +495,7 @@ function PropertiesContent() {
                   <option value="price-high">Price: High to Low</option>
                 </select>
                 <button
-                  className={`hamburger-menu-btn px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${
+                  className={`hamburger-menu-btn px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg text-xs sm:text-sm font-medium transition-all duration-200 flex-1 sm:flex-none ${
                     viewMode === 'horizontal' 
                       ? 'bg-blue-600 text-white hover:bg-blue-700' 
                       : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
@@ -503,10 +503,11 @@ function PropertiesContent() {
                   aria-label="List View"
                   onClick={() => setViewMode('horizontal')}
                 >
-                  List view
+                  <span className="hidden sm:inline">List view</span>
+                  <span className="sm:hidden">List</span>
                 </button>
                 <button
-                  className={`grid-view-btn px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${
+                  className={`grid-view-btn px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg text-xs sm:text-sm font-medium transition-all duration-200 flex-1 sm:flex-none ${
                     viewMode === 'vertical' 
                       ? 'bg-blue-600 text-white hover:bg-blue-700' 
                       : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
@@ -514,10 +515,11 @@ function PropertiesContent() {
                   aria-label="Grid View"
                   onClick={() => setViewMode('vertical')}
                 >
-                  Grid view
+                  <span className="hidden sm:inline">Grid view</span>
+                  <span className="sm:hidden">Grid</span>
                 </button>
                 <button
-                  className={`map-view-btn px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${
+                  className={`map-view-btn px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg text-xs sm:text-sm font-medium transition-all duration-200 flex-1 sm:flex-none ${
                     viewMode === 'map' 
                       ? 'bg-blue-600 text-white hover:bg-blue-700' 
                       : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
@@ -525,14 +527,22 @@ function PropertiesContent() {
                   aria-label="Map View"
                   onClick={() => setViewMode('map')}
                 >
-                  Map view
+                  <span className="hidden sm:inline">Map view</span>
+                  <span className="sm:hidden">Map</span>
+                </button>
+                <button
+                  className="filter-toggle-btn px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg bg-blue-600 text-white text-xs sm:text-sm font-medium hover:bg-blue-700 transition-all duration-200 md:hidden w-full sm:w-auto"
+                  onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+                  aria-label="Toggle filters"
+                >
+                  Filters
                 </button>
               </div>
             </div>
           </div>
 
       {/* (Secondary sticky search bar removed – top search bar is now sticky instead) */}
-      <main className="properties-main-layout flex flex-col lg:flex-row gap-6 mx-auto px-6 md:px-10 lg:px-[150px] py-6">
+      <main className="properties-main-layout flex flex-col lg:flex-row gap-4 sm:gap-6 mx-auto px-4 sm:px-6 md:px-10 lg:px-[150px] py-4 sm:py-6">
         {/* Dropdown Filter Menu - Mobile */}
         {isSidebarOpen && (
           <>

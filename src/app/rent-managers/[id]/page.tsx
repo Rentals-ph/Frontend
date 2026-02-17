@@ -13,6 +13,7 @@ import type { Property } from '../../../types'
 import type { Agent } from '../../../api/endpoints/agents'
 import type { PaginatedResponse } from '../../../api/types'
 import { ASSETS } from '@/utils/assets'
+import { resolveAgentAvatar } from '@/utils/imageResolver'
 import PageHeader from '../../../components/layout/PageHeader'
 // import './page.css' // Removed - converted to Tailwind
 
@@ -135,24 +136,9 @@ export default function RentManagerDetailsPage() {
     return image
   }
 
-  // Helper function to get agent image URL
-  const getAgentImageUrl = (imagePath: string | null | undefined): string | null => {
-    if (!imagePath) return null
-    
-    // If it's already a full URL, return it
-    if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
-      return imagePath
-    }
-    
-    // If it starts with /storage, it's a Laravel storage path
-    if (imagePath.startsWith('/storage') || imagePath.startsWith('storage/')) {
-      const baseUrl = getApiBaseUrl().replace('/api', '')
-      return `${baseUrl}/${imagePath.startsWith('/') ? imagePath.slice(1) : imagePath}`
-    }
-    
-    // Otherwise, assume it's a relative path from storage
-    const baseUrl = getApiBaseUrl().replace('/api', '')
-    return `${baseUrl}/storage/${imagePath}`
+  // Helper function to get agent image URL using the resolver
+  const getAgentImageUrl = (imagePath: string | null | undefined): string => {
+    return resolveAgentAvatar(imagePath, managerId)
   }
 
   // Helper function to get initials for fallback avatar
@@ -329,21 +315,19 @@ export default function RentManagerDetailsPage() {
               {/* Profile Header */}
               <div className="flex items-start gap-4 mb-6">
                 <div className="relative">
-                  {manager.image ? (
-                    <img 
-                      src={getAgentImageUrl(manager.image) || ''} 
-                      alt={manager.name}
-                      className="w-24 h-24 rounded-lg object-cover"
-                      onError={(e) => {
-                        const target = e.target as HTMLImageElement
-                        target.style.display = 'none'
-                        const fallback = target.nextElementSibling as HTMLElement
-                        if (fallback) fallback.style.display = 'flex'
-                      }}
-                    />
-                  ) : null}
+                  <img 
+                    src={getAgentImageUrl(manager.image)} 
+                    alt={manager.name}
+                    className="w-24 h-24 rounded-lg object-cover"
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement
+                      target.style.display = 'none'
+                      const fallback = target.nextElementSibling as HTMLElement
+                      if (fallback) fallback.style.display = 'flex'
+                    }}
+                  />
                   <div 
-                    className={`w-24 h-24 rounded-lg bg-blue-600 flex items-center justify-center text-white text-2xl font-bold ${manager.image ? 'hidden' : 'flex'}`}
+                    className="w-24 h-24 rounded-lg bg-blue-600 flex items-center justify-center text-white text-2xl font-bold hidden"
                   >
                     <span>{getInitials(manager.name)}</span>
                   </div>

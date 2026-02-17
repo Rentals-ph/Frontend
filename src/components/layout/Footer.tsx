@@ -3,20 +3,20 @@ import { ASSETS } from '@/utils/assets'
 
 const Footer = () => {
   return (
-    <footer className="bg-[#0A369D] text-white px-6 sm:px-10 md:px-20 lg:px-[150px] pt-12 pb-5 relative bottom-0" id="contact">
-      <div className="w-full mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-[2fr_1fr_1fr] gap-10 md:gap-15 lg:gap-[120px] items-start">
+    <footer className="bg-[#0A369D] text-white px-4 sm:px-6 md:px-10 lg:px-20 xl:px-[150px] pt-8 sm:pt-12 pb-4 sm:pb-5 relative bottom-0" id="contact">
+      <div className="w-full mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-[2fr_1fr_1fr] gap-8 sm:gap-10 md:gap-15 lg:gap-[120px] items-start">
         <div className="flex flex-col gap-1.5 md:col-span-2 lg:col-span-1">
           <Link href="/">
             <img
               src={ASSETS.LOGO_FOOTER_WHITE}
               alt="Rentals.ph logo"
-              className="w-[200px] sm:w-[225px] h-auto object-contain"
+              className="w-[180px] sm:w-[200px] md:w-[225px] h-auto object-contain"
             />
           </Link>
-          <p className="text-white font-outfit text-lg sm:text-xl font-normal leading-relaxed mt-8 max-w-[360px]">
+          <p className="text-white font-outfit text-base sm:text-lg md:text-xl font-normal leading-relaxed mt-6 sm:mt-8 max-w-[360px]">
             Unlock the door to your new beginning.
           </p>
-          <div className="flex gap-6 items-center mt-8">
+          <div className="flex gap-4 sm:gap-6 items-center mt-6 sm:mt-8">
             <a href="#facebook" className="flex items-center justify-center transition-opacity hover:opacity-80" aria-label="Facebook">
               <svg width="48" height="48" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <circle cx="30" cy="30" r="15" fill="white"/>
@@ -33,23 +33,23 @@ const Footer = () => {
         </div>
 
         <div className="flex flex-col gap-1.5">
-          <h3 className="text-white font-outfit text-lg font-bold mb-2.5 tracking-wider">LINKS</h3>
-          <Link href="/" className="text-white font-outfit text-[15px] sm:text-[18px] font-light leading-relaxed block transition-colors hover:text-rental-orange-500">Home</Link>
-          <Link href="/about" className="text-white font-outfit text-[15px] sm:text-[18px] font-light leading-relaxed block transition-colors hover:text-rental-orange-500">About</Link>
-          <Link href="/blog" className="text-white font-outfit text-[15px] sm:text-[18px] font-light leading-relaxed block transition-colors hover:text-rental-orange-500">Blog</Link>
-          <Link href="/news" className="text-white font-outfit text-[15px] sm:text-[18px] font-light leading-relaxed block transition-colors hover:text-rental-orange-500">News</Link>
-          <Link href="/contact" className="text-white font-outfit text-[15px] sm:text-[18px] font-light leading-relaxed block transition-colors hover:text-rental-orange-500">Contact</Link>
+          <h3 className="text-white font-outfit text-base sm:text-lg font-bold mb-2 sm:mb-2.5 tracking-wider">LINKS</h3>
+          <Link href="/" className="text-white font-outfit text-sm sm:text-[15px] md:text-[18px] font-light leading-relaxed block transition-colors hover:text-rental-orange-500">Home</Link>
+          <Link href="/about" className="text-white font-outfit text-sm sm:text-[15px] md:text-[18px] font-light leading-relaxed block transition-colors hover:text-rental-orange-500">About</Link>
+          <Link href="/blog" className="text-white font-outfit text-sm sm:text-[15px] md:text-[18px] font-light leading-relaxed block transition-colors hover:text-rental-orange-500">Blog</Link>
+          <Link href="/news" className="text-white font-outfit text-sm sm:text-[15px] md:text-[18px] font-light leading-relaxed block transition-colors hover:text-rental-orange-500">News</Link>
+          <Link href="/contact" className="text-white font-outfit text-sm sm:text-[15px] md:text-[18px] font-light leading-relaxed block transition-colors hover:text-rental-orange-500">Contact</Link>
         </div>
 
         <div className="flex flex-col gap-1.5">
-          <h3 className="text-white font-outfit text-lg font-bold mb-2.5 tracking-wider">LEGAL</h3>
-          <a href="#terms" className="text-white font-outfit text-[15px] sm:text-[18px] font-light leading-relaxed block transition-colors hover:text-rental-orange-500">Terms of Service</a>
-          <a href="#privacy" className="text-white font-outfit text-[15px] sm:text-[18px] font-light leading-relaxed block transition-colors hover:text-rental-orange-500">Privacy Policy</a>
+          <h3 className="text-white font-outfit text-base sm:text-lg font-bold mb-2 sm:mb-2.5 tracking-wider">LEGAL</h3>
+          <a href="#terms" className="text-white font-outfit text-sm sm:text-[15px] md:text-[18px] font-light leading-relaxed block transition-colors hover:text-rental-orange-500">Terms of Service</a>
+          <a href="#privacy" className="text-white font-outfit text-sm sm:text-[15px] md:text-[18px] font-light leading-relaxed block transition-colors hover:text-rental-orange-500">Privacy Policy</a>
         </div>
       </div>
 
-      <div className="border-t border-white/20 w-full py-2.5 mx-auto mt-8">
-        <p className="text-white font-outfit text-base sm:text-lg font-medium leading-relaxed text-center m-0">
+      <div className="border-t border-white/20 w-full py-2 sm:py-2.5 mx-auto mt-6 sm:mt-8">
+        <p className="text-white font-outfit text-sm sm:text-base md:text-lg font-medium leading-relaxed text-center m-0 px-4">
           © 2026 Rental.ph. All rights reserved.
         </p>
       </div>

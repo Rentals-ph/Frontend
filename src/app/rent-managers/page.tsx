@@ -8,17 +8,11 @@ import Footer from '../../components/layout/Footer'
 import { agentsApi } from '../../api'
 import { getApiBaseUrl } from '../../config/api'
 import { ASSETS } from '@/utils/assets'
+import { resolveAgentAvatar } from '@/utils/imageResolver'
 
-// Helper function to get agent image URL
-const getAgentImageUrl = (imagePath: string | null | undefined): string | null => {
-  if (!imagePath) return null
-  if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) return imagePath
-  if (imagePath.startsWith('/storage') || imagePath.startsWith('storage/')) {
-    const baseUrl = getApiBaseUrl().replace('/api', '')
-    return `${baseUrl}/${imagePath.startsWith('/') ? imagePath.slice(1) : imagePath}`
-  }
-  const baseUrl = getApiBaseUrl().replace('/api', '')
-  return `${baseUrl}/storage/${imagePath}`
+// Helper function to get agent image URL using the resolver
+const getAgentImageUrl = (imagePath: string | null | undefined, agentId?: number): string => {
+  return resolveAgentAvatar(imagePath, agentId)
 }
 
 const getInitials = (name: string) => {
@@ -46,7 +40,6 @@ export default function RentManagersPage() {
   const [selectedProvince, setSelectedProvince] = useState('')
   const [selectedCity, setSelectedCity] = useState('')
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
-  const [showStickySearch, setShowStickySearch] = useState(false)
 
   const features = [
     { id: 1, icon: '/assets/icons/secure.svg', alt: 'secure', title: 'Property Management', description: 'Expert handling of property listings, maintenance coordination, and tenant relations.' },
@@ -87,16 +80,6 @@ export default function RentManagersPage() {
     return () => { mounted = false }
   }, [])
 
-  useEffect(() => {
-    const onScroll = () => {
-      if (typeof window === 'undefined') return
-      setShowStickySearch(window.scrollY > 220)
-    }
-    onScroll()
-    window.addEventListener('scroll', onScroll)
-    return () => window.removeEventListener('scroll', onScroll)
-  }, [])
-
   const uniqueLocations = Array.from(new Set(managers.map((m) => m.location))).filter(Boolean)
 
   const filteredManagers = managers.filter((m) => {
@@ -115,16 +98,16 @@ export default function RentManagersPage() {
       <Navbar />
 
       {/* Hero Section */}
-      <section className="relative mt-20 pt-16 pb-16 px-6 md:px-10 lg:px-[150px] overflow-x-visible min-h-[550px]" style={{ background: 'linear-gradient(to top,rgb(24, 24, 24) 0%, #1A3DBF 40%,rgb(36, 71, 196) 100%)', overflowY: 'visible' }}>
-  <div className="mx-auto relative flex items-center max-w-full overflow-visible" style={{ minHeight: '430px', overflow: 'visible' }}>
+      <section className="relative mt-16 sm:mt-20 pt-8 sm:pt-16 pb-8 sm:pb-16 px-4 sm:px-6 md:px-10 lg:px-[150px] overflow-x-visible min-h-[400px] sm:min-h-[550px]" style={{ background: 'linear-gradient(to top,rgb(24, 24, 24) 0%, #1A3DBF 40%,rgb(36, 71, 196) 100%)', overflowY: 'visible' }}>
+  <div className="mx-auto relative flex items-center max-w-full overflow-visible" style={{ minHeight: '300px', overflow: 'visible' }}>
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 items-stretch w-full overflow-visible">
 
       {/* Left Column - Description */}
-      <div className="order-2 lg:order-1 text-2xl max-w-[650px]">
-        <h1 className="font-bold text-white mb-6 leading-tight text-left">
+      <div className="order-2 lg:order-1 text-lg sm:text-xl md:text-2xl max-w-[650px]">
+        <h1 className="font-bold text-white mb-4 sm:mb-6 leading-tight text-left text-2xl sm:text-3xl md:text-4xl">
           What are Rent Managers?
         </h1>
-        <p className="text-white leading-relaxed text-1xl font-light text-justify">
+        <p className="text-white leading-relaxed text-base sm:text-lg md:text-xl font-light text-justify">
           Rent Managers are trusted professionals who help property owners manage their
           rental properties and assist tenants in finding their perfect home. They handle
           everything from property listings to tenant screening, making the rental process
@@ -135,13 +118,13 @@ export default function RentManagersPage() {
       {/* Right Column - Person Image */}
       <div className="relative order-1 lg:order-2 lg:col-span-2 flex justify-center lg:justify-end" style={{ overflow: 'visible', minHeight: '0', position: 'relative' }}>
         <img
-          className="h-[610px] w-auto object-contain object-bottom absolute z-[5]"
+          className="h-[300px] sm:h-[400px] md:h-[500px] lg:h-[610px] -mt-100 w-auto object-contain object-bottom absolute z-[5]"
           src="/assets/images/agents/hero-person.png"
           alt="Rent Manager"
           style={{ 
-            maxWidth: 'clamp(300px, 40vw, 500px)',
-            right: '200px',
-            top: '-500px',
+            maxWidth: 'clamp(200px, 50vw, 500px)',
+            right: 'clamp(-50px, 10vw, 200px)',
+            top: 'clamp(-400px, -30vw, -400px)',
             position: 'absolute'
           }}
         />
@@ -152,30 +135,30 @@ export default function RentManagersPage() {
 </section>
 
       {/* Feature Cards Row - Overlapping hero */}
-      <div className=" mx-auto px-6 md:px-10 lg:px-[150px] relative" style={{ marginTop: '-100px', zIndex: 10, paddingTop: '20px' }}>
-        <div className="grid grid-cols-4 gap-6 lg:grid-cols-4 md:grid-cols-1">
+      <div className=" mx-auto px-4 sm:px-6 md:px-10 lg:px-[150px] relative" style={{ marginTop: '-160px', zIndex: 10, paddingTop: '20px' }}>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
           {features.map((feature) => (
             <div 
               key={feature.id} 
-              className="bg-white p-6"
+              className="bg-white p-4 sm:p-6"
               style={{
                 borderRadius: '16px',
                 boxShadow: '0 4px 20px rgba(0,0,0,0.08)'
               }}
             >
-              <div className="flex flex-col items-center text-center gap-4">
-                <div className="w-12 h-12 flex items-center justify-center">
+              <div className="flex flex-col items-center text-center gap-3 sm:gap-4">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center">
                   <img 
                     src={feature.icon} 
                     alt={feature.alt} 
-                    className="w-12 h-12" 
+                    className="w-10 h-10 sm:w-12 sm:h-12" 
                     style={{ filter: 'brightness(0) saturate(100%) invert(27%) sepia(95%) saturate(2598%) hue-rotate(210deg) brightness(95%) contrast(92%)' }} 
                   />
                 </div>
                 <div 
                   className="font-bold"
                   style={{ 
-                    fontSize: '22px',
+                    fontSize: 'clamp(16px, 4vw, 22px)',
                     color: '#2563EB'
                   }}
                 >
@@ -184,7 +167,7 @@ export default function RentManagersPage() {
                 <div 
                   className="text-center"
                   style={{ 
-                    fontSize: '18px',
+                    fontSize: 'clamp(14px, 3.5vw, 18px)',
                     color: '#374151',
                     lineHeight: '1.5'
                   }}
@@ -198,12 +181,12 @@ export default function RentManagersPage() {
       </div>
 
       {/* Search and Filter Row - Full Width */}
-      <div className="top-search-bar-container sticky top-0 z-30 bg-white mt-10 border-b border-gray-200 py-5  lg:px-[150px] mb-8">
+      <div className="top-search-bar-container sticky top-0 z-40 bg-white mt-6 sm:mt-10 border-b border-gray-200 py-3 sm:py-5 px-4 sm:px-6 md:px-10 lg:px-[150px] mb-6 sm:mb-8 shadow-md">
         <div className="max-w-[1200px] mx-auto">
-          <div className="top-search-bar flex items-center gap-4 flex-wrap lg:flex-nowrap w-full">
-              <div className="search-input-container flex-1 min-w-[280px] relative">
+          <div className="top-search-bar flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 w-full">
+              <div className="search-input-container flex-1 w-full sm:min-w-[200px] relative">
                 <svg 
-                  className="search-icon absolute left-4 top-3 w-5 h-5 text-gray-500 pointer-events-none" 
+                  className="search-icon absolute left-3 sm:left-4 top-3 w-4 h-4 sm:w-5 sm:h-5 text-gray-500 pointer-events-none" 
                   viewBox="0 0 24 24" 
                   fill="none" 
                   xmlns="http://www.w3.org/2000/svg"
@@ -213,15 +196,15 @@ export default function RentManagersPage() {
                 </svg>
                 <input
                   type="text"
-                  className="main-search-input w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="main-search-input w-full pl-10 sm:pl-12 pr-3 sm:pr-4 py-2.5 sm:py-3 border border-gray-300 rounded-lg bg-white text-sm sm:text-base text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   placeholder="Search here..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
               </div>
-              <div className="top-search-bar-controls flex items-center gap-3 flex-wrap lg:flex-nowrap">
+              <div className="top-search-bar-controls flex flex-wrap items-center gap-2 sm:gap-3">
                 <select
-                  className="sort-dropdown-btn px-6 py-2.5 border border-gray-300 rounded-lg bg-white text-gray-700 text-sm font-medium cursor-pointer hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="sort-dropdown-btn px-3 sm:px-4 md:px-6 py-2 sm:py-2.5 border border-gray-300 rounded-lg bg-white text-gray-700 text-xs sm:text-sm font-medium cursor-pointer hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent flex-1 sm:flex-none min-w-0"
                   value={selectedProvince}
                   onChange={(e) => setSelectedProvince(e.target.value)}
                 >
@@ -231,7 +214,7 @@ export default function RentManagersPage() {
                   ))}
                 </select>
                 <select
-                  className="sort-dropdown-btn px-4 py-2.5 border border-gray-300 rounded-lg bg-white text-gray-700 text-sm font-medium cursor-pointer hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="sort-dropdown-btn px-3 sm:px-4 py-2 sm:py-2.5 border border-gray-300 rounded-lg bg-white text-gray-700 text-xs sm:text-sm font-medium cursor-pointer hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent flex-1 sm:flex-none min-w-0"
                   value={selectedCity}
                   onChange={(e) => setSelectedCity(e.target.value)}
                 >
@@ -241,7 +224,7 @@ export default function RentManagersPage() {
                   ))}
                 </select>
                 <button
-                  className={`hamburger-menu-btn px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${
+                  className={`hamburger-menu-btn px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg text-xs sm:text-sm font-medium transition-all duration-200 flex-1 sm:flex-none ${
                     viewMode === 'list' 
                       ? 'bg-blue-600 text-white hover:bg-blue-700' 
                       : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
@@ -249,10 +232,11 @@ export default function RentManagersPage() {
                   aria-label="List View"
                   onClick={() => setViewMode('list')}
                 >
-                  List view
+                  <span className="hidden sm:inline">List view</span>
+                  <span className="sm:hidden">List</span>
                 </button>
                 <button
-                  className={`grid-view-btn px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${
+                  className={`grid-view-btn px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg text-xs sm:text-sm font-medium transition-all duration-200 flex-1 sm:flex-none ${
                     viewMode === 'grid' 
                       ? 'bg-blue-600 text-white hover:bg-blue-700' 
                       : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
@@ -260,7 +244,8 @@ export default function RentManagersPage() {
                   aria-label="Grid View"
                   onClick={() => setViewMode('grid')}
                 >
-                  Grid view
+                  <span className="hidden sm:inline">Grid view</span>
+                  <span className="sm:hidden">Grid</span>
                 </button>
               </div>
             </div>
@@ -268,12 +253,12 @@ export default function RentManagersPage() {
         </div>
 
       {/* Find a Rent Manager Section */}
-      <main className=" lg:px-[150px]" style={{ paddingTop: '0px', paddingBottom: '60px' }}>
+      <main className="px-4 sm:px-6 md:px-10 lg:px-[150px]" style={{ paddingTop: '0px', paddingBottom: '40px' }}>
         <section className="mx-auto">
           <h2 
-            className="font-bold mb-8"
+            className="font-bold mb-6 sm:mb-8 px-2 sm:px-0"
             style={{ 
-              fontSize: '22px',
+              fontSize: 'clamp(18px, 4vw, 22px)',
               color: '#1A3DBF',
               textTransform: 'uppercase',
               textAlign: 'left',
@@ -283,55 +268,13 @@ export default function RentManagersPage() {
             FIND A RENT MANAGERS
           </h2>
 
-          {/* Sticky Search Bar */}
-          <div className={`fixed top-0 left-0 right-0 z-40 bg-white shadow-md transition-transform duration-300 ${showStickySearch ? 'translate-y-0' : '-translate-y-full'}`}>
-            <div className="max-w-[1200px] mx-auto px-6 md:px-10 lg:px-[150px] py-4 flex items-center gap-4 flex-wrap">
-              <Link href="/" className="flex-shrink-0">
-                <img src={ASSETS.LOGO_HERO_MAIN} alt="Rentals.ph logo" className="h-10" />
-              </Link>
-              <div className="relative flex-1 min-w-[280px]">
-                <svg className="absolute left-4 top-3 pointer-events-none" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M9 17C13.4183 17 17 13.4183 17 9C17 4.58172 13.4183 1 9 1C4.58172 1 1 4.58172 1 9C1 13.4183 4.58172 17 9 17Z" stroke="#666" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  <path d="M19 19L14.65 14.65" stroke="#666" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-                <input 
-                  type="text" 
-                  placeholder="Search here..." 
-                  className="w-full pl-12 pr-4 py-2.5 border border-gray-300 rounded-xl bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                />
-              </div>
-              <select 
-                className="px-4 py-2.5 border border-gray-300 rounded-xl bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                value={selectedProvince}
-                onChange={(e) => setSelectedProvince(e.target.value)}
-              >
-                <option value="">Province</option>
-                {uniqueLocations.map(location => (
-                  <option key={location} value={location}>{location}</option>
-                ))}
-              </select>
-              <select 
-                className="px-4 py-2.5 border border-gray-300 rounded-xl bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                value={selectedCity}
-                onChange={(e) => setSelectedCity(e.target.value)}
-              >
-                <option value="">City</option>
-                {uniqueLocations.map(location => (
-                  <option key={location} value={location}>{location}</option>
-                ))}
-              </select>
-            </div>
-          </div>
-
           {/* Manager Cards Grid */}
           {loading ? (
             <div style={{ textAlign: 'center', padding: '40px' }}>
               <p>Loading rent managers...</p>
             </div>
           ) : filteredManagers.length > 0 ? (
-            <div className={viewMode === 'grid' ? 'grid grid-cols-2 gap-6 md:grid-cols-1 lg:grid-cols-3' : 'flex flex-col gap-4'}>
+            <div className={viewMode === 'grid' ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6' : 'flex flex-col gap-4'}>
               {filteredManagers.map((manager) => (
                 <div
                   key={manager.id}
@@ -363,19 +306,17 @@ export default function RentManagersPage() {
                             backgroundColor: '#2563EB'
                           }}
                         >
-                          {manager.image ? (
-                            <img 
-                              src={getAgentImageUrl(manager.image) || ''} 
-                              alt={manager.name}
-                              className="w-full h-full object-cover"
-                              onError={(e) => {
-                                const target = e.target as HTMLImageElement
-                                target.style.display = 'none'
-                                const fallback = target.nextElementSibling as HTMLElement
-                                if (fallback) fallback.style.display = 'flex'
-                              }}
-                            />
-                          ) : null}
+                          <img 
+                            src={getAgentImageUrl(manager.image, manager.id)} 
+                            alt={manager.name}
+                            className="w-full h-full object-cover"
+                            onError={(e) => {
+                              const target = e.target as HTMLImageElement
+                              target.style.display = 'none'
+                              const fallback = target.nextElementSibling as HTMLElement
+                              if (fallback) fallback.style.display = 'flex'
+                            }}
+                          />
                           <div 
                             className="absolute inset-0 flex items-center justify-center text-white font-bold"
                             style={{ 
@@ -389,13 +330,13 @@ export default function RentManagersPage() {
                       </div>
                       
                       {/* Card Body */}
-                      <div className="px-4 pb-4">
+                      <div className="px-3 sm:px-4 pb-3 sm:pb-4">
                         {/* Name Row with Listing Count */}
-                        <div className="flex items-center justify-between mb-1">
+                        <div className="flex items-center justify-between mb-1 gap-2">
                           <h3 
                             className="font-bold truncate flex-1"
                             style={{ 
-                              fontSize: '18px',
+                              fontSize: 'clamp(14px, 3.5vw, 18px)',
                               color: '#374151'
                             }}
                           >
@@ -404,7 +345,7 @@ export default function RentManagersPage() {
                           <span 
                             className="font-medium flex-shrink-0 ml-2"
                             style={{ 
-                              fontSize: '14px',
+                              fontSize: 'clamp(11px, 2.5vw, 14px)',
                               color: '#2563EB'
                             }}
                           >
@@ -414,9 +355,9 @@ export default function RentManagersPage() {
                         
                         {/* Rent Manager Label */}
                         <p 
-                          className="mb-4"
+                          className="mb-3 sm:mb-4"
                           style={{ 
-                            fontSize: '13px',
+                            fontSize: 'clamp(11px, 2.5vw, 13px)',
                             color: '#2563EB'
                           }}
                         >
@@ -424,19 +365,18 @@ export default function RentManagersPage() {
                         </p>
                         
                         {/* Divider */}
-                        <div className="border-t mb-4" style={{ borderColor: '#E5E7EB' }} />
+                        <div className="border-t mb-3 sm:mb-4" style={{ borderColor: '#E5E7EB' }} />
                         
                         {/* Contact Info */}
-                        <div className="flex flex-col gap-2 mb-4">
+                        <div className="flex flex-col gap-2 mb-3 sm:mb-4">
                           <div className="flex items-center gap-2">
-                            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <svg width="16" height="16" className="sm:w-[18px] sm:h-[18px] flex-shrink-0" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
                               <path d="M2 3C2 2.45 2.45 2 3 2H13C13.55 2 14 2.45 14 3V13C14 13.55 13.55 14 13 14H3C2.45 14 2 13.55 2 13V3ZM3 3V13H13V3H3Z" stroke="#2563EB" strokeWidth="1.5" fill="none"/>
                               <path d="M3 4L8 8L13 4" stroke="#2563EB" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
                             </svg>
                             <span 
-                              className="truncate"
+                              className="truncate text-xs sm:text-sm"
                               style={{ 
-                                fontSize: '14px',
                                 color: '#374151'
                               }}
                             >
@@ -445,15 +385,14 @@ export default function RentManagersPage() {
                           </div>
                           {manager.phone && (
                             <div className="flex items-center gap-2">
-                              <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                              <svg width="16" height="16" className="sm:w-[18px] sm:h-[18px] flex-shrink-0" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M3.5 2C2.67 2 2 2.67 2 3.5V12.5C2 13.33 2.67 14 3.5 14H12.5C13.33 14 14 13.33 14 12.5V3.5C14 2.67 13.33 2 12.5 2H3.5ZM3.5 3H12.5C12.78 3 13 3.22 13 3.5V12.5C13 12.78 12.78 13 12.5 13H3.5C3.22 13 3 12.78 3 12.5V3.5C3 3.22 3.22 3 3.5 3Z" stroke="#2563EB" strokeWidth="1.5" fill="none"/>
                                 <path d="M6 5H10" stroke="#2563EB" strokeWidth="1.5" strokeLinecap="round"/>
                                 <path d="M6 7H12" stroke="#2563EB" strokeWidth="1.5" strokeLinecap="round"/>
                               </svg>
                               <span 
-                                className="truncate"
+                                className="truncate text-xs sm:text-sm"
                                 style={{ 
-                                  fontSize: '14px',
                                   color: '#374151'
                                 }}
                               >
@@ -469,8 +408,8 @@ export default function RentManagersPage() {
                           style={{
                             backgroundColor: '#1D4ED8',
                             borderRadius: '8px',
-                            padding: '12px 16px',
-                            fontSize: '14px'
+                            padding: '10px 12px',
+                            fontSize: 'clamp(12px, 3vw, 14px)'
                           }}
                           type="button"
                           onClick={(e) => {
@@ -478,8 +417,9 @@ export default function RentManagersPage() {
                             router.push(`/rent-managers/${manager.id}`)
                           }}
                         >
-                          View My Listing
-                          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <span className="hidden sm:inline">View My Listing</span>
+                          <span className="sm:hidden">View Listing</span>
+                          <svg width="14" height="14" className="sm:w-4 sm:h-4" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M6 12L10 8L6 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                           </svg>
                         </button>
@@ -487,37 +427,35 @@ export default function RentManagersPage() {
                     </>
                   ) : (
                     <>
-                      <div className="flex flex-row">
-                        <div className="w-48 flex-shrink-0">
+                      <div className="flex flex-col sm:flex-row">
+                        <div className="w-full sm:w-48 flex-shrink-0">
                           <div className="relative w-full aspect-square overflow-hidden">
-                            {manager.image ? (
-                              <img 
-                                src={getAgentImageUrl(manager.image) || ''} 
-                                alt={manager.name}
-                                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                                onError={(e) => {
-                                  const target = e.target as HTMLImageElement
-                                  target.style.display = 'none'
-                                  const fallback = target.nextElementSibling as HTMLElement
-                                  if (fallback) fallback.style.display = 'flex'
-                                }}
-                              />
-                            ) : null}
+                            <img 
+                              src={getAgentImageUrl(manager.image, manager.id)} 
+                              alt={manager.name}
+                              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                              onError={(e) => {
+                                const target = e.target as HTMLImageElement
+                                target.style.display = 'none'
+                                const fallback = target.nextElementSibling as HTMLElement
+                                if (fallback) fallback.style.display = 'flex'
+                              }}
+                            />
                             <div 
-                              className="absolute inset-0 flex items-center justify-center bg-blue-600 text-white text-4xl font-bold"
+                              className="absolute inset-0 flex items-center justify-center bg-blue-600 text-white text-2xl sm:text-4xl font-bold"
                               style={{ display: manager.image ? 'none' : 'flex' }}
                             >
                               <span>{getInitials(manager.name)}</span>
                             </div>
                           </div>
                         </div>
-                        <div className="flex-1 p-6">
-                          <div className="flex items-start justify-between mb-4">
+                        <div className="flex-1 p-4 sm:p-6">
+                          <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between mb-3 sm:mb-4 gap-2">
                             <div className="flex-1 min-w-0">
                               <h3 
                                 className="font-bold truncate mb-1"
                                 style={{ 
-                                  fontSize: '18px',
+                                  fontSize: 'clamp(16px, 4vw, 18px)',
                                   color: '#374151'
                                 }}
                               >
@@ -525,7 +463,7 @@ export default function RentManagersPage() {
                               </h3>
                               <p 
                                 style={{ 
-                                  fontSize: '13px',
+                                  fontSize: 'clamp(11px, 2.5vw, 13px)',
                                   color: '#2563EB'
                                 }}
                               >
@@ -533,26 +471,25 @@ export default function RentManagersPage() {
                               </p>
                             </div>
                             <span 
-                              className="font-medium flex-shrink-0 ml-2"
+                              className="font-medium flex-shrink-0"
                               style={{ 
-                                fontSize: '14px',
+                                fontSize: 'clamp(12px, 3vw, 14px)',
                                 color: '#2563EB'
                               }}
                             >
                               {manager.listings} Listings
                             </span>
                           </div>
-                          <div className="border-t mb-4" style={{ borderColor: '#E5E7EB' }} />
-                          <div className="flex flex-col gap-3">
+                          <div className="border-t mb-3 sm:mb-4" style={{ borderColor: '#E5E7EB' }} />
+                          <div className="flex flex-col gap-2 sm:gap-3">
                             <div className="flex items-center gap-2">
-                              <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                              <svg width="16" height="16" className="sm:w-[18px] sm:h-[18px] flex-shrink-0" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M2 3C2 2.45 2.45 2 3 2H13C13.55 2 14 2.45 14 3V13C14 13.55 13.55 14 13 14H3C2.45 14 2 13.55 2 13V3ZM3 3V13H13V3H3Z" stroke="#2563EB" strokeWidth="1.5" fill="none"/>
                                 <path d="M3 4L8 8L13 4" stroke="#2563EB" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
                               </svg>
                               <span 
-                                className="truncate"
+                                className="truncate text-xs sm:text-sm"
                                 style={{ 
-                                  fontSize: '14px',
                                   color: '#374151'
                                 }}
                               >
@@ -561,15 +498,14 @@ export default function RentManagersPage() {
                             </div>
                             {manager.phone && (
                               <div className="flex items-center gap-2">
-                                <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <svg width="16" height="16" className="sm:w-[18px] sm:h-[18px] flex-shrink-0" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
                                   <path d="M3.5 2C2.67 2 2 2.67 2 3.5V12.5C2 13.33 2.67 14 3.5 14H12.5C13.33 14 14 13.33 14 12.5V3.5C14 2.67 13.33 2 12.5 2H3.5ZM3.5 3H12.5C12.78 3 13 3.22 13 3.5V12.5C13 12.78 12.78 13 12.5 13H3.5C3.22 13 3 12.78 3 12.5V3.5C3 3.22 3.22 3 3.5 3Z" stroke="#2563EB" strokeWidth="1.5" fill="none"/>
                                   <path d="M6 5H10" stroke="#2563EB" strokeWidth="1.5" strokeLinecap="round"/>
                                   <path d="M6 7H12" stroke="#2563EB" strokeWidth="1.5" strokeLinecap="round"/>
                                 </svg>
                                 <span 
-                                  className="truncate"
+                                  className="truncate text-xs sm:text-sm"
                                   style={{ 
-                                    fontSize: '14px',
                                     color: '#374151'
                                   }}
                                 >
@@ -583,12 +519,13 @@ export default function RentManagersPage() {
                                 className="inline-flex items-center gap-2 font-medium transition-colors duration-200"
                                 style={{
                                   color: '#2563EB',
-                                  fontSize: '14px'
+                                  fontSize: 'clamp(12px, 3vw, 14px)'
                                 }}
                                 onClick={(e) => e.stopPropagation()}
                               >
-                                View My Listing
-                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <span className="hidden sm:inline">View My Listing</span>
+                                <span className="sm:hidden">View Listing</span>
+                                <svg width="14" height="14" className="sm:w-4 sm:h-4" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                                   <path d="M6 12L10 8L6 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                                 </svg>
                               </Link>
@@ -610,7 +547,7 @@ export default function RentManagersPage() {
       </main>
 
       {/* CTA Section */}
-      <section className="relative py-16 px-6 md:px-10 lg:px-[150px] overflow-hidden" style={{ minHeight: '400px' }}>
+      <section className="relative py-12 sm:py-16 px-4 sm:px-6 md:px-10 lg:px-[150px] overflow-hidden" style={{ minHeight: '300px' }}>
         {/* Background Image */}
         <div className="absolute inset-0 w-full h-full z-0">
           <img 
@@ -630,17 +567,17 @@ export default function RentManagersPage() {
         />
         
         {/* Content */}
-        <div className="relative z-10 max-w-4xl mx-auto text-center flex flex-col items-center justify-center" style={{ minHeight: '400px' }}>
-          <h2 className="text-white text-4xl md:text-5xl font-bold mb-5 leading-tight">
+        <div className="relative z-10 max-w-4xl mx-auto text-center flex flex-col items-center justify-center px-4" style={{ minHeight: '300px' }}>
+          <h2 className="text-white text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4 sm:mb-5 leading-tight">
             Become a Rental Manager here!
           </h2>
-          <p className="text-white text-lg md:text-xl mb-8 max-w-2xl">
+          <p className="text-white text-base sm:text-lg md:text-xl mb-6 sm:mb-8 max-w-2xl">
             Join us together with the most trusted managers to help people find their perfect home.
           </p>
-          <button className="bg-white text-blue-600 font-semibold text-lg px-8 py-4 rounded-full hover:bg-gray-50 transition-all duration-200 flex items-center gap-3 group">
+          <button className="bg-white text-blue-600 font-semibold text-base sm:text-lg px-6 sm:px-8 py-3 sm:py-4 rounded-full hover:bg-gray-50 transition-all duration-200 flex items-center gap-2 sm:gap-3 group">
             <span>Join now!</span>
-            <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center group-hover:bg-blue-700 transition-colors duration-200">
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-blue-600 flex items-center justify-center group-hover:bg-blue-700 transition-colors duration-200">
+              <svg width="14" height="14" className="sm:w-4 sm:h-4" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M6 12L10 8L6 4" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
             </div>

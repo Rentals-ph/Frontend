@@ -269,7 +269,7 @@ const Navbar = () => {
                 )}
               </div>
             ) : (
-              <button className="rounded-full border border-rental-orange-500 text-rental-orange-500 px-5 h-12 font-outfit text-base font-medium cursor-pointer inline-flex items-center justify-center hover:bg-rental-orange-500 hover:text-white transition-colors" onClick={handleLoginClick}>
+              <button className="rounded-full !border-2 !border-rental-orange-500 bg-transparent text-rental-orange-500 px-5 h-12 font-outfit text-base font-medium cursor-pointer inline-flex items-center justify-center hover:bg-rental-orange-500 hover:text-white transition-colors" onClick={handleLoginClick}>
                 Login / Register
               </button>
             )}
@@ -367,7 +367,7 @@ const Navbar = () => {
               </button>
             </div>
           ) : (
-            <button className="rounded-full border border-rental-orange-500 text-rental-orange-500 px-5 h-12 sm:h-11 font-outfit text-[13px] sm:text-[15px] font-medium cursor-pointer inline-flex items-center justify-center mx-6 my-5 hover:bg-rental-orange-500 hover:text-white transition-colors" onClick={() => {
+            <button className="rounded-full !border-2 !border-rental-orange-500 bg-transparent text-rental-orange-500 px-5 h-12 sm:h-11 font-outfit text-[13px] sm:text-[15px] font-medium cursor-pointer inline-flex items-center justify-center mx-6 my-5 hover:bg-rental-orange-500 hover:text-white transition-colors" onClick={() => {
               handleLoginClick()
               setIsMobileMenuOpen(false)
             }}>

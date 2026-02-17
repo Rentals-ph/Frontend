@@ -276,10 +276,10 @@ export default function RentManagerDetailsPage() {
   // Conditional returns - must come after all hooks
   if (loading) {
     return (
-      <div className="rm-details-page">
+      <div className="min-h-screen bg-gray-50">
         <Navbar />
         <PageHeader title="MY LISTING" />
-        <div style={{ textAlign: 'center', padding: '40px' }}>
+        <div className="text-center py-10 px-6 md:px-10 lg:px-[150px]">
           <p>Loading rent manager details...</p>
         </div>
         <Footer />
@@ -289,23 +289,25 @@ export default function RentManagerDetailsPage() {
 
   if (!manager) {
     return (
-      <div className="rm-details-page">
+      <div className="min-h-screen bg-gray-50">
         <Navbar />
         <PageHeader title="MY LISTING" />
 
-        <div className="rm-details-breadcrumbs">
-          <Link href="/" className="breadcrumb-link">Home</Link>
-          <span className="breadcrumb-separator">&gt;</span>
-          <Link href="/rent-managers" className="breadcrumb-link">RM</Link>
-          <span className="breadcrumb-separator">&gt;</span>
-          <span className="breadcrumb-current">Not Found</span>
+        <div className="px-6 md:px-10 lg:px-[150px] py-4 bg-white">
+          <div className="flex items-center gap-2 text-sm">
+            <Link href="/" className="text-blue-600 hover:text-blue-800">Home</Link>
+            <span className="text-gray-400">&gt;</span>
+            <Link href="/rent-managers" className="text-blue-600 hover:text-blue-800">RM</Link>
+            <span className="text-gray-400">&gt;</span>
+            <span className="text-gray-600">Not Found</span>
+          </div>
         </div>
-        <main className="rm-details-main">
-          <div className="rm-details-container">
-            <div className="rm-not-found-card">
-              <h2>Rent Manager not found</h2>
-              <p>Please go back and select a valid rent manager.</p>
-              <Link className="rm-back-link" href="/rent-managers">Back to Rent Managers</Link>
+        <main className="px-6 md:px-10 lg:px-[150px] py-8">
+          <div className="max-w-7xl mx-auto">
+            <div className="bg-white rounded-lg shadow-md p-8 text-center">
+              <h2 className="text-2xl font-bold mb-4 text-gray-800">Rent Manager not found</h2>
+              <p className="text-gray-600 mb-6">Please go back and select a valid rent manager.</p>
+              <Link className="inline-block px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors" href="/rent-managers">Back to Rent Managers</Link>
             </div>
           </div>
         </main>
@@ -315,29 +317,23 @@ export default function RentManagerDetailsPage() {
   }
 
   return (
-    <div className="rm-details-page">
+    <div className="min-h-screen bg-gray-50">
       <Navbar />
 
-      <PageHeader title="MY LISTING" />
-
-      <div className="rm-details-breadcrumbs">
-        <Link href="/" className="breadcrumb-link">Home</Link>
-        <span className="breadcrumb-separator">&gt;</span>
-        <Link href="/rent-managers" className="breadcrumb-link">RM</Link>
-        <span className="breadcrumb-separator">&gt;</span>
-        <span className="breadcrumb-current">{manager.name}</span>
-      </div>
-
-      <main className="rm-details-main">
-        <div className="rm-details-container">
-          <section className="rm-top-grid">
-            <div className="rm-profile-card">
-              <div className="rm-profile-top">
-                <div className="rm-profile-photo" aria-hidden="true">
+      <main className="px-6 md:px-10 lg:px-[150px] py-8">
+        <div className="mx-auto">
+          {/* Top Section - Profile and Contact Form */}
+          <section className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+            {/* Profile Card */}
+            <div className="bg-white rounded-lg shadow-md p-6">
+              {/* Profile Header */}
+              <div className="flex items-start gap-4 mb-6">
+                <div className="relative">
                   {manager.image ? (
                     <img 
                       src={getAgentImageUrl(manager.image) || ''} 
                       alt={manager.name}
+                      className="w-24 h-24 rounded-lg object-cover"
                       onError={(e) => {
                         const target = e.target as HTMLImageElement
                         target.style.display = 'none'
@@ -347,53 +343,71 @@ export default function RentManagerDetailsPage() {
                     />
                   ) : null}
                   <div 
-                    className="rm-photo-placeholder"
-                    style={{ display: manager.image ? 'none' : 'flex' }}
+                    className={`w-24 h-24 rounded-lg bg-blue-600 flex items-center justify-center text-white text-2xl font-bold ${manager.image ? 'hidden' : 'flex'}`}
                   >
-                    <div className="rm-photo-initials">
-                      <span>{getInitials(manager.name)}</span>
-                    </div>
+                    <span>{getInitials(manager.name)}</span>
                   </div>
                 </div>
 
-                <div className="rm-profile-header">
-                  <div className="rm-profile-title">
-                    <h2 className="rm-profile-name">{manager.name}</h2>
-                    <div className="rm-profile-meta-row">
-                      <span className="rm-badge">{manager.role}</span>
-                      <span className="rm-listings-pill">{properties.length} Listings</span>
-                    </div>
-                  </div>
-
-                  <div className="rm-profile-qr" aria-label="QR code placeholder">
-                    <div className="rm-qr-box" />
+                <div className="flex-1">
+                  <h2 className="text-2xl font-bold text-gray-800 mb-2">{manager.name}</h2>
+                  <div className="flex items-center gap-2 mb-4">
+                    <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm font-semibold">{manager.role}</span>
+                    <span className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm">{properties.length} Listings</span>
                   </div>
                 </div>
 
-                <div className="rm-profile-awards" aria-hidden="true">
-                  <div className="rm-award-badge" />
-                  <div className="rm-award-badge" />
-                  <div className="rm-award-badge" />
+                {/* QR Code Placeholder */}
+                <div className="w-20 h-20 bg-gray-200 rounded-lg flex items-center justify-center">
+                  <div className="w-16 h-16 bg-white border-2 border-gray-300 rounded"></div>
                 </div>
               </div>
 
-              <div className="rm-profile-body">
-                <h3 className="rm-about-title">About {manager.name}</h3>
-                <p className="rm-about-paragraph">
+              {/* Awards/Badges */}
+              <div className="flex gap-2 mb-6">
+                <div className="px-4 py-2 bg-yellow-100 text-yellow-800 rounded-lg text-sm font-semibold flex items-center gap-2">
+                  <span>⭐</span>
+                  <span>CUSTOMER'S CHOICE</span>
+                </div>
+                <div className="px-4 py-2 bg-yellow-100 text-yellow-800 rounded-lg text-sm font-semibold flex items-center gap-2">
+                  <span>⭐</span>
+                  <span>5 STAR RENT MANAGER</span>
+                </div>
+              </div>
+
+              {/* About Section */}
+              <div>
+                <h3 className="text-xl font-bold mb-4 text-gray-800">ABOUT US</h3>
+                <p className="text-gray-600 leading-relaxed mb-4">
                   {manager.name} is a {manager.role} with {properties.length} property listings.
                 </p>
+                <ul className="space-y-2">
+                  <li className="flex items-start gap-2">
+                    <span className="text-green-600 mt-1">✓</span>
+                    <span className="text-gray-600">Proven Expertise: Skilled in overseeing rental properties, maintaining smooth operations, and maximizing property value.</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-green-600 mt-1">✓</span>
+                    <span className="text-gray-600">Strong Credentials: Knowledgeable in landlord-tenant laws, financial management, and effective communication strategies.</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-green-600 mt-1">✓</span>
+                    <span className="text-gray-600">Client-Centered Approach: Committed to fostering positive tenant relationships and ensuring seamless property management.</span>
+                  </li>
+                </ul>
               </div>
             </div>
 
-            <aside className="rm-contact-card">
-              <h3 className="rm-contact-title">Contact {manager.name}</h3>
-              <form className="rm-contact-form" onSubmit={handleSubmit}>
+            {/* Contact Form */}
+            <aside className="bg-white rounded-lg shadow-md p-6">
+              <h3 className="text-xl font-bold mb-4 text-gray-800">Contact {manager.name}</h3>
+              <form className="space-y-4" onSubmit={handleSubmit}>
                 <input
                   name="firstName"
                   placeholder="First Name"
                   value={formData.firstName}
                   onChange={handleInputChange}
-                  className="rm-input"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   required
                 />
                 <input
@@ -401,7 +415,7 @@ export default function RentManagerDetailsPage() {
                   placeholder="Last Name"
                   value={formData.lastName}
                   onChange={handleInputChange}
-                  className="rm-input"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   required
                 />
                 <input
@@ -409,7 +423,7 @@ export default function RentManagerDetailsPage() {
                   placeholder="Phone"
                   value={formData.phone}
                   onChange={handleInputChange}
-                  className="rm-input"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   required
                 />
                 <input
@@ -418,7 +432,7 @@ export default function RentManagerDetailsPage() {
                   placeholder="Email"
                   value={formData.email}
                   onChange={handleInputChange}
-                  className="rm-input"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   required
                 />
                 <textarea
@@ -426,26 +440,35 @@ export default function RentManagerDetailsPage() {
                   placeholder="Your message"
                   value={formData.message}
                   onChange={handleInputChange}
-                  className="rm-textarea"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   rows={4}
                   required
                 />
-                <button className="rm-contact-submit" type="submit">Contact</button>
+                <button className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors" type="submit">Contact</button>
               </form>
             </aside>
           </section>
 
-          <section className="rm-tabs-card">
-            <div className="rm-tabs-header">
+          {/* Tabs Section */}
+          <section className="bg-white rounded-lg shadow-md p-6">
+            <div className="flex border-b border-gray-200 mb-6">
               <button
-                className={`rm-tab ${activeTab === 'listing' ? 'active' : ''}`}
+                className={`px-6 py-3 font-semibold border-b-2 transition-colors ${
+                  activeTab === 'listing' 
+                    ? 'border-blue-600 text-blue-600' 
+                    : 'border-transparent text-gray-600 hover:text-gray-800'
+                }`}
                 onClick={() => setActiveTab('listing')}
                 type="button"
               >
                 Listing ({properties.length})
               </button>
               <button
-                className={`rm-tab ${activeTab === 'reviews' ? 'active' : ''}`}
+                className={`px-6 py-3 font-semibold border-b-2 transition-colors ${
+                  activeTab === 'reviews' 
+                    ? 'border-blue-600 text-blue-600' 
+                    : 'border-transparent text-gray-600 hover:text-gray-800'
+                }`}
                 onClick={() => setActiveTab('reviews')}
                 type="button"
               >
@@ -454,20 +477,21 @@ export default function RentManagerDetailsPage() {
             </div>
 
             {activeTab === 'listing' ? (
-              <div className="rm-listing-panel">
-                <div className="rm-listing-controls">
-                  <div className="rm-search-wrap">
-                    <span className="rm-search-icon" aria-hidden="true">🔍</span>
+              <div>
+                {/* Search and Filters */}
+                <div className="mb-6 space-y-4">
+                  <div className="relative">
+                    <span className="absolute left-3 top-2 text-gray-400">🔍</span>
                     <input
-                      className="rm-search"
+                      className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                       placeholder="Search properties by name, location"
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
                     />
                   </div>
-                  <div className="rm-filters-row">
+                  <div className="flex flex-wrap gap-3">
                     <select
-                      className="rm-select"
+                      className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                       value={priceFilter}
                       onChange={(e) => setPriceFilter(e.target.value)}
                     >
@@ -479,7 +503,7 @@ export default function RentManagerDetailsPage() {
                       <option value="over-80k">Over ₱80,000</option>
                     </select>
                     <select
-                      className="rm-select"
+                      className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                       value={sortOrder}
                       onChange={(e) => setSortOrder(e.target.value as 'newest' | 'oldest')}
                     >
@@ -487,15 +511,19 @@ export default function RentManagerDetailsPage() {
                       <option value="oldest">Oldest First</option>
                     </select>
                     <button
-                      className={`rm-more-filters ${showMoreFilters ? 'active' : ''}`}
+                      className={`px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors ${
+                        showMoreFilters ? 'bg-blue-50 border-blue-500' : ''
+                      }`}
                       type="button"
                       onClick={() => setShowMoreFilters(!showMoreFilters)}
                     >
                       More Filters
                     </button>
-                    <div className="rm-view-toggle-container">
+                    <div className="flex gap-2 border border-gray-300 rounded-lg p-1">
                       <button
-                        className={`rm-view-btn ${viewMode === 'horizontal' ? 'active' : ''}`}
+                        className={`p-2 rounded transition-colors ${
+                          viewMode === 'horizontal' ? 'bg-blue-600 text-white' : 'text-gray-600 hover:bg-gray-100'
+                        }`}
                         type="button"
                         aria-label="List View"
                         onClick={() => setViewMode('horizontal')}
@@ -505,7 +533,9 @@ export default function RentManagerDetailsPage() {
                         </svg>
                       </button>
                       <button
-                        className={`rm-view-btn ${viewMode === 'vertical' ? 'active' : ''}`}
+                        className={`p-2 rounded transition-colors ${
+                          viewMode === 'vertical' ? 'bg-blue-600 text-white' : 'text-gray-600 hover:bg-gray-100'
+                        }`}
                         type="button"
                         aria-label="Grid View"
                         onClick={() => setViewMode('vertical')}
@@ -521,11 +551,11 @@ export default function RentManagerDetailsPage() {
                   </div>
 
                   {showMoreFilters && (
-                    <div className="rm-more-filters-panel">
-                      <div className="rm-filter-group">
-                        <label className="rm-filter-label">Property Type</label>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 p-4 bg-gray-50 rounded-lg">
+                      <div>
+                        <label className="block text-sm font-semibold mb-2 text-gray-700">Property Type</label>
                         <select
-                          className="rm-select"
+                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                           value={moreFilters.propertyType}
                           onChange={(e) => setMoreFilters({ ...moreFilters, propertyType: e.target.value })}
                         >
@@ -539,10 +569,10 @@ export default function RentManagerDetailsPage() {
                           <option value="Bed Space">Bed Space</option>
                         </select>
                       </div>
-                      <div className="rm-filter-group">
-                        <label className="rm-filter-label">Bedrooms</label>
+                      <div>
+                        <label className="block text-sm font-semibold mb-2 text-gray-700">Bedrooms</label>
                         <select
-                          className="rm-select"
+                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                           value={moreFilters.bedrooms}
                           onChange={(e) => setMoreFilters({ ...moreFilters, bedrooms: e.target.value })}
                         >
@@ -554,10 +584,10 @@ export default function RentManagerDetailsPage() {
                           <option value="4">4+</option>
                         </select>
                       </div>
-                      <div className="rm-filter-group">
-                        <label className="rm-filter-label">Bathrooms</label>
+                      <div>
+                        <label className="block text-sm font-semibold mb-2 text-gray-700">Bathrooms</label>
                         <select
-                          className="rm-select"
+                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                           value={moreFilters.bathrooms}
                           onChange={(e) => setMoreFilters({ ...moreFilters, bathrooms: e.target.value })}
                         >
@@ -567,10 +597,10 @@ export default function RentManagerDetailsPage() {
                           <option value="3">3+</option>
                         </select>
                       </div>
-                      <div className="rm-filter-group">
-                        <label className="rm-filter-label">Parking</label>
+                      <div>
+                        <label className="block text-sm font-semibold mb-2 text-gray-700">Parking</label>
                         <select
-                          className="rm-select"
+                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                           value={moreFilters.parking}
                           onChange={(e) => setMoreFilters({ ...moreFilters, parking: e.target.value })}
                         >
@@ -579,23 +609,13 @@ export default function RentManagerDetailsPage() {
                           <option value="1">1</option>
                           <option value="2">2+</option>
                         </select>
-                                           
-                      </div>
-                      <div className="rm-filter-group">  
-                      <label className="rm-filter-label">Clear Filters</label>
-                        <button
-                          className="rm-clear-filters"
-                          type="button"
-                          onClick={() => setShowMoreFilters(false)}
-                        >
-                          Clear
-                        </button>
                       </div>
                     </div>
                   )}
                 </div>
 
-                <div className={`rm-listings ${viewMode === 'vertical' ? 'rm-listings-grid' : ''}`}>
+                {/* Property Listings */}
+                <div className={`mt-6 ${viewMode === 'vertical' ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6' : 'space-y-4'}`}>
                   {filteredAndSortedProperties.length > 0 ? (
                     filteredAndSortedProperties.map((p) => {
                       const propertySize = p.area 
@@ -639,20 +659,21 @@ export default function RentManagerDetailsPage() {
                       )
                     })
                   ) : (
-                    <div className="rm-empty-state">
+                    <div className="text-center py-12 text-gray-500">
                       <p>No properties found matching your filters.</p>
                     </div>
                   )}
                 </div>
               </div>
             ) : (
-              <div className="rm-reviews-panel">
-                <div className="rm-overall-rating">
-                  <div className="rm-rating-display">
-                    <div className="rm-rating-number">{roundedRating}</div>
-                    <div className="rm-rating-out-of">out of 5</div>
+              <div>
+                {/* Overall Rating */}
+                <div className="flex items-center gap-8 mb-8 pb-8 border-b border-gray-200">
+                  <div className="text-center">
+                    <div className="text-4xl font-bold text-gray-800">{roundedRating}</div>
+                    <div className="text-sm text-gray-500">out of 5</div>
                   </div>
-                  <div className="rm-rating-stars">
+                  <div className="flex items-center gap-1">
                     {[...Array(5)].map((_, index) => {
                       const starValue = index + 1
                       let fillPercentage = 0
@@ -663,18 +684,18 @@ export default function RentManagerDetailsPage() {
                       }
 
                       return (
-                        <div key={index} className="rm-star-wrapper">
+                        <div key={index} className="relative">
                           <svg
                             width="32"
                             height="32"
                             viewBox="0 0 24 24"
                             fill="none"
-                            className="rm-star-outline"
+                            className="text-gray-300"
                           >
-                            <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" stroke="#D1D5DB" strokeWidth="1" />
+                            <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" stroke="currentColor" strokeWidth="1" />
                           </svg>
                           <div
-                            className="rm-star-fill"
+                            className="absolute top-0 left-0 overflow-hidden"
                             style={{ width: `${fillPercentage}%` }}
                           >
                             <svg
@@ -690,22 +711,24 @@ export default function RentManagerDetailsPage() {
                       )
                     })}
                   </div>
-                  <div className="rm-rating-count">{reviews.length} reviews</div>
+                  <div className="text-gray-600">{reviews.length} reviews</div>
                 </div>
-                <div className="rm-reviews-list">
+                
+                {/* Reviews List */}
+                <div className="space-y-6">
                   {reviews.map((review) => (
-                    <div key={review.id} className="rm-review-card">
-                      <div className="rm-review-header">
-                        <div className="rm-reviewer-info">
-                          <div className="rm-reviewer-avatar">
+                    <div key={review.id} className="border-b border-gray-200 pb-6 last:border-0">
+                      <div className="flex items-start justify-between mb-3">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center text-white font-semibold">
                             {review.reviewerName.charAt(0)}
                           </div>
-                          <div className="rm-reviewer-details">
-                            <div className="rm-reviewer-name">{review.reviewerName}</div>
-                            <div className="rm-review-date">{review.date}</div>
+                          <div>
+                            <div className="font-semibold text-gray-800">{review.reviewerName}</div>
+                            <div className="text-sm text-gray-500">{review.date}</div>
                           </div>
                         </div>
-                        <div className="rm-review-rating">
+                        <div className="flex gap-1">
                           {[...Array(5)].map((_, index) => (
                             <svg
                               key={index}
@@ -713,15 +736,13 @@ export default function RentManagerDetailsPage() {
                               height="20"
                               viewBox="0 0 24 24"
                               fill={index < review.rating ? '#FBBF24' : '#E5E7EB'}
-                              stroke={index < review.rating ? '#FBBF24' : '#D1D5DB'}
-                              strokeWidth="1"
                             >
                               <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
                             </svg>
                           ))}
                         </div>
                       </div>
-                      <div className="rm-review-comment">
+                      <div className="text-gray-600 leading-relaxed">
                         {review.comment}
                       </div>
                     </div>
@@ -730,14 +751,15 @@ export default function RentManagerDetailsPage() {
               </div>
             )}
 
-            <div className="rm-pagination">
-              <button className="rm-page-arrow" type="button">←</button>
-              <button className="rm-page-num active" type="button">1</button>
-              <button className="rm-page-num" type="button">2</button>
-              <button className="rm-page-num" type="button">3</button>
-              <span className="rm-page-ellipsis">...</span>
-              <button className="rm-page-num" type="button">50</button>
-              <button className="rm-page-num" type="button">→</button>
+            {/* Pagination */}
+            <div className="flex items-center justify-center gap-2 mt-8 pt-8 border-t border-gray-200">
+              <button className="px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors" type="button">←</button>
+              <button className="px-4 py-2 bg-blue-600 text-white rounded-lg font-semibold" type="button">1</button>
+              <button className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors" type="button">2</button>
+              <button className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors" type="button">3</button>
+              <span className="px-2 text-gray-500">...</span>
+              <button className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors" type="button">50</button>
+              <button className="px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors" type="button">→</button>
             </div>
           </section>
         </div>

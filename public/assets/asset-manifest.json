@@ -502,6 +502,16 @@
           "originalName": "blog-image2.png"
         }
       },
+      "contact": {
+        "CONTACT_PERSON": {
+          "id": "CONTACT_PERSON",
+          "path": "/assets/images/contact/contact-person.png",
+          "category": "images",
+          "subcategory": "contact",
+          "description": "Contact person image",
+          "originalName": "contact-person.png"
+        }
+      },
       "testimonials": {
         "TESTIMONIAL_ELAINE": {
           "id": "TESTIMONIAL_ELAINE",
@@ -722,6 +732,20 @@
           "category": "backgrounds",
           "description": "News section background",
           "originalName": "news-bg.png"
+        },
+        "BG_CONTACT_HORIZONTAL": {
+          "id": "BG_CONTACT_HORIZONTAL",
+          "path": "/assets/backgrounds/contact-horizontal-bg.png",
+          "category": "backgrounds",
+          "description": "Contact horizontal section background",
+          "originalName": "contact-horizontal-bg.png"
+        },
+        "BG_CONTACT_VERTICAL": {
+          "id": "BG_CONTACT_VERTICAL",
+          "path": "/assets/backgrounds/contact-vertical-bg.png",
+          "category": "backgrounds",
+          "description": "Contact vertical section background",
+          "originalName": "contact-vertical-bg.png"
         }
       
     },

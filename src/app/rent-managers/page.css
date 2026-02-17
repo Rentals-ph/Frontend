@@ -57,7 +57,7 @@
 
 .what-are-rm-title {
   font-family: 'Outfit', 'Montserrat', sans-serif;
-  font-size: 36px;
+  font-size: 48px;
   font-weight: 700;
   color: #205ED7;
   margin: 0 0 20px 0;
@@ -133,9 +133,179 @@
   text-align: center;
 }
 
+/* HERO specific styles to match the provided design */
+.hero-section {
+  position: relative;
+  overflow: visible; /* space for overlapping cards */
+}
+
+/* Use a blue gradient matching the design */
+.hero-section {
+  background: linear-gradient(180deg, #2f7df0 0%, #184a94 100%);
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+/* hero layout spacing moved from inline styles */
+.hero-section {
+  min-height: 220px;
+}
+
+.hero-content {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 60px 40px 0;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  position: relative;
+  z-index: 2; /* keep content above the person image */
+}
+
+.hero-left {
+  flex: 1 1 50%;
+}
+
+.hero-right {
+  flex: 1 1 50%;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  position: relative;
+}
+
+.hero-right img {
+  width: 420px;
+  max-width: 48vw;
+  height: auto;
+  object-fit: cover;
+  transform: translateY(-10px);
+}
+
+/* Position the hero person so it overlaps/escapes the top of the hero container */
+.hero-right {
+  position: relative;
+}
+
+.hero-person-img {
+  position: relative;/* push head further above the top */
+  right: 40px;
+  width: 560px;
+  height: auto;
+  z-index: 1; /* placed behind hero-features */
+  pointer-events: none;
+}
+
+.hero-features {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: -60px;
+  width: 100%;
+  pointer-events: auto;
+  display: flex;
+  justify-content: center;
+  z-index: 6; /* ensure feature cards sit above person image */
+}
+
+/* hero-specific title/text overrides (white on blue) */
+.hero-section .what-are-rm-title {
+  color: #ffffff;
+  font-size: 40px;
+  font-weight: 700;
+  margin-bottom: 24px;
+}
+
+.hero-section .what-are-rm-text {
+  color: #ffffff;
+  font-size: 18px;
+  margin-bottom: 32px;
+  max-width: 600px;
+}
+
+.hero-features-inner {
+  display: flex;
+  gap: 20px;
+  background: transparent;
+  padding: 12px;
+  max-width: 1200px;
+  width: calc(100% - 40px);
+  box-sizing: border-box;
+  justify-content: space-between;
+}
+
+.hf-card {
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 18px 20px;
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.12), 0 6px 18px rgba(2,6,23,0.06);
+  flex: 1 1 0;
+  min-width: 220px;
+}
+
+/* When the hf-card contains a single body element, stack and center its contents */
+.hf-card .hf-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 10px;
+}
+
+.hf-card .hf-body img {
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
+  display: block;
+  margin: 0 auto;
+}
+
+.hf-icon {
+  width: 64px;
+  height: 64px;
+  background: linear-gradient(180deg, rgba(32,94,215,0.12), rgba(32,94,215,0.06));
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hf-icon img {
+  width: 36px;
+  height: 36px;
+}
+
+.hf-title {
+  font-family: 'Outfit', 'Montserrat', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  color: #205ED7;
+}
+
+.hf-desc {
+  font-family: 'Outfit', 'Inter', sans-serif;
+  font-size: 13px;
+  color: #444;
+  line-height: 1.4;
+}
+
+@media (max-width: 900px) {
+  .hero-content { flex-direction: column-reverse; padding: 36px 20px 0 }
+  .hero-right img { width: 280px }
+  .hero-person-img { position: static; width: 320px; height: auto; margin-top: -20px; }
+  .hero-features-inner { gap: 12px; flex-direction: column; align-items: stretch }
+  .hf-card { min-width: auto }
+}
+
 /* Find a Rent Managers Section */
 .find-rm-section {
-  margin-bottom: 80px;
+  padding: 80px 0;
 }
 
 .find-rm-title {

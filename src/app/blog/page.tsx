@@ -68,49 +68,13 @@ export default function BlogPage() {
       <PageHeader title="BLOG" />
       <main className="blog-main-content">
         {loading ? (
-          <div style={{ textAlign: 'center', padding: '40px' }}>
+          <div style={{ textAlign: 'center' }}>
             <p>Loading blogs...</p>
           </div>
         ) : (
           <>
-
             {/* Custom 3-card layout: small - large - small */}
-            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'stretch', gap: 24, marginBottom: 40 }}>
-              {/* Always render 3 cards, fallback to first/empty if not enough blogs */}
-              <BlogCard
-                image={getImageUrl(blogs[1]?.image || blogs[0]?.image || ASSETS.PLACEHOLDER_PROPERTY_MAIN)}
-                category={blogs[1]?.category || blogs[0]?.category || ''}
-                title={blogs[1]?.title || blogs[0]?.title || ''}
-                excerpt={blogs[1]?.excerpt || blogs[0]?.excerpt || ''}
-                author={<><HiUser style={{verticalAlign:'middle',marginRight:6}}/>{blogs[1]?.author || blogs[0]?.author || ''}</>}
-                date={<><HiCalendar style={{verticalAlign:'middle',marginRight:6}}/>{formatDate(blogs[1]?.published_at || blogs[0]?.published_at || null)}</>}
-                readTime={formatReadTime(blogs[1]?.read_time || blogs[0]?.read_time || 1)}
-                link={blogs[1] ? `/blog/${blogs[1].id}` : blogs[0] ? `/blog/${blogs[0].id}` : '#'}
-                size="small"
-              />
-              <BlogCard
-                image={getImageUrl(blogs[0]?.image || ASSETS.PLACEHOLDER_PROPERTY_MAIN)}
-                category={blogs[0]?.category || ''}
-                title={blogs[0]?.title || ''}
-                excerpt={blogs[0]?.excerpt || ''}
-                author={<><HiUser style={{verticalAlign:'middle',marginRight:6}}/>{blogs[0]?.author || ''}</>}
-                date={<><HiCalendar style={{verticalAlign:'middle',marginRight:6}}/>{formatDate(blogs[0]?.published_at || null)}</>}
-                readTime={formatReadTime(blogs[0]?.read_time || 1)}
-                link={blogs[0] ? `/blog/${blogs[0].id}` : '#'}
-                size="large"
-              />
-              <BlogCard
-                image={getImageUrl(blogs[2]?.image || blogs[0]?.image || ASSETS.PLACEHOLDER_PROPERTY_MAIN)}
-                category={blogs[2]?.category || blogs[0]?.category || ''}
-                title={blogs[2]?.title || blogs[0]?.title || ''}
-                excerpt={blogs[2]?.excerpt || blogs[0]?.excerpt || ''}
-                author={<><HiUser style={{verticalAlign:'middle',marginRight:6}}/>{blogs[2]?.author || blogs[0]?.author || ''}</>}
-                date={<><HiCalendar style={{verticalAlign:'middle',marginRight:6}}/>{formatDate(blogs[2]?.published_at || blogs[0]?.published_at || null)}</>}
-                readTime={formatReadTime(blogs[2]?.read_time || blogs[0]?.read_time || 1)}
-                link={blogs[2] ? `/blog/${blogs[2].id}` : blogs[0] ? `/blog/${blogs[0].id}` : '#'}
-                size="small"
-              />
-            </div>
+            
 
             <div className="blog-articles-grid">
               {regularPosts.map((post) => (

@@ -1,7 +1,9 @@
 {
+  "/_not-found/page": "app/_not-found/page.js",
   "/page": "app/page.js",
-  "/about/page": "app/about/page.js",
-  "/rent-managers/page": "app/rent-managers/page.js",
   "/properties/page": "app/properties/page.js",
-  "/property/[id]/page": "app/property/[id]/page.js"
+  "/about/page": "app/about/page.js",
+  "/agent/page": "app/agent/page.js",
+  "/agent/listing-assistant/page": "app/agent/listing-assistant/page.js",
+  "/agent/create-listing/page": "app/agent/create-listing/page.js"
 }

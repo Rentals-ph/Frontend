@@ -13,6 +13,7 @@ import PageHeader from '../../components/layout/PageHeader'
 import { propertiesApi } from '../../api/endpoints/properties'
 import type { Property } from '../../types'
 import { ASSETS } from '@/utils/assets'
+import PopularSearches from '@/components/home/PopularSearches'
 
 function PropertiesContent() {
   const searchParams = useSearchParams()
@@ -121,7 +122,7 @@ function PropertiesContent() {
 
   // Helper function to format price
   const formatPrice = (price: number): string => {
-    return `₱${price.toLocaleString('en-US')}/Month`
+    return `₱${price.toLocaleString('en-US')}/Monthly`
   }
 
   // Helper function to format date
@@ -1358,7 +1359,7 @@ function PropertiesContent() {
           </div>
         </div>
       </main>
-
+      <PopularSearches />
       <Footer />
     </div>
   )

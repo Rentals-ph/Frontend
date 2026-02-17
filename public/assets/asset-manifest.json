@@ -681,6 +681,13 @@
         "description": "New hero landing page background",
         "originalName": "landing-hero-bg-new-784ecf.png"
       },
+        "BG_LOGIN": {
+          "id": "BG_LOGIN",
+          "path": "/assets/backgrounds/login-bg.png",
+          "category": "backgrounds",
+          "description": "Login modal background image",
+          "originalName": "login-bg.png"
+        },
       "BG_CONTACT_US": {
         "id": "BG_CONTACT_US",
         "path": "/assets/backgrounds/background-contactus.png",

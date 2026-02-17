@@ -10,5 +10,17 @@
     "files": [
       "static/chunks/_app-pages-browser_node_modules_leaflet_dist_leaflet-src_js.js"
     ]
+  },
+  "components/listing-assistant/ListingAssistantChat.tsx -> leaflet": {
+    "id": "components/listing-assistant/ListingAssistantChat.tsx -> leaflet",
+    "files": [
+      "static/chunks/_app-pages-browser_node_modules_leaflet_dist_leaflet-src_js.js"
+    ]
+  },
+  "components/listing-assistant/LocationPicker.tsx -> leaflet": {
+    "id": "components/listing-assistant/LocationPicker.tsx -> leaflet",
+    "files": [
+      "static/chunks/_app-pages-browser_node_modules_leaflet_dist_leaflet-src_js.js"
+    ]
   }
 }

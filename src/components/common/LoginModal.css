@@ -61,17 +61,17 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 60px 50px;
+  padding: 40px 30px;
 }
 
 .login-branding {
   text-align: center;
-  max-width: 380px;
+  max-width: 450px;
 }
 
 .login-logo {
   width: 100%;
-  max-width: 320px;
+  max-width: 420px;
   height: auto;
 }
 
@@ -83,30 +83,36 @@
   flex-direction: column;
   justify-content: center;
   max-width: 500px;
+  background: rgba(255,255,255,0.95);
+  box-shadow: 0 4px 32px rgba(32,94,215,0.08);
+  border-radius: 0 16px 16px 0;
+  border-left: 1.5px solid #e5e7eb;
+  position: relative;
 }
 
 .login-title {
+  text-shadow: 0 2px 8px rgba(254,142,10,0.08);
+  text-align: center;
   color: #FE8E0A;
   font-family: 'Outfit', 'Inter', sans-serif;
-  font-size: 48px;
+  font-size: 40px;
   font-weight: 700;
-  text-align: center;
-  margin: 0 0 36px 0;
-  letter-spacing: 3px;
-  line-height: 1;
 }
 
 /* Form Styles */
 .login-form {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 15px;
 }
 
 .form-group {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
+  border-radius: 8px;
+  box-shadow: 0 1px 4px rgba(32,94,215,0.04);
+  margin-bottom: 8px;
 }
 
 .form-group label {
@@ -135,19 +141,19 @@
 .input-with-icon input {
   width: 100%;
   padding: 13px 16px 13px 56px;
-  border: 1px solid #e5e7eb;
+  border: 1.5px solid #e5e7eb;
   border-radius: 6px;
   font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 15px;
   color: #374151;
-  background: #ff2200;
+  background: #fff;
   transition: all 0.3s ease;
   line-height: 1.4;
+  box-shadow: 0 1px 4px rgba(32,94,215,0.04);
 }
 
 .input-with-icon input::placeholder {
   color: #9ca3af;
-  font-style: italic;
 }
 
 .input-with-icon input:focus {
@@ -223,7 +229,10 @@
 /* Footer */
 .login-footer {
   text-align: center;
-  margin-top: 32px;
+  margin-top: 40px;
+  padding-bottom: 8px;
+  font-size: 16px;
+  color: #374151;
 }
 
 .login-footer p {

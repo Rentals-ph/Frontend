@@ -128,23 +128,36 @@ function LoginModal({ isOpen, onClose, onRegisterClick }: LoginModalProps) {
         <button className="modal-close-btn" onClick={onClose}>
           ✕
         </button>
-        
         <div className="login-modal-content">
-          {/* Left Side - Branding */}
-          <div className="login-modal-left">
-            <div className="login-branding">
+          {/* Left Side - Background and Branding */}
+          <div className="login-modal-left" style={{ padding: 0, position: 'relative' }}>
+            <img
+              src={ASSETS.BG_LOGIN}
+              alt="Login Background"
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: '100%',
+                height: '100%',
+                objectFit: 'cover',
+                zIndex: 0,
+                borderTopLeftRadius: '16px',
+                borderBottomLeftRadius: '16px',
+              }}
+            />
+            <div className="login-branding" style={{ position: 'relative', zIndex: 1 }}>
               <img
-                src={ASSETS.LOGO_HERO_MAIN}
-                alt="Rentals.ph - Philippines #1 Property Rental Website"
+                src={ASSETS.LOGO_FOOTER_WHITE}
+                alt="Rentals.ph Logo White"
                 className="login-logo"
+                style={{ marginBottom: '24px', width: '320px', height: 'auto' }}
               />
             </div>
           </div>
-
           {/* Right Side - Form */}
           <div className="login-modal-right">
             <h2 className="login-title">LOGIN</h2>
-            
             <form onSubmit={handleSubmit} className="login-form">
               {/* Error Message */}
               {loginError && (
@@ -160,7 +173,6 @@ function LoginModal({ isOpen, onClose, onRegisterClick }: LoginModalProps) {
                   {loginError}
                 </div>
               )}
-
               <div className="form-group">
                 <label htmlFor="email">Email</label>
                 <div className="input-with-icon">
@@ -178,7 +190,6 @@ function LoginModal({ isOpen, onClose, onRegisterClick }: LoginModalProps) {
                   />
                 </div>
               </div>
-
               <div className="form-group">
                 <label htmlFor="password">Password</label>
                 <div className="input-with-icon">
@@ -212,7 +223,6 @@ function LoginModal({ isOpen, onClose, onRegisterClick }: LoginModalProps) {
                   </button>
                 </div>
               </div>
-
               <div className="form-checkbox">
                 <input
                   type="checkbox"
@@ -222,16 +232,14 @@ function LoginModal({ isOpen, onClose, onRegisterClick }: LoginModalProps) {
                 />
                 <label htmlFor="remember">Remember me</label>
               </div>
-
               <button type="submit" className="login-submit-btn" disabled={isSubmitting}>
                 {isSubmitting ? 'Logging in...' : 'Login'}
               </button>
             </form>
-
             <div className="login-footer">
               <p>Don't have an account?</p>
               <button className="register-link" onClick={onRegisterClick}>
-                Register
+                Register as Agent
               </button>
             </div>
           </div>

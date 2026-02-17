@@ -708,7 +708,22 @@
         "category": "backgrounds",
         "description": "Rent managers section background",
         "originalName": "rent-managers-bg.png"
-      }
+        },
+        "BG_BLOG": {
+          "id": "BG_BLOG",
+          "path": "/assets/backgrounds/blog-bg.png",
+          "category": "backgrounds",
+          "description": "Blog section background",
+          "originalName": "blog-bg.png"
+        },
+        "BG_NEWS": {
+          "id": "BG_NEWS",
+          "path": "/assets/backgrounds/news-bg.png",
+          "category": "backgrounds",
+          "description": "News section background",
+          "originalName": "news-bg.png"
+        }
+      
     },
     "decorative": {
       "DECORATIVE_VECTOR_1": {

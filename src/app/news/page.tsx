@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Navbar from '../../components/layout/Navbar'
 import Footer from '../../components/layout/Footer'
-import PageHeader from '../../components/layout/PageHeader'
 import { newsApi } from '../../api'
 import type { News } from '../../api/endpoints/news'
 import { ASSETS } from '@/utils/assets'
@@ -32,14 +31,19 @@ export default function NewsPage() {
   const categoryColors: { [key: string]: string } = {
     'Business': '#4A90E2',
     'Economy': '#50C878',
-    'Technology': '#9B59B6',
+    'Technology': '#FF69B4',
     'Politics': '#E74C3C',
-    'Health': '#F39C12',
-    'Sports': '#3498DB',
+    'Health': '#50C878',
+    'Sports': '#E74C3C',
     'Entertainment': '#E91E63',
     'Science': '#00BCD4',
     'Legal': '#E74C3C',
-    'Property Management': '#4A90E2'
+    'Property Management': '#4A90E2',
+    'Environment': '#50C878',
+    'Finance': '#4A90E2',
+    'Real Estate': '#FF8C00',
+    'Travel': '#000000',
+    'Life': '#000000'
   }
 
   const getCategoryColor = (category: string) => {
@@ -47,7 +51,17 @@ export default function NewsPage() {
   }
 
   const formatDate = (dateString: string | null): string => {
-    if (!dateString) return 'Date not available'
+    if (!dateString) return 'January 15, 2026'
+    const date = new Date(dateString)
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    })
+  }
+
+  const formatDateShort = (dateString: string | null): string => {
+    if (!dateString) return 'January 15, 2026'
     const date = new Date(dateString)
     return date.toLocaleDateString('en-US', {
       year: 'numeric',
@@ -68,172 +82,295 @@ export default function NewsPage() {
   }
 
   // Organize news into sections
-  const featuredNews = news.slice(0, 5)
-  const column2Data = {
-    largeCard: news[5] || null,
-    mediumCards: news.slice(6, 8),
-    smallerArticles: news.slice(8, 13)
-  }
-  const column3Data = {
-    mediumCard: news[13] || null,
-    smallerArticles: news.slice(14, 19)
-  }
+  const bigNewsBox = news[0] || null // Left column - big box
+  const topRightBlock = news[1] || null // Right column top - single block
+  const bottomRightBlocks = news.slice(2, 4) // Right column bottom - 2 blocks side by side
+  const recentPosts = news.slice(4, 10)
+  const latestNews = news.slice(10, 16)
+  const headlineNews = news.slice(0, 5) // For ticker animation
 
   return (
-    <div className="flex min-h-screen flex-col bg-white">
+    <div className="flex min-h-screen flex-col bg-white overflow-x-hidden">
       <Navbar />
 
-      {/* Page Header */}
-      <PageHeader title="NEWS" />
+      {/* Red Hero Banner */}
+      <section className="w-full bg-red-600 py-8 md:py-10">
+        <div className="px-6 md:px-10 lg:px-[150px] flex gap-8">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white font-outfit uppercase text-start mb-4">
+            NEWS
+          </h1>
+          
+          {/* Headline Ticker Animation */}
+          {headlineNews.length > 0 && (
+            <div className="relative overflow-hidden bg-black/20 py-3 h-13 rounded justify-center items-center flex">
+              <div 
+                className="flex whitespace-nowrap"
+                style={{
+                  animation: 'scrollRight 40s linear infinite'
+                }}
+              >
+                {/* Duplicate content for seamless loop */}
+                {[...Array(3)].map((_, loopIndex) => (
+                  <div key={loopIndex} className="flex items-center gap-8 px-4">
+                    {headlineNews.map((article, index) => (
+                      <div key={`${loopIndex}-${index}`} className="flex items-center gap-4">
+                        <span className="text-white font-outfit text-sm md:text-base font-semibold">
+                          {article.title}
+                        </span>
+                        <span className="text-white/60 text-lg">•</span>
+                      </div>
+                    ))}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+          
+          <style dangerouslySetInnerHTML={{
+            __html: `
+              @keyframes scrollRight {
+                0% {
+                  transform: translateX(0);
+                }
+                100% {
+                  transform: translateX(-33.333%);
+                }
+              }
+            `
+          }} />
+        </div>
+      </section>
 
-      {/* Main Content */}
-      <main className="mx-auto w-full max-w-7xl px-4 py-10 md:px-8 lg:px-16">
-        <div className="grid grid-cols-1 gap-8 lg:grid-cols-[1.4fr_3.5fr_1.6fr]">
+      {/* Main Content Area with Background Texture */}
+      <div 
+        className="relative w-full"
+        style={{
+          backgroundImage: `url(${ASSETS.BG_NEWS})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat'
+        }}
+      >
+        <div className="absolute inset-0 bg-white/90"></div>
+        
+        <main className="relative z-10 mx-auto w-full px-6 md:px-10 lg:px-[150px] py-12">
           {loading ? (
-            <div className="p-10 text-center">
-              <p>Loading news...</p>
+            <div className="text-center py-20">
+              <p className="text-gray-600">Loading news...</p>
             </div>
           ) : (
             <>
-              {/* Left Column - Featured News */}
-              <div className="flex h-full flex-col justify-start">
-                <h2 className="mb-6 font-outfit text-2xl font-bold text-rental-blue-800 md:text-lg">Featured News</h2>
-                <div className="mb-6 flex flex-col gap-5">
-                  {featuredNews.slice(0, 3).map((article) => (
-                    <article key={article.id} className="flex flex-col gap-4 md:flex-row md:items-start">
-                      <div className="h-60 w-full flex-shrink-0 overflow-hidden rounded md:h-30 md:w-30">
-                        <img src={getImageUrl(article.image)} alt={article.title} className="h-full w-full object-cover" />
-                      </div>
-                      <div className="flex flex-1 flex-col gap-2">
-                        <h3 className="m-0 font-outfit text-base font-semibold leading-snug text-black md:text-sm">{article.title}</h3>
-                        <div className="flex items-center gap-3 font-outfit text-sm text-gray-600">
-                          <span>{article.author}</span>
-                          <span>{formatDate(article.published_at)}</span>
+              {/* Header Section - Two Columns Layout */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12 items-stretch">
+                {/* Left Column - Big News Box */}
+                <div className="lg:col-span-1 flex">
+                  {bigNewsBox && (
+                    <Link href={`/news/${bigNewsBox.id}`} className="no-underline w-full">
+                      <article className="relative overflow-hidden rounded-lg h-full w-full">
+                        <div className="relative h-[600px] w-full overflow-hidden">
+                          <img 
+                            src={getImageUrl(bigNewsBox.image)} 
+                            alt={bigNewsBox.title} 
+                            className="h-full w-full object-cover" 
+                          />
+                          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/70 to-transparent p-6">
+                            <div className="mb-3">
+                              <span className="bg-black/80 px-3 py-1 rounded text-white font-outfit text-sm font-semibold uppercase">
+                                {bigNewsBox.category}
+                              </span>
+                            </div>
+                            <h2 className="text-2xl md:text-3xl font-bold text-white font-outfit mb-3 leading-tight">
+                              {bigNewsBox.title}
+                            </h2>
+                            <div className="text-white font-outfit text-sm">
+                              Lorem ipsum • {formatDate(bigNewsBox.published_at)}
+                            </div>
+                          </div>
                         </div>
-                      </div>
-                    </article>
-                  ))}
-                  <Link href="/news" className="mt-6 inline-block self-start py-3 font-outfit text-base font-semibold text-rental-blue-800 transition-colors hover:text-rental-orange-500">
-                    View More News →
-                  </Link>
+                      </article>
+                    </Link>
+                  )}
                 </div>
-                
-                <div className="flex h-full items-center justify-center rounded bg-gradient-to-b from-rental-orange-500 to-rental-blue-800 px-5 py-15">
-                  <span className="font-outfit text-3xl font-bold uppercase tracking-wider text-white md:text-2xl">ADVERTISEMENT</span>
+
+                {/* Right Column - Top Block and Bottom Two Blocks */}
+                <div className="lg:col-span-1 flex flex-col gap-4 h-[600px] max-h-[600px] min-h-0">
+                  {/* Top Block */}
+                  {topRightBlock && (
+                    <Link href={`/news/${topRightBlock.id}`} className="no-underline flex-1 min-h-0">
+                      <article className="relative overflow-hidden rounded-lg h-full">
+                        <div className="relative h-full w-full overflow-hidden">
+                          <img 
+                            src={getImageUrl(topRightBlock.image)} 
+                            alt={topRightBlock.title} 
+                            className="h-full w-full object-cover" 
+                          />
+                          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/70 to-transparent p-4">
+                            <div className="mb-2">
+                              <span className="bg-black/80 px-2 py-1 rounded text-white font-outfit text-xs font-semibold uppercase">
+                                {topRightBlock.category}
+                              </span>
+                            </div>
+                            <h3 className="text-base md:text-lg font-bold text-white font-outfit mb-2 leading-tight line-clamp-2">
+                              {topRightBlock.title}
+                            </h3>
+                            <div className="text-white font-outfit text-xs">
+                              Lorem ipsum • {formatDateShort(topRightBlock.published_at)}
+                            </div>
+                          </div>
+                        </div>
+                      </article>
+                    </Link>
+                  )}
+
+                  {/* Bottom Two Blocks - Side by Side */}
+                  <div className="grid grid-cols-2 gap-4 flex-1 min-h-0">
+                    {bottomRightBlocks.map((article) => (
+                      <Link key={article.id} href={`/news/${article.id}`} className="no-underline h-full min-h-0">
+                        <article className="relative overflow-hidden rounded-lg h-full">
+                          <div className="relative h-full w-full overflow-hidden">
+                            <img 
+                              src={getImageUrl(article.image)} 
+                              alt={article.title} 
+                              className="h-full w-full object-cover" 
+                            />
+                            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/70 to-transparent p-4">
+                              <div className="mb-2">
+                                <span className="bg-black/80 px-2 py-1 rounded text-white font-outfit text-xs font-semibold uppercase">
+                                  {article.category}
+                                </span>
+                              </div>
+                              <h3 className="text-sm md:text-base font-bold text-white font-outfit mb-2 leading-tight line-clamp-2">
+                                {article.title}
+                              </h3>
+                              <div className="text-white font-outfit text-xs">
+                                Lorem ipsum • {formatDateShort(article.published_at)}
+                              </div>
+                            </div>
+                          </div>
+                        </article>
+                      </Link>
+                    ))}
+                  </div>
                 </div>
               </div>
 
-              {/* Second Column - Large Card, Two Medium Cards, Smaller Articles */}
-              <div className="flex h-full flex-col justify-start gap-5">
-                <h2 className="font-outfit text-2xl font-bold text-rental-blue-800 md:text-lg">Editors Choice</h2>
-                
-                {/* Large Featured Card */}
-                {column2Data.largeCard && (
-                  <article className="mb-2 overflow-hidden rounded">
-                    <div className="relative h-96 w-full overflow-hidden md:h-64">
-                      <img src={getImageUrl(column2Data.largeCard.image)} alt={column2Data.largeCard.title} className="h-full w-full object-cover" />
-                      <div className="absolute bottom-0 left-0 right-0 flex flex-col gap-3 bg-gradient-to-t from-black/80 to-transparent p-6">
-                        <span className="mb-1 font-outfit text-sm font-medium text-white" style={{ color: getCategoryColor(column2Data.largeCard.category) }}>• {column2Data.largeCard.category}</span>
-                        <h3 className="m-0 font-outfit text-xl font-semibold leading-snug text-white">{column2Data.largeCard.title}</h3>
-                        <div className="flex items-center gap-3 font-outfit text-sm text-white">
-                          <span>{column2Data.largeCard.author}</span>
-                          <span>{formatDate(column2Data.largeCard.published_at)}</span>
-                        </div>
-                      </div>
-                    </div>
-                  </article>
-                )}
-
-                {/* Two Medium Cards Side by Side */}
-                <div className="mb-2 grid grid-cols-1 gap-4 md:grid-cols-2">
-                  {column2Data.mediumCards.map((article) => (
-                    <article key={article.id} className="flex flex-col overflow-hidden rounded bg-white shadow-md">
-                      <div className="h-40 w-full overflow-hidden md:h-36">
-                        <img src={getImageUrl(article.image)} alt={article.title} className="h-full w-full object-cover" />
-                      </div>
-                      <div className="flex flex-col gap-2 p-4">
-                        <h4 className="m-0 font-outfit text-sm font-semibold leading-snug text-black">{article.title}</h4>
-                        <div className="flex items-center gap-2 font-outfit text-xs text-gray-600">
-                          <span>{article.author}</span>
-                          <span>{formatDate(article.published_at)}</span>
-                        </div>
-                      </div>
-                    </article>
-                  ))}
+              {/* Bottom Content Section */}
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
+                {/* Left Column - Latest News */}
+                <div className="lg:col-span-2">
+                  <h2 className="text-2xl md:text-3xl font-bold text-gray-900 font-outfit mb-6 uppercase">
+                    LATEST NEWS
+                  </h2>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 h-[600px] overflow-y-auto">
+                    {latestNews.map((article) => (
+                      <Link key={article.id} href={`/news/${article.id}`} className="no-underline">
+                        <article className="flex gap-4 pb-6 border-b border-gray-200 hover:opacity-80 transition-opacity">
+                          {/* Image */}
+                          <div className="w-36 h-36 flex-shrink-0 overflow-hidden rounded-lg">
+                            <img 
+                              src={getImageUrl(article.image)} 
+                              alt={article.title} 
+                              className="h-full w-full object-cover" 
+                            />
+                          </div>
+                          {/* Content */}
+                          <div className="flex flex-col flex-1 gap-2">
+                            <h3 className="text-base font-bold text-gray-900 font-outfit leading-tight line-clamp-2">
+                              {article.title}
+                            </h3>
+                            <div className="text-sm text-gray-600 font-outfit">
+                              Lorem Ipsum • {formatDateShort(article.published_at)}
+                            </div>
+                            <div className="mt-1">
+                              <span 
+                                className="text-xs font-semibold font-outfit px-2 py-1 rounded"
+                                style={{ 
+                                  color: getCategoryColor(article.category),
+                                  backgroundColor: `${getCategoryColor(article.category)}20`
+                                }}
+                              >
+                                {article.category}
+                              </span>
+                            </div>
+                          </div>
+                        </article>
+                      </Link>
+                    ))}
+                  </div>
                 </div>
 
-                {/* Smaller Articles */}
-                <div className="flex flex-col gap-4">
-                  {column2Data.smallerArticles.slice(0, 3).map((article) => (
-                    <article key={article.id} className="flex flex-row-reverse items-start gap-3 md:flex-row">
-                      <div className="flex flex-1 flex-col gap-1.5">
-                        <span className="font-outfit text-xs font-medium text-gray-500" style={{ color: getCategoryColor(article.category) }}>• {article.category}</span>
-                        <h5 className="m-0 font-outfit text-sm font-semibold leading-snug text-black">{article.title}</h5>
-                        <div className="flex items-center gap-2 font-outfit text-xs text-gray-600">
-                          <span>{article.author}</span>
-                          <span>{formatDate(article.published_at)}</span>
-                        </div>
-                      </div>
-                      <div className="h-16 w-20 flex-shrink-0 overflow-hidden rounded md:h-18">
-                        <img src={getImageUrl(article.image)} alt={article.title} className="h-full w-full object-cover" />
-                      </div>
-                    </article>
-                  ))}
-                </div>
-                <Link href="/blog" className="mt-6 inline-block self-start py-3 font-outfit text-base font-semibold text-rental-blue-800 transition-colors hover:text-rental-orange-500">
-                  View More News →
-                </Link>
-              </div>
-
-              {/* Third Column - Medium Card and Smaller Articles */}
-              <div className="flex h-full flex-col justify-start gap-5">
-                <h2 className="font-outfit text-2xl font-bold text-rental-blue-800 md:text-lg">Trending</h2>
-                
-                {/* Medium Card */}
-                {column3Data.mediumCard && (
-                  <article className="mb-2 flex flex-col overflow-hidden rounded">
-                    <div className="h-60 w-full overflow-hidden md:h-56">
-                      <img src={getImageUrl(column3Data.mediumCard.image)} alt={column3Data.mediumCard.title} className="h-full w-full object-cover" />
+                {/* Right Column - Recent Posts Sidebar */}
+                <div className="lg:col-span-1">
+                  <h3 className="text-lg font-bold text-gray-900 font-outfit mb-4 uppercase">
+                    RECENT POSTS
+                  </h3>
+                  <div className="relative h-[600px] overflow-hidden">
+                    <div 
+                      className="flex flex-col gap-3"
+                      style={{
+                        animation: 'scrollDown 30s linear infinite'
+                      }}
+                    >
+                      {/* First set of posts */}
+                      {recentPosts.map((article, index) => (
+                        <Link key={`first-${article.id}-${index}`} href={`/news/${article.id}`} className="no-underline">
+                          <div className="flex gap-3 items-start hover:opacity-80 transition-opacity">
+                            <div className="w-16 h-16 flex-shrink-0 overflow-hidden rounded">
+                              <img 
+                                src={getImageUrl(article.image)} 
+                                alt={article.title} 
+                                className="h-full w-full object-cover" 
+                              />
+                            </div>
+                            <div className="flex-1">
+                              <h4 className="text-sm font-semibold text-gray-900 font-outfit leading-tight line-clamp-2">
+                                {article.title}
+                              </h4>
+                            </div>
+                          </div>
+                        </Link>
+                      ))}
+                      {/* Duplicate set for seamless loop */}
+                      {recentPosts.map((article, index) => (
+                        <Link key={`second-${article.id}-${index}`} href={`/news/${article.id}`} className="no-underline">
+                          <div className="flex gap-3 items-start hover:opacity-80 transition-opacity">
+                            <div className="w-16 h-16 flex-shrink-0 overflow-hidden rounded">
+                              <img 
+                                src={getImageUrl(article.image)} 
+                                alt={article.title} 
+                                className="h-full w-full object-cover" 
+                              />
+                            </div>
+                            <div className="flex-1">
+                              <h4 className="text-sm font-semibold text-gray-900 font-outfit leading-tight line-clamp-2">
+                                {article.title}
+                              </h4>
+                            </div>
+                          </div>
+                        </Link>
+                      ))}
                     </div>
-                    <div className="flex flex-col gap-2 pt-4">
-                      <h4 className="m-0 font-outfit text-base font-semibold leading-snug text-black">{column3Data.mediumCard.title}</h4>
-                      <div className="flex items-center gap-2 font-outfit text-xs text-gray-600">
-                        <span>{column3Data.mediumCard.author}</span>
-                        <span>{formatDate(column3Data.mediumCard.published_at)}</span>
-                      </div>
-                    </div>
-                  </article>
-                )}
-
-                {/* Smaller Articles */}
-                <div className="flex flex-col gap-4">
-                  {column3Data.smallerArticles.slice(0, 3).map((article) => (
-                    <article key={article.id} className="flex flex-row-reverse items-start gap-3 md:flex-row">
-                      <div className="flex flex-1 flex-col gap-1.5">
-                        <span className="font-outfit text-xs font-medium text-gray-500" style={{ color: getCategoryColor(article.category) }}>• {article.category}</span>
-                        <h5 className="m-0 font-outfit text-sm font-semibold leading-snug text-black">{article.title}</h5>
-                        <div className="flex items-center gap-2 font-outfit text-xs text-gray-600">
-                          <span>{article.author}</span>
-                          <span>{formatDate(article.published_at)}</span>
-                        </div>
-                      </div>
-                      <div className="h-16 w-20 flex-shrink-0 overflow-hidden rounded md:h-36">
-                        <img src={getImageUrl(article.image)} alt={article.title} className="h-full w-full object-cover" />
-                      </div>
-                    </article>
-                  ))}
+                  </div>
+                  <style dangerouslySetInnerHTML={{
+                    __html: `
+                      @keyframes scrollDown {
+                        0% {
+                          transform: translateY(0);
+                        }
+                        100% {
+                          transform: translateY(-50%);
+                        }
+                      }
+                    `
+                  }} />
                 </div>
-                <Link href="/blog" className="mt-6 inline-block self-start py-3 font-outfit text-base font-semibold text-rental-blue-800 transition-colors hover:text-rental-orange-500">
-                  View More News →
-                </Link>
               </div>
             </>
           )}
-        </div>
-      </main>
+        </main>
+      </div>
 
       <Footer />
     </div>
   )
 }
-

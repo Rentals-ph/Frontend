@@ -1093,14 +1093,14 @@ function PropertiesContent() {
                   </div>
                 )}
               </div>
-              <div className="categories-row flex items-center gap-2 flex-wrap">
+              <div className="categories-row flex items-center gap-5 flex-wrap">
                 {categories.map((category) => (
                   <button
                     key={category.name}
-                    className={`category-chip px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                    className={`category-chip px-4 py-2 bg-gray-100 text-gray-700 rounded-full text-sm font-medium transition-all duration-200 ${
                       selectedType === category.name 
                         ? 'bg-blue-600 text-white hover:bg-blue-700' 
-                        : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
+                        : 'bg-gray-300 text-gray-700 border border-gray-300 hover:bg-gray-400'
                     }`}
                     onClick={() => {
                       setSelectedType(category.name)

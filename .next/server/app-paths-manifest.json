@@ -1,7 +1,9 @@
 {
+  "/_not-found/page": "app/_not-found/page.js",
   "/page": "app/page.js",
+  "/news/page": "app/news/page.js",
+  "/contact/page": "app/contact/page.js",
   "/about/page": "app/about/page.js",
   "/blog/page": "app/blog/page.js",
-  "/rent-managers/page": "app/rent-managers/page.js",
-  "/properties/page": "app/properties/page.js"
+  "/rent-managers/page": "app/rent-managers/page.js"
 }

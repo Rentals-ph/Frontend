@@ -77,9 +77,9 @@ const Testimonials = () => {
               <p className="font-outfit text-base md:text-lg font-normal leading-relaxed text-white/95 mb-6 max-w-md">
                 Discover Why The Most Successful Property Managers In The Philippines Rely On Rentals.Ph To Streamline Their Operations, Verify Quality Tenants, And Maximize Their Portfolio's Reach.
               </p>
-              <Link href="/contact" className="inline-flex items-center gap-3 px-8 py-4 bg-rental-orange-500 text-white font-outfit text-base font-semibold rounded-full transition-all hover:bg-rental-orange-600 hover:gap-4 w-fit">
+              <Link href="/contact" style={{ background: "rgba(32, 94, 215, 0.9)" }}  className="inline-flex items-center gap-3 px-8 py-4 bg-white text-white font-outfit text-base font-semibold rounded-full transition-all hover:bg-rental-orange-600 hover:gap-4 w-fit" >
                 <span>Connect Now</span>
-                <span className="transition-transform">
+                <span className="transition-transform items-center justify-center flex">
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M5 12H19M19 12L13 6M19 12L13 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                   </svg>

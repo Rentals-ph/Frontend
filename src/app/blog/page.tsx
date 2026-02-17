@@ -94,27 +94,6 @@ export default function BlogPage() {
             </div>
           </>
         )}
-
-        {/* Pagination */}
-        <div className="mx-auto mb-2.5 flex w-full max-w-7xl items-center justify-center gap-2.5">
-          <button className="flex h-10 w-10 items-center justify-center rounded border-2 border-gray-200 bg-white text-gray-600 transition-all hover:border-rental-blue-600 hover:bg-blue-50 hover:text-rental-blue-600" aria-label="Previous page">
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M12.5 15L7.5 10L12.5 5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          </button>
-          <div className="flex items-center gap-1.5">
-            <button className={`flex h-10 w-10 items-center justify-center rounded border-2 font-outfit text-base font-semibold transition-all ${currentPage === 1 ? 'border-rental-blue-600 bg-rental-blue-600 text-white' : 'border-gray-200 bg-white text-gray-600 hover:border-rental-blue-600 hover:text-rental-blue-600'}`} onClick={() => setCurrentPage(1)}>1</button>
-            <button className={`flex h-10 w-10 items-center justify-center rounded border-2 font-outfit text-base font-semibold transition-all ${currentPage === 2 ? 'border-rental-blue-600 bg-rental-blue-600 text-white' : 'border-gray-200 bg-white text-gray-600 hover:border-rental-blue-600 hover:text-rental-blue-600'}`} onClick={() => setCurrentPage(2)}>2</button>
-            <button className={`flex h-10 w-10 items-center justify-center rounded border-2 font-outfit text-base font-semibold transition-all ${currentPage === 3 ? 'border-rental-blue-600 bg-rental-blue-600 text-white' : 'border-gray-200 bg-white text-gray-600 hover:border-rental-blue-600 hover:text-rental-blue-600'}`} onClick={() => setCurrentPage(3)}>3</button>
-            <span className="px-1 font-outfit text-base text-gray-600">...</span>
-            <button className={`flex h-10 w-10 items-center justify-center rounded border-2 font-outfit text-base font-semibold transition-all ${currentPage === 50 ? 'border-rental-blue-600 bg-rental-blue-600 text-white' : 'border-gray-200 bg-white text-gray-600 hover:border-rental-blue-600 hover:text-rental-blue-600'}`} onClick={() => setCurrentPage(50)}>50</button>
-          </div>
-          <button className="flex h-10 w-10 items-center justify-center rounded border-2 border-gray-200 bg-white text-gray-600 transition-all hover:border-rental-blue-600 hover:bg-blue-50 hover:text-rental-blue-600" aria-label="Next page">
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M7.5 15L12.5 10L7.5 5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          </button>
-        </div>
       </main>
 
       {/* Newsletter Section */}

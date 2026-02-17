@@ -119,7 +119,7 @@ const Blogs = () => {
             {/* Left Small Blog Card */}
             <div className="flex-1 min-w-0 max-w-[28%] flex relative transition-all duration-600">
               <Link href={leftBlog.id === 'placeholder' ? '#' : `/blog/${leftBlog.id}`} className="no-underline w-full">
-                <article className="bg-white rounded-2xl overflow-hidden flex flex-col h-full group hover:shadow-xl transition-shadow">
+                <article className="bg-white rounded-2xl overflow-hidden flex flex-col h-full group shadow-xl transition-shadow">
                   <img
                     src={getImageUrl(leftBlog.image)}
                     alt={leftBlog.title}
@@ -130,14 +130,14 @@ const Blogs = () => {
                       <span className="text-rental-blue-600 font-outfit text-xs font-semibold uppercase tracking-wider">{leftBlog.category}</span>
                       <span className="text-gray-500 font-outfit text-xs">{formatReadTime(leftBlog.read_time)}</span>
                     </div>
-                    <h3 className="text-gray-900 font-outfit text-lg font-bold leading-snug mb-3 line-clamp-2">{leftBlog.title}</h3>
-                    <p className="text-gray-600 font-outfit text-sm leading-relaxed mb-4 line-clamp-3 flex-1">{leftBlog.excerpt}</p>
+                    <h3 className="text-gray-900 font-outfit text-xl font-bold leading-snug mb-3 line-clamp-2">{leftBlog.title}</h3>
+                    <p className="text-gray-600 font-outfit text-lg leading-relaxed mb-4 line-clamp-3 flex-1">{leftBlog.excerpt}</p>
                     <div className="flex flex-col gap-2 mb-4">
                       <div className="flex items-center gap-2 text-gray-700">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" className="w-4 h-4">
                           <path d="M12 12c2.761 0 5-2.239 5-5s-2.239-5-5-5-5 2.239-5 5 2.239 5 5 5zm0 2c-3.866 0-7 2.239-7 5v3h14v-3c0-2.761-3.134-5-7-5z"/>
                         </svg>
-                        <span className="font-outfit text-sm">{leftBlog.author}</span>
+                        <span className="font-outfit text-base">{leftBlog.author}</span>
                       </div>
                       <div className="flex items-center gap-2 text-gray-600">
                         <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg" className="w-4 h-4">
@@ -147,7 +147,7 @@ const Blogs = () => {
                       </div>
                     </div>
                     <div className="mt-auto">
-                      <span className="text-rental-blue-600 font-outfit text-sm font-medium flex items-center gap-2 group-hover:text-rental-orange-500 transition-colors">
+                      <span className="text-rental-blue-600 font-outfit text-base font-medium flex items-center gap-2 group-hover:text-rental-orange-500 transition-colors">
                         Read More
                         <svg width="20" height="17" viewBox="0 0 20 17" fill="none" xmlns="http://www.w3.org/2000/svg">
                           <path d="M12 1L19 8.5L12 16M19 8.5H1" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -168,13 +168,14 @@ const Blogs = () => {
                     alt={centerBlog.title}
                     className="w-full h-full min-h-[500px] object-cover"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent flex flex-col justify-end p-8">
+                  <div className="absolute inset-0 bg-black/30 z-10"></div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent flex flex-col justify-end p-8 z-20">
                     <div className="flex justify-between items-center mb-4">
-                      <span className="text-white font-outfit text-sm font-semibold uppercase tracking-wider">{centerBlog.category}</span>
-                      <span className="text-white/90 font-outfit text-sm">{formatReadTime(centerBlog.read_time)}</span>
+                      <span className="text-white font-outfit text-base font-semibold uppercase tracking-wider">{centerBlog.category}</span>
+                      <span className="text-white/90 font-outfit text-base">{formatReadTime(centerBlog.read_time)}</span>
                     </div>
                     <h3 className="text-white font-outfit text-3xl font-bold leading-tight mb-4">{centerBlog.title}</h3>
-                    <p className="text-white/95 font-outfit text-base leading-relaxed mb-6 line-clamp-3">{centerBlog.excerpt}</p>
+                    <p className="text-white/95 font-outfit text-lg leading-relaxed mb-6 line-clamp-3">{centerBlog.excerpt}</p>
                     <div className="flex gap-6 mb-6">
                       <div className="flex items-center gap-2 text-white">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" className="w-5 h-5">
@@ -186,7 +187,7 @@ const Blogs = () => {
                         <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg" className="w-5 h-5">
                           <path d="M6 2a1 1 0 1 1 2 0v1h4V2a1 1 0 1 1 2 0v1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h1V2a1 1 0 1 1 2 0v1zm10 3H4v11h12V5zm-1 2v2H5V7h10z"/>
                         </svg>
-                        <span className="font-outfit text-sm">{formatDate(centerBlog.published_at)}</span>
+                        <span className="font-outfit text-base">{formatDate(centerBlog.published_at)}</span>
                       </div>
                     </div>
                     <div>
@@ -205,7 +206,7 @@ const Blogs = () => {
             {/* Right Small Blog Card */}
             <div className="flex-1 min-w-0 max-w-[28%] flex relative transition-all duration-600">
               <Link href={rightBlog.id === 'placeholder' ? '#' : `/blog/${rightBlog.id}`} className="no-underline w-full">
-                <article className="bg-white rounded-2xl overflow-hidden flex flex-col h-full group hover:shadow-xl transition-shadow">
+                <article className="bg-white rounded-2xl overflow-hidden flex flex-col h-full group shadow-xl transition-shadow">
                   <img
                     src={getImageUrl(rightBlog.image)}
                     alt={rightBlog.title}
@@ -216,24 +217,24 @@ const Blogs = () => {
                       <span className="text-rental-blue-600 font-outfit text-xs font-semibold uppercase tracking-wider">{rightBlog.category}</span>
                       <span className="text-gray-500 font-outfit text-xs">{formatReadTime(rightBlog.read_time)}</span>
                     </div>
-                    <h3 className="text-gray-900 font-outfit text-lg font-bold leading-snug mb-3 line-clamp-2">{rightBlog.title}</h3>
-                    <p className="text-gray-600 font-outfit text-sm leading-relaxed mb-4 line-clamp-3 flex-1">{rightBlog.excerpt}</p>
+                    <h3 className="text-gray-900 font-outfit text-xl font-bold leading-snug mb-3 line-clamp-2">{rightBlog.title}</h3>
+                    <p className="text-gray-600 font-outfit text-lg leading-relaxed mb-4 line-clamp-3 flex-1">{rightBlog.excerpt}</p>
                     <div className="flex flex-col gap-2 mb-4">
                       <div className="flex items-center gap-2 text-gray-700">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" className="w-4 h-4">
                           <path d="M12 12c2.761 0 5-2.239 5-5s-2.239-5-5-5-5 2.239-5 5 2.239 5 5 5zm0 2c-3.866 0-7 2.239-7 5v3h14v-3c0-2.761-3.134-5-7-5z"/>
                         </svg>
-                        <span className="font-outfit text-sm">{rightBlog.author}</span>
+                        <span className="font-outfit text-base">{rightBlog.author}</span>
                       </div>
                       <div className="flex items-center gap-2 text-gray-600">
                         <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg" className="w-4 h-4">
                           <path d="M6 2a1 1 0 1 1 2 0v1h4V2a1 1 0 1 1 2 0v1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h1V2a1 1 0 1 1 2 0v1zm10 3H4v11h12V5zm-1 2v2H5V7h10z"/>
                         </svg>
-                        <span className="font-outfit text-xs">{formatDate(rightBlog.published_at)}</span>
+                        <span className="font-outfit text-base">{formatDate(rightBlog.published_at)}</span>
                       </div>
                     </div>
                     <div className="mt-auto">
-                      <span className="text-rental-blue-600 font-outfit text-sm font-medium flex items-center gap-2 group-hover:text-rental-orange-500 transition-colors">
+                      <span className="text-rental-blue-600 font-outfit text-base font-medium flex items-center gap-2 group-hover:text-rental-orange-500 transition-colors">
                         Read More
                         <svg width="20" height="17" viewBox="0 0 20 17" fill="none" xmlns="http://www.w3.org/2000/svg">
                           <path d="M12 1L19 8.5L12 16M19 8.5H1" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>

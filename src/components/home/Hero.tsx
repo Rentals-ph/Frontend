@@ -565,7 +565,7 @@ function Hero() {
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <div className="relative">
+                  <div className="chat-menu-container relative">
                     <button 
                       className="p-2 hover:bg-white rounded-lg transition-colors text-gray-600 hover:text-gray-900"
                       onClick={() => setShowMenu(!showMenu)}

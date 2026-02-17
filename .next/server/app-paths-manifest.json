@@ -1,5 +1,7 @@
 {
   "/page": "app/page.js",
   "/about/page": "app/about/page.js",
+  "/blog/page": "app/blog/page.js",
+  "/rent-managers/page": "app/rent-managers/page.js",
   "/properties/page": "app/properties/page.js"
 }

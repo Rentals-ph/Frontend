@@ -3,7 +3,7 @@
 import Navbar from '../../components/layout/Navbar'
 import Testimonials from '../../components/home/Testimonials'
 import Footer from '../../components/layout/Footer'
-import Partners from '../../components/home/Partners'
+import Partners from '../../components/common/Partners'
 import { ASSETS } from '@/utils/assets'
 
 export default function AboutPage() {
@@ -26,9 +26,9 @@ export default function AboutPage() {
             }}
           />
         </div>
-        <div className="relative z-[3] max-w-[var(--page-max-width)] mx-auto px-6 md:px-10 lg:px-[var(--page-padding-desktop)] py-[120px] md:py-32 w-full flex items-center justify-center flex-1">
+        <div className="relative z-[3] max-w-[var(--page-max-width)] mx-auto px-6 md:px-10 lg:px-[150px] py-[120px] md:py-32 w-full flex items-center justify-center flex-1">
           <div className="text-center flex flex-col items-center justify-center max-w-[800px]">
-            <h1 className="font-outfit font-bold text-4xl md:text-[55px] leading-tight text-white m-0 mb-6">
+            <h1 className="font-outfit font-bold text-5xl md:text-[55px] leading-tight text-white m-0">
               About Rentals.ph
             </h1>
             <p className="font-outfit text-lg md:text-xl font-light leading-relaxed text-white/95 m-0">
@@ -40,14 +40,14 @@ export default function AboutPage() {
       </section>
 
       {/* Main Content Section */}
-      <section className="bg-white py-12 md:py-16 px-6 md:px-10 lg:px-20">
-        <div className="max-w-6xl mx-auto">
+      <section className="bg-white py-12 md:py-16 px-6 md:px-10 lg:px-[150px]">
+        <div className=" mx-auto">
           <div className="w-full">
             <h2 className="font-outfit text-2xl md:text-3xl font-bold text-gray-900 text-center mb-8">
               OUR STORY
             </h2>
             
-            <p className="font-outfit text-base md:text-lg font-light leading-relaxed text-gray-700 text-center mb-12 max-w-4xl mx-auto">
+            <p className="font-outfit text-lg font-light leading-relaxed text-gray-700 text-center mb-12 max-w-4xl mx-auto">
               Established in 2014 under Philippine Real Estate Management Solutions Inc., Rentals.ph was organized with one clear goal: to serve as the vehicle in translating real estate investments into productive assets. Today, we stand as the only rental portal backed by realtors, rent managers, and licensed real estate professionals.
             </p>
 
@@ -56,7 +56,7 @@ export default function AboutPage() {
                 <h3 className="font-outfit text-xl font-bold text-rental-blue-600 mb-4">
                   OUR MISSION
                 </h3>
-                <p className="font-outfit text-base font-light leading-relaxed text-gray-700">
+                <p className="font-outfit text-lg font-light leading-relaxed text-gray-700">
                   To transform real estate investments into productive assets while providing exceptional service to property owners and tenants across the Philippines.
                 </p>
               </div>
@@ -64,7 +64,7 @@ export default function AboutPage() {
                 <h3 className="font-outfit text-xl font-bold text-rental-blue-600 mb-4">
                   OUR VISION
                 </h3>
-                <p className="font-outfit text-base font-light leading-relaxed text-gray-700">
+                <p className="font-outfit text-lg font-light leading-relaxed text-gray-700">
                   To be the leading rental platform that connects property owners with quality tenants through innovative technology and trusted professional networks.
                 </p>
               </div>
@@ -84,10 +84,10 @@ export default function AboutPage() {
                       onError={(e) => { e.currentTarget.style.display = 'none' }}
                     />
                   </div>
-                  <h4 className="font-outfit text-lg font-semibold text-gray-900 mb-3">
+                  <h4 className="font-outfit text-xl font-semibold text-gray-900 mb-3">
                     Rent.ph Cares
                   </h4>
-                  <p className="font-outfit text-sm font-light leading-relaxed text-gray-600">
+                  <p className="font-outfit text-lg font-light leading-relaxed text-gray-600">
                     Your Rentals, Their Hope—every transaction becomes an opportunity to give back to communities in need.
                   </p>
                 </div>
@@ -103,7 +103,7 @@ export default function AboutPage() {
                   <h4 className="font-outfit text-lg font-semibold text-gray-900 mb-3">
                     Trusted Partner
                   </h4>
-                  <p className="font-outfit text-sm font-light leading-relaxed text-gray-600">
+                  <p className="font-outfit text-lg font-light leading-relaxed text-gray-600">
                     Backed by certified real estate professionals ensuring expertise, integrity, and personalized service.
                   </p>
                 </div>
@@ -116,10 +116,10 @@ export default function AboutPage() {
                       onError={(e) => { e.currentTarget.style.display = 'none' }}
                     />
                   </div>
-                  <h4 className="font-outfit text-lg font-semibold text-gray-900 mb-3">
+                  <h4 className="font-outfit text-xl font-semibold text-gray-900 mb-3">
                     Productive Assets
                   </h4>
-                  <p className="font-outfit text-sm font-light leading-relaxed text-gray-600">
+                  <p className="font-outfit text-lg font-light leading-relaxed text-gray-600">
                     Transforming real estate investments into productive assets through comprehensive rental solutions.
                   </p>
                 </div>
@@ -132,10 +132,10 @@ export default function AboutPage() {
                       onError={(e) => { e.currentTarget.style.display = 'none' }}
                     />
                   </div>
-                  <h4 className="font-outfit text-lg font-semibold text-gray-900 mb-3">
+                  <h4 className="font-outfit text-xl font-semibold text-gray-900 mb-3">
                     Nationwide Coverage
                   </h4>
-                  <p className="font-outfit text-sm font-light leading-relaxed text-gray-600">
+                  <p className="font-outfit text-lg font-light leading-relaxed text-gray-600">
                     Comprehensive rental solutions across the Philippines through our network of rent professionals.
                   </p>
                 </div>
@@ -148,7 +148,7 @@ export default function AboutPage() {
       {/* Social Proof Section */}
       <section className="bg-gray-50 py-12">
         <Testimonials />
-        <div className="max-w-7xl mx-auto px-6 md:px-10">
+        <div className="px-6 md:px-10 lg:px-[150px]">
           <div className="mt-12">
             <Partners />
           </div>

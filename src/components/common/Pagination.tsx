@@ -136,9 +136,9 @@ function Pagination({
               return (
                 <button
                   key={pageNumber}
-                  className={`flex h-10 w-10 items-center justify-center rounded-full border-1.5 p-0 font-outfit text-sm font-medium shadow-sm transition-all md:h-9 md:w-9 md:text-xs xs:h-8 xs:w-8 xs:text-xs ${
+                  className={`flex h-10 w-10 items-center text-gray-700 justify-center rounded-full border-1.5 p-0 font-outfit text-sm font-medium shadow-sm transition-all md:h-9 md:w-9 md:text-xs xs:h-8 xs:w-8 xs:text-xs ${
                     isActive
-                      ? 'scale-105 border-rental-blue-600 bg-gradient-to-br from-rental-blue-600 to-rental-blue-700 font-semibold text-white shadow-[0_4px_12px_rgba(32,94,215,0.3)] hover:from-rental-blue-700 hover:to-rental-blue-800 hover:shadow-[0_6px_16px_rgba(32,94,215,0.4)]'
+                      ? 'scale-105 border-rental-blue-600 bg-gradient-to-br from-rental-blue-600 to-rental-blue-700 font-semibold text-rental-blue-600 bg-rental-blue-50 shadow-[0_4px_12px_rgba(32,94,215,0.3)] hover:from-rental-blue-700 hover:to-rental-blue-800 hover:shadow-[0_6px_16px_rgba(32,94,215,0.4)]'
                       : 'border-gray-200 bg-white text-gray-700 hover:-translate-y-0.5 hover:border-rental-blue-600 hover:bg-blue-50 hover:text-rental-blue-600 hover:shadow-[0_2px_8px_rgba(32,94,215,0.2)] active:translate-y-0 active:shadow-[0_1px_4px_rgba(32,94,215,0.15)]'
                   }`}
                   onClick={() => handlePageClick(pageNumber)}

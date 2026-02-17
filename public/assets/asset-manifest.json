@@ -701,6 +701,13 @@
         "category": "backgrounds",
         "description": "Testimonials section background",
         "originalName": "testimonials-bg.png"
+      },
+      "BG_RENT_MANAGERS": {
+        "id": "BG_RENT_MANAGERS",
+        "path": "/assets/backgrounds/rent-managers-bg.png",
+        "category": "backgrounds",
+        "description": "Rent managers section background",
+        "originalName": "rent-managers-bg.png"
       }
     },
     "decorative": {

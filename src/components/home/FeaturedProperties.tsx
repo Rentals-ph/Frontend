@@ -151,7 +151,7 @@ const FeaturedProperties = () => {
   }, [isPaused, loading, featuredProperties.length])
 
   return (
-    <section id="properties" className="bg-gradient-to-b from-[#e8f0ff] to-white border-t-0 relative min-h-[60vh] flex px-6 md:px-10 lg:px-[150px] flex-col justify-center py-12 pb-32 before:content-[''] before:absolute before:top-0 before:left-0 before:right-0 before:h-px before:bg-gradient-to-r before:from-transparent before:via-gray-200 before:to-transparent after:content-[''] after:absolute after:bottom-0 after:left-0 after:right-0 after:h-px after:bg-gradient-to-r after:from-transparent after:via-gray-200 after:to-transparent">
+    <section id="properties" className="bg-gradient-to-b from-[#e8f0ff] to-white border-t-0 relative min-h-[60vh] flex px-6 md:px-10 lg:px-[150px] flex-col justify-center py-12 pb-4 before:content-[''] before:absolute before:top-0 before:left-0 before:right-0 before:h-px before:bg-gradient-to-r before:from-transparent before:via-gray-200 before:to-transparent after:content-[''] after:absolute after:bottom-0 after:left-0 after:right-0 after:h-px after:bg-gradient-to-r after:from-transparent after:via-gray-200 after:to-transparent">
       <div className="w-full">
         <div className="flex justify-between items-end mb-4 relative">
           <div>

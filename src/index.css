@@ -5,6 +5,30 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer utilities {
+  /* Global Custom Scrollbar Styles - Applied to all scrollbars */
+  * {
+    scrollbar-width: auto;
+    scrollbar-color: rgb(59 130 246) rgb(229 231 235);
+  }
+
+  *::-webkit-scrollbar {
+    height: 0.5rem;
+    width: 0.5rem;
+  }
+
+  *::-webkit-scrollbar-track {
+    background-color: rgb(229 231 235);
+    border-radius: 9999px;
+  }
+
+  *::-webkit-scrollbar-thumb {
+    background-color: rgb(59 130 246);
+    border-radius: 9999px;
+    border: none;
+  }
+}
+
 /* Custom Base Styles - Applied to all pages */
 
 /* Page Padding CSS Variables for consistent spacing */

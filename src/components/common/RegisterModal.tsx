@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { authApi } from '../../api'
+import { ASSETS } from '@/utils/assets'
 
 interface RegisterModalProps {
   isOpen: boolean
@@ -7,8 +8,13 @@ interface RegisterModalProps {
 }
 
 function RegisterModal({ isOpen, onClose }: RegisterModalProps) {
+  const [role, setRole] = useState<'user' | 'agent' | 'broker'>('agent')
+  const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitError, setSubmitError] = useState<string | null>(null)
   const [submitSuccess, setSubmitSuccess] = useState(false)
@@ -22,7 +28,13 @@ function RegisterModal({ isOpen, onClose }: RegisterModalProps) {
     setSubmitSuccess(false)
 
     try {
-      // Validate email format
+      // Validate fields
+      if (!name.trim()) {
+        setSubmitError('Please enter your name')
+        setIsSubmitting(false)
+        return
+      }
+
       if (!email.trim()) {
         setSubmitError('Please enter your Email Account')
         setIsSubmitting(false)
@@ -41,6 +53,12 @@ function RegisterModal({ isOpen, onClose }: RegisterModalProps) {
         return
       }
 
+      if (password !== confirmPassword) {
+        setSubmitError('Passwords do not match')
+        setIsSubmitting(false)
+        return
+      }
+
       const response = await authApi.register({
         email: email.trim(),
         password,
@@ -50,7 +68,6 @@ function RegisterModal({ isOpen, onClose }: RegisterModalProps) {
         setSubmitSuccess(true)
         setTimeout(() => {
           onClose()
-          // Optionally redirect to login or show success message
         }, 2000)
       } else {
         setSubmitError(response.message || 'Registration failed. Please try again.')
@@ -75,91 +92,217 @@ function RegisterModal({ isOpen, onClose }: RegisterModalProps) {
   }
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="relative w-[90%] max-w-[500px] max-h-[90vh] overflow-hidden rounded-2xl bg-white px-12 py-15 shadow-[0px_10px_40px_rgba(0,0,0,0.2)] md:px-7.5 md:py-10" onClick={(e) => e.stopPropagation()}>
-        <button className="absolute right-5 top-5 z-10 flex h-9 w-9 items-center justify-center border-0 bg-transparent text-3xl leading-none text-gray-400 transition-colors hover:text-gray-700" onClick={onClose}>
+    <div className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/50 backdrop-blur-sm" onClick={onClose}>
+      <div className="relative w-[90%] max-w-[1000px] max-h-[90vh] overflow-hidden rounded-2xl bg-white shadow-[0px_10px_40px_rgba(0,0,0,0.2)]" onClick={(e) => e.stopPropagation()}>
+        <button 
+          className="absolute right-5 top-5 z-10 flex h-9 w-9 items-center justify-center border-0 bg-transparent text-2xl leading-none text-black transition-colors hover:text-gray-700" 
+          onClick={onClose}
+        >
           ✕
         </button>
-
-        <div className="p-0">
-          <h2 className="m-0 mb-3 text-center font-outfit text-5xl font-bold leading-none tracking-[3px] text-rental-orange-500 md:text-4xl">
-            Register
-          </h2>
-          <p className="m-0 mb-9 text-center font-outfit text-sm font-normal leading-snug text-gray-500">
-            Please enter your Email Account to register
-          </p>
-
-          {/* Success Message */}
-          {submitSuccess && (
-            <div className="mb-5 rounded border border-green-300 bg-green-100 px-4 py-3 font-outfit text-sm leading-snug text-green-900">
-              Registration successful! You can now login.
+        <div className="flex min-h-[580px]">
+          {/* Left Side - Background and Branding */}
+          <div className="relative flex flex-1 items-center justify-center bg-gradient-to-b from-[#B8D4F1] to-[#89B5E3] p-10 px-7.5 md:p-10 md:px-5" style={{ padding: 0, position: 'relative' }}>
+            <img
+              src={ASSETS.BG_LOGIN}
+              alt="Register Background"
+              className="absolute inset-0 z-0 h-full w-full rounded-l-2xl object-cover"
+            />
+            <div className="relative z-10 max-w-[450px] text-center">
+              <img
+                src={ASSETS.LOGO_FOOTER_WHITE}
+                alt="Rentals.ph Logo White"
+                className="mx-auto mb-6 h-auto w-full max-w-[420px]"
+                style={{ marginBottom: '24px', width: '320px', height: 'auto' }}
+              />
             </div>
-          )}
+          </div>
 
-          {/* Error Message */}
-          {submitError && (
-            <div className="mb-5 rounded border border-red-300 bg-red-100 px-4 py-3 font-outfit text-sm leading-snug text-red-900">
-              {submitError}
+          {/* Right Side - Form */}
+          <div className="relative flex max-w-[500px] flex-1 flex-col justify-center rounded-r-2xl border-l-[1.5px] border-gray-200 bg-white/95 px-12 py-15 shadow-[0_4px_32px_rgba(32,94,215,0.08)] md:px-7.5 md:py-10">
+            <h2 className="text-center font-outfit text-4xl font-bold text-rental-orange-500 mb-8 md:text-4xl">
+              Register
+            </h2>
+
+            {/* Role Selection Tabs */}
+            <div className="mb-6 flex rounded-lg border border-gray-200 bg-gray-50 p-1">
+              <button
+                type="button"
+                onClick={() => setRole('user')}
+                className={`flex-1 rounded-md px-4 py-2 text-sm font-medium transition-colors ${
+                  role === 'user'
+                    ? 'bg-rental-orange-500 text-white shadow-sm'
+                    : 'bg-transparent text-gray-700'
+                }`}
+              >
+                User
+              </button>
+              <button
+                type="button"
+                onClick={() => setRole('agent')}
+                className={`flex-1 rounded-md px-4 py-2 text-sm font-medium transition-colors ${
+                  role === 'agent'
+                    ? 'bg-rental-orange-500 text-white shadow-sm'
+                    : 'bg-transparent text-gray-700'
+                }`}
+              >
+                Agent
+              </button>
+              <button
+                type="button"
+                onClick={() => setRole('broker')}
+                className={`flex-1 rounded-md px-4 py-2 text-sm font-medium transition-colors ${
+                  role === 'broker'
+                    ? 'bg-rental-orange-500 text-white shadow-sm'
+                    : 'bg-transparent text-gray-700'
+                }`}
+              >
+                Broker
+              </button>
             </div>
-          )}
 
-          <form onSubmit={handleSubmit} className="mt-0 flex flex-col gap-5">
-            <div className="flex flex-col gap-2">
-              <label htmlFor="email" className="font-outfit text-sm font-medium leading-snug text-gray-800">
-                Email Account *
-              </label>
-              <div className="relative flex items-center">
-                <svg className="pointer-events-none absolute left-3.5 z-10 h-5 w-5" width="20" height="20" viewBox="0 0 20 20" fill="none">
-                  <path d="M16.6667 5.83333V14.1667C16.6667 15.0871 15.9205 15.8333 15 15.8333H5C4.07953 15.8333 3.33333 15.0871 3.33333 14.1667V5.83333M16.6667 5.83333C16.6667 4.91286 15.9205 4.16667 15 4.16667H5C4.07953 4.16667 3.33333 4.91286 3.33333 5.83333M16.6667 5.83333L10 10.8333L3.33333 5.83333" stroke="#FE8E0A" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
+            {/* Success Message */}
+            {submitSuccess && (
+              <div className="mb-5 rounded border border-green-300 bg-green-100 px-4 py-3 font-outfit text-sm text-green-900">
+                Registration successful! You can now login.
+              </div>
+            )}
+
+            {/* Error Message */}
+            {submitError && (
+              <div className="mb-5 rounded border border-red-300 bg-red-100 px-4 py-3 font-outfit text-sm text-red-900">
+                {submitError}
+              </div>
+            )}
+
+            <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+              {/* Name Field */}
+              <div className="flex flex-col gap-2">
+                <label htmlFor="name" className="font-outfit text-sm font-medium text-gray-900">
+                  Name
+                </label>
                 <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  placeholder="Enter your email account"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  type="text"
+                  id="name"
+                  placeholder="Enter your name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
                   required
                   disabled={isSubmitting}
-                  className="w-full rounded-md border border-gray-200 bg-white py-3 pl-14 pr-4 font-outfit text-sm leading-snug text-gray-700 transition-all placeholder:italic placeholder:text-gray-400 focus:border-rental-blue-600 focus:bg-white focus:shadow-[0_0_0_3px_rgba(32,94,215,0.1)] focus:outline-none disabled:cursor-not-allowed disabled:bg-gray-100"
+                  className="w-full rounded-lg border border-gray-300 bg-white py-3 px-4 font-outfit text-sm text-gray-900 placeholder-gray-400 focus:border-rental-blue-600 focus:outline-none focus:ring-2 focus:ring-rental-blue-600/20"
                 />
               </div>
-            </div>
 
-            <div className="flex flex-col gap-2">
-              <label htmlFor="password" className="font-outfit text-sm font-medium leading-snug text-gray-800">
-                Password *
-              </label>
-              <div className="relative flex items-center">
-                <svg className="pointer-events-none absolute left-3.5 z-10 h-5 w-5" width="20" height="20" viewBox="0 0 20 20" fill="none">
-                  <path d="M5.83333 9.16667V5.83333C5.83333 3.53215 7.69881 1.66667 10 1.66667C12.3012 1.66667 14.1667 3.53215 14.1667 5.83333V9.16667M10 12.5V14.1667M6.66667 18.3333H13.3333C14.2538 18.3333 15 17.5871 15 16.6667V10.8333C15 9.91286 14.2538 9.16667 13.3333 9.16667H6.66667C5.74619 9.16667 5 9.91286 5 10.8333V16.6667C5 17.5871 5.74619 18.3333 6.66667 18.3333Z" stroke="#FE8E0A" strokeWidth="1.5" strokeLinecap="round"/>
-                </svg>
-                <input
-                  type="password"
-                  id="password"
-                  name="password"
-                  placeholder="Enter your password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                  disabled={isSubmitting}
-                  minLength={8}
-                  className="w-full rounded-md border border-gray-200 bg-white py-3 pl-14 pr-4 font-outfit text-sm leading-snug text-gray-700 transition-all placeholder:italic placeholder:text-gray-400 focus:border-rental-blue-600 focus:bg-white focus:shadow-[0_0_0_3px_rgba(32,94,215,0.1)] focus:outline-none disabled:cursor-not-allowed disabled:bg-gray-100"
-                />
+              {/* Email Field with Verify Button */}
+              <div className="flex flex-col gap-2">
+                <label htmlFor="email" className="font-outfit text-sm font-medium text-gray-900">
+                  Email
+                </label>
+                <div className="flex gap-2">
+                  <input
+                    type="email"
+                    id="email"
+                    placeholder="Enter your email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                    disabled={isSubmitting}
+                    className="flex-1 rounded-lg border border-gray-300 bg-white py-3 px-4 font-outfit text-sm text-gray-900 placeholder-gray-400 focus:border-rental-blue-600 focus:outline-none focus:ring-2 focus:ring-rental-blue-600/20"
+                  />
+                  <button
+                    type="button"
+                    className="rounded-lg bg-rental-blue-600 px-6 py-3 font-outfit text-sm font-medium text-white hover:bg-rental-blue-700 transition-colors"
+                  >
+                    Verify email
+                  </button>
+                </div>
               </div>
-              <p className="m-0 mt-1 font-outfit text-xs font-normal text-gray-500">
-                Password must be at least 8 characters
-              </p>
-            </div>
 
-            <button 
-              type="submit" 
-              className="mt-2 cursor-pointer rounded-md border-0 bg-rental-blue-600 px-4 py-3.5 font-outfit text-base font-semibold leading-snug text-white shadow-sm transition-all hover:bg-rental-blue-700 hover:shadow-md disabled:cursor-not-allowed disabled:opacity-60" 
-              disabled={isSubmitting}
-            >
-              {isSubmitting ? 'Registering...' : 'Register'}
-            </button>
-          </form>
+              {/* Password Field */}
+              <div className="flex flex-col gap-2">
+                <label htmlFor="password" className="font-outfit text-sm font-medium text-gray-900">
+                  Password
+                </label>
+                <div className="relative">
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    id="password"
+                    placeholder="Enter your password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                    disabled={isSubmitting}
+                    minLength={8}
+                    className="w-full rounded-lg border border-gray-300 bg-white py-3 px-4 pr-12 font-outfit text-sm text-gray-900 placeholder-gray-400 focus:border-rental-blue-600 focus:outline-none focus:ring-2 focus:ring-rental-blue-600/20"
+                  />
+                  <button
+                    type="button"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer border-0 bg-transparent p-1"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? (
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M3 3L21 21M10.5 10.5C10.1872 10.8128 10 11.2403 10 11.7C10 12.7046 10.7954 13.5 11.8 13.5C12.2597 13.5 12.6872 13.3128 13 13M6.6 6.6C4.6146 8.0732 3 10.2727 3 12C3 15.314 6.9 19 12 19C13.7273 19 15.9268 18.3854 17.4 16.4M9 5.2C9.9585 4.9 11.0015 4.8 12 4.8C17.1 4.8 21 8.486 21 11.8C21 12.7985 20.1 14.841 19.2 16" stroke="#666" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                    ) : (
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 5C7 5 2.73 8.11 1 12.5C2.73 16.89 7 20 12 20C17 20 21.27 16.89 23 12.5C21.27 8.11 17 5 12 5Z" stroke="#666" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        <circle cx="12" cy="12" r="3" stroke="#666" strokeWidth="2"/>
+                      </svg>
+                    )}
+                  </button>
+                </div>
+              </div>
+
+              {/* Confirm Password Field */}
+              <div className="flex flex-col gap-2">
+                <label htmlFor="confirmPassword" className="font-outfit text-sm font-medium text-gray-900">
+                  Confirm Password
+                </label>
+                <div className="relative">
+                  <input
+                    type={showConfirmPassword ? 'text' : 'password'}
+                    id="confirmPassword"
+                    placeholder="Enter your password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    required
+                    disabled={isSubmitting}
+                    minLength={8}
+                    className="w-full rounded-lg border border-gray-300 bg-white py-3 px-4 pr-12 font-outfit text-sm text-gray-900 placeholder-gray-400 focus:border-rental-blue-600 focus:outline-none focus:ring-2 focus:ring-rental-blue-600/20"
+                  />
+                  <button
+                    type="button"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer border-0 bg-transparent p-1"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  >
+                    {showConfirmPassword ? (
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M3 3L21 21M10.5 10.5C10.1872 10.8128 10 11.2403 10 11.7C10 12.7046 10.7954 13.5 11.8 13.5C12.2597 13.5 12.6872 13.3128 13 13M6.6 6.6C4.6146 8.0732 3 10.2727 3 12C3 15.314 6.9 19 12 19C13.7273 19 15.9268 18.3854 17.4 16.4M9 5.2C9.9585 4.9 11.0015 4.8 12 4.8C17.1 4.8 21 8.486 21 11.8C21 12.7985 20.1 14.841 19.2 16" stroke="#666" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                    ) : (
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 5C7 5 2.73 8.11 1 12.5C2.73 16.89 7 20 12 20C17 20 21.27 16.89 23 12.5C21.27 8.11 17 5 12 5Z" stroke="#666" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        <circle cx="12" cy="12" r="3" stroke="#666" strokeWidth="2"/>
+                      </svg>
+                    )}
+                  </button>
+                </div>
+              </div>
+
+              {/* Register Button with Gradient */}
+              <button 
+                type="submit" 
+                className="mt-2 cursor-pointer rounded-lg border-0 px-4 py-3.5 font-outfit text-base font-semibold text-white shadow-sm transition-all hover:shadow-md disabled:cursor-not-allowed disabled:opacity-60" 
+                style={{
+                  background: 'linear-gradient(to right, #2563EB 0%, #FE8E0A 100%)'
+                }}
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? 'Registering...' : 'Register'}
+              </button>
+            </form>
+          </div>
         </div>
       </div>
     </div>

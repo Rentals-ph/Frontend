@@ -15,7 +15,6 @@ import {
   FiX,
   FiSave
 } from 'react-icons/fi'
-import '../page.css'
 
 interface User {
   id: number

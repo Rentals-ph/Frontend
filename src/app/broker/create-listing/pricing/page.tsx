@@ -14,7 +14,7 @@ import {
 } from 'react-icons/fi'
 // import '../../broker-shared.css' // Removed - converted to Tailwind
 // import '../../../agent/create-listing/AgentCreateListingCategory.css' // Removed - converted to Tailwind
-import '../../../agent/create-listing/pricing/page.css'
+// import '../../../agent/create-listing/pricing/page.css' // Removed - file doesn't exist
 
 function ProgressRing({ percent }: { percent: number }) {
   const { radius, stroke, normalizedRadius, circumference, strokeDashoffset } = useMemo(() => {

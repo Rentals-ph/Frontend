@@ -43,6 +43,7 @@ export interface Agent {
   email: string
   phone?: string | null
   agency_name?: string | null
+  office_address?: string | null
   city?: string | null
   state?: string | null
   prc_license_number?: string | null

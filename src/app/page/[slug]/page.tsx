@@ -13,7 +13,7 @@ import {
   FiStar,
   FiHeart
 } from 'react-icons/fi'
-import '../../agent/page-builder/page.css'
+// import '../../agent/page-builder/page.css' // Removed - file doesn't exist
 
 export default function PublicPageBuilderPage() {
   const params = useParams()

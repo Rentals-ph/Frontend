@@ -9,7 +9,6 @@ import {
   FiClock,
   FiTrendingUp
 } from 'react-icons/fi'
-import '../page.css'
 
 export default function RevenuePage() {
   const [userName, setUserName] = useState('John Admin')

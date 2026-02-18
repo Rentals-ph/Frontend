@@ -9,7 +9,7 @@ import {
   FiBarChart2,
   FiImage
 } from 'react-icons/fi'
-import '../../agent/downloadables/page.css'
+// import '../../agent/downloadables/page.css' // Removed - file doesn't exist
 // import '../broker-shared.css' // Removed - converted to Tailwind
 
 export default function BrokerDownloadables() {

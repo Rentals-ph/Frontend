@@ -14,8 +14,8 @@ import {
 import { generatePropertyDescription, getFallbackDescription } from '../../../../utils/aiDescription'
 // import '../../broker-shared.css' // Removed - converted to Tailwind
 // import '../../../agent/create-listing/AgentCreateListingCategory.css' // Removed - converted to Tailwind
-import '../../../agent/create-listing/details/page.css'
-import '../../../agent/create-listing/location/page.css'
+// import '../../../agent/create-listing/details/page.css' // Removed - file doesn't exist
+// import '../../../agent/create-listing/location/page.css' // Removed - file doesn't exist
 // import '../../../agent/create-listing/ai-generate.css' // Removed - converted to Tailwind
 
 function ProgressRing({ percent }: { percent: number }) {

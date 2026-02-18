@@ -7,9 +7,10 @@ import type { Property } from '@/types'
 interface PropertiesMapProps {
   properties: Property[]
   agentId?: number | null // Optional: filter by agent ID for extra safety
+  className?: string // Optional: additional CSS classes
 }
 
-export default function PropertiesMap({ properties, agentId }: PropertiesMapProps) {
+export default function PropertiesMap({ properties, agentId, className }: PropertiesMapProps) {
   const mapContainerRef = useRef<HTMLDivElement>(null)
   const mapRef = useRef<Map | null>(null)
   const markersRef = useRef<Marker[]>([])
@@ -205,12 +206,12 @@ export default function PropertiesMap({ properties, agentId }: PropertiesMapProp
   const hiddenCount = properties.filter((p) => !p.published_at).length
 
   return (
-    <div style={{ position: 'relative', width: '100%', height: '100%' }}>
+    <div className={className} style={{ position: 'relative', width: '100%', height: '100%' }}>
       <div
         ref={mapContainerRef}
         style={{
           width: '100%',
-          height: '400px',
+          height: '100%',
           borderRadius: '8px',
           overflow: 'hidden',
         }}

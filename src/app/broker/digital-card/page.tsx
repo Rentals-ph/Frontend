@@ -12,7 +12,7 @@ import {
   FiPhone
 } from 'react-icons/fi'
 import { FaWhatsapp } from 'react-icons/fa'
-import '../../agent/digital-card/page.css'
+// import '../../agent/digital-card/page.css' // Removed - file doesn't exist
 // import '../broker-shared.css' // Removed - converted to Tailwind
 
 export default function BrokerDigitalCard() {

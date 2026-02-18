@@ -5,7 +5,6 @@ import AppSidebar from '../../../components/common/AppSidebar'
 import DashboardHeader from '../../../components/common/DashboardHeader'
 import api from '../../../lib/api'
 import { FiRefreshCw, FiCheck, FiX, FiEye } from 'react-icons/fi'
-import '../page.css'
 
 interface Agent {
   id: number

@@ -1,61 +1,136 @@
 /**
- * AI Property Description Generator using Groq API (Llama 3.1)
- * 
- * Groq offers free tier with 30 RPM and is extremely fast.
- * Get your free API key at: https://console.groq.com/keys
+ * AI Property Description Generator
+ * Supports multiple AI providers: Gemini, Groq, OpenAI
+ * Configure via NEXT_PUBLIC_AI_PROVIDER environment variable (defaults to 'gemini')
  */
 
-const GROQ_API_URL = 'https://api.groq.com/openai/v1/chat/completions';
+const getProviderConfig = () => {
+  const provider = (process.env.NEXT_PUBLIC_AI_PROVIDER || 'gemini').toLowerCase();
+  
+  if (provider === 'gemini') {
+    const apiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY || 'AIzaSyDBasSMnY6BWzLkn1RSIQH2pK7X6GykYSg';
+    const model = process.env.NEXT_PUBLIC_GEMINI_MODEL || 'gemini-2.0-flash';
+    return {
+      provider: 'gemini',
+      apiKey,
+      model,
+      url: `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`,
+    };
+  } else if (provider === 'groq') {
+    const apiKey = process.env.NEXT_PUBLIC_GROQ_API_KEY;
+    const model = process.env.NEXT_PUBLIC_GROQ_MODEL || 'llama-3.3-70b-versatile';
+    return {
+      provider: 'groq',
+      apiKey,
+      model,
+      url: 'https://api.groq.com/openai/v1/chat/completions',
+    };
+  } else {
+    // OpenAI
+    const apiKey = process.env.NEXT_PUBLIC_OPENAI_API_KEY;
+    const model = process.env.NEXT_PUBLIC_OPENAI_MODEL || 'gpt-3.5-turbo';
+    return {
+      provider: 'openai',
+      apiKey,
+      model,
+      url: 'https://api.openai.com/v1/chat/completions',
+    };
+  }
+};
 
 export async function generatePropertyDescription(
   category: string,
   title: string
 ): Promise<string> {
-  const apiKey = process.env.NEXT_PUBLIC_GROQ_API_KEY;
+  const config = getProviderConfig();
 
-  if (!apiKey || apiKey === 'your_groq_api_key_here') {
-    throw new Error('Groq API key not configured. Get a free key at https://console.groq.com/keys');
+  if (!config.apiKey) {
+    throw new Error(`${config.provider} API key not configured. Please set the appropriate environment variable.`);
   }
 
-  const response = await fetch(GROQ_API_URL, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${apiKey}`,
-    },
-    body: JSON.stringify({
-      model: 'llama-3.3-70b-versatile',
-      messages: [
-        {
-          role: 'system',
-          content:
-            'You are a professional real estate copywriter for Rentals.ph, a Philippine rental property platform. Write compelling, concise property descriptions for rental listings. Keep it to 3-4 sentences. Be specific and professional. Do not use markdown formatting. Write in plain text only.',
-        },
+  const systemPrompt = 'You are a professional real estate copywriter for Rentals.ph, a Philippine rental property platform. Write compelling, concise property descriptions for rental listings. Keep it to 3-4 sentences. Be specific and professional. Do not use markdown formatting. Write in plain text only.';
+  
+  const userPrompt = `Write a rental property listing description for:\nCategory: ${category}\nTitle: ${title}\n\nThe description should highlight the property's appeal, mention potential amenities typical for this category, and encourage prospective tenants to schedule a viewing.`;
+
+  if (config.provider === 'gemini') {
+    // Gemini API format
+    const requestBody = {
+      contents: [
         {
           role: 'user',
-          content: `Write a rental property listing description for:\nCategory: ${category}\nTitle: ${title}\n\nThe description should highlight the property's appeal, mention potential amenities typical for this category, and encourage prospective tenants to schedule a viewing.`,
+          parts: [{ text: `${systemPrompt}\n\n${userPrompt}` }],
         },
       ],
-      temperature: 0.7,
-      max_tokens: 300,
-    }),
-  });
+      generationConfig: {
+        temperature: 0.7,
+        maxOutputTokens: 300,
+      },
+    };
 
-  if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}));
-    throw new Error(
-      `Groq API error: ${response.status} — ${JSON.stringify(errorData)}`
-    );
+    const response = await fetch(config.url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(requestBody),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(
+        `Gemini API error: ${response.status} — ${JSON.stringify(errorData)}`
+      );
+    }
+
+    const data = await response.json();
+    const content = data?.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
+
+    if (!content) {
+      throw new Error('Gemini API returned an empty response');
+    }
+
+    return content;
+  } else {
+    // Groq/OpenAI API format (OpenAI-compatible)
+    const response = await fetch(config.url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${config.apiKey}`,
+      },
+      body: JSON.stringify({
+        model: config.model,
+        messages: [
+          {
+            role: 'system',
+            content: systemPrompt,
+          },
+          {
+            role: 'user',
+            content: userPrompt,
+          },
+        ],
+        temperature: 0.7,
+        max_tokens: 300,
+      }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(
+        `${config.provider} API error: ${response.status} — ${JSON.stringify(errorData)}`
+      );
+    }
+
+    const data = await response.json();
+    const content = data?.choices?.[0]?.message?.content?.trim();
+
+    if (!content) {
+      throw new Error(`${config.provider} API returned an empty response`);
+    }
+
+    return content;
   }
-
-  const data = await response.json();
-  const content = data?.choices?.[0]?.message?.content?.trim();
-
-  if (!content) {
-    throw new Error('Groq API returned an empty response');
-  }
-
-  return content;
 }
 
 export function getFallbackDescription(

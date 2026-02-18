@@ -101,10 +101,7 @@ export default function BlogDetailsPage() {
   return (
     <div className="min-h-screen bg-white flex flex-col flex-1"> {/* blog-details-page */}
       <Navbar />
-
-      <PageHeader title="BLOG" />
-
-      <main className="max-w-[1400px] mx-auto py-10 px-8 w-full xl:px-8 lg:px-6 md:px-4 md:py-7.5 sm:py-6 sm:px-4"> {/* blog-details-main-content */}
+      <main className="w-full px-4 sm:px-6 md:px-10 lg:px-[150px] py-8 sm:py-12"> {/* blog-details-main-content */}
         {loading ? (
           <div className="text-center p-10">
             <p>Loading blog post...</p>
@@ -114,9 +111,9 @@ export default function BlogDetailsPage() {
             <p>Blog post not found</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 gap-10 items-start w-full mx-auto lg:gap-7.5"> {/* blog-details-layout */}
+          <div className="mx-auto w-full"> {/* blog-details-layout */}
             <div className="flex flex-col gap-7.5"> {/* blog-details-article-column */}
-              <div className="flex flex-col gap-4"> {/* blog-details-header */}
+              <div className="flex flex-col gap-4 mb-5"> {/* blog-details-header */}
                 <h1 className="font-outfit text-4xl font-bold text-black m-0 leading-tight lg:text-3xl md:text-[26px] sm:text-[22px]">{blogPost.title}</h1> {/* blog-details-title */}
                 <div className="flex gap-5 items-center"> {/* blog-details-meta */}
                   <div className="flex items-center gap-2 text-gray-600 font-outfit text-sm"> {/* blog-details-author */}
@@ -187,11 +184,6 @@ export default function BlogDetailsPage() {
                     <p className="font-outfit text-base leading-relaxed text-gray-800 m-0 mb-5 text-justify sm:text-[13px]"> {/* blog-details-paragraph */}
                       {paragraph}
                     </p>
-                    {index === 0 && (
-                      <div className="float-right w-[300px] my-5 ml-7.5 flex items-center justify-center clear-right"> {/* blog-details-ad-image */}
-                        <img src={ASSETS.BLOG_IMAGE_2} alt="House-Hunting Before the New Year Rush" className="w-full h-auto object-contain block" />
-                      </div>
-                    )}
                   </div>
                 ))}
                     </div>
@@ -247,18 +239,13 @@ export default function BlogDetailsPage() {
                         <p className="font-outfit text-base leading-relaxed text-gray-800 m-0 mb-5 text-justify sm:text-[13px]"> {/* blog-details-paragraph */}
                           {paragraph}
                         </p>
-                        {index === 0 && (
-                          <div className="float-right w-[300px] my-5 ml-7.5 flex items-center justify-center clear-right"> {/* blog-details-ad-image */}
-                            <img src={ASSETS.BLOG_IMAGE_2} alt="House-Hunting Before the New Year Rush" className="w-full h-auto object-contain block" />
-                          </div>
-                        )}
                       </div>
                     ))}
                   </div>
                 </>
               )}
 
-            <div className="mt-10 pt-10 border-t-2 border-gray-200"> {/* blog-details-comments */}
+            <div className="mt-5 border-t-2 border-gray-200"> {/* blog-details-comments */}
               <h2 className="font-outfit text-2xl font-bold text-black m-0 mb-6 md:text-xl sm:text-[17px]">Comments</h2> {/* blog-details-comments-title */}
               <div className="flex flex-col gap-6"> {/* blog-details-comments-list */}
                 {comments.map((comment) => (
@@ -281,11 +268,11 @@ export default function BlogDetailsPage() {
                 <div className="grid grid-cols-3 gap-5 xl:grid-cols-2 md:grid-cols-1"> {/* blog-details-related-grid */}
                   {relatedArticles.length > 0 ? (
                     relatedArticles.map((article) => (
-                      <Link key={article.id} href={`/blog/${article.id}`} className="flex flex-col bg-white rounded overflow-hidden shadow-sm no-underline transition-all duration-200 hover:-translate-y-1 hover:shadow-md"> {/* blog-details-related-card */}
-                        <div className="w-full h-45 overflow-hidden"> {/* related-card-image */}
-                          <img src={getImageUrl(article.image)} alt={article.title} className="w-full h-full object-cover" />
+                      <Link key={article.id} href={`/blog/${article.id}`} className="flex flex-col bg-white rounded overflow-hidden shadow-sm no-underline transition-all duration-200 hover:-translate-y-1 hover:shadow-md h-full"> {/* blog-details-related-card */}
+                        <div className="w-full h-48 sm:h-56 md:h-64 overflow-hidden flex-shrink-0"> {/* related-card-image */}
+                          <img src={getImageUrl(article.image)} alt={article.title} className="w-full h-full object-cover transition-transform duration-300 hover:scale-105" />
                         </div>
-                        <div className="p-4 flex flex-col gap-2"> {/* related-card-content */}
+                        <div className="p-4 flex flex-col gap-2 flex-1 min-h-[140px]"> {/* related-card-content */}
                           <div className="flex gap-2 items-center"> {/* related-card-meta */}
                             <span className="font-outfit text-xs font-medium text-[#32b241]">{article.category}</span> {/* related-card-category */}
                             <span className="font-outfit text-xs text-gray-600">{formatReadTime(article.read_time)}</span> {/* related-card-read-time */}

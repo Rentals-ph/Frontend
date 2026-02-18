@@ -50,6 +50,8 @@ export interface LoginResponse {
 export interface RegisterCredentials {
   email: string
   password: string
+  name?: string
+  role?: 'agent' | 'broker'
 }
 
 export interface RegisterResponse {
@@ -60,6 +62,21 @@ export interface RegisterResponse {
     email: string
   }
   errors?: Record<string, string[]>
+}
+
+export interface SendVerificationEmailResponse {
+  success: boolean
+  message: string
+}
+
+export interface VerifyEmailResponse {
+  success: boolean
+  message: string
+}
+
+export interface CheckVerificationStatusResponse {
+  success: boolean
+  verified: boolean
 }
 
 export const authApi = {
@@ -98,6 +115,47 @@ export const authApi = {
       return response.data
     } catch (error: any) {
       console.error('Register API call error:', error)
+      throw error
+    }
+  },
+
+  /**
+   * Send email verification
+   */
+  sendVerificationEmail: async (email: string): Promise<SendVerificationEmailResponse> => {
+    try {
+      const response = await apiClient.post<SendVerificationEmailResponse>('/verify-email/send', { email })
+      return response.data
+    } catch (error: any) {
+      console.error('Send verification email API call error:', error)
+      throw error
+    }
+  },
+
+  /**
+   * Verify email with token
+   */
+  verifyEmail: async (email: string, token: string): Promise<VerifyEmailResponse> => {
+    try {
+      const response = await apiClient.post<VerifyEmailResponse>('/verify-email/verify', { email, token })
+      return response.data
+    } catch (error: any) {
+      console.error('Verify email API call error:', error)
+      throw error
+    }
+  },
+
+  /**
+   * Check email verification status
+   */
+  checkVerificationStatus: async (email: string): Promise<CheckVerificationStatusResponse> => {
+    try {
+      const response = await apiClient.get<CheckVerificationStatusResponse>('/verify-email/status', {
+        params: { email }
+      })
+      return response.data
+    } catch (error: any) {
+      console.error('Check verification status API call error:', error)
       throw error
     }
   },

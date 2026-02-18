@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { ASSETS, getAsset } from '@/utils/assets'
 import { api, type PropertySearchResponse, type ConversationMessage } from '@/lib/api'
@@ -94,14 +94,20 @@ function Hero() {
     for (let i = chatMessages.length - 1; i >= 0; i--) {
       const msg = chatMessages[i]
       if (msg.properties && Array.isArray(msg.properties) && msg.properties.length > 0) {
-        console.log('Found properties in message:', msg.properties)
+        console.log(`Found properties in message ${i}:`, {
+          count: msg.properties.length,
+          ids: msg.properties.map(p => p.id),
+          properties: msg.properties
+        })
         return {
-          properties: msg.properties,
-          title: `Found ${msg.properties.length} propert${msg.properties.length === 1 ? 'y' : 'ies'}`
+          properties: [...msg.properties], // Create new array reference to ensure React detects change
+          title: `Found ${msg.properties.length} propert${msg.properties.length === 1 ? 'y' : 'ies'}`,
+          messageIndex: i, // Track which message these properties came from
+          timestamp: Date.now() // Add timestamp to force re-render when properties change
         }
       }
     }
-    console.log('No properties found in chat messages. Messages:', chatMessages)
+    console.log('No properties found in chat messages. Total messages:', chatMessages.length)
     return null
   }, [chatMessages])
   const [showHistory, setShowHistory] = useState(false)
@@ -109,6 +115,8 @@ function Hero() {
   const [conversations, setConversations] = useState<any[]>([])
   const [isLoadingConversations, setIsLoadingConversations] = useState(false)
   const router = useRouter()
+  const chatMessagesEndRef = useRef<HTMLDivElement>(null)
+  const chatMessagesContainerRef = useRef<HTMLDivElement>(null)
 
   // Array of background images - prioritize light blue with plant background
   const backgroundImages = [
@@ -331,6 +339,7 @@ function Hero() {
         
         console.log('API Response:', searchData)
         console.log('Properties from API:', searchData.properties)
+        console.log('Properties count from API:', searchData.properties?.length || 0)
         
         // Update conversation ID if provided and save to localStorage
         if (searchData.conversation_id) {
@@ -338,19 +347,30 @@ function Hero() {
           localStorage.setItem(CONVERSATION_ID_KEY, searchData.conversation_id)
         }
         
-        // Add assistant message with properties
+        // Add assistant message with properties - ALWAYS use properties from API response
+        const propertiesFromApi = Array.isArray(searchData.properties) ? searchData.properties : []
         const assistantMessage = {
           role: 'assistant' as const,
           message: searchData.ai_response,
-          properties: searchData.properties || []
+          properties: propertiesFromApi // Always include properties, even if empty array
         }
         
-        console.log('Assistant message with properties:', assistantMessage)
+        console.log('=== NEW ASSISTANT MESSAGE ===')
+        console.log('Properties from API:', propertiesFromApi)
+        console.log('Properties count:', propertiesFromApi.length)
+        console.log('Properties IDs:', propertiesFromApi.map(p => p?.id || 'no-id'))
+        console.log('Full assistant message:', assistantMessage)
         
-        setChatMessages([
+        // Update chat messages - this will trigger latestProperties to update
+        const updatedMessages = [
           ...newMessages,
           assistantMessage
-        ])
+        ]
+        
+        console.log('Updated chat messages count:', updatedMessages.length)
+        console.log('Last message properties:', updatedMessages[updatedMessages.length - 1]?.properties?.length || 0)
+        
+        setChatMessages(updatedMessages)
       } else {
         // Handle error - show user-friendly message
         const errorMessage = response.message || 'Sorry, I encountered an error while searching. Please try again.'
@@ -446,6 +466,17 @@ function Hero() {
       loadConversations()
     }
   }, [showHistory])
+
+  // Auto-scroll chat to bottom when messages change or loading state changes
+  useEffect(() => {
+    if (chatMessagesContainerRef.current) {
+      // Scroll only the chat container, not the entire page
+      chatMessagesContainerRef.current.scrollTo({
+        top: chatMessagesContainerRef.current.scrollHeight,
+        behavior: 'smooth'
+      })
+    }
+  }, [chatMessages, isLoading])
 
   // Auto-rotate background images with smooth transitions
   useEffect(() => {
@@ -550,157 +581,162 @@ function Hero() {
           isChatMode ? 'max-h-[600px]' : 'max-h-[400px]'
         }`}>
           {isChatMode ? (
-            <>
-            {/* Chat Interface */}
-            <div className="bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl overflow-hidden">
-              <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-rental-blue-50 to-white">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-rental-blue-600 flex items-center justify-center">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" fill="currentColor" className="text-white"/>
-                    </svg>
-                  </div>
-                  <div>
-                    <h3 className="font-outfit text-lg font-semibold text-gray-900">RentalsGroq</h3>
-                  </div>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="chat-menu-container relative">
-                    <button 
-                      className="p-2 hover:bg-white rounded-lg transition-colors text-gray-600 hover:text-gray-900"
-                      onClick={() => setShowMenu(!showMenu)}
-                      aria-label="More options"
-                      title="More options"
-                    >
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <circle cx="12" cy="12" r="1" fill="currentColor"/>
-                        <circle cx="12" cy="5" r="1" fill="currentColor"/>
-                        <circle cx="12" cy="19" r="1" fill="currentColor"/>
+            <div className="flex flex-col md:flex-row gap-4 w-full h-[600px] max-h-[600px]">
+              {/* Chat Interface - Left side */}
+              <div className="flex-1 bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl overflow-hidden flex flex-col min-w-0 h-full">
+                <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-rental-blue-50 to-white flex-shrink-0">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-rental-blue-600 flex items-center justify-center">
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" fill="currentColor" className="text-white"/>
                       </svg>
-                    </button>
-                    {showMenu && (
-                      <div className="absolute top-full right-0 mt-2 w-56 bg-white rounded-lg shadow-xl border border-gray-200 py-2 z-50">
-                        <button 
-                          className="w-full flex items-center gap-3 px-4 py-2 text-left text-gray-700 hover:bg-gray-50 transition-colors font-outfit text-sm"
-                          onClick={() => {
-                            setShowHistory(true)
-                            setShowMenu(false)
-                          }}
-                        >
-                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M3 12h18M3 6h18M3 18h18" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                          </svg>
-                          View History
-                        </button>
-                        {conversationId && (
-                          <>
-                            
-                            <button 
-                              className="w-full flex items-center gap-3 px-4 py-2 text-left text-red-600 hover:bg-red-50 transition-colors font-outfit text-sm"
-                              onClick={() => handleDeleteConversation()}
-                            >
-                              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6h14z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                              </svg>
-                              Delete Conversation
-                            </button>
-                          </>
-                        )}
-                        <button 
-                          className="w-full flex items-center gap-3 px-4 py-2 text-left text-gray-700 hover:bg-gray-50 transition-colors font-outfit text-sm"
-                          onClick={handleNewConversation}
-                        >
-                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M12 5v14M5 12h14" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                          </svg>
-                          New Conversation
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                  <button 
-                    className="p-2 hover:bg-white rounded-lg transition-colors text-gray-600 hover:text-gray-900"
-                    onClick={() => setIsChatMode(false)}
-                    aria-label="Close chat"
-                  >
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                    </svg>
-                  </button>
-                </div>
-              </div>
-              <div className="h-96 overflow-y-auto p-6 space-y-4 bg-gray-50 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
-                {isLoadingHistory ? (
-                  <div className="flex flex-col w-full items-start">
-                    <div className="max-w-[75%] p-3 px-4 rounded-xl bg-gray-100 text-gray-900 rounded-bl-sm font-outfit text-sm leading-relaxed break-words text-left">
-                      <span className="inline-block text-gray-600 italic after:content-['...'] animate-pulse">Loading conversation</span>
+                    </div>
+                    <div>
+                      <h3 className="font-outfit text-lg font-semibold text-gray-900">RentalsGroq</h3>
                     </div>
                   </div>
-                ) : (
-                  <>
-                    {chatMessages.map((msg, index) => (
-                      <div key={index} className={`flex flex-col w-full ${msg.role === 'user' ? 'items-end' : 'items-start'}`}>
-                        <div 
-                          className={`max-w-[75%] p-3 px-4 rounded-xl font-outfit text-sm leading-relaxed break-words text-left ${
-                            msg.role === 'user' 
-                              ? 'bg-[#205ED7] text-white rounded-br-sm' 
-                              : 'bg-gray-100 text-gray-900 rounded-bl-sm'
-                          }`}
-                          dangerouslySetInnerHTML={{
-                            __html: msg.role === 'assistant' 
-                              ? formatAIMessage(msg.message)
-                              : msg.message.replace(/\n/g, '<br />')
-                          }}
-                        />
-                      </div>
-                    ))}
-                    {isLoading && (
-                      <div className="flex flex-col w-full items-start">
-                        <div className="max-w-[75%] p-3 px-4 rounded-xl bg-gray-100 text-gray-900 rounded-bl-sm font-outfit text-sm leading-relaxed break-words text-left">
-                          <span className="inline-block text-gray-600 italic after:content-['...'] animate-pulse">Thinking</span>
+                  <div className="flex items-center gap-2">
+                    <div className="chat-menu-container relative">
+                      <button 
+                        className="p-2 hover:bg-white rounded-lg transition-colors text-gray-600 hover:text-gray-900"
+                        onClick={() => setShowMenu(!showMenu)}
+                        aria-label="More options"
+                        title="More options"
+                      >
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <circle cx="12" cy="12" r="1" fill="currentColor"/>
+                          <circle cx="12" cy="5" r="1" fill="currentColor"/>
+                          <circle cx="12" cy="19" r="1" fill="currentColor"/>
+                        </svg>
+                      </button>
+                      {showMenu && (
+                        <div className="absolute top-full right-0 mt-2 w-56 bg-white rounded-lg shadow-xl border border-gray-200 py-2 z-50">
+                          <button 
+                            className="w-full flex items-center gap-3 px-4 py-2 text-left text-gray-700 hover:bg-gray-50 transition-colors font-outfit text-sm"
+                            onClick={() => {
+                              setShowHistory(true)
+                              setShowMenu(false)
+                            }}
+                          >
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                              <path d="M3 12h18M3 6h18M3 18h18" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                            </svg>
+                            View History
+                          </button>
+                          {conversationId && (
+                            <>
+                              
+                              <button 
+                                className="w-full flex items-center gap-3 px-4 py-2 text-left text-red-600 hover:bg-red-50 transition-colors font-outfit text-sm"
+                                onClick={() => handleDeleteConversation()}
+                              >
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                  <path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6h14z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                                </svg>
+                                Delete Conversation
+                              </button>
+                            </>
+                          )}
+                          <button 
+                            className="w-full flex items-center gap-3 px-4 py-2 text-left text-gray-700 hover:bg-gray-50 transition-colors font-outfit text-sm"
+                            onClick={handleNewConversation}
+                          >
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                              <path d="M12 5v14M5 12h14" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                            </svg>
+                            New Conversation
+                          </button>
                         </div>
+                      )}
+                    </div>
+                    <button 
+                      className="p-2 hover:bg-white rounded-lg transition-colors text-gray-600 hover:text-gray-900"
+                      onClick={() => setIsChatMode(false)}
+                      aria-label="Close chat"
+                    >
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+                <div ref={chatMessagesContainerRef} className="flex-1 overflow-y-auto p-6 space-y-4 bg-gray-50 min-h-0">
+                  {isLoadingHistory ? (
+                    <div className="flex flex-col w-full items-start">
+                      <div className="max-w-[75%] p-3 px-4 rounded-xl bg-gray-100 text-gray-900 rounded-bl-sm font-outfit text-sm leading-relaxed break-words text-left">
+                        <span className="inline-block text-gray-600 italic after:content-['...'] animate-pulse">Loading conversation</span>
                       </div>
-                    )}
-                  </>
-                )}
+                    </div>
+                  ) : (
+                    <>
+                      {chatMessages.map((msg, index) => (
+                        <div key={index} className={`flex flex-col w-full ${msg.role === 'user' ? 'items-end' : 'items-start'}`}>
+                          <div 
+                            className={`max-w-[75%] p-3 px-4 rounded-xl font-outfit text-sm leading-relaxed break-words text-left ${
+                              msg.role === 'user' 
+                                ? 'bg-[#205ED7] text-white rounded-br-sm' 
+                                : 'bg-gray-100 text-gray-900 rounded-bl-sm'
+                            }`}
+                            dangerouslySetInnerHTML={{
+                              __html: msg.role === 'assistant' 
+                                ? formatAIMessage(msg.message)
+                                : msg.message.replace(/\n/g, '<br />')
+                            }}
+                          />
+                        </div>
+                      ))}
+                      {isLoading && (
+                        <div className="flex flex-col w-full items-start">
+                          <div className="max-w-[75%] p-3 px-4 rounded-xl bg-gray-100 text-gray-900 rounded-bl-sm font-outfit text-sm leading-relaxed break-words text-left">
+                            <span className="inline-block text-gray-600 italic after:content-['...'] animate-pulse">Thinking</span>
+                          </div>
+                        </div>
+                      )}
+                      {/* Invisible element at the bottom to scroll to */}
+                      <div ref={chatMessagesEndRef} />
+                    </>
+                  )}
+                </div>
+                <form className="flex items-center gap-2 p-4 px-5 border-t border-gray-200/50 bg-white flex-shrink-0" onSubmit={handleChatSubmit}>
+                  <input
+                    type="text"
+                    className="flex-1 p-3 px-4 border border-gray-300/65 rounded-lg font-outfit text-sm outline-none transition-colors focus:border-[#205ED7]"
+                    placeholder={isLoading ? "Searching..." : "Type your message..."}
+                    value={chatMessage}
+                    onChange={(e) => setChatMessage(e.target.value)}
+                    disabled={isLoading}
+                  />
+                  <button type="submit" className="w-11 h-11 bg-[#205ED7] border-none rounded-lg text-white cursor-pointer flex items-center justify-center transition-all flex-shrink-0 hover:bg-[#1a4bb8] hover:scale-105 active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </button>
+                </form>
               </div>
-              <form className="flex items-center gap-2 p-4 px-5 border-t border-gray-200/50 bg-white" onSubmit={handleChatSubmit}>
-                <input
-                  type="text"
-                  className="flex-1 p-3 px-4 border border-gray-300/65 rounded-lg font-outfit text-sm outline-none transition-colors focus:border-[#205ED7]"
-                  placeholder={isLoading ? "Searching..." : "Type your message..."}
-                  value={chatMessage}
-                  onChange={(e) => setChatMessage(e.target.value)}
-                  disabled={isLoading}
-                />
-                <button type="submit" className="w-11 h-11 bg-[#205ED7] border-none rounded-lg text-white cursor-pointer flex items-center justify-center transition-all flex-shrink-0 hover:bg-[#1a4bb8] hover:scale-105 active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
-                </button>
-              </form>
+              {/* Properties Panel - Right side when in chat mode - Only show when properties exist */}
+              {latestProperties && latestProperties.properties.length > 0 && (  
+                <div 
+                  key={`properties-${latestProperties.messageIndex}-${latestProperties.properties.length}-${latestProperties.timestamp || Date.now()}`}
+                  className="w-full md:w-[340px] md:max-w-[340px] bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl overflow-hidden flex flex-col flex-shrink-0 h-full"
+                >
+                  <div className="p-4 px-5 border-b border-gray-200 bg-gradient-to-r from-rental-blue-50 to-white flex-shrink-0">
+                    <h3 className="font-outfit text-base font-semibold text-gray-900 m-0">{latestProperties.title}</h3>
+                  </div>
+                  <div className="flex-1 overflow-y-auto p-4 space-y-3 min-h-0">
+                    {latestProperties.properties.map((property, index) => (
+                      <SimplePropertyCard
+                        key={`${property.id}-${index}-${latestProperties.messageIndex}`}
+                        id={property.id}
+                        title={property.title}
+                        location={property.location || property.city || property.street_address || undefined}
+                        price={`₱${property.price.toLocaleString()}${property.price_type ? `/${property.price_type}` : ''}`}
+                        image={property.image_url || (property.image ? getImageUrl(property.image) : ASSETS.PLACEHOLDER_PROPERTY_MAIN)}
+                      />
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
-            {/* Properties Panel - Right side when in chat mode - Only show when properties exist */}
-            {latestProperties && (
-              <div className="w-full md:w-[340px] md:max-w-[340px] bg-white rounded-2xl shadow-2xl overflow-hidden flex flex-col">
-                <div className="p-4 px-5 border-b border-gray-200 bg-gradient-to-r from-rental-blue-50 to-white">
-                  <h3 className="font-outfit text-base font-semibold text-gray-900 m-0">{latestProperties.title}</h3>
-                </div>
-                <div className="flex-1 overflow-y-auto p-4 space-y-3 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
-                  {latestProperties.properties.map((property) => (
-                    <SimplePropertyCard
-                      key={property.id}
-                      id={property.id}
-                      title={property.title}
-                      location={property.location || property.city || property.street_address || undefined}
-                      price={`₱${property.price.toLocaleString()}${property.price_type ? `/${property.price_type}` : ''}`}
-                      image={property.image_url || (property.image ? getImageUrl(property.image) : ASSETS.PLACEHOLDER_PROPERTY_MAIN)}
-                    />
-                  ))}
-                </div>
-              </div>
-            )}
-            </>
           ) : (
             <>
               {/* White container with 80% opacity and rounded borders */}

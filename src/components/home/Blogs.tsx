@@ -115,16 +115,18 @@ const Blogs = () => {
             <p>Loading blogs...</p>
           </div>
         ) : (
-          <div className="flex flex-col lg:flex-row gap-4 sm:gap-6 lg:gap-10 items-stretch w-full overflow-visible relative min-h-[200px]">
+          <div className="flex flex-col lg:flex-row gap-4 sm:gap-6 lg:gap-10 items-stretch w-full overflow-visible relative">
             {/* Left Small Blog Card */}
             <div className="flex-1 min-w-0 lg:max-w-[28%] flex relative transition-all duration-600">
-              <Link href={leftBlog.id === 'placeholder' ? '#' : `/blog/${leftBlog.id}`} className="no-underline w-full">
+              <Link href={leftBlog.id === 'placeholder' ? '#' : `/blog/${leftBlog.id}`} className="no-underline w-full h-full">
                 <article className="bg-white rounded-xl sm:rounded-2xl overflow-hidden flex flex-col h-full group shadow-xl transition-shadow">
-                  <img
-                    src={getImageUrl(leftBlog.image)}
-                    alt={leftBlog.title}
-                    className="w-full h-[180px] sm:h-[200px] object-cover"
-                  />
+                  <div className="w-full h-[180px] sm:h-[200px] overflow-hidden flex-shrink-0">
+                    <img
+                      src={getImageUrl(leftBlog.image)}
+                      alt={leftBlog.title}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
                   <div className="p-4 sm:p-6 flex flex-col flex-1">
                     <div className="flex justify-between items-center mb-2 sm:mb-3">
                       <span className="text-rental-blue-600 font-outfit text-[10px] sm:text-xs font-semibold uppercase tracking-wider">{leftBlog.category}</span>
@@ -161,13 +163,15 @@ const Blogs = () => {
 
             {/* Center Large Blog Card */}
             <div className="flex-[2] min-w-0 flex relative transition-all duration-600 order-2 lg:order-none">
-              <Link href={centerBlog.id === 'placeholder' ? '#' : `/blog/${centerBlog.id}`} className="no-underline w-full">
-                <article className="relative rounded-xl sm:rounded-2xl overflow-hidden h-full group min-h-[300px] sm:min-h-[400px] lg:min-h-[500px]">
-                  <img
-                    src={getImageUrl(centerBlog.image)}
-                    alt={centerBlog.title}
-                    className="w-full h-full min-h-[300px] sm:min-h-[400px] lg:min-h-[500px] object-cover"
-                  />
+              <Link href={centerBlog.id === 'placeholder' ? '#' : `/blog/${centerBlog.id}`} className="no-underline w-full h-full">
+                <article className="relative rounded-xl sm:rounded-2xl overflow-hidden group h-[400px] sm:h-[500px] lg:h-[600px]">
+                  <div className="absolute inset-0 w-full h-full">
+                    <img
+                      src={getImageUrl(centerBlog.image)}
+                      alt={centerBlog.title}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
                   <div className="absolute inset-0 bg-black/30 z-10"></div>
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent flex flex-col justify-end p-4 sm:p-6 md:p-8 z-20">
                     <div className="flex justify-between items-center mb-3 sm:mb-4">
@@ -205,13 +209,15 @@ const Blogs = () => {
 
             {/* Right Small Blog Card */}
             <div className="flex-1 min-w-0 lg:max-w-[28%] flex relative transition-all duration-600 order-3">
-              <Link href={rightBlog.id === 'placeholder' ? '#' : `/blog/${rightBlog.id}`} className="no-underline w-full">
+              <Link href={rightBlog.id === 'placeholder' ? '#' : `/blog/${rightBlog.id}`} className="no-underline w-full h-full">
                 <article className="bg-white rounded-xl sm:rounded-2xl overflow-hidden flex flex-col h-full group shadow-xl transition-shadow">
-                  <img
-                    src={getImageUrl(rightBlog.image)}
-                    alt={rightBlog.title}
-                    className="w-full h-[180px] sm:h-[200px] object-cover"
-                  />
+                  <div className="w-full h-[180px] sm:h-[200px] overflow-hidden flex-shrink-0">
+                    <img
+                      src={getImageUrl(rightBlog.image)}
+                      alt={rightBlog.title}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
                   <div className="p-4 sm:p-6 flex flex-col flex-1">
                     <div className="flex justify-between items-center mb-2 sm:mb-3">
                       <span className="text-rental-blue-600 font-outfit text-[10px] sm:text-xs font-semibold uppercase tracking-wider">{rightBlog.category}</span>

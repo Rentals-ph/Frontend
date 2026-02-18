@@ -117,10 +117,10 @@ export default function BlogPage() {
               {/* Left Column - Featured Article */}
               <div className="lg:col-span-1">
                 {featuredPost && (
-                  <Link href={`/blog/${featuredPost.id}`} className="no-underline">
-                    <article className="flex flex-col overflow-hidden rounded-lg bg-white shadow-md transition-all hover:-translate-y-1 hover:shadow-lg">
+                  <Link href={`/blog/${featuredPost.id}`} className="no-underline h-full">
+                    <article className="flex flex-col overflow-hidden rounded-lg bg-white shadow-md transition-all hover:-translate-y-1 hover:shadow-lg h-full">
                       {/* Image */}
-                      <div className="h-64 md:h-80 w-full overflow-hidden">
+                      <div className="h-64 md:h-80 lg:h-96 w-full overflow-hidden flex-shrink-0">
                         <img 
                           src={getImageUrl(featuredPost.image)} 
                           alt={featuredPost.title} 
@@ -128,7 +128,7 @@ export default function BlogPage() {
                         />
                       </div>
                       {/* Content */}
-                      <div className="flex flex-col gap-3 p-4 sm:p-6">
+                      <div className="flex flex-col gap-3 p-4 sm:p-6 flex-1">
                         <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-black font-outfit leading-tight">
                           {featuredPost.title}
                         </h2>
@@ -179,7 +179,7 @@ export default function BlogPage() {
                       <Link key={post.id} href={`/blog/${post.id}`} className="no-underline">
                         <article className="flex gap-3 sm:gap-4 overflow-hidden rounded-lg bg-white shadow-md transition-all hover:-translate-y-1 hover:shadow-lg p-3 sm:p-4">
                           {/* Image Thumbnail */}
-                          <div className="w-20 h-20 sm:w-24 sm:h-24 flex-shrink-0 overflow-hidden rounded-lg">
+                          <div className="w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 flex-shrink-0 overflow-hidden rounded-lg">
                             <img 
                               src={getImageUrl(post.image)} 
                               alt={post.title} 
@@ -212,18 +212,18 @@ export default function BlogPage() {
             <div className="mb-8 sm:mb-12">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                 {paginatedPosts.map((post) => (
-                  <Link key={post.id} href={`/blog/${post.id}`} className="no-underline">
-                    <article className="flex flex-col overflow-hidden rounded-lg bg-white shadow-md transition-all hover:-translate-y-1 hover:shadow-lg">
+                  <Link key={post.id} href={`/blog/${post.id}`} className="no-underline h-full">
+                    <article className="flex flex-col overflow-hidden rounded-lg bg-white shadow-md transition-all hover:-translate-y-1 hover:shadow-lg h-full">
                       {/* Image */}
-                      <div className="h-40 sm:h-48 w-full overflow-hidden">
+                      <div className="h-48 sm:h-56 md:h-64 w-full overflow-hidden flex-shrink-0">
                         <img 
                           src={getImageUrl(post.image)} 
                           alt={post.title} 
-                          className="h-full w-full object-cover" 
+                          className="h-full w-full object-cover transition-transform duration-300 hover:scale-105" 
                         />
                       </div>
                       {/* Content */}
-                      <div className="flex flex-col gap-2 sm:gap-2.5 p-4 sm:p-6">
+                      <div className="flex flex-col gap-2 sm:gap-2.5 p-4 sm:p-6 flex-1 min-h-[180px]">
                         <div className="mb-1.5 sm:mb-2 flex items-center gap-2 sm:gap-2.5 flex-wrap">
                           <span className="rounded bg-green-600 px-2 sm:px-3 py-0.5 sm:py-1 font-outfit text-[10px] sm:text-xs font-semibold text-white uppercase">
                             {post.category}
@@ -232,7 +232,7 @@ export default function BlogPage() {
                             {formatReadTime(post.read_time)} read
                           </span>
                         </div>
-                        <h3 className="m-0 font-outfit text-base sm:text-lg font-semibold leading-snug text-black line-clamp-2">
+                        <h3 className="m-0 font-outfit text-base sm:text-lg font-semibold leading-snug text-black line-clamp-2 flex-1">
                           {post.title}
                         </h3>
                         <span className="ml-auto mt-auto self-end font-outfit text-xs sm:text-sm font-semibold text-blue-600 transition-colors hover:text-orange-500">

@@ -5,10 +5,11 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import Navbar from '../../components/layout/Navbar'
 import Footer from '../../components/layout/Footer'
-import { agentsApi } from '../../api'
+import { agentsApi, propertiesApi } from '../../api'
 import { getApiBaseUrl } from '../../config/api'
 import { ASSETS } from '@/utils/assets'
 import { resolveAgentAvatar } from '@/utils/imageResolver'
+import type { Property } from '../../types'
 
 // Helper function to get agent image URL using the resolver
 const getAgentImageUrl = (imagePath: string | null | undefined, agentId?: number): string => {
@@ -53,8 +54,30 @@ export default function RentManagersPage() {
     const load = async () => {
       try {
         setLoading(true)
-        const agents = await agentsApi.getAll()
+        
+        // Fetch agents and properties in parallel
+        const [agents, allPropertiesResponse] = await Promise.all([
+          agentsApi.getAll(),
+          propertiesApi.getAll()
+        ])
+        
         if (!mounted) return
+        
+        // Handle both array and paginated response for properties
+        const allProperties: Property[] = Array.isArray(allPropertiesResponse)
+          ? allPropertiesResponse
+          : (allPropertiesResponse as any)?.data || []
+        
+        // Count properties per agent
+        const propertiesCountByAgent: { [key: number]: number } = {}
+        allProperties.forEach((property) => {
+          // Check agent_id field
+          const agentId = (property as any).agent_id || property.agent?.id
+          if (agentId) {
+            propertiesCountByAgent[agentId] = (propertiesCountByAgent[agentId] || 0) + 1
+          }
+        })
+        
         const mapped = agents.map((a) => {
           const name = a.full_name || `${a.first_name || ''} ${a.last_name || ''}`.trim() || a.email
           const location = [a.city, a.state].filter(Boolean).join(', ')
@@ -63,7 +86,7 @@ export default function RentManagersPage() {
             name,
             role: a.license_type || a.agency_name || 'Rent Manager',
             location: location || 'Unknown',
-            listings: a.properties_count || 0,
+            listings: propertiesCountByAgent[a.id] || 0,
             email: a.email,
             phone: a.phone || undefined,
             image: a.profile_image || a.image || a.avatar || null,
@@ -98,7 +121,7 @@ export default function RentManagersPage() {
       <Navbar />
 
       {/* Hero Section */}
-      <section className="relative mt-16 sm:mt-20 pt-8 sm:pt-16 pb-8 sm:pb-16 px-4 sm:px-6 md:px-10 lg:px-[150px] overflow-x-visible min-h-[400px] sm:min-h-[550px]" style={{ background: 'linear-gradient(to top,rgb(24, 24, 24) 0%, #1A3DBF 40%,rgb(36, 71, 196) 100%)', overflowY: 'visible' }}>
+      <section className="relative mt-16 sm:mt-20 pt-8 sm:pt-16 pb-8 sm:pb-16 px-4 sm:px-6 md:px-10 lg:px-[150px] overflow-x-visible min-h-[400px] sm:min-h-[550px]" style={{ background: 'linear-gradient(to right, #205ED7 0%, #FE8E0A 100%)', overflowY: 'visible' }}>
   <div className="mx-auto relative flex items-center max-w-full overflow-visible" style={{ minHeight: '300px', overflow: 'visible' }}>
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 items-stretch w-full overflow-visible">
 
@@ -124,7 +147,7 @@ export default function RentManagersPage() {
           style={{ 
             maxWidth: 'clamp(200px, 50vw, 500px)',
             right: 'clamp(-50px, 10vw, 200px)',
-            top: 'clamp(-400px, -30vw, -400px)',
+            top: 'clamp(-373px, -30vw, -400px)',
             position: 'absolute'
           }}
         />

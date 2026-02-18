@@ -1146,8 +1146,8 @@ function PropertiesContent() {
                 ) : (
                   <>
                     <div className={viewMode === 'horizontal' 
-                      ? 'properties-list flex flex-col gap-6' 
-                      : 'properties-grid grid grid-cols-2 gap-6 lg:grid-cols-3 md:grid-cols-1'}>
+                      ? 'properties-list flex flex-col gap-4 sm:gap-6' 
+                      : 'properties-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6'}>
                       {paginatedProperties.map(property => {
                         const propertySize = property.area 
                           ? `${property.area} sqft` 
@@ -1178,7 +1178,7 @@ function PropertiesContent() {
                         return viewMode === 'horizontal' ? (
                           <HorizontalPropertyCard key={property.id} {...cardProps} />
                         ) : (
-                          <div key={property.id} className="w-full [&>article]:w-full [&>article]:min-w-0 [&>article]:max-w-full">
+                          <div key={property.id} className="w-full min-w-0 [&>article]:w-full [&>article]:min-w-0 [&>article]:max-w-full [&>article]:h-full">
                             <VerticalPropertyCard {...cardProps} />
                           </div>
                         )

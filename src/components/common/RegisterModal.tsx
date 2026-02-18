@@ -1,13 +1,14 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { authApi } from '../../api'
 import { ASSETS } from '@/utils/assets'
 
 interface RegisterModalProps {
   isOpen: boolean
   onClose: () => void
+  onLoginClick?: () => void
 }
 
-function RegisterModal({ isOpen, onClose }: RegisterModalProps) {
+function RegisterModal({ isOpen, onClose, onLoginClick }: RegisterModalProps) {
   const [role, setRole] = useState<'user' | 'agent' | 'broker'>('agent')
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
@@ -18,8 +19,103 @@ function RegisterModal({ isOpen, onClose }: RegisterModalProps) {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitError, setSubmitError] = useState<string | null>(null)
   const [submitSuccess, setSubmitSuccess] = useState(false)
+  const [isEmailVerified, setIsEmailVerified] = useState(false)
+  const [isSendingVerification, setIsSendingVerification] = useState(false)
+  const [verificationError, setVerificationError] = useState<string | null>(null)
+  const [verificationSent, setVerificationSent] = useState(false)
+
+  // Check verification status when email changes
+  useEffect(() => {
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      setIsEmailVerified(false)
+      setVerificationSent(false)
+      return
+    }
+
+    // Normalize email for consistent lookup
+    const normalizedEmail = email.toLowerCase().trim()
+
+    // Check localStorage first (set by verify-email page)
+    const localVerified = localStorage.getItem(`verified_email_${normalizedEmail}`)
+    if (localVerified === 'true') {
+      setIsEmailVerified(true)
+      return
+    }
+
+    // Poll server for verification status
+    const checkVerification = async () => {
+      try {
+        const response = await authApi.checkVerificationStatus(normalizedEmail)
+        if (response.success && response.verified) {
+          setIsEmailVerified(true)
+          localStorage.setItem(`verified_email_${normalizedEmail}`, 'true')
+        } else {
+          setIsEmailVerified(false)
+        }
+      } catch (error) {
+        // Silently fail - user can still try to verify
+        setIsEmailVerified(false)
+      }
+    }
+
+    checkVerification()
+    
+    // Poll every 2 seconds if not verified (faster polling)
+    const interval = setInterval(() => {
+      if (!isEmailVerified) {
+        checkVerification()
+      }
+    }, 2000)
+
+    return () => clearInterval(interval)
+  }, [email, isEmailVerified])
+
+  // Listen for email verification events (from verify-email page)
+  useEffect(() => {
+    const handleEmailVerified = (event: CustomEvent) => {
+      const verifiedEmail = event.detail?.email
+      if (verifiedEmail && email.toLowerCase().trim() === verifiedEmail) {
+        setIsEmailVerified(true)
+        localStorage.setItem(`verified_email_${verifiedEmail}`, 'true')
+      }
+    }
+
+    window.addEventListener('emailVerified', handleEmailVerified as EventListener)
+    return () => {
+      window.removeEventListener('emailVerified', handleEmailVerified as EventListener)
+    }
+  }, [email])
 
   if (!isOpen) return null
+
+  const handleSendVerification = async () => {
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      setVerificationError('Please enter a valid email address first')
+      return
+    }
+
+    setIsSendingVerification(true)
+    setVerificationError(null)
+
+    try {
+      const response = await authApi.sendVerificationEmail(email)
+      if (response.success) {
+        setVerificationSent(true)
+        setVerificationError(null)
+      } else {
+        setVerificationError(response.message || 'Failed to send verification email')
+      }
+    } catch (error: any) {
+      console.error('Send verification error:', error)
+      if (error.response?.data?.message) {
+        setVerificationError(error.response.data.message)
+      } else {
+        setVerificationError('Failed to send verification email. Please try again.')
+      }
+    } finally {
+      setIsSendingVerification(false)
+    }
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -59,21 +155,38 @@ function RegisterModal({ isOpen, onClose }: RegisterModalProps) {
         return
       }
 
+      // Check if email is verified
+      if (!isEmailVerified) {
+        setSubmitError('Please verify your email address before registering')
+        setIsSubmitting(false)
+        return
+      }
+
+      // Map 'user' role to 'agent' for backend compatibility
+      const backendRole = role === 'user' ? 'agent' : role
+
       const response = await authApi.register({
         email: email.trim(),
         password,
+        name: name.trim(),
+        role: backendRole,
       })
 
       if (response.success) {
         setSubmitSuccess(true)
+        // Close register modal and open login modal after a short delay
         setTimeout(() => {
           onClose()
-        }, 2000)
+          if (onLoginClick) {
+            onLoginClick()
+          }
+        }, 1500)
       } else {
         setSubmitError(response.message || 'Registration failed. Please try again.')
       }
     } catch (error: any) {
       console.error('Registration error:', error)
+      console.error('Error response:', error.response?.data)
       
       if (error.response?.status === 422 && error.response?.data?.errors) {
         const errors = error.response.data.errors
@@ -170,7 +283,7 @@ function RegisterModal({ isOpen, onClose }: RegisterModalProps) {
 
             {/* Error Message */}
             {submitError && (
-              <div className="mb-5 rounded border border-red-300 bg-red-100 px-4 py-3 font-outfit text-sm text-red-900">
+              <div className="mb-5  rounded border border-red-300 bg-rental-orange-50 px-4 py-5 font-outfit text-sm text-rental-orange-500">
                 {submitError}
               </div>
             )}
@@ -204,18 +317,57 @@ function RegisterModal({ isOpen, onClose }: RegisterModalProps) {
                     id="email"
                     placeholder="Enter your email"
                     value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    onChange={(e) => {
+                      setEmail(e.target.value)
+                      setVerificationSent(false)
+                      setIsEmailVerified(false)
+                      setVerificationError(null)
+                    }}
                     required
                     disabled={isSubmitting}
-                    className="flex-1 rounded-lg border border-gray-300 bg-white py-3 px-4 font-outfit text-sm text-gray-900 placeholder-gray-400 focus:border-rental-blue-600 focus:outline-none focus:ring-2 focus:ring-rental-blue-600/20"
+                    className={`flex-1 rounded-lg border py-3 px-4 font-outfit text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 ${
+                      isEmailVerified
+                        ? 'border-green-500 bg-green-50 focus:border-green-600 focus:ring-green-600/20'
+                        : 'border-gray-300 bg-white focus:border-rental-blue-600 focus:ring-rental-blue-600/20'
+                    }`}
                   />
                   <button
                     type="button"
-                    className="rounded-lg bg-rental-blue-600 px-6 py-3 font-outfit text-sm font-medium text-white hover:bg-rental-blue-700 transition-colors"
+                    onClick={handleSendVerification}
+                    disabled={isSendingVerification || isEmailVerified || isSubmitting || !email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)}
+                    className={`rounded-lg px-6 py-3 font-outfit text-sm font-medium transition-colors ${
+                      isEmailVerified
+                        ? 'bg-green-600 text-white cursor-default'
+                        : 'bg-rental-blue-600 text-white hover:bg-rental-blue-700 disabled:opacity-50 disabled:cursor-not-allowed'
+                    }`}
                   >
-                    Verify email
+                    {isEmailVerified ? (
+                      <span className="flex items-center gap-1">
+                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                        </svg>
+                        Verified
+                      </span>
+                    ) : isSendingVerification ? (
+                      'Sending...'
+                    ) : (
+                      'Verify email'
+                    )}
                   </button>
                 </div>
+                {verificationSent && !isEmailVerified && (
+                  <p className="text-xs text-gray-600 mt-1">
+                    Verification email sent! Please check your inbox and click the verification link.
+                  </p>
+                )}
+                {verificationError && (
+                  <p className="text-xs text-red-600 mt-1">{verificationError}</p>
+                )}
+                {isEmailVerified && (
+                  <p className="text-xs text-green-600 mt-1">
+                    ✓ Email verified! You can now proceed with registration.
+                  </p>
+                )}
               </div>
 
               {/* Password Field */}
@@ -237,7 +389,7 @@ function RegisterModal({ isOpen, onClose }: RegisterModalProps) {
                   />
                   <button
                     type="button"
-                    className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer border-0 bg-transparent p-1"
+                    className="absolute right-3 top-3 cursor-pointer border-0 bg-transparent p-1"
                     onClick={() => setShowPassword(!showPassword)}
                   >
                     {showPassword ? (
@@ -273,7 +425,7 @@ function RegisterModal({ isOpen, onClose }: RegisterModalProps) {
                   />
                   <button
                     type="button"
-                    className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer border-0 bg-transparent p-1"
+                    className="absolute right-3 top-3 cursor-pointer border-0 bg-transparent p-1"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                   >
                     {showConfirmPassword ? (
@@ -297,10 +449,15 @@ function RegisterModal({ isOpen, onClose }: RegisterModalProps) {
                 style={{
                   background: 'linear-gradient(to right, #2563EB 0%, #FE8E0A 100%)'
                 }}
-                disabled={isSubmitting}
+                disabled={isSubmitting || !isEmailVerified}
               >
                 {isSubmitting ? 'Registering...' : 'Register'}
               </button>
+              {!isEmailVerified && (
+                <p className="text-xs text-gray-500 text-center mt-2">
+                  Please verify your email address to continue with registration.
+                </p>
+              )}
             </form>
           </div>
         </div>

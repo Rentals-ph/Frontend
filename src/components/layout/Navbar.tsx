@@ -6,6 +6,7 @@ import { usePathname, useRouter } from 'next/navigation'
 import { FiUser, FiLogOut, FiChevronDown, FiHome, FiMenu, FiX } from 'react-icons/fi'
 import { ASSETS } from '@/utils/assets'
 import { agentsApi } from '@/api'
+import { resolveAgentAvatar } from '@/utils/imageResolver'
 import LoginModal from '../common/LoginModal'
 import RegisterModal from '../common/RegisterModal'
 
@@ -17,6 +18,8 @@ const Navbar = () => {
   const [isUserLoggedIn, setIsUserLoggedIn] = useState(false)
   const [userName, setUserName] = useState('User')
   const [userRole, setUserRole] = useState<'agent' | 'admin' | 'broker'>('agent')
+  const [userImage, setUserImage] = useState<string | null>(null)
+  const [userId, setUserId] = useState<number | null>(null)
   const pathname = usePathname()
   const router = useRouter()
   const userMenuRef = useRef<HTMLDivElement>(null)
@@ -49,13 +52,14 @@ const Navbar = () => {
   useEffect(() => {
     checkAuthStatus()
     
-    // If user is logged in as agent but name is missing, try to fetch it
+    // If user is logged in, try to fetch user data including image
     const authToken = localStorage.getItem('auth_token')
     const role = localStorage.getItem('user_role') || localStorage.getItem('agent_role')
     const storedName = localStorage.getItem('user_name') || localStorage.getItem('agent_name')
+    const storedUserId = localStorage.getItem('user_id') || localStorage.getItem('agent_id')
     
-    if (authToken && role === 'agent' && !storedName) {
-      // Fetch agent data to get the name
+    if (authToken && role === 'agent') {
+      // Fetch agent data to get the name and image
       agentsApi.getCurrent()
         .then((agent) => {
           if (agent.first_name && agent.last_name) {
@@ -64,10 +68,33 @@ const Navbar = () => {
             localStorage.setItem('user_name', fullName)
             setUserName(fullName)
           }
+          if (agent.id) {
+            setUserId(agent.id)
+            localStorage.setItem('agent_id', agent.id.toString())
+            localStorage.setItem('user_id', agent.id.toString())
+          }
+          // Resolve avatar image
+          const avatarImage = resolveAgentAvatar(
+            agent.image || agent.avatar || agent.profile_image,
+            agent.id
+          )
+          setUserImage(avatarImage)
         })
         .catch((error) => {
           console.error('Error fetching agent data in Navbar:', error)
+          // If fetch fails but we have stored user ID, try to use it for image resolution
+          if (storedUserId) {
+            const avatarImage = resolveAgentAvatar(null, parseInt(storedUserId))
+            setUserImage(avatarImage)
+          }
         })
+    } else if (authToken && (role === 'admin' || role === 'broker')) {
+      // For admin/broker, try to get user ID from localStorage
+      if (storedUserId) {
+        setUserId(parseInt(storedUserId))
+        // For now, use placeholder for admin/broker until we have their image endpoints
+        setUserImage(null)
+      }
     }
     
     // Listen for storage changes (in case logout happens in another tab/window)
@@ -220,7 +247,7 @@ const Navbar = () => {
                   <div className="flex items-center gap-2.5 px-2 py-1 rounded-lg transition-colors hover:bg-gray-100">
                     <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden flex-shrink-0">
                       <img 
-                        src={ASSETS.PLACEHOLDER_PROFILE} 
+                        src={userImage || ASSETS.PLACEHOLDER_PROFILE} 
                         alt={userName}
                         className="w-full h-full object-cover"
                         onError={(e) => {
@@ -299,18 +326,15 @@ const Navbar = () => {
         {isMobileMenuOpen && (
           <div 
             className="md:hidden fixed inset-0 bg-black/50 z-[999] transition-opacity duration-300"
-            onClick={(e) => {
-              e.stopPropagation()
-              setIsMobileMenuOpen(false)
-            }}
+            onClick={() => setIsMobileMenuOpen(false)}
           />
         )}
 
         {/* Mobile Sidebar */}
         <nav 
           ref={mobileMenuRef}
-          className={`md:hidden fixed top-0 right-0 h-full w-[280px] sm:w-[320px] bg-white shadow-2xl z-[1000] transform transition-transform duration-300 ease-in-out overflow-y-auto translate-x-full ${
-            isMobileMenuOpen ? 'translate-x-0' : ''
+          className={`md:hidden fixed top-0 right-0 h-full w-[280px] sm:w-[320px] bg-white shadow-2xl z-[1000] transform transition-transform duration-300 ease-in-out overflow-y-auto ${
+            isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full'
           }`}
           onClick={(e) => e.stopPropagation()}
         >
@@ -318,11 +342,9 @@ const Navbar = () => {
           <div className="flex items-center justify-between p-4 sm:p-6 border-b border-gray-200">
             <h2 className="text-lg font-bold text-rental-blue-600 font-outfit">Menu</h2>
             <button 
-              className="p-2 text-gray-600 hover:text-gray-900 transition-colors"
-              onClick={(e) => {
-                e.stopPropagation()
-                setIsMobileMenuOpen(false)
-              }}
+              type="button"
+              className="p-2 text-gray-600 hover:text-gray-900 transition-colors cursor-pointer"
+              onClick={() => setIsMobileMenuOpen(false)}
               aria-label="Close menu"
             >
               <FiX size={24} />
@@ -388,7 +410,7 @@ const Navbar = () => {
               <div className="flex items-center gap-3 pb-3 border-b border-gray-100">
                 <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden flex-shrink-0">
                   <img 
-                    src={ASSETS.PLACEHOLDER_PROFILE} 
+                    src={userImage || ASSETS.PLACEHOLDER_PROFILE} 
                     alt={userName}
                     className="w-full h-full object-cover"
                     onError={(e) => {
@@ -466,6 +488,7 @@ const Navbar = () => {
       <RegisterModal
         isOpen={isRegisterOpen}
         onClose={() => setIsRegisterOpen(false)}
+        onLoginClick={handleLoginClick}
       />
     </>
   )

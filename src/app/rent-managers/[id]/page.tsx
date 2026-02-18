@@ -599,7 +599,7 @@ export default function RentManagerDetailsPage() {
                 </div>
 
                 {/* Property Listings */}
-                <div className={`mt-6 ${viewMode === 'vertical' ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6' : 'space-y-4'}`}>
+                <div className={`mt-6 ${viewMode === 'vertical' ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6' : 'space-y-4 sm:space-y-6'}`}>
                   {filteredAndSortedProperties.length > 0 ? (
                     filteredAndSortedProperties.map((p) => {
                       const propertySize = p.area 
@@ -624,22 +624,23 @@ export default function RentManagerDetailsPage() {
                           location={p.location}
                         />
                       ) : (
-                        <VerticalPropertyCard
-                          key={p.id}
-                          id={p.id}
-                          propertyType={p.type}
-                          date={formatDate(p.published_at)}
-                          price={formatPrice(p.price)}
-                          title={p.title}
-                          image={p.image_url || p.image || ASSETS.PLACEHOLDER_PROPERTY_MAIN}
-                          rentManagerName={manager.name}
-                          rentManagerRole={manager.role}
-                          bedrooms={p.bedrooms}
-                          bathrooms={p.bathrooms}
-                          parking={0}
-                          propertySize={propertySize}
-                          location={p.location}
-                        />
+                        <div key={p.id} className="w-full min-w-0 [&>article]:w-full [&>article]:min-w-0 [&>article]:max-w-full [&>article]:h-full">
+                          <VerticalPropertyCard
+                            id={p.id}
+                            propertyType={p.type}
+                            date={formatDate(p.published_at)}
+                            price={formatPrice(p.price)}
+                            title={p.title}
+                            image={p.image_url || p.image || ASSETS.PLACEHOLDER_PROPERTY_MAIN}
+                            rentManagerName={manager.name}
+                            rentManagerRole={manager.role}
+                            bedrooms={p.bedrooms}
+                            bathrooms={p.bathrooms}
+                            parking={0}
+                            propertySize={propertySize}
+                            location={p.location}
+                          />
+                        </div>
                       )
                     })
                   ) : (

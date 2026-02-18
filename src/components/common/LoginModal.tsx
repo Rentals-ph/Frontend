@@ -156,7 +156,7 @@ function LoginModal({ isOpen, onClose, onRegisterClick }: LoginModalProps) {
             <form onSubmit={handleSubmit} className="flex flex-col gap-4">
               {/* Error Message */}
               {loginError && (
-                <div className="mb-5 rounded border border-red-300 bg-red-100 px-4 py-3 font-outfit text-sm text-red-900">
+                <div className="rounded border border-red-300 bg-rental-orange-50 px-4 py-5 font-outfit text-sm text-rental-orange-500">
                   {loginError}
                 </div>
               )}
@@ -196,7 +196,7 @@ function LoginModal({ isOpen, onClose, onRegisterClick }: LoginModalProps) {
                   />
                   <button
                     type="button"
-                    className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer border-0 bg-transparent p-1"
+                    className="absolute right-3 top-3 cursor-pointer border-0 bg-transparent p-1"
                     onClick={() => setShowPassword(!showPassword)}
                   >
                     {showPassword ? (

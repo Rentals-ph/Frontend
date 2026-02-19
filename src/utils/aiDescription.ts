@@ -8,8 +8,8 @@ const getProviderConfig = () => {
   const provider = (process.env.NEXT_PUBLIC_AI_PROVIDER || 'gemini').toLowerCase();
   
   if (provider === 'gemini') {
-    const apiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY || 'AIzaSyDBasSMnY6BWzLkn1RSIQH2pK7X6GykYSg';
-    const model = process.env.NEXT_PUBLIC_GEMINI_MODEL || 'gemini-2.0-flash';
+    const apiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY;
+    const model = process.env.NEXT_PUBLIC_GEMINI_MODEL;
     return {
       provider: 'gemini',
       apiKey,
@@ -18,7 +18,7 @@ const getProviderConfig = () => {
     };
   } else if (provider === 'groq') {
     const apiKey = process.env.NEXT_PUBLIC_GROQ_API_KEY;
-    const model = process.env.NEXT_PUBLIC_GROQ_MODEL || 'llama-3.3-70b-versatile';
+    const model = process.env.NEXT_PUBLIC_GROQ_MODEL;
     return {
       provider: 'groq',
       apiKey,

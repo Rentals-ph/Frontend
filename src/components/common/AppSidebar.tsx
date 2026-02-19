@@ -24,8 +24,13 @@ import {
   FiCheckSquare,
   FiGrid,
   FiLogOut,
+  FiChevronLeft,
+  FiChevronRight,
 } from 'react-icons/fi'
 
+const SIDEBAR_STORAGE_KEY = 'sidebar-collapsed'
+const SIDEBAR_WIDTH_EXPANDED = 280
+const SIDEBAR_WIDTH_COLLAPSED = 72
 
 function AppSidebar() {
   const pathname = usePathname()
@@ -33,8 +38,21 @@ function AppSidebar() {
   const [hasUnreadMessages, setHasUnreadMessages] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [showLogoutDropdown, setShowLogoutDropdown] = useState(false)
+  const [isCollapsed, setIsCollapsed] = useState(() => {
+    if (typeof window === 'undefined') return false
+    return localStorage.getItem(SIDEBAR_STORAGE_KEY) === 'true'
+  })
   const sidebarRef = useRef<HTMLElement>(null)
   const logoutRef = useRef<HTMLDivElement>(null)
+
+  // Sync collapsed state to CSS variable and localStorage (desktop only; mobile uses overlay)
+  useEffect(() => {
+    const width = isCollapsed ? SIDEBAR_WIDTH_COLLAPSED : SIDEBAR_WIDTH_EXPANDED
+    document.documentElement.style.setProperty('--app-sidebar-width', `${width}px`)
+    try {
+      localStorage.setItem(SIDEBAR_STORAGE_KEY, String(isCollapsed))
+    } catch (_) {}
+  }, [isCollapsed])
   
   // Determine if we're on admin or agent routes
   const isAdminRoute = pathname?.startsWith('/admin')
@@ -92,11 +110,8 @@ function AppSidebar() {
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (sidebarRef.current && !sidebarRef.current.contains(event.target as Node)) {
-        // Check if click is on the mobile menu button (which is outside sidebar)
         const target = event.target as HTMLElement
-        if (!target.closest('.mobile-menu-toggle')) {
-          setIsMobileMenuOpen(false)
-        }
+        if (!target.closest('.mobile-menu-toggle')) setIsMobileMenuOpen(false)
       }
     }
 
@@ -168,6 +183,37 @@ function AppSidebar() {
     return pathname === path || pathname.startsWith(path + '/')
   }
 
+  const navLinkClass = (active: boolean) =>
+    `flex items-center gap-2.5 px-3 py-2.5 rounded-lg no-underline text-[13px] font-medium transition-all flex-shrink-0 ${active ? 'bg-blue-50 text-blue-500' : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900'} ${isCollapsed ? 'lg:justify-center lg:px-2' : ''}`
+
+  const NavLink = ({
+    href,
+    icon: Icon,
+    label,
+    active,
+    badge,
+  }: {
+    href: string
+    icon: React.ElementType
+    label: string
+    active: boolean
+    badge?: boolean
+  }) => (
+    <Link
+      href={href}
+      className={navLinkClass(active)}
+      title={isCollapsed ? label : undefined}
+    >
+      <div className="relative inline-flex items-center justify-center flex-shrink-0">
+        <Icon className="text-lg" />
+        {badge && hasUnreadMessages && (
+          <span className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white shadow-[0_0_0_1px_rgba(0,0,0,0.1)]" />
+        )}
+      </div>
+      {!isCollapsed && <span className="truncate">{label}</span>}
+    </Link>
+  )
+
   // Agent sidebar content
   const renderAgentSidebar = () => (
     <>
@@ -178,23 +224,8 @@ function AppSidebar() {
         <FiLayout className="text-lg" />
         <span>Home</span>
       </Link>*/}
-      <Link
-        href="/agent"
-        className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg no-underline text-gray-500 text-[13px] font-medium transition-all ${isActive('/agent') && !pathname?.includes('/agent/') ? 'bg-blue-50 text-blue-500' : 'hover:bg-gray-50 hover:text-gray-900'}`}
-      >
-        <FiHome className="text-lg" />
-        <span>Dashboard</span>
-      </Link>
-      <Link
-        href="/agent/inbox"
-        className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg no-underline text-gray-500 text-[13px] font-medium transition-all ${isActive('/agent/inbox') ? 'bg-blue-50 text-blue-500' : 'hover:bg-gray-50 hover:text-gray-900'}`}
-      >
-        <div className="relative inline-flex items-center justify-center">
-          <FiMail className="text-lg" />
-          {hasUnreadMessages && <span className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white shadow-[0_0_0_1px_rgba(0,0,0,0.1)]"></span>}
-        </div>
-        <span>Inbox</span>
-      </Link>
+      <NavLink href="/agent" icon={FiHome} label="Dashboard" active={isActive('/agent') && !pathname?.includes('/agent/')} />
+      <NavLink href="/agent/inbox" icon={FiMail} label="Inbox" active={isActive('/agent/inbox')} badge />
       {/* <Link
         href="/agent/downloadables"
         className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg no-underline text-gray-500 text-[13px] font-medium transition-all ${isActive('/agent/downloadables') ? 'bg-blue-50 text-blue-500' : 'hover:bg-gray-50 hover:text-gray-900'}`}
@@ -209,21 +240,8 @@ function AppSidebar() {
         <FiCreditCard className="text-lg" />
         <span>Digital Business Card</span>
       </Link>*/}
-      <Link
-        href="/agent/page-builder"
-        className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg no-underline text-gray-500 text-[13px] font-medium transition-all ${isActive('/agent/page-builder') ? 'bg-blue-50 text-blue-500' : 'hover:bg-gray-50 hover:text-gray-900'}`}
-      >
-        <FiSettings className="text-lg" />
-        <span>Page Builder</span>
-      </Link> 
-
-      <Link
-          href="/agent/listings"
-          className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg no-underline text-gray-500 text-[13px] font-medium transition-all ${isActive('/agent/listings') ? 'bg-blue-50 text-blue-500' : 'hover:bg-gray-50 hover:text-gray-900'}`}
-        >
-          <FiList className="text-lg" />
-          <span>My Listings</span>
-        </Link>
+      <NavLink href="/agent/page-builder" icon={FiSettings} label="Page Builder" active={isActive('/agent/page-builder')} />
+      <NavLink href="/agent/listings" icon={FiList} label="My Listings" active={isActive('/agent/listings')} />
         {/* <Link
           href="/agent/tracker"
           className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg no-underline text-gray-500 text-[13px] font-medium transition-all ${isActive('/agent/tracker') ? 'bg-blue-50 text-blue-500' : 'hover:bg-gray-50 hover:text-gray-900'}`}
@@ -251,134 +269,29 @@ function AppSidebar() {
   // Broker sidebar content
   const renderBrokerSidebar = () => (
     <>
-      <Link
-        href="/broker"
-        className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg no-underline text-gray-500 text-[13px] font-medium transition-all ${isActive('/broker') ? 'bg-blue-50 text-blue-500' : 'hover:bg-gray-50 hover:text-gray-900'}`}
-      >
-        <FiGrid className="text-lg" />
-        <span>Dashboard</span>
-      </Link>
-      <Link
-        href="/broker/company-profile"
-        className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg no-underline text-gray-500 text-[13px] font-medium transition-all ${isActive('/broker/company-profile') ? 'bg-blue-50 text-blue-500' : 'hover:bg-gray-50 hover:text-gray-900'}`}
-      >
-        <FiLayout className="text-lg" />
-        <span>Company Profile</span>
-      </Link>
-      <Link
-        href="/broker/team"
-        className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg no-underline text-gray-500 text-[13px] font-medium transition-all ${isActive('/broker/team') ? 'bg-blue-50 text-blue-500' : 'hover:bg-gray-50 hover:text-gray-900'}`}
-      >
-        <FiUsers className="text-lg" />
-        <span>Team Management</span>
-      </Link>
-      <Link
-        href="/broker/listings"
-        className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg no-underline text-gray-500 text-[13px] font-medium transition-all ${isActive('/broker/listings') ? 'bg-blue-50 text-blue-500' : 'hover:bg-gray-50 hover:text-gray-900'}`}
-      >
-        <FiHome className="text-lg" />
-        <span>Listings</span>
-      </Link>
-      <Link
-        href="/broker/approvals"
-        className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg no-underline text-gray-500 text-[13px] font-medium transition-all ${isActive('/broker/approvals') ? 'bg-blue-50 text-blue-500' : 'hover:bg-gray-50 hover:text-gray-900'}`}
-      >
-        <FiCheckSquare className="text-lg" />
-        <span>Agent Approvals</span>
-      </Link>
-      <Link
-        href="/broker/page-builder"
-        className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg no-underline text-gray-500 text-[13px] font-medium transition-all ${isActive('/broker/page-builder') ? 'bg-blue-50 text-blue-500' : 'hover:bg-gray-50 hover:text-gray-900'}`}
-      >
-        <FiFileText className="text-lg" />
-        <span>Page Builder</span>
-      </Link>
-      <Link
-        href="/broker/reports"
-        className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg no-underline text-gray-500 text-[13px] font-medium transition-all ${isActive('/broker/reports') ? 'bg-blue-50 text-blue-500' : 'hover:bg-gray-50 hover:text-gray-900'}`}
-      >
-        <FiBarChart2 className="text-lg" />
-        <span>Reports</span>
-      </Link>
-      <Link
-        href="/broker/inbox"
-        className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg no-underline text-gray-500 text-[13px] font-medium transition-all ${isActive('/broker/inbox') ? 'bg-blue-50 text-blue-500' : 'hover:bg-gray-50 hover:text-gray-900'}`}
-      >
-        <div className="relative inline-flex items-center justify-center">
-          <FiMail className="text-lg" />
-          {hasUnreadMessages && <span className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white shadow-[0_0_0_1px_rgba(0,0,0,0.1)]"></span>}
-        </div>
-        <span>Inbox</span>
-      </Link>
-      <Link
-        href="/broker/downloadables"
-        className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg no-underline text-gray-500 text-[13px] font-medium transition-all ${isActive('/broker/downloadables') ? 'bg-blue-50 text-blue-500' : 'hover:bg-gray-50 hover:text-gray-900'}`}
-      >
-        <FiDownload className="text-lg" />
-        <span>Downloadables</span>
-      </Link>
-      <Link
-        href="/broker/digital-card"
-        className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg no-underline text-gray-500 text-[13px] font-medium transition-all ${isActive('/broker/digital-card') ? 'bg-blue-50 text-blue-500' : 'hover:bg-gray-50 hover:text-gray-900'}`}
-      >
-        <FiCreditCard className="text-lg" />
-        <span>Digital Business Card</span>
-      </Link>
-      <Link
-        href="/broker/settings"
-        className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg no-underline text-gray-500 text-[13px] font-medium transition-all ${isActive('/broker/settings') ? 'bg-blue-50 text-blue-500' : 'hover:bg-gray-50 hover:text-gray-900'}`}
-      >
-        <FiSettings className="text-lg" />
-        <span>Settings</span>
-      </Link>
+      <NavLink href="/broker" icon={FiGrid} label="Dashboard" active={isActive('/broker')} />
+      <NavLink href="/broker/company-profile" icon={FiLayout} label="Company Profile" active={isActive('/broker/company-profile')} />
+      <NavLink href="/broker/team" icon={FiUsers} label="Team Management" active={isActive('/broker/team')} />
+      <NavLink href="/broker/listings" icon={FiHome} label="Listings" active={isActive('/broker/listings')} />
+      <NavLink href="/broker/approvals" icon={FiCheckSquare} label="Agent Approvals" active={isActive('/broker/approvals')} />
+      <NavLink href="/broker/page-builder" icon={FiFileText} label="Page Builder" active={isActive('/broker/page-builder')} />
+      <NavLink href="/broker/reports" icon={FiBarChart2} label="Reports" active={isActive('/broker/reports')} />
+      <NavLink href="/broker/inbox" icon={FiMail} label="Inbox" active={isActive('/broker/inbox')} badge />
+      <NavLink href="/broker/downloadables" icon={FiDownload} label="Downloadables" active={isActive('/broker/downloadables')} />
+      <NavLink href="/broker/digital-card" icon={FiCreditCard} label="Digital Business Card" active={isActive('/broker/digital-card')} />
+      <NavLink href="/broker/settings" icon={FiSettings} label="Settings" active={isActive('/broker/settings')} />
     </>
   )
 
   // Admin sidebar content
   const renderAdminSidebar = () => (
     <>
-      <Link
-        href="/"
-        className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg no-underline text-gray-500 text-[13px] font-medium transition-all ${isActive('/') && !pathname?.includes('//') ? 'bg-blue-50 text-blue-500' : 'hover:bg-gray-50 hover:text-gray-900'}`}
-      >
-        <FiLayout className="text-lg" />
-        <span>Home</span>
-      </Link>
-      <Link
-        href="/admin"
-        className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg no-underline text-gray-500 text-[13px] font-medium transition-all ${isActive('/admin') ? 'bg-blue-50 text-blue-500' : 'hover:bg-gray-50 hover:text-gray-900'}`}
-      >
-        <FiHome className="text-lg" />
-        <span>Dashboard</span>
-      </Link>
-      <Link
-        href="/admin/agents"
-        className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg no-underline text-gray-500 text-[13px] font-medium transition-all ${isActive('/admin/agents') ? 'bg-blue-50 text-blue-500' : 'hover:bg-gray-50 hover:text-gray-900'}`}
-      >
-        <FiUsers className="text-lg" />
-        <span>Agents</span>
-      </Link>
-      <Link
-        href="/admin/properties"
-        className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg no-underline text-gray-500 text-[13px] font-medium transition-all ${isActive('/admin/properties') ? 'bg-blue-50 text-blue-500' : 'hover:bg-gray-50 hover:text-gray-900'}`}
-      >
-        <FiLayers className="text-lg" />
-        <span>Properties</span>
-      </Link>
-      <Link
-        href="/admin/revenue"
-        className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg no-underline text-gray-500 text-[13px] font-medium transition-all ${isActive('/admin/revenue') ? 'bg-blue-50 text-blue-500' : 'hover:bg-gray-50 hover:text-gray-900'}`}
-      >
-        <FiDollarSign className="text-lg" />
-        <span>Revenue</span>
-      </Link>
-      <Link
-        href="/admin/users"
-        className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg no-underline text-gray-500 text-[13px] font-medium transition-all ${isActive('/admin/users') ? 'bg-blue-50 text-blue-500' : 'hover:bg-gray-50 hover:text-gray-900'}`}
-      >
-        <FiUsers className="text-lg" />
-        <span>Users</span>
-      </Link>
+      <NavLink href="/" icon={FiLayout} label="Home" active={isActive('/') && !pathname?.includes('//')} />
+      <NavLink href="/admin" icon={FiHome} label="Dashboard" active={isActive('/admin')} />
+      <NavLink href="/admin/agents" icon={FiUsers} label="Agents" active={isActive('/admin/agents')} />
+      <NavLink href="/admin/properties" icon={FiLayers} label="Properties" active={isActive('/admin/properties')} />
+      <NavLink href="/admin/revenue" icon={FiDollarSign} label="Revenue" active={isActive('/admin/revenue')} />
+      <NavLink href="/admin/users" icon={FiUsers} label="Users" active={isActive('/admin/users')} />
     </>
   )
 
@@ -388,13 +301,14 @@ function AppSidebar() {
 
   return (
     <>
-      {/* Mobile Menu Toggle Button */}
-      <button 
-        className="hidden fixed top-4 left-4 z-[1001] bg-white border border-gray-200 rounded-lg p-2.5 cursor-pointer text-gray-900 shadow-[0_2px_4px_rgba(0,0,0,0.1)] transition-all md:flex md:items-center md:justify-center hover:bg-gray-50 hover:shadow-[0_4px_6px_rgba(0,0,0,0.15)] max-[480px]:top-3 max-[480px]:left-3 max-[480px]:p-2"
+      {/* Mobile menu toggle - only on tablet/mobile (below lg) */}
+      <button
+        type="button"
+        className="mobile-menu-toggle fixed top-4 left-4 z-[1001] lg:hidden bg-white border border-gray-200 rounded-lg p-2.5 cursor-pointer text-gray-900 shadow-[0_2px_4px_rgba(0,0,0,0.1)] transition-all flex items-center justify-center hover:bg-gray-50 hover:shadow-[0_4px_6px_rgba(0,0,0,0.15)] max-[480px]:top-3 max-[480px]:left-3 max-[480px]:p-2 min-h-[44px] min-w-[44px]"
         onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-        aria-label="Toggle menu"
+        aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
       >
-        {isMobileMenuOpen ? <FiX size={24} /> : <FiMenu size={24} />}
+        {isMobileMenuOpen ? <FiX size={24} aria-hidden /> : <FiMenu size={24} aria-hidden />}
       </button>
 
       {/* Mobile Overlay */}
@@ -408,18 +322,27 @@ function AppSidebar() {
       {/* Sidebar */}
       <aside 
         ref={sidebarRef}
-        className={`w-[280px] lg:w-60 bg-white border-r border-gray-200 flex flex-col fixed h-screen overflow-hidden z-[1000] md:-translate-x-full md:transition-transform md:duration-300 md:ease-in-out max-[480px]:w-[260px] ${isMobileMenuOpen ? 'md:translate-x-0' : ''}`}
+        className={`w-[280px] max-[480px]:w-[260px] bg-white border-r border-gray-200 flex flex-col fixed h-screen overflow-hidden z-[1000] md:-translate-x-full md:transition-transform md:duration-300 md:ease-in-out transition-[width] duration-200 ${isCollapsed ? 'lg:w-[72px]' : 'lg:w-60'} ${isMobileMenuOpen ? 'md:translate-x-0' : ''}`}
       >
-        <div className="p-2.5 border-b border-gray-200 flex-shrink-0">
-          <div className="flex items-center justify-center w-full mb-1">
-            <Link href="/">
+        <div className={`p-2.5 border-b border-gray-200 flex-shrink-0 ${isCollapsed ? 'lg:px-2 lg:overflow-visible' : ''}`}>
+          <div className={`flex items-center justify-center w-full mb-1 ${isCollapsed ? 'lg:mb-0' : ''}`}>
+            <Link href="/" className={isCollapsed ? 'lg:flex lg:justify-center' : ''}>
               <img
                 src={ASSETS.LOGO_HERO_MAIN}
                 alt="Rentals.ph logo"
-                className="w-auto h-[60px] md:h-[50px] max-w-full object-contain"
+                className={`h-[60px] md:h-[50px] w-auto max-w-full object-contain ${isCollapsed ? 'lg:!h-[60px] lg:!w-[60px] lg:!min-w-[60px] lg:max-w-none' : ''}`}
               />
             </Link>
           </div>
+          {/* Collapse toggle - desktop only */}
+          <button
+            type="button"
+            onClick={() => setIsCollapsed((c) => !c)}
+            className="hidden lg:flex items-center justify-center w-full mt-2 py-1.5 rounded-lg text-gray-500 hover:bg-gray-100 hover:text-gray-700 transition-colors"
+            aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+          >
+            {isCollapsed ? <FiChevronRight className="text-lg" /> : <FiChevronLeft className="text-lg" />}
+          </button>
         </div>
 
         <nav className="p-3 lg:py-2.5 lg:px-2 md:p-3 flex flex-col gap-4 lg:gap-3 md:gap-4 flex-1 overflow-y-auto overflow-x-hidden min-h-0 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-gray-300 [&::-webkit-scrollbar-thumb]:rounded [&::-webkit-scrollbar-thumb:hover]:bg-gray-400" onClick={handleNavClick}>
@@ -437,8 +360,9 @@ function AppSidebar() {
               </div>
             )}
             <div 
-              className="flex items-center gap-2.5 px-5 py-4 border-t border-gray-200 flex-shrink-0 transition-colors cursor-pointer hover:bg-gray-100" 
+              className={`flex items-center gap-2.5 px-5 py-4 border-t border-gray-200 flex-shrink-0 transition-colors cursor-pointer hover:bg-gray-100 ${isCollapsed ? 'lg:justify-center lg:px-2 lg:py-3' : ''}`}
               onClick={() => setShowLogoutDropdown(!showLogoutDropdown)}
+              title={isCollapsed ? 'Account' : undefined}
             >
               <div className="w-9 h-9 rounded-full overflow-hidden flex-shrink-0 bg-gray-200">
                 <img
@@ -455,10 +379,12 @@ function AppSidebar() {
                 />
                 <div className="w-full h-full hidden items-center justify-center bg-gradient-to-br from-blue-500 to-purple-600 text-white font-semibold text-[13px]">JA</div>
               </div>
-              <div className="flex flex-col gap-px flex-1 min-w-0">
-                <span className="text-[13px] font-semibold text-gray-900 whitespace-nowrap overflow-hidden text-ellipsis">John Anderson</span>
-                <span className="text-[11px] text-gray-400">Broker</span>
-              </div>
+              {!isCollapsed && (
+                <div className="flex flex-col gap-px flex-1 min-w-0">
+                  <span className="text-[13px] font-semibold text-gray-900 whitespace-nowrap overflow-hidden text-ellipsis">John Anderson</span>
+                  <span className="text-[11px] text-gray-400">Broker</span>
+                </div>
+              )}
             </div>
           </div>
         )}

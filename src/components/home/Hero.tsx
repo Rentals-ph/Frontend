@@ -528,7 +528,7 @@ function Hero() {
   return (
     <section 
       id="home" 
-      className={`relative overflow-hidden pb-[200px] mt-0 transition-all duration-500 ease-in-out flex flex-col justify-center items-center ${
+      className={`relative overflow-hidden pb-[200px]  mt-0 transition-all duration-500 ease-in-out flex flex-col justify-center items-center ${
         isChatMode 
           ? 'max-h-[1100px] min-h-[900px] pb-[200px]' 
           : 'max-h-[800px] min-h-[800px]'
@@ -874,7 +874,7 @@ function Hero() {
         </div>
 
         {/* Recommended Searches - Outside search container */}
-        <div className="relative z-10 mt-3.5 w-full max-w-4xl px-5">
+        <div className="relative z-10 mt-3.5 w-full max-w-4xl px-5 ">
           <div className="flex flex-wrap gap-2 justify-center">
             {recommendedSearches.map((search, index) => (
               <button

@@ -308,8 +308,8 @@ export default function PublicPageBuilderPage() {
     const sectionVisibility = pageData.section_visibility || {}
 
     return (
-      <div style={{ minHeight: '100vh', backgroundColor: '#FFFFFF' }}>
-        <div className="full-preview-property-page">
+      <div className="min-h-screen bg-white">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 md:px-10 py-8">
           {/* Render sections in the order specified by layoutSections */}
           {layoutSections.map((section: any) => {
             if (!section.visible || !sectionVisibility[section.id as keyof typeof sectionVisibility]) return null
@@ -317,22 +317,22 @@ export default function PublicPageBuilderPage() {
             switch (section.id) {
               case 'hero':
                 return (
-                  <div key={section.id} className="full-preview-property-hero-section" style={{ width: '100%' }}>
+                  <div key={section.id} className="mb-6">
                     <div 
-                      className="full-preview-property-hero-image"
+                      className="relative w-full h-96 rounded-2xl overflow-hidden"
                       style={{
-                        backgroundImage: `url(${pageData.hero_image})`,
+                        backgroundImage: pageData.hero_image ? `url(${pageData.hero_image})` : 'none',
+                        backgroundColor: pageData.hero_image ? 'transparent' : '#E5E7EB',
                         backgroundSize: 'cover',
                         backgroundPosition: 'center',
-                        position: 'relative',
                         filter: `brightness(${100 - (pageData.overall_darkness || 30)}%)`
                       }}
                     >
-                      <div className="full-preview-property-hero-overlay">
-                        <h1 className="full-preview-property-hero-title">{pageData.main_heading}</h1>
-                        <p className="full-preview-property-hero-tagline">{pageData.tagline}</p>
+                      <div className="absolute inset-0 bg-black/30 flex flex-col items-center justify-center text-center px-6">
+                        <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">{pageData.main_heading}</h1>
+                        <p className="text-lg md:text-xl text-white/90 mb-6">{pageData.tagline}</p>
                         {pageData.property_price && (
-                          <button className="full-preview-property-hero-price-btn">
+                          <button className="px-6 py-3 bg-blue-600 text-white font-semibold rounded-xl hover:bg-blue-700 transition-colors">
                             Starts at {pageData.property_price} /mo
                           </button>
                         )}
@@ -343,26 +343,30 @@ export default function PublicPageBuilderPage() {
               
               case 'propertyDescription':
                 return (
-                  <div key={section.id} className="full-preview-property-about-section" style={{ maxWidth: '1200px', margin: '0 auto', padding: '40px 24px' }}>
-                    <h2 className="full-preview-property-section-heading">About</h2>
-                    <p className="full-preview-property-about-text">{pageData.property_description}</p>
+                  <div key={section.id} className="mb-6">
+                    <h2 className="text-2xl font-bold text-gray-900 mb-3">About</h2>
+                    <p className="text-gray-700 leading-relaxed">{pageData.property_description}</p>
                   </div>
                 )
               
               case 'propertyImages':
                 return (
-                  <div key={section.id} className="full-preview-property-inside-section" style={{ maxWidth: '1200px', margin: '0 auto', padding: '40px 24px' }}>
-                    <h2 className="full-preview-property-section-heading">What's Inside?</h2>
-                    <div className="full-preview-property-inside-images">
-                      {(pageData.property_images || []).map((image: string, index: number) => (
-                        <div 
-                          key={index} 
-                          className="full-preview-property-inside-image-item"
-                          style={{ borderRadius: getCornerRadiusClass(pageData.selected_corner_radius) }}
-                        >
-                          <img src={image} alt={`Interior ${index + 1}`} />
-                        </div>
-                      ))}
+                  <div key={section.id} className="mb-6">
+                    <h2 className="text-2xl font-bold text-gray-900 mb-4">What's Inside?</h2>
+                    <div className="grid grid-cols-3 gap-4">
+                      {(pageData.property_images || []).length > 0 ? (
+                        (pageData.property_images || []).map((image: string, index: number) => (
+                          <div 
+                            key={index} 
+                            className="aspect-square rounded-lg overflow-hidden bg-gray-200"
+                            style={{ borderRadius: getCornerRadiusClass(pageData.selected_corner_radius) }}
+                          >
+                            <img src={image} alt={`Interior ${index + 1}`} className="w-full h-full object-cover" />
+                          </div>
+                        ))
+                      ) : (
+                        <p className="text-gray-500 italic col-span-3">Property images will appear here...</p>
+                      )}
                     </div>
                   </div>
                 )
@@ -371,11 +375,8 @@ export default function PublicPageBuilderPage() {
                 return (
                   <div 
                     key={section.id}
-                    className="full-preview-property-agent-card"
+                    className="p-6 mb-6 text-white"
                     style={{
-                      maxWidth: '1200px',
-                      margin: '0 auto',
-                      padding: '0 24px 40px 24px',
                       backgroundColor: pageData.selected_brand_color === 'white' ? '#3B82F6' : 
                                      pageData.selected_brand_color === 'dark' ? '#1F2937' :
                                      pageData.selected_brand_color === 'orange' ? '#F97316' :
@@ -383,41 +384,57 @@ export default function PublicPageBuilderPage() {
                       borderRadius: getCornerRadiusClass(pageData.selected_corner_radius)
                     }}
                   >
-                    <div className="full-preview-property-agent-content">
-                      <div className="full-preview-property-agent-image-wrapper">
-                        <img 
-                          src={pageData.profile_card_image || ASSETS.PLACEHOLDER_PROFILE} 
-                          alt={pageData.profile_card_name || 'Agent'} 
-                          className="full-preview-property-agent-image" 
-                        />
+                    <div className="flex gap-4">
+                      <div className="flex-shrink-0">
+                        <div className="w-20 h-20 rounded-full overflow-hidden bg-white/20 border-2 border-white/30">
+                          <img 
+                            src={pageData.profile_card_image || ASSETS.PLACEHOLDER_PROFILE} 
+                            alt={pageData.profile_card_name || 'Agent'} 
+                            className="w-full h-full object-cover" 
+                          />
+                        </div>
                       </div>
-                      <div className="full-preview-property-agent-info">
-                        <h3 className="full-preview-property-agent-name">{pageData.profile_card_name}</h3>
-                        <p className="full-preview-property-agent-role">{pageData.profile_card_role}</p>
-                        <p className="full-preview-property-agent-quote">{pageData.profile_card_bio}</p>
-                        <div className="full-preview-property-agent-icons">
+                      <div className="flex-1">
+                        <h3 className="text-xl font-bold text-white mb-1">{pageData.profile_card_name}</h3>
+                        <p className="text-sm text-white/80 mb-3">{pageData.profile_card_role}</p>
+                        <p className="text-sm text-white/90 mb-4">{pageData.profile_card_bio}</p>
+                        <div className="flex items-center gap-3">
                           {pageData.contact_email && (
                             <a 
                               href={`mailto:${pageData.contact_email}`}
-                              className="full-preview-property-agent-icon"
+                              className="w-8 h-8 rounded-full bg-white/20 backdrop-blur-sm text-white hover:bg-white/30 transition-colors flex items-center justify-center"
                             >
-                              <FiMail />
+                              <FiMail className="w-4 h-4" />
                             </a>
                           )}
                           {pageData.contact_phone && (
                             <a 
                               href={`tel:${pageData.contact_phone}`}
-                              className="full-preview-property-agent-icon"
+                              className="w-8 h-8 rounded-full bg-white/20 backdrop-blur-sm text-white hover:bg-white/30 transition-colors flex items-center justify-center"
                             >
-                              <FiPhone />
+                              <FiPhone className="w-4 h-4" />
                             </a>
                           )}
-                          <button className="full-preview-property-agent-icon">
-                            <FiMessageCircle />
-                          </button>
-                          <button className="full-preview-property-agent-icon">
-                            <FiGlobe />
-                          </button>
+                          {pageData.contact_info?.message && (
+                            <a 
+                              href={pageData.contact_info.message}
+                              className="w-8 h-8 rounded-full bg-white/20 backdrop-blur-sm text-white hover:bg-white/30 transition-colors flex items-center justify-center"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              <FiMessageCircle className="w-4 h-4" />
+                            </a>
+                          )}
+                          {pageData.contact_info?.website && (
+                            <a 
+                              href={pageData.contact_info.website}
+                              className="w-8 h-8 rounded-full bg-white/20 backdrop-blur-sm text-white hover:bg-white/30 transition-colors flex items-center justify-center"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              <FiGlobe className="w-4 h-4" />
+                            </a>
+                          )}
                         </div>
                       </div>
                     </div>
@@ -430,31 +447,31 @@ export default function PublicPageBuilderPage() {
           })}
 
           {/* Ready To View? Section */}
-          <div className="full-preview-property-contact-section" style={{ maxWidth: '1200px', margin: '0 auto', padding: '40px 24px' }}>
-            <div className="full-preview-property-contact-left">
-              <h2 className="full-preview-property-section-heading">Ready To View?</h2>
-              <p className="full-preview-property-contact-text">Schedule a tour or ask any questions about the property.</p>
-              <div className="full-preview-property-contact-info">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <div>
+              <h2 className="text-2xl font-bold text-gray-900 mb-2">Ready To View?</h2>
+              <p className="text-gray-600 mb-4">Schedule a tour or ask any questions about the property.</p>
+              <div className="flex flex-col gap-3">
                 {pageData.contact_phone && (
-                  <div className="full-preview-property-contact-item">
-                    <FiPhone className="full-preview-property-contact-icon" />
+                  <div className="flex items-center gap-3 text-gray-700">
+                    <FiPhone className="w-5 h-5 text-gray-500" />
                     <span>{pageData.contact_phone}</span>
                   </div>
                 )}
                 {pageData.contact_email && (
-                  <div className="full-preview-property-contact-item">
-                    <FiMail className="full-preview-property-contact-icon" />
+                  <div className="flex items-center gap-3 text-gray-700">
+                    <FiMail className="w-5 h-5 text-gray-500" />
                     <span>{pageData.contact_email}</span>
                   </div>
                 )}
               </div>
             </div>
-            <div className="full-preview-property-contact-form">
-              <h3 className="full-preview-property-form-title">Contact {pageData.profile_card_name || 'Agent'}</h3>
-              <form onSubmit={handleContactFormSubmit}>
+            <div className="bg-gray-50 rounded-lg p-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Contact {pageData.profile_card_name || 'Agent'}</h3>
+              <form onSubmit={handleContactFormSubmit} className="flex flex-col gap-3">
                 <input
                   type="text"
-                  className="full-preview-property-form-input"
+                  className="w-full px-4 py-2.5 border border-gray-300 rounded-lg bg-white text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   placeholder="Your name"
                   value={contactFormName}
                   onChange={(e) => setContactFormName(e.target.value)}
@@ -462,14 +479,14 @@ export default function PublicPageBuilderPage() {
                 />
                 <input
                   type="email"
-                  className="full-preview-property-form-input"
+                  className="w-full px-4 py-2.5 border border-gray-300 rounded-lg bg-white text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   placeholder="Your email"
                   value={contactFormEmail}
                   onChange={(e) => setContactFormEmail(e.target.value)}
                   required
                 />
                 <textarea
-                  className="full-preview-property-form-textarea"
+                  className="w-full px-4 py-2.5 border border-gray-300 rounded-lg bg-white text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-y"
                   placeholder="Your message"
                   value={contactFormMessage}
                   onChange={(e) => setContactFormMessage(e.target.value)}
@@ -477,11 +494,11 @@ export default function PublicPageBuilderPage() {
                   required
                 />
                 <button 
-                  className="full-preview-property-form-submit-btn"
+                  className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors"
                   type="submit"
                 >
                   <span>Send Inquiry</span>
-                  <FiMessageCircle />
+                  <FiMessageCircle className="w-4 h-4" />
                 </button>
               </form>
             </div>

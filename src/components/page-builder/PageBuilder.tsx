@@ -26,8 +26,7 @@ import {
   FiMove,
   FiCheck,
   FiX,
-  FiExternalLink,
-  FiBell
+  FiExternalLink
 } from 'react-icons/fi'
 
 interface PageBuilderProps {
@@ -679,9 +678,6 @@ export default function PageBuilder({ userType }: PageBuilderProps) {
                 </p>
               </div>
               <div className="flex items-center gap-3.5 md:w-full md:justify-between md:gap-2.5">
-                <button className="w-11 h-11 rounded-xl border-0 bg-white flex items-center justify-center text-gray-600 text-xl cursor-pointer transition-all duration-200 shadow-sm hover:bg-gray-50 hover:text-blue-600">
-                  <FiBell />
-                </button>
                 <a href="/broker/create-listing" className="inline-flex items-center gap-2 py-2.5 px-5 bg-blue-600 text-white text-sm font-semibold rounded-xl border-0 no-underline cursor-pointer transition-all duration-200 shadow-sm hover:bg-blue-700 active:scale-[0.98]">
                   <FiPlus />
                   Add Listing

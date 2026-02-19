@@ -1,1 +1,1 @@
-self.__REACT_LOADABLE_MANIFEST="{\"components/common/PublicPropertiesMap.tsx -> leaflet\":{\"id\":\"components/common/PublicPropertiesMap.tsx -> leaflet\",\"files\":[\"static/chunks/_app-pages-browser_node_modules_leaflet_dist_leaflet-src_js.js\"]}}"
+self.__REACT_LOADABLE_MANIFEST="{\"components/common/PropertyLocationMap.tsx -> leaflet\":{\"id\":\"components/common/PropertyLocationMap.tsx -> leaflet\",\"files\":[\"static/chunks/_app-pages-browser_node_modules_leaflet_dist_leaflet-src_js.js\"]}}"

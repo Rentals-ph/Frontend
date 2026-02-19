@@ -11,11 +11,6 @@
       "static/css/app/layout.css",
       "static/chunks/app/layout.js"
     ],
-    "/verify-email/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/verify-email/page.js"
-    ],
     "/agent/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
@@ -31,21 +26,15 @@
       "static/chunks/main-app.js",
       "static/chunks/app/agent/page-builder/page.js"
     ],
-    "/properties/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/css/app/properties/page.css",
-      "static/chunks/app/properties/page.js"
-    ],
-    "/rent-managers/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/rent-managers/page.js"
-    ],
     "/about/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
       "static/chunks/app/about/page.js"
+    ],
+    "/property/[id]/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/property/[id]/page.js"
     ]
   }
 }

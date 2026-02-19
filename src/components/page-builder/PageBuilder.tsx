@@ -1,0 +1,2646 @@
+'use client'
+
+import { useState, useRef, useEffect } from 'react'
+import AppSidebar from '../../components/common/AppSidebar'
+import AgentHeader from '../../components/agent/AgentHeader'
+import { ASSETS } from '@/utils/assets'
+import { pageBuilderApi, propertiesApi, testimonialsApi } from '@/api'
+import type { Property, Testimonial } from '@/types'
+import { 
+  FiSettings,
+  FiUpload,
+  FiMail,
+  FiPhone,
+  FiMessageCircle,
+  FiGlobe,
+  FiPlus,
+  FiStar,
+  FiHeart,
+  FiLayout,
+  FiEdit3,
+  FiEye,
+  FiEyeOff,
+  FiChevronUp,
+  FiChevronDown,
+  FiTrash2,
+  FiMove,
+  FiCheck,
+  FiX,
+  FiExternalLink,
+  FiBell
+} from 'react-icons/fi'
+
+interface PageBuilderProps {
+  userType: 'agent' | 'broker'
+}
+
+export default function PageBuilder({ userType }: PageBuilderProps) {
+  const [selectedTheme, setSelectedTheme] = useState('white')
+  const [showBio, setShowBio] = useState(true)
+  const [showContactNumber, setShowContactNumber] = useState(true)
+  const [showExperienceStats, setShowExperienceStats] = useState(false)
+  const [showFeaturedListings, setShowFeaturedListings] = useState(true)
+  const [showTestimonials, setShowTestimonials] = useState(true)
+  const [bio, setBio] = useState('')
+  const [activeTab, setActiveTab] = useState('profile')
+  const [leftSidebarTab, setLeftSidebarTab] = useState('content')
+  const [showFullPreview, setShowFullPreview] = useState(false)
+  
+  // Profile image state
+  const [profileImage, setProfileImage] = useState<string | null>(null)
+  const profileImageInputRef = useRef<HTMLInputElement>(null)
+  
+  // Contact information states
+  const [contactInfo, setContactInfo] = useState({
+    email: '',
+    phone: '',
+    message: '',
+    website: ''
+  })
+  const [showContactModal, setShowContactModal] = useState(false)
+  const [editingContactType, setEditingContactType] = useState<string | null>(null)
+  
+  // Experience stats state
+  const [experienceStats, setExperienceStats] = useState<Array<{ label: string; value: string }>>([])
+  const [showExperienceModal, setShowExperienceModal] = useState(false)
+  const [editingStatIndex, setEditingStatIndex] = useState<number | null>(null)
+  
+  // Featured listings edit state
+  const [showFeaturedListingsModal, setShowFeaturedListingsModal] = useState(false)
+  const [editingListingIndex, setEditingListingIndex] = useState<number | null>(null)
+  
+  // Testimonials edit state
+  const [showTestimonialsModal, setShowTestimonialsModal] = useState(false)
+  const [editingTestimonialIndex, setEditingTestimonialIndex] = useState<number | null>(null)
+  
+  // File input refs
+  const heroImageInputRef = useRef<HTMLInputElement>(null)
+  const profileCardImageInputRef = useRef<HTMLInputElement>(null)
+  const propertyImageInputRef = useRef<HTMLInputElement>(null)
+  
+  // Drag and drop state
+  const [draggedSectionIndex, setDraggedSectionIndex] = useState<number | null>(null)
+  
+  // Property mode states
+  const [heroImage, setHeroImage] = useState('')
+  const [mainHeading, setMainHeading] = useState('')
+  const [tagline, setTagline] = useState('')
+  const [overallDarkness, setOverallDarkness] = useState(30)
+  const [propertyDescription, setPropertyDescription] = useState('')
+  const [propertyImages, setPropertyImages] = useState<string[]>([])
+  const [profileCardName, setProfileCardName] = useState('')
+  const [profileCardRole, setProfileCardRole] = useState('')
+  const [profileCardBio, setProfileCardBio] = useState('')
+  const [profileCardImage, setProfileCardImage] = useState('')
+  
+  // Additional property preview states
+  const [propertyPrice, setPropertyPrice] = useState('')
+  const [contactFormName, setContactFormName] = useState('')
+  const [contactFormEmail, setContactFormEmail] = useState('')
+  const [contactFormMessage, setContactFormMessage] = useState('')
+  
+  // Section visibility states
+  const [sectionVisibility, setSectionVisibility] = useState({
+    hero: false,
+    propertyDescription: true,
+    propertyImages: true,
+    profileCard: true
+  })
+  
+  // Layout sections order
+  const [layoutSections, setLayoutSections] = useState([
+    { id: 'hero', name: 'Hero', visible: false },
+    { id: 'propertyDescription', name: 'Property Description', visible: true },
+    { id: 'propertyImages', name: 'Property Images', visible: true },
+    { id: 'profileCard', name: 'Profile Card', visible: true }
+  ])
+  
+  // Design states
+  const [selectedBrandColor, setSelectedBrandColor] = useState('white')
+  const [selectedCornerRadius, setSelectedCornerRadius] = useState('soft')
+  
+  // Page builder data state
+  const [pageBuilderId, setPageBuilderId] = useState<number | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
+  const [isSaving, setIsSaving] = useState(false)
+  const [isPublishing, setIsPublishing] = useState(false)
+  const [isPublished, setIsPublished] = useState(false)
+  const [pageUrl, setPageUrl] = useState<string | null>(null)
+  const [pageSlug, setPageSlug] = useState<string | null>(null)
+  const [showPageUrlModal, setShowPageUrlModal] = useState(false)
+  
+  // Featured listings and testimonials state
+  const [featuredListings, setFeaturedListings] = useState<Property[]>([])
+  const [availableProperties, setAvailableProperties] = useState<Property[]>([])
+  const [testimonials, setTestimonials] = useState<Testimonial[]>([])
+  const [availableTestimonials, setAvailableTestimonials] = useState<Testimonial[]>([])
+  const [loadingProperties, setLoadingProperties] = useState(false)
+  const [loadingTestimonials, setLoadingTestimonials] = useState(false)
+  
+  // Load available properties and testimonials
+  useEffect(() => {
+    const loadAvailableData = async () => {
+      try {
+        setLoadingProperties(true)
+        setLoadingTestimonials(true)
+        
+        // Get current user ID from auth (you may need to adjust this based on your auth setup)
+        // For now, we'll get all properties and filter client-side
+        const properties = await propertiesApi.getAll()
+        const propertiesArray = Array.isArray(properties) ? properties : (properties as any).data || []
+        setAvailableProperties(propertiesArray)
+        
+        const testimonialsData = await testimonialsApi.getAll()
+        setAvailableTestimonials(testimonialsData)
+      } catch (error) {
+        console.error('Error loading available data:', error)
+      } finally {
+        setLoadingProperties(false)
+        setLoadingTestimonials(false)
+      }
+    }
+    
+    loadAvailableData()
+  }, [])
+  
+  // Load page builder data on mount
+  useEffect(() => {
+    const loadPageBuilder = async () => {
+      try {
+        setIsLoading(true)
+        const pageBuilders = await pageBuilderApi.getAll(userType, activeTab as 'profile' | 'property')
+        
+        // Also load profile page builder data to sync with property page
+        const profilePageBuilders = await pageBuilderApi.getAll(userType, 'profile')
+        const profilePageData = profilePageBuilders.length > 0 ? profilePageBuilders[0] : null
+        
+        if (pageBuilders.length > 0) {
+          const pageData = pageBuilders[0]
+          setPageBuilderId(pageData.id || null)
+          setIsPublished(pageData.is_published || false)
+          setPageUrl(pageData.page_url || null)
+          setPageSlug(pageData.page_slug || null)
+          
+          // Load profile data
+          if (activeTab === 'profile' && pageData.page_type === 'profile') {
+            if (pageData.selected_theme) setSelectedTheme(pageData.selected_theme)
+            if (pageData.bio !== undefined) setBio(pageData.bio)
+            if (pageData.show_bio !== undefined) setShowBio(pageData.show_bio)
+            if (pageData.show_contact_number !== undefined) setShowContactNumber(pageData.show_contact_number)
+            if (pageData.show_experience_stats !== undefined) setShowExperienceStats(pageData.show_experience_stats)
+            if (pageData.show_featured_listings !== undefined) setShowFeaturedListings(pageData.show_featured_listings)
+            if (pageData.show_testimonials !== undefined) setShowTestimonials(pageData.show_testimonials)
+            if (pageData.profile_image) setProfileImage(pageData.profile_image)
+            if (pageData.contact_info) {
+              setContactInfo({
+                email: pageData.contact_info.email || '',
+                phone: pageData.contact_info.phone || '',
+                message: pageData.contact_info.message || '',
+                website: pageData.contact_info.website || ''
+              })
+            }
+            if (pageData.experience_stats) setExperienceStats(pageData.experience_stats)
+            if (pageData.featured_listings) setFeaturedListings(pageData.featured_listings as Property[])
+            if (pageData.testimonials) setTestimonials(pageData.testimonials as Testimonial[])
+            // Load profile card fields - always load if they exist, even if empty
+            if (pageData.profile_card_name !== undefined) setProfileCardName(pageData.profile_card_name || '')
+            if (pageData.profile_card_role !== undefined) setProfileCardRole(pageData.profile_card_role || '')
+            if (pageData.profile_card_bio !== undefined) setProfileCardBio(pageData.profile_card_bio || '')
+            if (pageData.profile_card_image !== undefined) setProfileCardImage(pageData.profile_card_image || '')
+          }
+          
+          // Load property data
+          if (activeTab === 'property' && pageData.page_type === 'property') {
+            if (pageData.hero_image) setHeroImage(pageData.hero_image)
+            if (pageData.main_heading) setMainHeading(pageData.main_heading)
+            if (pageData.tagline) setTagline(pageData.tagline)
+            if (pageData.overall_darkness !== undefined) setOverallDarkness(pageData.overall_darkness)
+            if (pageData.property_description) setPropertyDescription(pageData.property_description)
+            if (pageData.property_images) setPropertyImages(pageData.property_images)
+            if (pageData.property_price) setPropertyPrice(pageData.property_price)
+            // Contact info is loaded from contact_info object above
+            if (pageData.section_visibility) {
+              setSectionVisibility({
+                hero: pageData.section_visibility.hero ?? false,
+                propertyDescription: pageData.section_visibility.propertyDescription ?? true,
+                propertyImages: pageData.section_visibility.propertyImages ?? true,
+                profileCard: pageData.section_visibility.profileCard ?? true
+              })
+            }
+            if (pageData.layout_sections) setLayoutSections(pageData.layout_sections)
+            if (pageData.selected_brand_color) setSelectedBrandColor(pageData.selected_brand_color)
+            if (pageData.selected_corner_radius) setSelectedCornerRadius(pageData.selected_corner_radius)
+            
+            // Sync profile card with profile page builder data
+            if (profilePageData) {
+              // Use profile image for profile card image
+              if (profilePageData.profile_image) {
+                setProfileCardImage(profilePageData.profile_image)
+              }
+              // Use bio for profile card bio
+              if (profilePageData.bio) {
+                setProfileCardBio(profilePageData.bio)
+              }
+              // Use contact info for profile card
+              if (profilePageData.contact_info) {
+                const contactInfo = profilePageData.contact_info
+                setContactInfo(prev => ({ 
+                  ...prev, 
+                  email: contactInfo.email || prev.email,
+                  phone: contactInfo.phone || prev.phone
+                }))
+              }
+            } else {
+              // Fallback to property page data if profile page doesn't exist
+              if (pageData.profile_card_name !== undefined) setProfileCardName(pageData.profile_card_name || '')
+              if (pageData.profile_card_role !== undefined) setProfileCardRole(pageData.profile_card_role || '')
+              if (pageData.profile_card_bio !== undefined) setProfileCardBio(pageData.profile_card_bio || '')
+              if (pageData.profile_card_image !== undefined) setProfileCardImage(pageData.profile_card_image || '')
+            }
+          }
+        } else {
+          // If no property page exists, still load profile data for profile card
+          if (activeTab === 'property' && profilePageData) {
+            if (profilePageData.profile_image) {
+              setProfileCardImage(profilePageData.profile_image)
+            }
+            if (profilePageData.bio) {
+              setProfileCardBio(profilePageData.bio)
+            }
+            if (profilePageData.contact_info) {
+              const contactInfo = profilePageData.contact_info
+              setContactInfo(prev => ({ 
+                ...prev, 
+                email: contactInfo.email || prev.email,
+                phone: contactInfo.phone || prev.phone
+              }))
+            }
+          }
+        }
+      } catch (error) {
+        console.error('Error loading page builder:', error)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+    
+    loadPageBuilder()
+  }, [activeTab])
+  
+  const brandColors = [
+    { id: 'white', color: '#FFFFFF' },
+    { id: 'dark', color: '#1F2937' },
+    { id: 'orange', color: '#F97316' },
+    { id: 'blue', color: '#3B82F6' }
+  ]
+  
+  const cornerRadiusOptions = [
+    { id: 'sharp', name: 'Sharp' },
+    { id: 'regular', name: 'Regular' },
+    { id: 'soft', name: 'Soft' }
+  ]
+  
+  const toggleSectionVisibility = (sectionId: string) => {
+    setSectionVisibility(prev => ({
+      ...prev,
+      [sectionId]: !prev[sectionId as keyof typeof prev]
+    }))
+    setLayoutSections(prev => prev.map(section => 
+      section.id === sectionId 
+        ? { ...section, visible: !section.visible }
+        : section
+    ))
+  }
+  
+  const moveSection = (index: number, direction: 'up' | 'down') => {
+    const newSections = [...layoutSections]
+    if (direction === 'up' && index > 0) {
+      [newSections[index], newSections[index - 1]] = [newSections[index - 1], newSections[index]]
+      setLayoutSections(newSections)
+    } else if (direction === 'down' && index < newSections.length - 1) {
+      [newSections[index], newSections[index + 1]] = [newSections[index + 1], newSections[index]]
+      setLayoutSections(newSections)
+    }
+  }
+  
+  const deleteSection = (sectionId: string) => {
+    setLayoutSections(prev => prev.filter(section => section.id !== sectionId))
+    setSectionVisibility(prev => {
+      const newVisibility = { ...prev }
+      delete newVisibility[sectionId as keyof typeof prev]
+      return newVisibility
+    })
+  }
+  
+  // File upload handlers
+  const handleFileUpload = (file: File, type: 'profile' | 'hero' | 'profileCard' | 'property') => {
+    const reader = new FileReader()
+    reader.onloadend = () => {
+      const result = reader.result as string
+      switch (type) {
+        case 'profile':
+          setProfileImage(result)
+          break
+        case 'hero':
+          setHeroImage(result)
+          break
+        case 'profileCard':
+          setProfileCardImage(result)
+          break
+        case 'property':
+          setPropertyImages(prev => [...prev, result])
+          break
+      }
+    }
+    reader.readAsDataURL(file)
+  }
+  
+  const handleImageInputChange = (e: React.ChangeEvent<HTMLInputElement>, type: 'profile' | 'hero' | 'profileCard' | 'property') => {
+    const file = e.target.files?.[0]
+    if (file && file.type.startsWith('image/')) {
+      handleFileUpload(file, type)
+    }
+  }
+  
+  // Contact management
+  const handleContactIconClick = (type: 'email' | 'phone' | 'message' | 'website') => {
+    setEditingContactType(type)
+    setShowContactModal(true)
+  }
+  
+  const handleContactSave = () => {
+    setShowContactModal(false)
+    setEditingContactType(null)
+  }
+  
+  // Experience stats management
+  const handleAddExperienceStat = () => {
+    setEditingStatIndex(null)
+    setShowExperienceModal(true)
+  }
+  
+  const handleSaveExperienceStat = (label: string, value: string) => {
+    if (editingStatIndex !== null) {
+      const updated = [...experienceStats]
+      updated[editingStatIndex] = { label, value }
+      setExperienceStats(updated)
+    } else {
+      setExperienceStats([...experienceStats, { label, value }])
+    }
+    setShowExperienceModal(false)
+    setEditingStatIndex(null)
+  }
+  
+  const handleDeleteExperienceStat = (index: number) => {
+    setExperienceStats(prev => prev.filter((_, i) => i !== index))
+  }
+  
+  // Featured listings management
+  const handleAddFeaturedListing = () => {
+    setEditingListingIndex(null)
+    setShowFeaturedListingsModal(true)
+  }
+  
+  const handleEditFeaturedListing = (index: number) => {
+    setEditingListingIndex(index)
+    setShowFeaturedListingsModal(true)
+  }
+  
+  const handleSelectFeaturedListing = (property: Property) => {
+    if (editingListingIndex !== null) {
+      const updated = [...featuredListings]
+      updated[editingListingIndex] = property
+      setFeaturedListings(updated)
+    } else {
+      setFeaturedListings([...featuredListings, property])
+    }
+    setShowFeaturedListingsModal(false)
+    setEditingListingIndex(null)
+  }
+  
+  const handleRemoveFeaturedListing = (index: number) => {
+    setFeaturedListings(prev => prev.filter((_, i) => i !== index))
+  }
+  
+  // Testimonials management
+  const handleAddTestimonial = () => {
+    setEditingTestimonialIndex(null)
+    setShowTestimonialsModal(true)
+  }
+  
+  const handleEditTestimonial = (index: number) => {
+    setEditingTestimonialIndex(index)
+    setShowTestimonialsModal(true)
+  }
+  
+  const handleSaveTestimonial = (testimonial: Testimonial) => {
+    if (editingTestimonialIndex !== null) {
+      const updated = [...testimonials]
+      updated[editingTestimonialIndex] = testimonial
+      setTestimonials(updated)
+    } else {
+      setTestimonials([...testimonials, testimonial])
+    }
+    setShowTestimonialsModal(false)
+    setEditingTestimonialIndex(null)
+  }
+  
+  const handleDeleteTestimonial = (index: number) => {
+    setTestimonials(prev => prev.filter((_, i) => i !== index))
+  }
+  
+  // Contact form submission
+  const handleContactFormSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    try {
+      // In a real app, this would send to a contact/inquiry API
+      // For now, we'll just show an alert
+      if (!contactFormName || !contactFormEmail || !contactFormMessage) {
+        alert('Please fill in all fields')
+        return
+      }
+      
+      // TODO: Implement actual API call to submit inquiry
+      console.log('Contact form submission:', {
+        name: contactFormName,
+        email: contactFormEmail,
+        message: contactFormMessage,
+        pageId: pageBuilderId,
+        pageType: activeTab
+      })
+      
+      alert('Thank you for your inquiry! We will get back to you soon.')
+      setContactFormName('')
+      setContactFormEmail('')
+      setContactFormMessage('')
+    } catch (error) {
+      console.error('Error submitting contact form:', error)
+      alert('Failed to send inquiry. Please try again.')
+    }
+  }
+  
+  // Remove property image
+  const handleRemovePropertyImage = (index: number) => {
+    setPropertyImages(prev => prev.filter((_, i) => i !== index))
+  }
+  
+  // Drag and drop handlers
+  const handleDragStart = (index: number) => {
+    setDraggedSectionIndex(index)
+  }
+  
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault()
+  }
+  
+  const handleDrop = (targetIndex: number) => {
+    if (draggedSectionIndex === null) return
+    
+    const newSections = [...layoutSections]
+    const [draggedItem] = newSections.splice(draggedSectionIndex, 1)
+    newSections.splice(targetIndex, 0, draggedItem)
+    setLayoutSections(newSections)
+    setDraggedSectionIndex(null)
+  }
+  
+  // Save changes handler - sends all page customization as a single page_data object
+  const handleSaveChanges = async () => {
+    try {
+      setIsSaving(true)
+      
+      // Collect all page customization data into a single object
+      const pageData = {
+        // Profile mode fields
+        selected_theme: selectedTheme,
+        bio: bio,
+        show_bio: showBio,
+        show_contact_number: showContactNumber,
+        show_experience_stats: showExperienceStats,
+        show_featured_listings: showFeaturedListings,
+        show_testimonials: showTestimonials,
+        profile_image: profileImage,
+        contact_info: contactInfo,
+        experience_stats: experienceStats,
+        featured_listings: featuredListings,
+        testimonials: testimonials,
+        
+        // Property mode fields
+        hero_image: heroImage,
+        main_heading: mainHeading,
+        tagline: tagline,
+        overall_darkness: overallDarkness,
+        property_description: propertyDescription,
+        property_images: propertyImages,
+        property_price: propertyPrice,
+        contact_phone: contactInfo.phone,
+        contact_email: contactInfo.email,
+        
+        // Profile card fields - always save the actual values from state
+        profile_card_name: profileCardName,
+        profile_card_role: profileCardRole,
+        profile_card_bio: profileCardBio,
+        profile_card_image: profileCardImage,
+        
+        // Layout and design fields
+        section_visibility: sectionVisibility,
+        layout_sections: layoutSections,
+        selected_brand_color: selectedBrandColor,
+        selected_corner_radius: selectedCornerRadius,
+      }
+      
+      // Send to backend with page_data structure
+      const savePayload = {
+        user_type: userType,
+        page_type: activeTab as 'profile' | 'property',
+        page_data: pageData,
+      }
+      
+      let savedData
+      if (pageBuilderId) {
+        savedData = await pageBuilderApi.update(pageBuilderId, savePayload)
+      } else {
+        savedData = await pageBuilderApi.save(savePayload)
+        setPageBuilderId(savedData.id || null)
+      }
+      
+      // Update page URL and slug if available
+      if (savedData.page_url) {
+        setPageUrl(savedData.page_url)
+      }
+      if (savedData.page_slug) {
+        setPageSlug(savedData.page_slug)
+      }
+      setIsPublished(savedData.is_published || false)
+      
+      alert('Changes saved successfully!')
+    } catch (error: any) {
+      console.error('Error saving page builder:', error)
+      alert('Failed to save changes: ' + (error.response?.data?.message || error.message))
+    } finally {
+      setIsSaving(false)
+    }
+  }
+  
+  // Publish handler
+  const handlePublish = async () => {
+    if (!pageBuilderId) {
+      alert('Please save your page first before publishing.')
+      return
+    }
+    
+    try {
+      setIsPublishing(true)
+      const publishedData = await pageBuilderApi.publish(pageBuilderId, !isPublished)
+      
+      setIsPublished(publishedData.is_published || false)
+      if (publishedData.page_url) {
+        setPageUrl(publishedData.page_url)
+      }
+      if (publishedData.page_slug) {
+        setPageSlug(publishedData.page_slug)
+      }
+      
+      if (publishedData.is_published) {
+        setShowPageUrlModal(true)
+        alert('Page published successfully! Your page is now live and shareable.')
+      } else {
+        alert('Page unpublished successfully.')
+      }
+    } catch (error: any) {
+      console.error('Error publishing page:', error)
+      alert('Failed to publish page: ' + (error.response?.data?.message || error.message))
+    } finally {
+      setIsPublishing(false)
+    }
+  }
+  
+  // Copy page URL to clipboard
+  const handleCopyUrl = () => {
+    if (pageUrl) {
+      navigator.clipboard.writeText(pageUrl)
+      alert('Page URL copied to clipboard!')
+    }
+  }
+  
+  // Apply design settings to preview
+  const getCornerRadiusClass = () => {
+    switch (selectedCornerRadius) {
+      case 'sharp': return '0px'
+      case 'regular': return '8px'
+      case 'soft': return '16px'
+      default: return '16px'
+    }
+  }
+  
+  const getBrandColorClass = () => {
+    return selectedBrandColor
+  }
+
+  const themes = [
+    { id: 'white', name: 'White', color: '#FFFFFF' },
+    { id: 'dark', name: 'Dark', color: '#1F2937' },
+    { id: 'orange', name: 'Orange', color: '#F97316' },
+    { id: 'blue', name: 'Blue', color: '#3B82F6' }
+  ]
+
+  // Helper function to format property price
+  const formatPropertyPrice = (property: Property) => {
+    return `₱${property.price.toLocaleString()}${property.price_type ? `/${property.price_type}` : '/mo'}`
+  }
+  
+  // Helper function to format property date
+  const formatPropertyDate = (property: Property) => {
+    if (property.published_at) {
+      const date = new Date(property.published_at)
+      return date.toLocaleDateString('en-US', { weekday: 'short', day: '2-digit', month: 'short', year: 'numeric' })
+    }
+    return 'Recently'
+  }
+
+  return (
+    <div className="flex min-h-screen bg-gray-100 font-outfit"> {/* agent-dashboard */}
+      <AppSidebar/>
+
+      <main className="ml-[280px] flex-1 w-[calc(100%-280px)] min-h-screen lg:ml-[240px] lg:w-[calc(100%-240px)] md:ml-[200px] md:w-[calc(100%-200px)] md:ml-0 md:w-full"> {/* agent-main */}
+        <div className="px-4 sm:px-6 md:px-10 lg:px-[150px] py-8 lg:py-6 md:py-4 md:pt-15">
+          {userType === 'agent' ? (
+            <AgentHeader 
+              title={activeTab === 'profile' ? "Page Builder > Profile" : "Page Builder > Property"} 
+              subtitle={activeTab === 'profile' ? "Customize your public profile page" : "Customize your property page"} 
+            />
+          ) : (
+            <header className="flex items-center justify-between mb-7 md:flex-col md:items-start md:gap-3.5">
+              <div className="flex flex-col gap-1">
+                <h1 className="text-2xl font-bold text-gray-900 m-0 mb-1 md:text-xl">
+                  {activeTab === 'profile' ? 'Page Builder > Profile' : 'Page Builder > Property'}
+                </h1>
+                <p className="text-sm text-gray-400 m-0">
+                  {activeTab === 'profile' ? 'Customize your public profile page' : 'Customize your property page'}
+                </p>
+              </div>
+              <div className="flex items-center gap-3.5 md:w-full md:justify-between md:gap-2.5">
+                <button className="w-11 h-11 rounded-xl border-0 bg-white flex items-center justify-center text-gray-600 text-xl cursor-pointer transition-all duration-200 shadow-sm hover:bg-gray-50 hover:text-blue-600">
+                  <FiBell />
+                </button>
+                <a href="/broker/create-listing" className="inline-flex items-center gap-2 py-2.5 px-5 bg-blue-600 text-white text-sm font-semibold rounded-xl border-0 no-underline cursor-pointer transition-all duration-200 shadow-sm hover:bg-blue-700 active:scale-[0.98]">
+                  <FiPlus />
+                  Add Listing
+                </a>
+              </div>
+            </header>
+          )}
+          
+          {/* Preview Button */}
+          <div className="flex justify-end mb-6"> {/* preview-button-container */}
+            <button 
+              className="inline-flex items-center gap-2 py-2.5 px-5 bg-blue-600 text-white text-sm font-semibold rounded-xl border-0 cursor-pointer transition-all duration-200 shadow-sm hover:bg-blue-700" /* full-preview-button */
+              onClick={() => setShowFullPreview(true)}
+            >
+              <FiExternalLink className="text-base" /> {/* preview-icon */}
+              <span>Preview Full Page</span>
+            </button>
+          </div>
+
+          <div className="grid grid-cols-[1fr_1.5fr] gap-6 lg:grid-cols-2"> {/* page-builder-container */}
+          {/* Left Column - Customization */}
+          <div className="flex flex-col gap-6"> {/* page-builder-left */}
+            {activeTab === 'profile' ? (
+              <>
+                <div className="bg-white rounded-2xl p-6 shadow-sm"> {/* customize-section */}
+                  <div className="flex items-start gap-4"> {/* customize-header */}
+                    <div className="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center text-blue-600 flex-shrink-0"> {/* customize-icon-wrapper */}
+                      <FiLayout className="text-xl" /> {/* customize-icon */}
+                    </div>
+                    <div className="flex-1"> {/* customize-content */}
+                      <h2 className="text-lg font-bold text-gray-900 mb-1">Customize your very own public page</h2> {/* customize-title */}
+                      <p className="text-sm text-gray-600">Showcase your public page to anyone.</p> {/* customize-subtitle */}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Themes Section */}
+                <div className="bg-white rounded-2xl p-6 shadow-sm"> {/* builder-section */}
+                  <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wider mb-4">Themes</h3> {/* section-label */}
+                  <div className="grid grid-cols-4 gap-4"> {/* themes-grid */}
+                    {themes.map((theme) => (
+                      <div key={theme.id} className="flex flex-col items-center gap-2">
+                        <button
+                          className={`w-16 h-16 rounded-full border-2 transition-all ${
+                            selectedTheme === theme.id 
+                              ? 'border-blue-600 ring-2 ring-blue-200' 
+                              : 'border-gray-300 hover:border-gray-400'
+                          } ${theme.id === 'white' ? 'border-gray-300' : ''}`}
+                          style={{ backgroundColor: theme.color }}
+                          onClick={() => setSelectedTheme(theme.id)}
+                          aria-label={theme.name}
+                        />
+                        <span className="text-xs font-medium text-gray-700">{theme.name}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Profile Section */}
+                <div className="bg-white rounded-2xl p-6 shadow-sm">
+                  <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wider mb-4">Profile</h3>
+                  <div className="flex flex-col gap-4">
+                    <div className="relative w-24 h-24 mx-auto">
+                      <img 
+                        src={profileImage || ASSETS.PLACEHOLDER_PROFILE} 
+                        alt="Profile"
+                        className="w-full h-full rounded-full object-cover"
+                        onError={(e) => {
+                          const target = e.target as HTMLImageElement;
+                          target.style.display = 'none';
+                        }}
+                      />
+                      <div className="absolute inset-0 w-full h-full rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-semibold text-lg hidden">
+                        JA
+                      </div>
+                    </div>
+                    <input
+                      type="file"
+                      ref={profileImageInputRef}
+                      accept="image/*"
+                      className="hidden"
+                      onChange={(e) => handleImageInputChange(e, 'profile')}
+                    />
+                    <button 
+                      className="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-blue-600 text-white text-sm font-medium rounded-lg border-0 cursor-pointer transition-colors hover:bg-blue-700"
+                      onClick={() => profileImageInputRef.current?.click()}
+                    >
+                      <FiUpload className="w-4 h-4" />
+                      Upload Image
+                    </button>
+                    <textarea
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-white text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-y min-h-[100px]"
+                      placeholder="This is my bio..."
+                      value={bio}
+                      onChange={(e) => setBio(e.target.value)}
+                    />
+                  </div>
+                </div>
+
+                {/* Profile Card Section */}
+                <div className="bg-white rounded-2xl p-6 shadow-sm">
+                  <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wider mb-4">Profile Card</h3>
+                  <div className="p-3 bg-blue-50 rounded-lg mb-4 text-sm text-blue-900">
+                    <strong>ℹ️ Note:</strong> Profile card uses the same image and bio from Profile section above. 
+                    You can customize the name and role separately.
+                  </div>
+                  <div className="flex flex-col gap-4">
+                    <div className="relative w-20 h-20 mx-auto group">
+                      <img 
+                        src={profileCardImage || profileImage || ASSETS.PLACEHOLDER_PROFILE} 
+                        alt="Profile Card" 
+                        className="w-full h-full rounded-full object-cover"
+                        onError={(e) => {
+                          const target = e.target as HTMLImageElement;
+                          target.style.display = 'none';
+                        }}
+                      />
+                      <div className="absolute inset-0 bg-black/50 rounded-full opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                        <input
+                          type="file"
+                          ref={profileCardImageInputRef}
+                          accept="image/*"
+                          className="hidden"
+                          onChange={(e) => handleImageInputChange(e, 'profileCard')}
+                        />
+                        <button 
+                          className="w-8 h-8 bg-white rounded-full flex items-center justify-center text-gray-700 hover:text-blue-600 transition-colors"
+                          onClick={() => profileCardImageInputRef.current?.click()}
+                        >
+                          <FiUpload className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </div>
+                    <div className="flex flex-col gap-2">
+                      <input
+                        type="text"
+                        className="w-full px-4 py-2.5 border border-gray-300 rounded-lg bg-white text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="Your name"
+                        value={profileCardName}
+                        onChange={(e) => setProfileCardName(e.target.value)}
+                      />
+                      <input
+                        type="text"
+                        className="w-full px-4 py-2.5 border border-gray-300 rounded-lg bg-white text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="Property Agent"
+                        value={profileCardRole}
+                        onChange={(e) => setProfileCardRole(e.target.value)}
+                      />
+                    </div>
+                    <textarea
+                      className="w-full px-4 py-2.5 border border-gray-300 rounded-lg bg-white text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-y min-h-[80px]"
+                      placeholder="Your bio (uses Profile bio if empty)..."
+                      value={profileCardBio}
+                      onChange={(e) => setProfileCardBio(e.target.value)}
+                    />
+                  </div>
+                </div>
+
+                {/* Information Section */}
+                <div className="bg-white rounded-2xl p-6 shadow-sm">
+                  <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wider mb-4">Information</h3>
+                  <div className="flex flex-col gap-4">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center justify-between flex-1 mr-4">
+                        <span className="text-sm font-medium text-gray-900">Show Bio</span>
+                        <span 
+                          className="text-sm text-blue-600 hover:text-blue-700 cursor-pointer"
+                          onClick={() => {
+                            const newBio = prompt('Edit your bio:', bio)
+                            if (newBio !== null) setBio(newBio)
+                          }}
+                        >
+                          Edit
+                        </span>
+                      </div>
+                      <label className="relative inline-flex items-center cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={showBio}
+                          onChange={(e) => setShowBio(e.target.checked)}
+                          className="sr-only peer"
+                        />
+                        <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                      </label>
+                    </div>
+
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center justify-between flex-1 mr-4">
+                        <span className="text-sm font-medium text-gray-900">Contact Number</span>
+                        <span 
+                          className="text-sm text-blue-600 hover:text-blue-700 cursor-pointer"
+                          onClick={() => handleContactIconClick('phone')}
+                        >
+                          Edit
+                        </span>
+                      </div>
+                      <label className="relative inline-flex items-center cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={showContactNumber}
+                          onChange={(e) => setShowContactNumber(e.target.checked)}
+                          className="sr-only peer"
+                        />
+                        <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                      </label>
+                    </div>
+
+                    <div className="flex items-center gap-3">
+                      <button 
+                        className="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center relative hover:bg-blue-200 transition-colors"
+                        onClick={() => handleContactIconClick('email')}
+                        title={contactInfo.email || 'Add Email'}
+                      >
+                        <FiMail className="w-5 h-5" />
+                        <FiPlus className="absolute -top-1 -right-1 w-4 h-4 bg-blue-600 text-white rounded-full p-0.5" />
+                      </button>
+                      <button 
+                        className="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center relative hover:bg-blue-200 transition-colors"
+                        onClick={() => handleContactIconClick('phone')}
+                        title={contactInfo.phone || 'Add Phone'}
+                      >
+                        <FiPhone className="w-5 h-5" />
+                        <FiPlus className="absolute -top-1 -right-1 w-4 h-4 bg-blue-600 text-white rounded-full p-0.5" />
+                      </button>
+                      <button 
+                        className="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center relative hover:bg-blue-200 transition-colors"
+                        onClick={() => handleContactIconClick('message')}
+                        title={contactInfo.message || 'Add Message'}
+                      >
+                        <FiMessageCircle className="w-5 h-5" />
+                        <FiPlus className="absolute -top-1 -right-1 w-4 h-4 bg-blue-600 text-white rounded-full p-0.5" />
+                      </button>
+                      <button 
+                        className="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center relative hover:bg-blue-200 transition-colors"
+                        onClick={() => handleContactIconClick('website')}
+                        title={contactInfo.website || 'Add Website'}
+                      >
+                        <FiGlobe className="w-5 h-5" />
+                        <FiPlus className="absolute -top-1 -right-1 w-4 h-4 bg-blue-600 text-white rounded-full p-0.5" />
+                      </button>
+                    </div>
+
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center justify-between flex-1 mr-4">
+                        <span className="text-sm font-medium text-gray-900">Experience Stats</span>
+                        <span 
+                          className="text-sm text-blue-600 hover:text-blue-700 cursor-pointer"
+                          onClick={handleAddExperienceStat}
+                        >
+                          Add
+                        </span>
+                      </div>
+                      <label className="relative inline-flex items-center cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={showExperienceStats}
+                          onChange={(e) => setShowExperienceStats(e.target.checked)}
+                          className="sr-only peer"
+                        />
+                        <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                      </label>
+                    </div>
+
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center justify-between flex-1 mr-4">
+                        <span className="text-sm font-medium text-gray-900">Featured Listings</span>
+                        <span 
+                          className="text-sm text-blue-600 hover:text-blue-700 cursor-pointer"
+                          onClick={handleAddFeaturedListing}
+                        >
+                          {featuredListings.length > 0 ? 'Edit' : 'Add'}
+                        </span>
+                      </div>
+                      <label className="relative inline-flex items-center cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={showFeaturedListings}
+                          onChange={(e) => setShowFeaturedListings(e.target.checked)}
+                          className="sr-only peer"
+                        />
+                        <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                      </label>
+                      {featuredListings.length > 0 && (
+                        <div className="ml-2 text-xs text-gray-500">
+                          {featuredListings.length} listing{featuredListings.length !== 1 ? 's' : ''} selected
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center justify-between flex-1 mr-4">
+                        <span className="text-sm font-medium text-gray-900">Client Testimonials</span>
+                        <span 
+                          className="text-sm text-blue-600 hover:text-blue-700 cursor-pointer"
+                          onClick={handleAddTestimonial}
+                        >
+                          {testimonials.length > 0 ? 'Edit' : 'Add'}
+                        </span>
+                      </div>
+                      <label className="relative inline-flex items-center cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={showTestimonials}
+                          onChange={(e) => setShowTestimonials(e.target.checked)}
+                          className="sr-only peer"
+                        />
+                        <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                      </label>
+                      {testimonials.length > 0 && (
+                        <div className="ml-2 text-xs text-gray-500">
+                          {testimonials.length} testimonial{testimonials.length !== 1 ? 's' : ''} added
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </>
+            ) : (
+              <>
+                {/* Property Mode Tabs */}
+                <div className="bg-white rounded-2xl p-2 shadow-sm">
+                  <div className="flex border-b border-gray-200">
+                    <button
+                      className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
+                        leftSidebarTab === 'content' 
+                          ? 'border-blue-600 text-blue-600' 
+                          : 'border-transparent text-gray-500 hover:text-gray-700'
+                      }`}
+                      onClick={() => setLeftSidebarTab('content')}
+                    >
+                      Content
+                    </button>
+                    <button
+                      className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
+                        leftSidebarTab === 'section' 
+                          ? 'border-blue-600 text-blue-600' 
+                          : 'border-transparent text-gray-500 hover:text-gray-700'
+                      }`}
+                      onClick={() => setLeftSidebarTab('section')}
+                    >
+                      Section
+                    </button>
+                    <button
+                      className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
+                        leftSidebarTab === 'design' 
+                          ? 'border-blue-600 text-blue-600' 
+                          : 'border-transparent text-gray-500 hover:text-gray-700'
+                      }`}
+                      onClick={() => setLeftSidebarTab('design')}
+                    >
+                      Design
+                    </button>
+                  </div>
+                </div>
+                
+
+                {/* Content Tab */}
+                {leftSidebarTab === 'content' && (
+                  <div className="flex flex-col gap-6">
+                    {/* Hero Settings */}
+                    <div className="bg-white rounded-2xl p-6 shadow-sm">
+                      <div className="flex items-center justify-between mb-4">
+                        <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wider">Hero Settings</h3>
+                        <button 
+                          className="p-2 text-gray-500 hover:text-gray-700 transition-colors"
+                          onClick={() => toggleSectionVisibility('hero')}
+                          aria-label="Toggle visibility"
+                        >
+                          {sectionVisibility.hero ? (
+                            <FiEye className="w-5 h-5" />
+                          ) : (
+                            <FiEyeOff className="w-5 h-5" />
+                          )}
+                        </button>
+                      </div>
+                      <div className="flex flex-col gap-4">
+                        <div className="relative w-full h-32 rounded-lg overflow-hidden bg-gray-100">
+                          {heroImage ? (
+                            <img src={heroImage} alt="Hero" className="w-full h-full object-cover" />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center text-gray-400">
+                              No image
+                            </div>
+                          )}
+                        </div>
+                        <input
+                          type="file"
+                          ref={heroImageInputRef}
+                          accept="image/*"
+                          className="hidden"
+                          onChange={(e) => handleImageInputChange(e, 'hero')}
+                        />
+                        <button 
+                          className="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-blue-600 text-white text-sm font-medium rounded-lg border-0 cursor-pointer transition-colors hover:bg-blue-700"
+                          onClick={() => heroImageInputRef.current?.click()}
+                        >
+                          <FiUpload className="w-4 h-4" />
+                          Upload Custom Photo
+                        </button>
+                      </div>
+                      <div className="grid grid-cols-2 gap-4 mb-4">
+                        <div className="flex flex-col gap-2">
+                          <label className="text-xs font-medium text-gray-700">Main Heading</label>
+                          <input
+                            type="text"
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            placeholder="Azure Residences"
+                            value={mainHeading}
+                            onChange={(e) => setMainHeading(e.target.value)}
+                          />
+                        </div>
+                        <div className="flex flex-col gap-2">
+                          <label className="text-xs font-medium text-gray-700">Price</label>
+                          <input
+                            type="text"
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            placeholder="P1,200"
+                            value={propertyPrice}
+                            onChange={(e) => setPropertyPrice(e.target.value)}
+                          />
+                        </div>
+                      </div>
+                      <div className="flex flex-col gap-2 mb-4">
+                        <label className="text-xs font-medium text-gray-700">Tagline</label>
+                        <input
+                          type="text"
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          placeholder="Luxury Living redefined with..."
+                          value={tagline}
+                          onChange={(e) => setTagline(e.target.value)}
+                        />
+                      </div>
+                      <div className="flex flex-col gap-2">
+                        <label className="text-xs font-medium text-gray-700">Overall Darkness</label>
+                        <div className="flex items-center gap-3">
+                          <input
+                            type="range"
+                            min="0"
+                            max="100"
+                            value={overallDarkness}
+                            onChange={(e) => setOverallDarkness(Number(e.target.value))}
+                            className="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
+                          />
+                          <span className="text-sm font-medium text-gray-700 w-12 text-right">{overallDarkness}%</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Property Description */}
+                    <div className="bg-white rounded-2xl p-6 shadow-sm">
+                      <div className="flex items-center justify-between mb-4">
+                        <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wider">Property Description</h3>
+                        <button 
+                          className="p-2 text-gray-500 hover:text-gray-700 transition-colors"
+                          onClick={() => toggleSectionVisibility('propertyDescription')}
+                          aria-label="Toggle visibility"
+                        >
+                          {sectionVisibility.propertyDescription ? (
+                            <FiEye className="w-5 h-5" />
+                          ) : (
+                            <FiEyeOff className="w-5 h-5" />
+                          )}
+                        </button>
+                      </div>
+                      <textarea
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-white text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-y"
+                        value={propertyDescription}
+                        onChange={(e) => setPropertyDescription(e.target.value)}
+                        rows={4}
+                        placeholder="Experience luxury living in the heart of the city. This stunning loft features floor-to-ceiling windows, premium appliances, and breathtaking views."
+                      />
+                    </div>
+
+                    {/* Property Images */}
+                    <div className="bg-white rounded-2xl p-6 shadow-sm">
+                      <div className="flex items-center justify-between mb-4">
+                        <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wider">Property Images</h3>
+                        <button 
+                          className="p-2 text-gray-500 hover:text-gray-700 transition-colors"
+                          onClick={() => toggleSectionVisibility('propertyImages')}
+                          aria-label="Toggle visibility"
+                        >
+                          {sectionVisibility.propertyImages ? (
+                            <FiEye className="w-5 h-5" />
+                          ) : (
+                            <FiEyeOff className="w-5 h-5" />
+                          )}
+                        </button>
+                      </div>
+                      <div className="grid grid-cols-3 gap-3">
+                        {propertyImages.map((image, index) => (
+                          <div key={index} className="relative aspect-square rounded-lg overflow-hidden bg-gray-100">
+                            <img src={image} alt={`Property ${index + 1}`} className="w-full h-full object-cover" />
+                            <button
+                              className="absolute top-1 right-1 w-6 h-6 bg-red-500/90 text-white rounded-full flex items-center justify-center hover:bg-red-600 transition-colors"
+                              onClick={() => handleRemovePropertyImage(index)}
+                              aria-label="Remove image"
+                            >
+                              <FiX className="w-3 h-3" />
+                            </button>
+                          </div>
+                        ))}
+                        <input
+                          type="file"
+                          ref={propertyImageInputRef}
+                          accept="image/*"
+                          className="hidden"
+                          onChange={(e) => handleImageInputChange(e, 'property')}
+                        />
+                        <button 
+                          className="aspect-square border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center gap-2 text-gray-500 hover:border-blue-500 hover:text-blue-500 transition-colors"
+                          onClick={() => propertyImageInputRef.current?.click()}
+                        >
+                          <FiPlus className="w-5 h-5" />
+                          <span className="text-xs font-medium">ADD</span>
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Contact Information */}
+                    <div className="bg-white rounded-2xl p-6 shadow-sm">
+                      <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wider mb-4">Contact Information</h3>
+                      <div className="p-3 bg-blue-50 rounded-lg mb-4 text-sm text-blue-900">
+                        <strong>ℹ️ Note:</strong> Contact information is synced with your Profile page builder. 
+                        Update your contact details in the Profile tab.
+                      </div>
+                      <div className="grid grid-cols-2 gap-3">
+                        <div className="flex flex-col gap-2">
+                          <label className="text-xs font-medium text-gray-700">Phone Number</label>
+                          <div className="px-3 py-2.5 border border-gray-300 rounded-lg bg-gray-50 text-sm text-gray-500">
+                            {contactInfo.phone || 'Not set - Edit in Profile tab'}
+                          </div>
+                        </div>
+                        <div className="flex flex-col gap-2">
+                          <label className="text-xs font-medium text-gray-700">Email Address</label>
+                          <div className="px-3 py-2.5 border border-gray-300 rounded-lg bg-gray-50 text-sm text-gray-500">
+                            {contactInfo.email || 'Not set - Edit in Profile tab'}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Profile Card - Synced with Profile Page Builder */}
+                    <div className="bg-white rounded-2xl p-6 shadow-sm">
+                      <div className="flex items-center justify-between mb-4">
+                        <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wider">Profile Card</h3>
+                        <button 
+                          className="p-2 text-gray-500 hover:text-gray-700 transition-colors"
+                          onClick={() => toggleSectionVisibility('profileCard')}
+                          aria-label="Toggle visibility"
+                        >
+                          {sectionVisibility.profileCard ? (
+                            <FiEye className="w-5 h-5" />
+                          ) : (
+                            <FiEyeOff className="w-5 h-5" />
+                          )}
+                        </button>
+                      </div>
+                      <div className="p-3 bg-blue-50 rounded-lg mb-4 text-sm text-blue-900">
+                        <strong>ℹ️ Note:</strong> Profile card automatically syncs with your Profile page builder. 
+                        Update your profile image, bio, and contact info in the Profile tab to see changes here.
+                      </div>
+                      <div className="flex flex-col gap-4">
+                        <div className="w-20 h-20 mx-auto rounded-full overflow-hidden bg-gray-200">
+                          <img src={profileImage || profileCardImage || ASSETS.PLACEHOLDER_PROFILE} alt="Profile" className="w-full h-full object-cover" />
+                        </div>
+                        <div className="flex flex-col gap-2">
+                          <div className="px-3 py-2.5 border border-gray-300 rounded-lg bg-gray-50 text-sm text-gray-500 cursor-not-allowed">
+                            {profileCardName || 'Your name from Profile page'}
+                          </div>
+                          <div className="px-3 py-2.5 border border-gray-300 rounded-lg bg-gray-50 text-sm text-gray-500 cursor-not-allowed">
+                            {profileCardRole || 'Property Agent'}
+                          </div>
+                        </div>
+                        <div className="px-3 py-2.5 border border-gray-300 rounded-lg bg-gray-50 text-sm text-gray-500 cursor-not-allowed min-h-[80px]">
+                          {bio || profileCardBio || 'Your bio from Profile page'}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Section Tab */}
+                {leftSidebarTab === 'section' && (
+                  <div className="bg-white rounded-2xl p-6 shadow-sm">
+                    <h2 className="text-lg font-bold text-gray-900 mb-4">Layout Manager</h2>
+                    <div className="flex flex-col gap-2">
+                      {layoutSections.map((section, index) => (
+                        <div 
+                          key={section.id} 
+                          className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg border border-gray-200 hover:border-gray-300 transition-colors"
+                          draggable
+                          onDragStart={() => handleDragStart(index)}
+                          onDragOver={handleDragOver}
+                          onDrop={() => handleDrop(index)}
+                          style={{
+                            cursor: 'move',
+                            opacity: draggedSectionIndex === index ? 0.5 : 1
+                          }}
+                        >
+                          <div className="flex flex-col gap-1">
+                            <button
+                              className="p-1 text-gray-500 hover:text-gray-700 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                              onClick={() => moveSection(index, 'up')}
+                              disabled={index === 0}
+                              aria-label="Move up"
+                            >
+                              <FiChevronUp className="w-4 h-4" />
+                            </button>
+                            <button
+                              className="p-1 text-gray-500 hover:text-gray-700 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                              onClick={() => moveSection(index, 'down')}
+                              disabled={index === layoutSections.length - 1}
+                              aria-label="Move down"
+                            >
+                              <FiChevronDown className="w-4 h-4" />
+                            </button>
+                          </div>
+                          <span className="flex-1 text-sm font-medium text-gray-900">{section.name}</span>
+                          <div className="flex items-center gap-2">
+                            <button
+                              className="p-2 text-gray-500 hover:text-gray-700 transition-colors"
+                              onClick={() => toggleSectionVisibility(section.id)}
+                              aria-label="Toggle visibility"
+                            >
+                              {section.visible ? (
+                                <FiEye className="w-4 h-4" />
+                              ) : (
+                                <FiEyeOff className="w-4 h-4" />
+                              )}
+                            </button>
+                            <button
+                              className="p-2 text-red-500 hover:text-red-700 transition-colors"
+                              onClick={() => deleteSection(section.id)}
+                              aria-label="Delete section"
+                            >
+                              <FiTrash2 className="w-4 h-4" />
+                            </button>
+                            <button
+                              className="p-2 text-gray-500 hover:text-gray-700 transition-colors cursor-move"
+                              aria-label="Drag to reorder"
+                              title="Drag to reorder"
+                            >
+                              <FiMove className="w-4 h-4" />
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Design Tab */}
+                {leftSidebarTab === 'design' && (
+                  <div className="flex flex-col gap-6">
+                    {/* Brand Color */}
+                    <div className="bg-white rounded-2xl p-6 shadow-sm">
+                      <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wider mb-4">Brand Color</h3>
+                      <div className="flex items-center gap-4">
+                        {brandColors.map((color) => (
+                          <button
+                            key={color.id}
+                            className={`w-16 h-16 rounded-full border-2 transition-all flex items-center justify-center ${
+                              selectedBrandColor === color.id 
+                                ? 'border-blue-600 ring-2 ring-blue-200' 
+                                : 'border-gray-300 hover:border-gray-400'
+                            } ${color.id === 'white' ? 'border-gray-300' : ''}`}
+                            style={{ backgroundColor: color.color }}
+                            onClick={() => setSelectedBrandColor(color.id)}
+                            aria-label={color.id}
+                          >
+                            {selectedBrandColor === color.id && (
+                              <FiCheck className="w-6 h-6 text-blue-600" />
+                            )}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Corner Radius */}
+                    <div className="bg-white rounded-2xl p-6 shadow-sm">
+                      <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wider mb-4">Corner Radius</h3>
+                      <div className="flex gap-3">
+                        {cornerRadiusOptions.map((option) => (
+                          <button
+                            key={option.id}
+                            className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
+                              selectedCornerRadius === option.id 
+                                ? 'bg-blue-600 text-white' 
+                                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                            }`}
+                            onClick={() => setSelectedCornerRadius(option.id)}
+                          >
+                            {option.name}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                )}
+                
+                {/* Save and Publish Buttons for Property Mode */}
+                <div className="mt-6 flex flex-col gap-3 p-5 border-t border-gray-200 bg-white rounded-b-2xl">
+                  <button 
+                    className="w-full px-4 py-2.5 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed" 
+                    onClick={handleSaveChanges}
+                    disabled={isSaving || isLoading}
+                  >
+                    {isSaving ? 'Saving...' : 'Save Changes'}
+                  </button>
+                  
+                  {pageBuilderId && (
+                    <>
+                      <button 
+                        className={`w-full px-4 py-2.5 font-semibold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
+                          isPublished 
+                            ? 'bg-green-600 text-white hover:bg-green-700' 
+                            : 'bg-blue-600 text-white hover:bg-blue-700'
+                        }`}
+                        onClick={handlePublish}
+                        disabled={isPublishing || isLoading}
+                      >
+                        {isPublishing ? 'Publishing...' : isPublished ? 'Unpublish Page' : 'Publish Page'}
+                      </button>
+                      
+                      {isPublished && pageUrl && (
+                        <div className="p-3 bg-gray-100 rounded-lg text-sm">
+                          <div className="mb-2 font-semibold text-gray-900">
+                            Your Page URL:
+                          </div>
+                          <div className="flex gap-2 items-center break-all">
+                            <a 
+                              href={pageUrl} 
+                              target="_blank" 
+                              rel="noopener noreferrer"
+                              className="text-blue-600 hover:text-blue-700 flex-1 break-all"
+                            >
+                              {pageUrl}
+                            </a>
+                            <button
+                              onClick={handleCopyUrl}
+                              className="px-3 py-1.5 bg-blue-600 text-white text-xs font-medium rounded hover:bg-blue-700 transition-colors whitespace-nowrap"
+                            >
+                              Copy
+                            </button>
+                          </div>
+                        </div>
+                      )}
+                    </>
+                  )}
+                </div>
+              </>
+            )}
+          </div>
+
+          {/* Right Column - Preview */}
+          <div className="flex flex-col">
+            <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
+              <div className="border-b border-gray-200">
+                <div className="flex">
+                  <button
+                    className={`flex-1 px-4 py-3 text-sm font-medium transition-colors ${
+                      activeTab === 'profile' 
+                        ? 'bg-blue-50 text-blue-600 border-b-2 border-blue-600' 
+                        : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
+                    }`}
+                    onClick={() => setActiveTab('profile')}
+                  >
+                    Profile
+                  </button>
+                  <button
+                    className={`flex-1 px-4 py-3 text-sm font-medium transition-colors ${
+                      activeTab === 'property' 
+                        ? 'bg-blue-50 text-blue-600 border-b-2 border-blue-600' 
+                        : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
+                    }`}
+                    onClick={() => setActiveTab('property')}
+                  >
+                    Property
+                  </button>
+                </div>
+              </div>
+
+              <div className="bg-gray-50 min-h-[1600px] overflow-y-auto p-6">
+                {activeTab === 'profile' && (
+                  <div className="bg-white rounded-2xl p-6 px-4 sm:px-6 md:px-10">
+                    <div className="bg-white rounded-2xl overflow-hidden mb-6">
+                      <div className="relative bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 p-8 pb-16">
+                        <div className="flex flex-col items-center text-center">
+                          <div className="relative w-32 h-32 mb-4">
+                            <img 
+                              src={profileImage || ASSETS.PLACEHOLDER_PROFILE} 
+                              alt={profileCardName || 'Profile'}
+                              className="w-full h-full rounded-full object-cover border-4 border-white shadow-lg"
+                              onError={(e) => {
+                                const target = e.target as HTMLImageElement;
+                                target.style.display = 'none';
+                              }}
+                            />
+                            <div className="absolute inset-0 w-full h-full rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-semibold text-2xl border-4 border-white shadow-lg hidden">
+                              JA
+                            </div>
+                          </div>
+                          <h2 className="text-3xl font-bold text-white mb-2">{profileCardName || 'Your Name'}</h2>
+                          {showBio && <p className="text-white/90 text-lg mb-4">{bio || 'Your bio will appear here...'}</p>}
+                          {showContactNumber && (
+                            <div className="flex items-center gap-4">
+                              {contactInfo.email && (
+                                <button className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm text-white hover:bg-white/30 transition-colors flex items-center justify-center" title={contactInfo.email}>
+                                  <FiMail className="w-5 h-5" />
+                                </button>
+                              )}
+                              {contactInfo.phone && (
+                                <button className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm text-white hover:bg-white/30 transition-colors flex items-center justify-center" title={contactInfo.phone}>
+                                  <FiPhone className="w-5 h-5" />
+                                </button>
+                              )}
+                              {contactInfo.message && (
+                                <button className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm text-white hover:bg-white/30 transition-colors flex items-center justify-center" title={contactInfo.message}>
+                                  <FiMessageCircle className="w-5 h-5" />
+                                </button>
+                              )}
+                              {contactInfo.website && (
+                                <button className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm text-white hover:bg-white/30 transition-colors flex items-center justify-center" title={contactInfo.website}>
+                                  <FiGlobe className="w-5 h-5" />
+                                </button>
+                              )}
+                            </div>
+                          )}
+                          {showExperienceStats && experienceStats.length > 0 && (
+                            <div className="flex items-center gap-6 mt-6">
+                              {experienceStats.map((stat, index) => (
+                                <div key={index} className="text-center">
+                                  <div className="text-2xl font-bold text-white">{stat.value}</div>
+                                  <div className="text-sm text-white/80">{stat.label}</div>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+
+                    {showFeaturedListings && featuredListings.length > 0 && (
+                      <div className="mb-6">
+                        <h3 className="text-xl font-bold text-gray-900 mb-4">Featured Listings</h3>
+                        <div className="flex gap-4 overflow-x-auto pb-2">
+                          {featuredListings.map((listing) => (
+                            <div key={listing.id} className="flex-shrink-0 w-72 bg-white rounded-lg overflow-hidden shadow-sm border border-gray-200">
+                              <div className="relative">
+                                <div className="absolute top-2 left-2 z-10 flex items-center gap-1 px-2 py-1 bg-blue-600 text-white text-xs font-semibold rounded">
+                                  <FiStar className="w-3 h-3 fill-current" />
+                                  <span>Featured</span>
+                                </div>
+                                <div className="w-full h-48 bg-gray-200">
+                                  <img src={listing.image || ASSETS.PLACEHOLDER_PROPERTY} alt={listing.title} className="w-full h-full object-cover" />
+                                </div>
+                                <button className="absolute top-2 right-2 w-8 h-8 bg-white rounded-full flex items-center justify-center text-gray-600 hover:text-red-500 transition-colors shadow-sm" aria-label="Favorite">
+                                  <FiHeart className="w-4 h-4" />
+                                </button>
+                              </div>
+                              <div className="p-4">
+                                <div className="flex items-center justify-between mb-2">
+                                  <div className="text-lg font-bold text-blue-600">{formatPropertyPrice(listing)}</div>
+                                </div>
+                                <div className="text-sm font-semibold text-gray-900 mb-1 line-clamp-1">{listing.title}</div>
+                                <div className="text-xs text-gray-500 mb-3">{listing.type}</div>
+                                <div className="flex items-center justify-between text-xs text-gray-500">
+                                  <div>{formatPropertyDate(listing)}</div>
+                                  <div className="flex items-center gap-1">
+                                    <span>1</span>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {showTestimonials && testimonials.length > 0 && (
+                      <div className="mb-6">
+                        <h3 className="text-xl font-bold text-gray-900 mb-4">Client Testimonials</h3>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          {testimonials.map((testimonial) => (
+                            <div key={testimonial.id} className="bg-white rounded-lg p-4 shadow-sm border border-gray-200">
+                              <div className="flex items-center gap-3 mb-3">
+                                <div className="relative w-10 h-10 rounded-full overflow-hidden bg-gray-200 flex-shrink-0">
+                                  <img 
+                                    src={testimonial.avatar || ASSETS.PLACEHOLDER_PROFILE} 
+                                    alt={testimonial.name}
+                                    className="w-full h-full object-cover"
+                                    onError={(e) => {
+                                      const target = e.target as HTMLImageElement;
+                                      target.style.display = 'none';
+                                    }}
+                                  />
+                                  <div className="absolute inset-0 w-full h-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-semibold text-sm hidden">
+                                    {testimonial.name.split(' ').map(n => n[0]).join('')}
+                                  </div>
+                                </div>
+                                <div className="text-sm font-semibold text-gray-900">{testimonial.name}</div>
+                              </div>
+                              <p className="text-sm text-gray-700 italic mb-2">"{testimonial.content}"</p>
+                              {testimonial.role && (
+                                <div className="text-xs text-gray-500">
+                                  {testimonial.role}
+                                </div>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {activeTab === 'property' && (
+                  <div className="bg-white rounded-2xl p-6 px-4 sm:px-6 md:px-10">
+                    {/* Render sections in the order specified by layoutSections */}
+                    {layoutSections.map((section) => {
+                      if (!section.visible) return null
+                      
+                      switch (section.id) {
+                        case 'hero':
+                          return (
+                            <div key={section.id} className="mb-6">
+                              <div 
+                                className="relative w-full h-96 rounded-2xl overflow-hidden"
+                                style={{
+                                  backgroundImage: heroImage ? `url(${heroImage})` : 'none',
+                                  backgroundColor: heroImage ? 'transparent' : '#E5E7EB',
+                                  backgroundSize: 'cover',
+                                  backgroundPosition: 'center',
+                                  filter: `brightness(${100 - overallDarkness}%)`
+                                }}
+                              >
+                                <div className="absolute inset-0 bg-black/30 flex flex-col items-center justify-center text-center px-6">
+                                  <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">{mainHeading || 'Property Title'}</h1>
+                                  <p className="text-lg md:text-xl text-white/90 mb-6">{tagline || 'Property tagline will appear here...'}</p>
+                                  <button className="px-6 py-3 bg-blue-600 text-white font-semibold rounded-xl hover:bg-blue-700 transition-colors">
+                                    Starts at {propertyPrice || 'Price'} /mo
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                          )
+                        
+                        case 'propertyDescription':
+                          return (
+                            <div key={section.id} className="mb-6">
+                              <h2 className="text-2xl font-bold text-gray-900 mb-3">About</h2>
+                              <p className="text-gray-700 leading-relaxed">{propertyDescription || 'Property description will appear here...'}</p>
+                            </div>
+                          )
+                        
+                        case 'propertyImages':
+                          return (
+                            <div key={section.id} className="mb-6">
+                              <h2 className="text-2xl font-bold text-gray-900 mb-4">What's Inside?</h2>
+                              <div className="grid grid-cols-3 gap-4">
+                                {propertyImages.length > 0 ? (
+                                  propertyImages.map((image, index) => (
+                                    <div 
+                                      key={index} 
+                                      className="aspect-square rounded-lg overflow-hidden bg-gray-200"
+                                      style={{ borderRadius: getCornerRadiusClass() }}
+                                    >
+                                      <img src={image} alt={`Interior ${index + 1}`} className="w-full h-full object-cover" />
+                                    </div>
+                                  ))
+                                ) : (
+                                  <p className="text-gray-500 italic col-span-3">Property images will appear here...</p>
+                                )}
+                              </div>
+                            </div>
+                          )
+                        
+                        case 'profileCard':
+                          return (
+                            <div 
+                              key={section.id}
+                              className="p-6 mb-6 text-white"
+                              style={{
+                                backgroundColor: selectedBrandColor === 'white' ? '#3B82F6' : 
+                                               selectedBrandColor === 'dark' ? '#1F2937' :
+                                               selectedBrandColor === 'orange' ? '#F97316' :
+                                               selectedBrandColor === 'blue' ? '#3B82F6' : '#3B82F6',
+                                borderRadius: getCornerRadiusClass()
+                              }}
+                            >
+                              <div className="flex gap-4">
+                                <div className="flex-shrink-0">
+                                  <div className="w-20 h-20 rounded-full overflow-hidden bg-white/20 border-2 border-white/30">
+                                    <img src={profileImage || profileCardImage || ASSETS.PLACEHOLDER_PROFILE} alt={profileCardName || 'Agent'} className="w-full h-full object-cover" />
+                                  </div>
+                                </div>
+                                <div className="flex-1">
+                                  <h3 className="text-xl font-bold text-white mb-1">{profileCardName || 'Your Name'}</h3>
+                                  <p className="text-sm text-white/80 mb-3">{profileCardRole || 'Property Agent'}</p>
+                                  <p className="text-sm text-white/90 mb-4">{bio || profileCardBio || 'Your bio from Profile page'}</p>
+                                  <div className="flex items-center gap-3">
+                                    {contactInfo.email && (
+                                      <a href={`mailto:${contactInfo.email}`} className="w-8 h-8 rounded-full bg-white/20 backdrop-blur-sm text-white hover:bg-white/30 transition-colors flex items-center justify-center">
+                                        <FiMail className="w-4 h-4" />
+                                      </a>
+                                    )}
+                                    {contactInfo.phone && (
+                                      <a href={`tel:${contactInfo.phone}`} className="w-8 h-8 rounded-full bg-white/20 backdrop-blur-sm text-white hover:bg-white/30 transition-colors flex items-center justify-center">
+                                        <FiPhone className="w-4 h-4" />
+                                      </a>
+                                    )}
+                                    {contactInfo.message && (
+                                      <a href={contactInfo.message} className="w-8 h-8 rounded-full bg-white/20 backdrop-blur-sm text-white hover:bg-white/30 transition-colors flex items-center justify-center" target="_blank" rel="noopener noreferrer">
+                                        <FiMessageCircle className="w-4 h-4" />
+                                      </a>
+                                    )}
+                                    {contactInfo.website && (
+                                      <a href={contactInfo.website} className="w-8 h-8 rounded-full bg-white/20 backdrop-blur-sm text-white hover:bg-white/30 transition-colors flex items-center justify-center" target="_blank" rel="noopener noreferrer">
+                                        <FiGlobe className="w-4 h-4" />
+                                      </a>
+                                    )}
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          )
+                        
+                        default:
+                          return null
+                      }
+                    })}
+
+                    {/* Ready To View? Section */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                      <div>
+                        <h2 className="text-2xl font-bold text-gray-900 mb-2">Ready To View?</h2>
+                        <p className="text-gray-600 mb-4">Schedule a tour or ask any questions about the property.</p>
+                        <div className="flex flex-col gap-3">
+                          <div className="flex items-center gap-3 text-gray-700">
+                            <FiPhone className="w-5 h-5 text-gray-500" />
+                            <span>{contactInfo.phone || 'Phone number'}</span>
+                          </div>
+                          <div className="flex items-center gap-3 text-gray-700">
+                            <FiMail className="w-5 h-5 text-gray-500" />
+                            <span>{contactInfo.email || 'Email address'}</span>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="bg-gray-50 rounded-lg p-6">
+                        <h3 className="text-lg font-semibold text-gray-900 mb-4">Contact {profileCardName || 'Agent'}</h3>
+                        <div className="flex flex-col gap-3">
+                          <input
+                            type="text"
+                            className="w-full px-4 py-2.5 border border-gray-300 rounded-lg bg-white text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            placeholder="Your name"
+                            value={contactFormName}
+                            onChange={(e) => setContactFormName(e.target.value)}
+                          />
+                          <input
+                            type="email"
+                            className="w-full px-4 py-2.5 border border-gray-300 rounded-lg bg-white text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            placeholder="Your email"
+                            value={contactFormEmail}
+                            onChange={(e) => setContactFormEmail(e.target.value)}
+                          />
+                          <textarea
+                            className="w-full px-4 py-2.5 border border-gray-300 rounded-lg bg-white text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-y"
+                            placeholder="Your message"
+                            value={contactFormMessage}
+                            onChange={(e) => setContactFormMessage(e.target.value)}
+                            rows={4}
+                          />
+                          <button 
+                            className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors"
+                            onClick={handleContactFormSubmit}
+                            type="submit"
+                          >
+                            <span>Send Inquiry</span>
+                            <FiMessageCircle className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+        </div>
+      </main>
+      
+      {/* Contact Modal */}
+      {showContactModal && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onClick={() => setShowContactModal(false)}>
+          <div className="bg-white rounded-xl shadow-xl max-w-md w-full" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center justify-between p-6 border-b border-gray-200">
+              <h3 className="text-lg font-semibold text-gray-900">Edit {editingContactType === 'email' ? 'Email' : editingContactType === 'phone' ? 'Phone' : editingContactType === 'message' ? 'Message' : 'Website'}</h3>
+              <button className="p-2 text-gray-400 hover:text-gray-600 transition-colors" onClick={() => setShowContactModal(false)}>
+                <FiX className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="p-6">
+              <input
+                type={editingContactType === 'email' ? 'email' : 'text'}
+                placeholder={`Enter ${editingContactType === 'email' ? 'email address' : editingContactType === 'phone' ? 'phone number' : editingContactType === 'message' ? 'message' : 'website URL'}`}
+                value={contactInfo[editingContactType as keyof typeof contactInfo] || ''}
+                onChange={(e) => setContactInfo(prev => ({ ...prev, [editingContactType!]: e.target.value }))}
+                className="w-full px-3 py-2.5 border border-gray-300 rounded-lg bg-white text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent mb-4"
+              />
+              <button 
+                className="w-full px-4 py-2.5 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors"
+                onClick={handleContactSave}
+              >
+                Save
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      
+      {/* Experience Stats Modal */}
+      {showExperienceModal && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onClick={() => setShowExperienceModal(false)}>
+          <div className="bg-white rounded-xl shadow-xl max-w-md w-full" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center justify-between p-6 border-b border-gray-200">
+              <h3 className="text-lg font-semibold text-gray-900">{editingStatIndex !== null ? 'Edit' : 'Add'} Experience Stat</h3>
+              <button className="p-2 text-gray-400 hover:text-gray-600 transition-colors" onClick={() => setShowExperienceModal(false)}>
+                <FiX className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="p-6">
+              <ExperienceStatForm
+                stat={editingStatIndex !== null ? experienceStats[editingStatIndex] : null}
+                onSave={handleSaveExperienceStat}
+                onCancel={() => setShowExperienceModal(false)}
+              />
+            </div>
+          </div>
+        </div>
+      )}
+      
+      {/* Featured Listings Modal */}
+      {showFeaturedListingsModal && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onClick={() => setShowFeaturedListingsModal(false)}>
+          <div className="bg-white rounded-xl shadow-xl max-w-2xl w-full max-h-[80vh] overflow-auto" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center justify-between p-6 border-b border-gray-200 sticky top-0 bg-white">
+              <h3 className="text-lg font-semibold text-gray-900">{editingListingIndex !== null ? 'Edit' : 'Add'} Featured Listing</h3>
+              <button className="p-2 text-gray-400 hover:text-gray-600 transition-colors" onClick={() => setShowFeaturedListingsModal(false)}>
+                <FiX className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="p-6">
+              {loadingProperties ? (
+                <p style={{ color: '#6B7280', textAlign: 'center', padding: '20px' }}>Loading properties...</p>
+              ) : availableProperties.length === 0 ? (
+                <p style={{ color: '#6B7280', textAlign: 'center', padding: '20px' }}>No properties available. Please create properties first.</p>
+              ) : (
+                <>
+                  <p style={{ color: '#6B7280', marginBottom: '16px' }}>
+                    Select a property to feature on your page:
+                  </p>
+                  <div style={{ display: 'grid', gap: '12px', maxHeight: '400px', overflowY: 'auto' }}>
+                    {availableProperties.map((property) => (
+                      <div
+                        key={property.id}
+                        onClick={() => handleSelectFeaturedListing(property)}
+                        style={{
+                          padding: '12px',
+                          border: '1px solid #E5E7EB',
+                          borderRadius: '8px',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          gap: '12px',
+                          alignItems: 'center',
+                          transition: 'all 0.2s'
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.borderColor = '#3B82F6'
+                          e.currentTarget.style.background = '#F3F4F6'
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.borderColor = '#E5E7EB'
+                          e.currentTarget.style.background = 'white'
+                        }}
+                      >
+                        <img 
+                          src={property.image || ASSETS.PLACEHOLDER_PROPERTY} 
+                          alt={property.title}
+                          style={{ width: '80px', height: '80px', objectFit: 'cover', borderRadius: '6px' }}
+                        />
+                        <div style={{ flex: 1 }}>
+                          <div style={{ fontWeight: '600', marginBottom: '4px' }}>{property.title}</div>
+                          <div style={{ fontSize: '14px', color: '#6B7280' }}>{property.location}</div>
+                          <div style={{ fontSize: '14px', color: '#3B82F6', marginTop: '4px' }}>
+                            ₱{property.price.toLocaleString()}{property.price_type ? `/${property.price_type}` : '/mo'}
+                          </div>
+                        </div>
+                        {featuredListings.some(l => l.id === property.id) && (
+                          <FiCheck style={{ color: '#10B981', fontSize: '20px' }} />
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                  {featuredListings.length > 0 && (
+                    <div style={{ marginTop: '20px', paddingTop: '20px', borderTop: '1px solid #E5E7EB' }}>
+                      <h4 style={{ marginBottom: '12px', fontSize: '16px', fontWeight: '600' }}>Selected Listings:</h4>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                        {featuredListings.map((listing, index) => (
+                          <div
+                            key={listing.id}
+                            style={{
+                              padding: '10px',
+                              background: '#F3F4F6',
+                              borderRadius: '6px',
+                              display: 'flex',
+                              justifyContent: 'space-between',
+                              alignItems: 'center'
+                            }}
+                          >
+                            <span style={{ fontSize: '14px' }}>{listing.title}</span>
+                            <button
+                              onClick={() => handleRemoveFeaturedListing(index)}
+                              style={{
+                                padding: '4px 8px',
+                                background: '#EF4444',
+                                color: 'white',
+                                border: 'none',
+                                borderRadius: '4px',
+                                cursor: 'pointer',
+                                fontSize: '12px'
+                              }}
+                            >
+                              Remove
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  <div style={{ display: 'flex', gap: '12px', marginTop: '20px' }}>
+                    <button 
+                      className="px-4 py-2.5 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors"
+                      onClick={() => setShowFeaturedListingsModal(false)}
+                      style={{ flex: 1 }}
+                    >
+                      Done
+                    </button>
+                  </div>
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+      
+      {/* Testimonials Modal */}
+      {showTestimonialsModal && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onClick={() => setShowTestimonialsModal(false)}>
+          <div className="bg-white rounded-xl shadow-xl max-w-lg w-full max-h-[80vh] overflow-auto" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center justify-between p-6 border-b border-gray-200 sticky top-0 bg-white">
+              <h3 className="text-lg font-semibold text-gray-900">{editingTestimonialIndex !== null ? 'Edit' : 'Add'} Testimonial</h3>
+              <button className="p-2 text-gray-400 hover:text-gray-600 transition-colors" onClick={() => setShowTestimonialsModal(false)}>
+                <FiX className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="p-6">
+              {testimonials.length > 0 && (
+                <div style={{ marginBottom: '20px', paddingBottom: '20px', borderBottom: '1px solid #E5E7EB' }}>
+                  <h4 style={{ marginBottom: '12px', fontSize: '16px', fontWeight: '600' }}>Current Testimonials:</h4>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    {testimonials.map((testimonial, index) => (
+                      <div
+                        key={testimonial.id}
+                        style={{
+                          padding: '12px',
+                          background: '#F3F4F6',
+                          borderRadius: '6px',
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'center'
+                        }}
+                      >
+                        <div style={{ flex: 1 }}>
+                          <div style={{ fontWeight: '600', marginBottom: '4px' }}>{testimonial.name}</div>
+                          <div style={{ fontSize: '12px', color: '#6B7280' }}>{testimonial.role}</div>
+                          <div style={{ fontSize: '12px', fontStyle: 'italic', marginTop: '4px' }}>
+                            "{testimonial.content.substring(0, 50)}..."
+                          </div>
+                        </div>
+                        <div style={{ display: 'flex', gap: '8px' }}>
+                          <button
+                            onClick={() => {
+                              setEditingTestimonialIndex(index)
+                            }}
+                            style={{
+                              padding: '6px 12px',
+                              background: '#3B82F6',
+                              color: 'white',
+                              border: 'none',
+                              borderRadius: '4px',
+                              cursor: 'pointer',
+                              fontSize: '12px'
+                            }}
+                          >
+                            Edit
+                          </button>
+                          <button
+                            onClick={() => handleDeleteTestimonial(index)}
+                            style={{
+                              padding: '6px 12px',
+                              background: '#EF4444',
+                              color: 'white',
+                              border: 'none',
+                              borderRadius: '4px',
+                              cursor: 'pointer',
+                              fontSize: '12px'
+                            }}
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+              <TestimonialForm
+                testimonial={editingTestimonialIndex !== null ? testimonials[editingTestimonialIndex] : null}
+                availableTestimonials={availableTestimonials}
+                onSave={handleSaveTestimonial}
+                onCancel={() => {
+                  setShowTestimonialsModal(false)
+                  setEditingTestimonialIndex(null)
+                }}
+              />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Page URL Modal */}
+      {showPageUrlModal && pageUrl && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onClick={() => setShowPageUrlModal(false)}>
+          <div className="bg-white rounded-xl shadow-xl max-w-lg w-full" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center justify-between p-6 border-b border-gray-200">
+              <h3 className="text-lg font-semibold text-gray-900">Your Page is Live! 🎉</h3>
+              <button className="p-2 text-gray-400 hover:text-gray-600 transition-colors" onClick={() => setShowPageUrlModal(false)}>
+                <FiX className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="p-6">
+              <p style={{ color: '#6B7280', marginBottom: '16px' }}>
+                Your page has been published and is now accessible via the link below. Share it across multiple platforms!
+              </p>
+              <div style={{ 
+                padding: '16px', 
+                background: '#F3F4F6', 
+                borderRadius: '8px',
+                marginBottom: '16px'
+              }}>
+                <div style={{ marginBottom: '8px', fontWeight: '600', color: '#111827', fontSize: '14px' }}>
+                  Page URL:
+                </div>
+                <div style={{ 
+                  display: 'flex', 
+                  gap: '8px', 
+                  alignItems: 'center',
+                  wordBreak: 'break-all'
+                }}>
+                  <a 
+                    href={pageUrl} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    style={{ 
+                      color: '#3B82F6', 
+                      textDecoration: 'none',
+                      flex: 1,
+                      fontSize: '14px'
+                    }}
+                  >
+                    {pageUrl}
+                  </a>
+                  <button
+                    onClick={handleCopyUrl}
+                    style={{
+                      padding: '8px 16px',
+                      background: '#3B82F6',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '6px',
+                      cursor: 'pointer',
+                      fontSize: '14px',
+                      whiteSpace: 'nowrap'
+                    }}
+                  >
+                    Copy Link
+                  </button>
+                </div>
+              </div>
+              <div style={{ display: 'flex', gap: '12px' }}>
+                <button 
+                  className="save-changes-button"
+                  onClick={() => {
+                    setShowPageUrlModal(false)
+                    window.open(pageUrl, '_blank')
+                  }}
+                  style={{ flex: 1 }}
+                >
+                  <FiExternalLink style={{ marginRight: '8px' }} />
+                  Open Page
+                </button>
+                <button 
+                  className="save-changes-button"
+                  onClick={() => setShowPageUrlModal(false)}
+                  style={{ flex: 1, background: '#F3F4F6', color: '#111827' }}
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Full Page Preview Modal */}
+      {showFullPreview && (
+        <div className="full-preview-overlay" onClick={() => setShowFullPreview(false)}>
+          <div className="full-preview-container" onClick={(e) => e.stopPropagation()}>
+            <div className="full-preview-header">
+              <h2 className="full-preview-title">
+                {activeTab === 'profile' ? 'Profile Page Preview' : 'Property Page Preview'}
+              </h2>
+              <button 
+                className="full-preview-close"
+                onClick={() => setShowFullPreview(false)}
+                aria-label="Close preview"
+              >
+                <FiX />
+              </button>
+            </div>
+            <div className="full-preview-content">
+              {activeTab === 'profile' ? (
+                <div className="full-preview-page">
+                  {/* Profile Preview */}
+                  <div className="full-preview-profile-section">
+                    <div className="full-preview-profile-header">
+                      <div className="full-preview-profile-image-wrapper">
+                        <img 
+                          src={profileImage || ASSETS.PLACEHOLDER_PROFILE} 
+                          alt="Profile"
+                          className="full-preview-profile-image"
+                          onError={(e) => {
+                            const target = e.target as HTMLImageElement;
+                            target.style.display = 'none';
+                          }}
+                        />
+                        <div className="full-preview-profile-fallback">JA</div>
+                      </div>
+                      <div className="full-preview-profile-info">
+                        <h2 className="full-preview-name">{profileCardName || 'Your Name'}</h2>
+                        {showBio && <p className="full-preview-tagline">{bio || 'Your bio will appear here...'}</p>}
+                        {showContactNumber && (
+                          <div className="full-preview-contact-icons">
+                            {contactInfo.email && (
+                              <button className="full-preview-contact-icon" title={contactInfo.email}>
+                                <FiMail />
+                              </button>
+                            )}
+                            {contactInfo.phone && (
+                              <button className="full-preview-contact-icon" title={contactInfo.phone}>
+                                <FiPhone />
+                              </button>
+                            )}
+                            {contactInfo.message && (
+                              <button className="full-preview-contact-icon" title={contactInfo.message}>
+                                <FiMessageCircle />
+                              </button>
+                            )}
+                            {contactInfo.website && (
+                              <button className="full-preview-contact-icon" title={contactInfo.website}>
+                                <FiGlobe />
+                              </button>
+                            )}
+                          </div>
+                        )}
+                        {showExperienceStats && experienceStats.length > 0 && (
+                          <div className="full-preview-experience-stats">
+                            {experienceStats.map((stat, index) => (
+                              <div key={index} className="full-preview-stat-item">
+                                <div className="full-preview-stat-value">{stat.value}</div>
+                                <div className="full-preview-stat-label">{stat.label}</div>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  {showFeaturedListings && featuredListings.length > 0 && (
+                    <div className="full-preview-featured-section">
+                      <h3 className="full-preview-section-title">Featured Listings</h3>
+                      <div className="full-preview-listings-grid">
+                        {featuredListings.map((listing) => (
+                          <div key={listing.id} className="full-preview-listing-card">
+                            <div className="full-preview-listing-badge">
+                              <FiStar className="full-preview-star-icon" />
+                              <span>Featured</span>
+                            </div>
+                            <div className="full-preview-listing-image-wrapper">
+                              <img src={listing.image || ASSETS.PLACEHOLDER_PROPERTY} alt={listing.title} />
+                            </div>
+                            <div className="full-preview-listing-info">
+                              <div className="full-preview-listing-info-header">
+                                <div className="full-preview-listing-price">{formatPropertyPrice(listing)}</div>
+                                <button className="full-preview-listing-heart" aria-label="Favorite">
+                                  <FiHeart />
+                                </button>
+                              </div>
+                              <div className="full-preview-listing-title">{listing.title}</div>
+                              <div className="full-preview-listing-category">{listing.type}</div>
+                              <div className="full-preview-listing-info-footer">
+                                <div className="full-preview-listing-date">{formatPropertyDate(listing)}</div>
+                                <div className="full-preview-listing-view-count">
+                                  <span>1</span>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {showTestimonials && testimonials.length > 0 && (
+                    <div className="full-preview-testimonials-section">
+                      <h3 className="full-preview-section-title">Client Testimonials</h3>
+                      <div className="full-preview-testimonials-grid">
+                        {testimonials.map((testimonial) => (
+                          <div key={testimonial.id} className="full-preview-testimonial-card">
+                            <div className="full-preview-testimonial-header">
+                              <img 
+                                src={testimonial.avatar || ASSETS.PLACEHOLDER_PROFILE} 
+                                alt={testimonial.name}
+                                className="full-preview-testimonial-avatar"
+                                onError={(e) => {
+                                  const target = e.target as HTMLImageElement;
+                                  target.style.display = 'none';
+                                }}
+                              />
+                              <div className="full-preview-testimonial-avatar-fallback">
+                                {testimonial.name.split(' ').map(n => n[0]).join('')}
+                              </div>
+                              <div className="full-preview-testimonial-name">{testimonial.name}</div>
+                            </div>
+                            <p className="full-preview-testimonial-quote">"{testimonial.content}"</p>
+                            {testimonial.role && (
+                              <div style={{ fontSize: '12px', color: '#6B7280', marginTop: '8px' }}>
+                                {testimonial.role}
+                              </div>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div className="full-preview-property-page">
+                  {/* Property Preview */}
+                  {layoutSections.map((section) => {
+                    if (!section.visible) return null
+                    
+                    switch (section.id) {
+                      case 'hero':
+                        return (
+                          <div key={section.id} className="full-preview-property-hero-section">
+                            <div 
+                              className="full-preview-property-hero-image"
+                              style={{
+                                backgroundImage: heroImage ? `url(${heroImage})` : 'none',
+                                backgroundColor: heroImage ? 'transparent' : '#E5E7EB',
+                                backgroundSize: 'cover',
+                                backgroundPosition: 'center',
+                                position: 'relative',
+                                filter: `brightness(${100 - overallDarkness}%)`
+                              }}
+                            >
+                              <div className="full-preview-property-hero-overlay">
+                                <h1 className="full-preview-property-hero-title">{mainHeading || 'Property Title'}</h1>
+                                <p className="full-preview-property-hero-tagline">{tagline || 'Property tagline will appear here...'}</p>
+                                <button className="full-preview-property-hero-price-btn">
+                                  Starts at {propertyPrice || 'Price'} /mo
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        )
+                      
+                      case 'propertyDescription':
+                        return (
+                          <div key={section.id} className="full-preview-property-about-section">
+                            <h2 className="full-preview-property-section-heading">About</h2>
+                            <p className="full-preview-property-about-text">{propertyDescription || 'Property description will appear here...'}</p>
+                          </div>
+                        )
+                      
+                      case 'propertyImages':
+                        return (
+                          <div key={section.id} className="full-preview-property-inside-section">
+                            <h2 className="full-preview-property-section-heading">What's Inside?</h2>
+                            <div className="full-preview-property-inside-images">
+                              {propertyImages.length > 0 ? (
+                                propertyImages.map((image, index) => (
+                                  <div 
+                                    key={index} 
+                                    className="full-preview-property-inside-image-item"
+                                    style={{ borderRadius: getCornerRadiusClass() }}
+                                  >
+                                    <img src={image} alt={`Interior ${index + 1}`} />
+                                  </div>
+                                ))
+                              ) : (
+                                <p style={{ color: '#6B7280', fontStyle: 'italic' }}>Property images will appear here...</p>
+                              )}
+                            </div>
+                          </div>
+                        )
+                      
+                      case 'profileCard':
+                        return (
+                          <div 
+                            key={section.id}
+                            className="full-preview-property-agent-card"
+                            style={{
+                              backgroundColor: selectedBrandColor === 'white' ? '#3B82F6' : 
+                                             selectedBrandColor === 'dark' ? '#1F2937' :
+                                             selectedBrandColor === 'orange' ? '#F97316' :
+                                             selectedBrandColor === 'blue' ? '#3B82F6' : '#3B82F6',
+                              borderRadius: getCornerRadiusClass()
+                            }}
+                          >
+                            <div className="full-preview-property-agent-content">
+                              <div className="full-preview-property-agent-image-wrapper">
+                                <img src={profileImage || profileCardImage} alt={profileCardName || 'Agent'} className="full-preview-property-agent-image" />
+                              </div>
+                              <div className="full-preview-property-agent-info">
+                                <h3 className="full-preview-property-agent-name">{profileCardName || 'Your Name'}</h3>
+                                <p className="full-preview-property-agent-role">{profileCardRole || 'Property Agent'}</p>
+                                <p className="full-preview-property-agent-quote">{bio || profileCardBio || 'Your bio from Profile page'}</p>
+                                <div className="full-preview-property-agent-icons">
+                                  {contactInfo.email && (
+                                    <a href={`mailto:${contactInfo.email}`} className="full-preview-property-agent-icon">
+                                      <FiMail />
+                                    </a>
+                                  )}
+                                  {contactInfo.phone && (
+                                    <a href={`tel:${contactInfo.phone}`} className="full-preview-property-agent-icon">
+                                      <FiPhone />
+                                    </a>
+                                  )}
+                                  {contactInfo.message && (
+                                    <a href={contactInfo.message} className="full-preview-property-agent-icon" target="_blank" rel="noopener noreferrer">
+                                      <FiMessageCircle />
+                                    </a>
+                                  )}
+                                  {contactInfo.website && (
+                                    <a href={contactInfo.website} className="full-preview-property-agent-icon" target="_blank" rel="noopener noreferrer">
+                                      <FiGlobe />
+                                    </a>
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        )
+                      
+                      default:
+                        return null
+                    }
+                  })}
+
+                  {/* Ready To View? Section */}
+                  <div className="full-preview-property-contact-section">
+                    <div className="full-preview-property-contact-left">
+                      <h2 className="full-preview-property-section-heading">Ready To View?</h2>
+                      <p className="full-preview-property-contact-text">Schedule a tour or ask any questions about the property.</p>
+                      <div className="full-preview-property-contact-info">
+                        <div className="full-preview-property-contact-item">
+                          <FiPhone className="full-preview-property-contact-icon" />
+                          <span>{contactInfo.phone || 'Phone number'}</span>
+                        </div>
+                        <div className="full-preview-property-contact-item">
+                          <FiMail className="full-preview-property-contact-icon" />
+                          <span>{contactInfo.email || 'Email address'}</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="full-preview-property-contact-form">
+                      <h3 className="full-preview-property-form-title">Contact {profileCardName || 'Agent'}</h3>
+                      <input
+                        type="text"
+                        className="full-preview-property-form-input"
+                        placeholder="Your name"
+                        value={contactFormName}
+                        onChange={(e) => setContactFormName(e.target.value)}
+                      />
+                      <input
+                        type="email"
+                        className="full-preview-property-form-input"
+                        placeholder="Your email"
+                        value={contactFormEmail}
+                        onChange={(e) => setContactFormEmail(e.target.value)}
+                      />
+                      <textarea
+                        className="full-preview-property-form-textarea"
+                        placeholder="Your message"
+                        value={contactFormMessage}
+                        onChange={(e) => setContactFormMessage(e.target.value)}
+                        rows={4}
+                      />
+                      <button 
+                        className="full-preview-property-form-submit-btn"
+                        onClick={handleContactFormSubmit}
+                        type="submit"
+                      >
+                        <span>Send Inquiry</span>
+                        <FiMessageCircle />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
+
+// Testimonial Form Component
+function TestimonialForm({ 
+  testimonial, 
+  availableTestimonials,
+  onSave, 
+  onCancel 
+}: { 
+  testimonial: Testimonial | null
+  availableTestimonials: Testimonial[]
+  onSave: (testimonial: Testimonial) => void
+  onCancel: () => void
+}) {
+  const [name, setName] = useState(testimonial?.name || '')
+  const [role, setRole] = useState(testimonial?.role || '')
+  const [content, setContent] = useState(testimonial?.content || '')
+  const [avatar, setAvatar] = useState(testimonial?.avatar || '')
+  const [useExisting, setUseExisting] = useState(false)
+  const [selectedTestimonialId, setSelectedTestimonialId] = useState<number | null>(null)
+  
+  const handleUseExisting = () => {
+    if (selectedTestimonialId) {
+      const selected = availableTestimonials.find(t => t.id === selectedTestimonialId)
+      if (selected) {
+        onSave(selected)
+      }
+    }
+  }
+  
+  const handleSaveCustom = () => {
+    if (!name || !content) {
+      alert('Please fill in name and content')
+      return
+    }
+    
+    const newTestimonial: Testimonial = {
+      id: testimonial?.id || Date.now(),
+      name,
+      role: role || '',
+      content,
+      avatar: avatar || null
+    }
+    onSave(newTestimonial)
+  }
+  
+  return (
+    <>
+      <div style={{ marginBottom: '16px' }}>
+        <label style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
+          <input
+            type="checkbox"
+            checked={useExisting}
+            onChange={(e) => setUseExisting(e.target.checked)}
+          />
+          <span>Use existing testimonial</span>
+        </label>
+      </div>
+      
+      {useExisting ? (
+        <>
+          <select
+            value={selectedTestimonialId || ''}
+            onChange={(e) => setSelectedTestimonialId(Number(e.target.value))}
+            style={{ 
+              width: '100%', 
+              padding: '12px', 
+              border: '1px solid #E5E7EB', 
+              borderRadius: '8px', 
+              marginBottom: '16px' 
+            }}
+          >
+            <option value="">Select a testimonial</option>
+            {availableTestimonials.map((t) => (
+              <option key={t.id} value={t.id}>
+                {t.name} - {t.role}
+              </option>
+            ))}
+          </select>
+          {selectedTestimonialId && (
+            <div style={{ 
+              padding: '12px', 
+              background: '#F3F4F6', 
+              borderRadius: '8px', 
+              marginBottom: '16px' 
+            }}>
+              {(() => {
+                const selected = availableTestimonials.find(t => t.id === selectedTestimonialId)
+                return selected ? (
+                  <>
+                    <div style={{ fontWeight: '600', marginBottom: '4px' }}>{selected.name}</div>
+                    <div style={{ fontSize: '14px', color: '#6B7280', marginBottom: '8px' }}>{selected.role}</div>
+                    <div style={{ fontSize: '14px', fontStyle: 'italic' }}>"{selected.content}"</div>
+                  </>
+                ) : null
+              })()}
+            </div>
+          )}
+        </>
+      ) : (
+        <>
+          <input
+            type="text"
+            placeholder="Client Name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            style={{ width: '100%', padding: '12px', border: '1px solid #E5E7EB', borderRadius: '8px', marginBottom: '12px' }}
+          />
+          <input
+            type="text"
+            placeholder="Client Role (e.g., Lessee, Property Owner)"
+            value={role}
+            onChange={(e) => setRole(e.target.value)}
+            style={{ width: '100%', padding: '12px', border: '1px solid #E5E7EB', borderRadius: '8px', marginBottom: '12px' }}
+          />
+          <textarea
+            placeholder="Testimonial content"
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            rows={4}
+            style={{ width: '100%', padding: '12px', border: '1px solid #E5E7EB', borderRadius: '8px', marginBottom: '12px' }}
+          />
+          <input
+            type="text"
+            placeholder="Avatar URL (optional)"
+            value={avatar}
+            onChange={(e) => setAvatar(e.target.value)}
+            style={{ width: '100%', padding: '12px', border: '1px solid #E5E7EB', borderRadius: '8px', marginBottom: '16px' }}
+          />
+        </>
+      )}
+      
+      <div style={{ display: 'flex', gap: '12px' }}>
+        <button 
+          className="save-changes-button"
+          onClick={useExisting ? handleUseExisting : handleSaveCustom}
+          style={{ flex: 1 }}
+          disabled={useExisting ? !selectedTestimonialId : (!name || !content)}
+        >
+          Save
+        </button>
+        <button 
+          onClick={onCancel}
+          style={{ 
+            flex: 1, 
+            padding: '14px 32px', 
+            background: '#F3F4F6', 
+            color: '#111827', 
+            border: 'none', 
+            borderRadius: '8px', 
+            fontSize: '15px', 
+            fontWeight: '600', 
+            cursor: 'pointer' 
+          }}
+        >
+          Cancel
+        </button>
+      </div>
+    </>
+  )
+}
+
+// Experience Stat Form Component
+function ExperienceStatForm({ 
+  stat, 
+  onSave, 
+  onCancel 
+}: { 
+  stat: { label: string; value: string } | null
+  onSave: (label: string, value: string) => void
+  onCancel: () => void
+}) {
+  const [label, setLabel] = useState(stat?.label || '')
+  const [value, setValue] = useState(stat?.value || '')
+  
+  return (
+    <>
+      <input
+        type="text"
+        placeholder="Label (e.g., Years of Experience)"
+        value={label}
+        onChange={(e) => setLabel(e.target.value)}
+        style={{ width: '100%', padding: '12px', border: '1px solid #E5E7EB', borderRadius: '8px', marginBottom: '12px' }}
+      />
+      <input
+        type="text"
+        placeholder="Value (e.g., 5)"
+        value={value}
+        onChange={(e) => setValue(e.target.value)}
+        style={{ width: '100%', padding: '12px', border: '1px solid #E5E7EB', borderRadius: '8px', marginBottom: '16px' }}
+      />
+      <div style={{ display: 'flex', gap: '12px' }}>
+        <button 
+          className="save-changes-button"
+          onClick={() => onSave(label, value)}
+          style={{ flex: 1 }}
+          disabled={!label || !value}
+        >
+          Save
+        </button>
+        <button 
+          onClick={onCancel}
+          style={{ 
+            flex: 1, 
+            padding: '14px 32px', 
+            background: '#F3F4F6', 
+            color: '#111827', 
+            border: 'none', 
+            borderRadius: '8px', 
+            fontSize: '15px', 
+            fontWeight: '600', 
+            cursor: 'pointer' 
+          }}
+        >
+          Cancel
+        </button>
+      </div>
+    </>
+  )
+}
+

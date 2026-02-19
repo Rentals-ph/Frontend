@@ -542,7 +542,7 @@ function PropertiesContent() {
           </div>
 
       {/* (Secondary sticky search bar removed – top search bar is now sticky instead) */}
-      <main className="properties-main-layout flex flex-col lg:flex-row gap-4 sm:gap-6 mx-auto px-4 sm:px-6 md:px-10 lg:px-[150px] py-4 sm:py-6">
+      <main className="properties-main-layout flex flex-col lg:flex-row gap-4 sm:gap-6 mx-auto px-4 sm:px-6 md:px-10 lg:px-[150px] py-4 sm:py-6 max-w-[1920px]">
         {/* Dropdown Filter Menu - Mobile */}
         {isSidebarOpen && (
           <>

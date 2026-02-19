@@ -9,6 +9,7 @@ export default {
     extend: {
       screens: {
         'xs': '320px',
+        'mobile': '478px',
         // Tailwind defaults:
         // 'sm': '640px',
         // 'md': '768px',

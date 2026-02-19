@@ -330,11 +330,11 @@ const Navbar = () => {
           />
         )}
 
-        {/* Mobile Sidebar */}
+        {/* Mobile Sidebar - Right Positioned */}
         <nav 
           ref={mobileMenuRef}
-          className={`md:hidden fixed top-0 right-0 h-full w-[280px] sm:w-[320px] bg-white shadow-2xl z-[1000] transform transition-transform duration-300 ease-in-out overflow-y-auto ${
-            isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full'
+          className={`md:hidden fixed top-0 right-0 h-full w-[280px] sm:w-[320px] bg-white shadow-2xl z-[1000] overflow-y-auto ${
+            isMobileMenuOpen ? '' : 'hidden'
           }`}
           onClick={(e) => e.stopPropagation()}
         >
@@ -343,8 +343,11 @@ const Navbar = () => {
             <h2 className="text-lg font-bold text-rental-blue-600 font-outfit">Menu</h2>
             <button 
               type="button"
-              className="p-2 text-gray-600 hover:text-gray-900 transition-colors cursor-pointer"
-              onClick={() => setIsMobileMenuOpen(false)}
+              className="p-2 text-gray-600 hover:text-gray-900 transition-colors cursor-pointer relative z-10"
+              onClick={(e) => {
+                e.stopPropagation()
+                setIsMobileMenuOpen(false)
+              }}
               aria-label="Close menu"
             >
               <FiX size={24} />

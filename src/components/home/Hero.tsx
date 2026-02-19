@@ -553,7 +553,7 @@ function Hero() {
       </div>
 
       {/* Hero content */}
-      <div className="flex mt-12 flex-col items-center justify-center w-full h-full min-h-[600px] text-center relative z-10 px-4">
+      <div className="flex xs:mt-16 sm:mt-20 mt-20 flex-col items-center justify-center w-full h-full min-h-[600px] text-center relative z-10 px-4">
         <h2 className="font-outfit text-4xl md:text-5xl lg:text-6xl font-bold text-[#205ED7] mb-0 tracking-tight leading-tight drop-shadow-[0_2px_8px_rgba(255,255,255,0.8)]">
           FIND YOUR HOME IN THE PHILIPPINES
         </h2>

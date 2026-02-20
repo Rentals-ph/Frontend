@@ -1,97 +1,63 @@
 'use client'
 
 import AppSidebar from '../../../components/common/AppSidebar'
-import { 
-  FiBell,
-  FiPlus,
+import BrokerHeader from '../../../components/broker/BrokerHeader'
+import {
   FiDownload,
   FiFileText,
   FiBarChart2,
-  FiImage
+  FiImage,
 } from 'react-icons/fi'
-// import '../../agent/downloadables/page.css' // Removed - file doesn't exist
-// import '../broker-shared.css' // Removed - converted to Tailwind
 
 export default function BrokerDownloadables() {
   const handleDownload = (type: string) => {
     console.log(`Downloading ${type}`)
   }
 
+  const items = [
+    { id: 'lease-agreements', label: 'Lease Agreements', icon: FiFileText },
+    { id: 'financial-report', label: 'Financial Report', icon: FiBarChart2 },
+    { id: 'property-photos', label: 'Property Photos', icon: FiImage },
+  ]
+
   return (
-    <div className="flex min-h-screen bg-gray-100 font-outfit"> {/* broker-dashboard */}
+    <div className="flex min-h-screen bg-[#F8F9FA] font-outfit">
       <AppSidebar />
 
-      <main className="ml-[280px] flex-1 w-[calc(100%-280px)] p-8 min-h-screen lg:ml-[240px] lg:w-[calc(100%-240px)] lg:p-6 md:ml-0 md:w-full md:p-4 md:pt-15"> {/* broker-main */}
-        {/* Broker Header */}
-        <header className="broker-header">
-          <div className="broker-header-left">
-            <h1>Downloadables</h1>
-            <p>Download resources and documents.</p>
-          </div>
-          <div className="broker-header-right">
-            <button className="broker-notification-btn">
-              <FiBell />
-            </button>
-            <a href="/broker/create-listing" className="broker-add-listing-btn">
-              <FiPlus />
-              Add Listing
-            </a>
-          </div>
-        </header>
+      <main className="ml-[280px] flex-1 w-[calc(100%-280px)] p-8 min-h-screen lg:ml-[240px] lg:w-[calc(100%-240px)] lg:p-6 md:ml-0 md:w-full md:p-4 md:pt-15">
+        <BrokerHeader
+          title="Dashboard"
+          subtitle="Welcome back, manage your rental properties"
+          showNotifications={true}
+        />
 
-        <div className="downloadables-section">
-          <h2 className="downloadables-title">Downloadables</h2>
-          
-          <div className="downloadables-list">
-            <div className="downloadable-card">
-              <div className="downloadable-icon-container">
-                <FiFileText className="downloadable-icon" />
-              </div>
-              <div className="downloadable-content">
-                <h3 className="downloadable-name">Lease Agreements</h3>
-              </div>
-              <button 
-                className="download-button"
-                onClick={() => handleDownload('lease-agreements')}
-                aria-label="Download Lease Agreements"
-              >
-                <FiDownload className="download-icon" />
-              </button>
-            </div>
+        <section className="mt-10">
+          <h2 className="text-xl font-bold text-[#333] mb-6">Downloadables</h2>
 
-            <div className="downloadable-card">
-              <div className="downloadable-icon-container">
-                <FiBarChart2 className="downloadable-icon" />
-              </div>
-              <div className="downloadable-content">
-                <h3 className="downloadable-name">Financial Report</h3>
-              </div>
-              <button 
-                className="download-button"
-                onClick={() => handleDownload('financial-report')}
-                aria-label="Download Financial Report"
+          <div className="flex flex-col gap-4">
+            {items.map(({ id, label, icon: Icon }) => (
+              <div
+                key={id}
+                className="flex items-center gap-4 bg-white rounded-lg p-4 shadow-[0_2px_4px_rgba(0,0,0,0.05)] border border-gray-200/80"
               >
-                <FiDownload className="download-icon" />
-              </button>
-            </div>
-
-            <div className="downloadable-card">
-              <div className="downloadable-icon-container">
-                <FiImage className="downloadable-icon" />
+                <div className="flex-shrink-0 w-12 h-12 rounded-lg bg-[#E0F2F7] flex items-center justify-center">
+                  <Icon className="w-6 h-6 text-[#007BFF]" aria-hidden />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <h3 className="text-base font-medium text-[#333]">{label}</h3>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => handleDownload(id)}
+                  aria-label={`Download ${label}`}
+                  className="flex-shrink-0 p-2 text-[#007BFF] hover:bg-blue-50 rounded-lg transition-colors"
+                >
+                  <FiDownload className="w-5 h-5" aria-hidden />
+                </button>
               </div>
-              <div className="downloadable-content">
-                <h3 className="downloadable-name">Property Photos</h3>
-              </div>
-              <button 
-                className="download-button"
-                onClick={() => handleDownload('property-photos')}
-                aria-label="Download Property Photos"
-              >
-                <FiDownload className="download-icon" />
-              </button>
-            </div>
+            ))}
           </div>
-        </div>
+        </section>
       </main>
     </div>
   )

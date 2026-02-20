@@ -6,9 +6,10 @@ import DashboardHeader from '../common/DashboardHeader'
 interface BrokerHeaderProps {
   title?: string
   subtitle?: string
+  showNotifications?: boolean
 }
 
-function BrokerHeader({ title = 'Dashboard', subtitle = 'Welcome back, manage your team and properties.' }: BrokerHeaderProps) {
+function BrokerHeader({ title = 'Dashboard', subtitle = 'Welcome back, manage your team and properties.', showNotifications = false }: BrokerHeaderProps) {
   const [userName, setUserName] = useState<string>('Broker')
   const [loading, setLoading] = useState(true)
 
@@ -42,6 +43,7 @@ function BrokerHeader({ title = 'Dashboard', subtitle = 'Welcome back, manage yo
       userName={userName}
       userRole={userRole}
       accountRoute="/broker/account"
+      showNotifications={showNotifications}
       avatarFallback={avatarFallback}
       avatarImage={avatarImage}
     />

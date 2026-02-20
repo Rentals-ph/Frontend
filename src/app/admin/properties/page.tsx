@@ -16,13 +16,6 @@ interface Property {
 
 export default function PropertiesPage() {
   const [filter, setFilter] = useState('all')
-  const [userName, setUserName] = useState('John Admin')
-
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      setUserName(localStorage.getItem('admin_name') || 'John Admin')
-    }
-  }, [])
 
   const properties: Property[] = [
     {
@@ -88,10 +81,7 @@ export default function PropertiesPage() {
         <DashboardHeader
           title="Dashboard Overview"
           subtitle="Welcome back, Admin"
-          userName={userName}
-          userRole="Administrator"
           showNotifications={true}
-          avatarFallback="JD"
         />
 
         <div className="properties-section">

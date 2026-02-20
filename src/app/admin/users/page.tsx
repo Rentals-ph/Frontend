@@ -32,7 +32,6 @@ interface User {
 export default function UserManagementPage() {
   const [filter, setFilter] = useState('all')
   const [roleFilter, setRoleFilter] = useState('all')
-  const [userName, setUserName] = useState('John Admin')
   const [users, setUsers] = useState<User[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -51,9 +50,6 @@ export default function UserManagementPage() {
   })
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      setUserName(localStorage.getItem('admin_name') || 'John Admin')
-    }
     fetchUsers()
   }, [filter, roleFilter])
 
@@ -226,10 +222,7 @@ export default function UserManagementPage() {
         <DashboardHeader
           title="User Management"
           subtitle="Manage all users in the system"
-          userName={userName}
-          userRole="Administrator"
           showNotifications={true}
-          avatarFallback="JD"
         />
 
         {error && (

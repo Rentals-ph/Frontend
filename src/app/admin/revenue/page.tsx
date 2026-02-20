@@ -11,13 +11,6 @@ import {
 } from 'react-icons/fi'
 
 export default function RevenuePage() {
-  const [userName, setUserName] = useState('John Admin')
-
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      setUserName(localStorage.getItem('admin_name') || 'John Admin')
-    }
-  }, [])
 
   return (
     <div className="admin-dashboard">
@@ -27,10 +20,7 @@ export default function RevenuePage() {
         <DashboardHeader
           title="Dashboard Overview"
           subtitle="Welcome back, Admin"
-          userName={userName}
-          userRole="Administrator"
           showNotifications={true}
-          avatarFallback="JD"
         />
 
         <h2 className="revenue-title">Revenue</h2>

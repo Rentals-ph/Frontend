@@ -30,7 +30,6 @@ interface Agent {
 
 export default function AgentsPage() {
   const [filter, setFilter] = useState('all')
-  const [userName, setUserName] = useState('John Admin')
   const [agents, setAgents] = useState<Agent[]>([])
   const [pendingAgents, setPendingAgents] = useState<Agent[]>([])
   const [loading, setLoading] = useState(true)
@@ -43,9 +42,6 @@ export default function AgentsPage() {
   const [showRejectModal, setShowRejectModal] = useState(false)
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      setUserName(localStorage.getItem('admin_name') || 'John Admin')
-    }
     fetchAgents()
     fetchPendingAgents()
   }, [filter])
@@ -156,10 +152,7 @@ export default function AgentsPage() {
         <DashboardHeader
           title="Agent Management"
           subtitle="Manage and approve agents"
-          userName={userName}
-          userRole="Administrator"
           showNotifications={true}
-          avatarFallback="JD"
         />
 
         {error && (

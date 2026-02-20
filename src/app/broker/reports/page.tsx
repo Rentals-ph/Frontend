@@ -2,9 +2,8 @@
 
 import { useState } from 'react'
 import AppSidebar from '../../../components/common/AppSidebar'
+import BrokerHeader from '../../../components/broker/BrokerHeader'
 import {
-  FiBell,
-  FiPlus,
   FiChevronDown,
   FiTrendingUp,
   FiMessageCircle,
@@ -137,23 +136,11 @@ export default function ReportsPage() {
   return (
     <div className="flex min-h-screen bg-gray-100 font-outfit"> {/* broker-dashboard */}
       <AppSidebar />
-      <main className="ml-[280px] flex-1 w-[calc(100%-280px)] p-8 min-h-screen lg:ml-[240px] lg:w-[calc(100%-240px)] lg:p-6 md:ml-0 md:w-full md:p-4 md:pt-15"> {/* broker-main */}
-        {/* Header */}
-        <header className="flex items-center justify-between mb-7 md:flex-col md:items-start md:gap-3.5"> {/* broker-header */}
-          <div className="flex flex-col gap-1"> {/* broker-header-left */}
-            <h1 className="text-2xl font-bold text-gray-900 m-0 mb-1 md:text-xl">Reports</h1>
-            <p className="text-sm text-gray-400 m-0">You can view your team&apos;s performance, lead conversion, and inventory health.</p>
-          </div>
-          <div className="flex items-center gap-3.5 md:w-full md:justify-between md:gap-2.5"> {/* broker-header-right */}
-            <button className="w-11 h-11 rounded-xl border-0 bg-white flex items-center justify-center text-gray-600 text-xl cursor-pointer transition-all duration-200 shadow-sm hover:bg-gray-50 hover:text-blue-600"> {/* broker-notification-btn */}
-              <FiBell />
-            </button>
-            <a href="/broker/create-listing" className="inline-flex items-center gap-2 py-2.5 px-5 bg-blue-600 text-white text-sm font-semibold rounded-xl border-0 no-underline cursor-pointer transition-all duration-200 shadow-sm hover:bg-blue-700 active:scale-[0.98]"> {/* broker-add-listing-btn */}
-              <FiPlus />
-              Add Listing
-            </a>
-          </div>
-        </header>
+      <main className="main-with-sidebar flex-1 p-8 min-h-screen lg:p-6 md:p-4 md:pt-15"> {/* broker-main */}
+        <BrokerHeader 
+          title="Reports" 
+          subtitle="You can view your team's performance, lead conversion, and inventory health." 
+        />
 
         {/* Stats Row */}
         <div className="grid grid-cols-4 gap-5 mb-6 lg:grid-cols-2 md:grid-cols-1"> {/* rp-stats-grid */}

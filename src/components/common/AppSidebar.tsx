@@ -13,6 +13,8 @@ import {
   FiBarChart2,
   FiFileText,
   FiBookOpen,
+  FiChevronRight, 
+  FiChevronLeft,
   FiLayout,
   FiUsers,
   FiDollarSign,
@@ -24,8 +26,7 @@ import {
   FiCheckSquare,
   FiGrid,
   FiLogOut,
-  FiChevronLeft,
-  FiChevronRight,
+  FiUser,
 } from 'react-icons/fi'
 
 const SIDEBAR_STORAGE_KEY = 'sidebar-collapsed'
@@ -60,21 +61,23 @@ function AppSidebar() {
   const isBrokerRoute = pathname?.startsWith('/broker')
 
   useEffect(() => {
-    // Only check unread messages for agent routes
-    if (!isAgentRoute) return
+    // Check unread messages for agent and broker routes
+    if (!isAgentRoute && !isBrokerRoute) return
 
     const checkUnreadMessages = () => {
-      // Check if account is processing (this would show as a notification in inbox)
-      const registrationStatus = localStorage.getItem('agent_registration_status')
-      const agentStatus = localStorage.getItem('agent_status')
-      
       let hasUnread = false
       
-      if (registrationStatus === 'processing' || 
-          agentStatus === 'processing' || 
-          agentStatus === 'pending' || 
-          agentStatus === 'under_review') {
-        hasUnread = true
+      if (isAgentRoute) {
+        // Check if account is processing (this would show as a notification in inbox)
+        const registrationStatus = localStorage.getItem('agent_registration_status')
+        const agentStatus = localStorage.getItem('agent_status')
+        
+        if (registrationStatus === 'processing' || 
+            agentStatus === 'processing' || 
+            agentStatus === 'pending' || 
+            agentStatus === 'under_review') {
+          hasUnread = true
+        }
       }
 
       // Check for unread messages count
@@ -99,7 +102,7 @@ function AppSidebar() {
       window.removeEventListener('storage', checkUnreadMessages)
       clearInterval(interval)
     }
-  }, [isAgentRoute])
+  }, [isAgentRoute, isBrokerRoute])
 
   // Close mobile menu when route changes
   useEffect(() => {
@@ -269,7 +272,7 @@ function AppSidebar() {
   // Broker sidebar content
   const renderBrokerSidebar = () => (
     <>
-      <NavLink href="/broker" icon={FiGrid} label="Dashboard" active={isActive('/broker')} />
+      <NavLink href="/broker" icon={FiGrid} label="Dashboard" active={isActive('/broker') && !pathname?.includes('/broker/')} />
       <NavLink href="/broker/company-profile" icon={FiLayout} label="Company Profile" active={isActive('/broker/company-profile')} />
       <NavLink href="/broker/team" icon={FiUsers} label="Team Management" active={isActive('/broker/team')} />
       <NavLink href="/broker/listings" icon={FiHome} label="Listings" active={isActive('/broker/listings')} />
@@ -279,7 +282,6 @@ function AppSidebar() {
       <NavLink href="/broker/inbox" icon={FiMail} label="Inbox" active={isActive('/broker/inbox')} badge />
       <NavLink href="/broker/downloadables" icon={FiDownload} label="Downloadables" active={isActive('/broker/downloadables')} />
       <NavLink href="/broker/digital-card" icon={FiCreditCard} label="Digital Business Card" active={isActive('/broker/digital-card')} />
-      <NavLink href="/broker/settings" icon={FiSettings} label="Settings" active={isActive('/broker/settings')} />
     </>
   )
 
@@ -349,10 +351,20 @@ function AppSidebar() {
           {isAdminRoute ? renderAdminSidebar() : isBrokerRoute ? renderBrokerSidebar() : renderAgentSidebar()}
         </nav>
 
-        {isBrokerRoute && (
+        {(isBrokerRoute || isAgentRoute) && (
           <div className="relative flex-shrink-0" ref={logoutRef}>
             {showLogoutDropdown && (
               <div className="absolute bottom-full left-3 right-3 bg-white border border-gray-200 rounded-[10px] shadow-[0_-4px_16px_rgba(0,0,0,0.12)] p-1.5 mb-1.5 z-[100] animate-[slideUpFade_0.15s_ease-out]">
+                <button 
+                  className="flex items-center gap-2.5 w-full px-3.5 py-2.5 bg-transparent border-none rounded-lg text-sm font-medium text-gray-900 cursor-pointer transition-colors hover:bg-gray-50" 
+                  onClick={() => {
+                    router.push(isBrokerRoute ? '/broker/account' : '/agent/account')
+                    setShowLogoutDropdown(false)
+                  }}
+                >
+                  <FiUser className="text-lg flex-shrink-0" />
+                  <span>Account</span>
+                </button>
                 <button className="flex items-center gap-2.5 w-full px-3.5 py-2.5 bg-transparent border-none rounded-lg text-sm font-medium text-red-500 cursor-pointer transition-colors hover:bg-red-50" onClick={handleLogout}>
                   <FiLogOut className="text-lg flex-shrink-0" />
                   <span>Logout</span>
@@ -382,7 +394,7 @@ function AppSidebar() {
               {!isCollapsed && (
                 <div className="flex flex-col gap-px flex-1 min-w-0">
                   <span className="text-[13px] font-semibold text-gray-900 whitespace-nowrap overflow-hidden text-ellipsis">John Anderson</span>
-                  <span className="text-[11px] text-gray-400">Broker</span>
+                  <span className="text-[11px] text-gray-400">{isBrokerRoute ? 'Broker' : 'Agent'}</span>
                 </div>
               )}
             </div>

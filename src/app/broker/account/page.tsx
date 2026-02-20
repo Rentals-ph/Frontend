@@ -8,13 +8,8 @@ import AccountSettings, {
   PasswordFormData 
 } from '../../../components/common/AccountSettings'
 import { ASSETS } from '@/utils/assets'
-import { 
-  FiBell,
-  FiPlus
-} from 'react-icons/fi'
-// import '../broker-shared.css' // Removed - converted to Tailwind
 
-export default function BrokerSettings() {
+export default function BrokerAccount() {
   const [loading, setLoading] = useState(true)
   
   const [profileData, setProfileData] = useState<ProfileData>({
@@ -107,27 +102,15 @@ export default function BrokerSettings() {
   }
 
   return (
-    <div className="flex min-h-screen bg-gray-100 font-outfit"> {/* broker-dashboard */}
+    <div className="flex min-h-screen bg-gray-100 font-outfit">
       <AppSidebar />
+      <main className="main-with-sidebar flex-1 min-h-screen">
+        <div className="px-4 sm:px-6 md:px-10 lg:px-[150px] py-8 lg:py-6 md:py-4 md:pt-15">
+          <header className="mb-7">
+            <h1 className="text-2xl font-bold text-gray-900 m-0 mb-1 md:text-xl">Account Settings</h1>
+            <p className="text-sm text-gray-400 m-0">Manage your account information and preferences.</p>
+          </header>
 
-      <main className="main-with-sidebar flex-1 p-8 min-h-screen lg:p-6 md:p-4 md:pt-15"> {/* broker-main */}
-        <header className="broker-header">
-          <div className="broker-header-left">
-            <h1>Settings</h1>
-            <p>Manage your account information and preferences.</p>
-          </div>
-          <div className="broker-header-right">
-            <button className="broker-notification-btn">
-              <FiBell />
-            </button>
-            <a href="/broker/create-listing" className="broker-add-listing-btn">
-              <FiPlus />
-              Add Listing
-            </a>
-          </div>
-        </header>
-
-        <div className="account-content">
           <AccountSettings
             userType="broker"
             profileData={profileData}
@@ -143,3 +126,4 @@ export default function BrokerSettings() {
     </div>
   )
 }
+

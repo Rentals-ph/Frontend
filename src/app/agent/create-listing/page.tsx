@@ -20,7 +20,7 @@ export default function AgentCreateListing() {
   return (
     <div className="flex min-h-screen bg-gray-100 font-outfit">
       <AppSidebar />
-      <main className="ml-[280px] flex-1 w-[calc(100%-280px)] p-8 min-h-screen lg:ml-60 lg:w-[calc(100%-240px)] lg:p-6 md:ml-[200px] md:w-[calc(100%-200px)] md:p-4">
+      <main className="main-with-sidebar flex-1 p-8 min-h-screen lg:p-6 md:p-4">
         <AgentHeader 
           title="Create New Listing" 
           subtitle="Choose how you'd like to create your property listing" 

@@ -237,7 +237,7 @@ export default function BrokerCreateListingOwnerReview() {
   return (
     <div className="broker-dashboard">
       <AppSidebar />
-      <main className="broker-main">
+      <main className="main-with-sidebar flex-1 p-8 min-h-screen lg:p-6 md:p-4 md:pt-15">
         <header className="broker-header">
           <div className="broker-header-left">
             <h1>Create Listing</h1>

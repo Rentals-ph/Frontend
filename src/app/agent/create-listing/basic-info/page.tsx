@@ -128,93 +128,100 @@ export default function AgentCreateListingBasicInfo() {
   }
 
   return (
-    <div className="agent-dashboard">
+    <div className="flex min-h-screen bg-gray-50 font-outfit">
       <AppSidebar />
-      <main className="agent-main">
+      <main className="main-with-sidebar flex-1 p-8 min-h-screen lg:p-6 md:p-4">
         <AgentHeader 
           title="Create Listing" 
           subtitle="Add basic property information." 
         />
 
-        <div className="flex items-center gap-2 text-xl font-semibold text-gray-900 my-1.5 mx-0 mb-4"> {/* aclc-breadcrumb */}
-          <span className="text-gray-900">Create Listing</span> {/* aclc-breadcrumb-strong */}
-          <span className="text-gray-400 font-medium">&gt;</span> {/* aclc-breadcrumb-sep */}
-          <span className="text-gray-400 font-semibold">Basic Information</span> {/* aclc-breadcrumb-muted */}
+        {/* Breadcrumb */}
+        <div className="flex items-center gap-2 text-lg font-semibold text-gray-900 mb-4">
+          <span className="text-gray-900">Create Listing</span>
+          <span className="text-gray-400 font-medium">&gt;</span>
+          <span className="text-gray-400 font-semibold">Basic Information</span>
         </div>
 
-        <div className="flex items-center gap-4 p-5 mb-6 bg-white rounded-xl shadow-sm md:flex-col md:items-start"> {/* section-card aclc-stepper-card */}
-          <div className="flex items-center gap-3 min-w-[220px]"> {/* aclc-stepper-left */}
+        {/* Progress Stepper Card */}
+        <div className="flex items-center gap-4 p-6 mb-6 bg-white rounded-xl shadow-sm border border-gray-100 md:flex-col md:items-start">
+          <div className="flex items-center gap-3 min-w-[220px]">
             <ProgressRing percent={25} />
-            <div className="text-sm font-semibold text-gray-600">Completion Status</div> {/* aclc-stepper-left-title */}
+            <div className="text-sm font-semibold text-gray-600">Completion Status</div>
           </div>
 
-          <div className="flex-1 grid grid-cols-4 items-start gap-0 md:w-full md:overflow-x-auto md:pb-1.5 md:justify-start"> {/* aclc-steps */}
+          <div className="flex-1 grid grid-cols-3 items-start gap-0 md:w-full md:overflow-x-auto md:pb-1.5 md:justify-start">
             {stepLabels.map((label, idx) => {
               const step = idx + 1
               const isActive = step === 1
               const isDone = step < 1
               return (
-                <div className="flex flex-col items-center min-w-0 flex-shrink-0" key={label}> {/* aclc-step */}
-                  <div className="w-full flex items-center relative"> {/* aclc-step-top */}
-                    <div className={`w-11 h-11 rounded-full flex items-center justify-center font-bold text-base flex-shrink-0 relative z-10 ${isActive ? 'bg-blue-600 text-white' : isDone ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-400'}`}> {/* aclc-step-circle */}
+                <div className="flex flex-col items-center min-w-0 flex-shrink-0" key={label}>
+                  <div className="w-full flex items-center relative">
+                    <div className={`w-11 h-11 rounded-full flex items-center justify-center font-bold text-base flex-shrink-0 relative z-10 ${isActive ? 'bg-blue-600 text-white' : isDone ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-400'}`}>
                       {isDone ? <FiCheck className="text-lg" /> : step}
                     </div>
-                    {step !== stepLabels.length && <div className={`h-1.5 rounded-full flex-1 ml-2 mr-2 min-w-0 ${step < 1 ? 'bg-blue-600' : 'bg-gray-200'}`} />} {/* aclc-step-line */}
+                    {step !== stepLabels.length && <div className={`h-1.5 rounded-full flex-1 ml-2 mr-2 min-w-0 ${step < 1 ? 'bg-blue-600' : 'bg-gray-200'}`} />}
                   </div>
-                  <div className={`mt-2 text-xs font-semibold text-center leading-tight ${isActive ? 'text-blue-600' : 'text-gray-400'}`}>{label}</div> {/* aclc-step-label */}
+                  <div className={`mt-2 text-xs font-semibold text-center leading-tight ${isActive ? 'text-blue-600' : 'text-gray-400'}`}>{label}</div>
                 </div>
               )
             })}
           </div>
         </div>
 
-        <div className="p-6 bg-white rounded-xl shadow-sm max-w-full"> {/* section-card aclc-form-card */}
-          <h2 className="m-0 mb-4 text-3xl font-bold text-gray-900">Basic Property Information</h2> {/* aclc-form-title */}
+        {/* Main Form Card */}
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+          <div className="px-6 py-5 border-b border-gray-200 bg-gray-50">
+            <h2 className="text-2xl font-bold text-gray-900">Basic Property Information</h2>
+            <p className="text-sm text-gray-600 mt-1">Fill in the essential details about your property</p>
+          </div>
 
-          {/* Two Column Layout */}
-          <div className="basic-info-two-column">
-            {/* Left Column: Category, Title, Description */}
-            <div className="basic-info-left-column">
-              {/* Category Section */}
-              <div style={{ marginBottom: '1.5rem' }}>
-                <label className="aclc-label" htmlFor="propertyCategory">
-                  Property Category *
-                </label>
-                <div className="aclc-select-wrap">
-                  <select
-                    id="propertyCategory"
-                    className="aclc-select"
-                    value={category}
-                    onChange={(e) => setCategory(e.target.value)}
-                  >
-                    <option value="" disabled>Select a property category</option>
-                    {categories.map((c) => (
-                      <option key={c} value={c}>{c}</option>
-                    ))}
-                  </select>
-                  <FiChevronDown className="aclc-select-caret" />
+          <div className="p-6 space-y-6">
+            {/* Category & Title Section */}
+            <div className="space-y-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* Category Card */}
+                <div className="bg-gray-50 rounded-lg p-5 border border-gray-200">
+                  <label htmlFor="propertyCategory" className="block text-sm font-semibold text-gray-900 mb-2">
+                    Property Category <span className="text-red-500">*</span>
+                  </label>
+                  <div className="relative">
+                    <select
+                      id="propertyCategory"
+                      className="w-full h-11 px-4 pr-10 border border-gray-300 rounded-lg bg-white text-gray-900 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all appearance-none cursor-pointer"
+                      value={category}
+                      onChange={(e) => setCategory(e.target.value)}
+                    >
+                      <option value="" disabled>Select a property category</option>
+                      {categories.map((c) => (
+                        <option key={c} value={c}>{c}</option>
+                      ))}
+                    </select>
+                    <FiChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none" />
+                  </div>
+                </div>
+
+                {/* Title Card */}
+                <div className="bg-gray-50 rounded-lg p-5 border border-gray-200">
+                  <label htmlFor="propertyTitle" className="block text-sm font-semibold text-gray-900 mb-2">
+                    Property Title <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    id="propertyTitle"
+                    className="w-full h-11 px-4 border border-gray-300 rounded-lg bg-white text-gray-900 text-sm font-medium placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                    placeholder="Enter a title for your property"
+                  />
                 </div>
               </div>
 
-              {/* Title */}
-              <div style={{ marginBottom: '1.5rem' }}>
-                <label className="aclc-label" htmlFor="propertyTitle">
-                  Property Title *
-                </label>
-                <input
-                  id="propertyTitle"
-                  className="acld-input"
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
-                  placeholder="Enter a title for your property"
-                />
-              </div>
-
-              {/* Description */}
-              <div>
-                <div className="flex items-center justify-between mb-1.5">
-                  <label className="aclc-label" htmlFor="propertyDescription" style={{ marginBottom: 0 }}>
-                    Property Description *
+              {/* Description Card */}
+              <div className="bg-gray-50 rounded-lg p-5 border border-gray-200">
+                <div className="flex items-center justify-between mb-3">
+                  <label htmlFor="propertyDescription" className="block text-sm font-semibold text-gray-900">
+                    Property Description <span className="text-red-500">*</span>
                   </label>
                   <button
                     type="button"
@@ -227,21 +234,23 @@ export default function AgentCreateListingBasicInfo() {
                     {isGenerating ? 'Generating...' : 'AI Generate'}
                   </button>
                 </div>
-                <div className="acld-editor">
-                  <div className="acld-editor-toolbar" aria-hidden="true">
-                    <button className="acld-tool-btn" type="button">B</button>
-                    <button className="acld-tool-btn" type="button">I</button>
-                    <button className="acld-tool-btn" type="button">U</button>
-                    <button className="acld-tool-btn" type="button">S</button>
-                    <button className="acld-tool-btn" type="button">•</button>
-                    <button className="acld-tool-btn" type="button">1.</button>
-                    <button className="acld-tool-btn" type="button">↺</button>
-                    <button className="acld-tool-btn" type="button">↻</button>
-                    <button className="acld-tool-btn" type="button">⤢</button>
+                <div className="border border-gray-300 rounded-lg bg-white overflow-hidden focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500 transition-all">
+                  <div className="flex items-center gap-1 px-3 py-2 border-b border-gray-200 bg-gray-50" aria-hidden="true">
+                    <button className="p-1.5 rounded hover:bg-gray-200 text-gray-600 hover:text-gray-900 transition-colors text-xs font-semibold" type="button">B</button>
+                    <button className="p-1.5 rounded hover:bg-gray-200 text-gray-600 hover:text-gray-900 transition-colors text-xs font-semibold" type="button">I</button>
+                    <button className="p-1.5 rounded hover:bg-gray-200 text-gray-600 hover:text-gray-900 transition-colors text-xs font-semibold" type="button">U</button>
+                    <button className="p-1.5 rounded hover:bg-gray-200 text-gray-600 hover:text-gray-900 transition-colors text-xs font-semibold" type="button">S</button>
+                    <div className="w-px h-4 bg-gray-300 mx-1" />
+                    <button className="p-1.5 rounded hover:bg-gray-200 text-gray-600 hover:text-gray-900 transition-colors text-xs font-semibold" type="button">•</button>
+                    <button className="p-1.5 rounded hover:bg-gray-200 text-gray-600 hover:text-gray-900 transition-colors text-xs font-semibold" type="button">1.</button>
+                    <div className="w-px h-4 bg-gray-300 mx-1" />
+                    <button className="p-1.5 rounded hover:bg-gray-200 text-gray-600 hover:text-gray-900 transition-colors text-xs font-semibold" type="button">↺</button>
+                    <button className="p-1.5 rounded hover:bg-gray-200 text-gray-600 hover:text-gray-900 transition-colors text-xs font-semibold" type="button">↻</button>
+                    <button className="p-1.5 rounded hover:bg-gray-200 text-gray-600 hover:text-gray-900 transition-colors text-xs font-semibold" type="button">⤢</button>
                   </div>
                   <textarea
                     id="propertyDescription"
-                    className="acld-textarea"
+                    className="w-full px-4 py-3 border-0 rounded-b-lg bg-white text-gray-900 text-sm font-medium placeholder-gray-400 focus:outline-none resize-y min-h-[200px]"
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                     placeholder="Describe your property in detail..."
@@ -251,19 +260,20 @@ export default function AgentCreateListingBasicInfo() {
               </div>
             </div>
 
-            {/* Right Column: Property Specs and Location */}
-            <div className="basic-info-right-column">
-              {/* Property Specs Section */}
-              <div style={{ marginBottom: '1.5rem' }}>
-                <h3 style={{ fontSize: '1.125rem', fontWeight: 600, marginBottom: '16px', color: '#111827' }}>Property Specifications</h3>
-                
+            {/* Property Specifications Card */}
+            <div className="bg-gray-50 rounded-lg p-5 border border-gray-200">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-200">Property Specifications</h3>
+              
+              <div className="space-y-4">
                 {/* Bedrooms, Bathrooms, Garage */}
-                <div className="acld-grid-3-compact" style={{ marginBottom: '16px' }}>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   <div>
-                    <label className="aclc-label" htmlFor="bedrooms">Bedrooms *</label>
+                    <label htmlFor="bedrooms" className="block text-sm font-semibold text-gray-900 mb-2">
+                      Bedrooms <span className="text-red-500">*</span>
+                    </label>
                     <input
                       id="bedrooms"
-                      className="acld-input acld-input-compact"
+                      className="w-full h-11 px-4 border border-gray-300 rounded-lg bg-white text-gray-900 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
                       type="number"
                       min={0}
                       value={bedrooms}
@@ -271,10 +281,12 @@ export default function AgentCreateListingBasicInfo() {
                     />
                   </div>
                   <div>
-                    <label className="aclc-label" htmlFor="bathrooms">Bathrooms *</label>
+                    <label htmlFor="bathrooms" className="block text-sm font-semibold text-gray-900 mb-2">
+                      Bathrooms <span className="text-red-500">*</span>
+                    </label>
                     <input
                       id="bathrooms"
-                      className="acld-input acld-input-compact"
+                      className="w-full h-11 px-4 border border-gray-300 rounded-lg bg-white text-gray-900 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
                       type="number"
                       min={0}
                       value={bathrooms}
@@ -282,10 +294,12 @@ export default function AgentCreateListingBasicInfo() {
                     />
                   </div>
                   <div>
-                    <label className="aclc-label" htmlFor="garage">Garage</label>
+                    <label htmlFor="garage" className="block text-sm font-semibold text-gray-900 mb-2">
+                      Garage
+                    </label>
                     <input
                       id="garage"
-                      className="acld-input acld-input-compact"
+                      className="w-full h-11 px-4 border border-gray-300 rounded-lg bg-white text-gray-900 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
                       type="number"
                       min={0}
                       value={garage}
@@ -295,12 +309,14 @@ export default function AgentCreateListingBasicInfo() {
                 </div>
 
                 {/* Floor Area, Unit, Lot Area */}
-                <div className="acld-grid-3-compact">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   <div>
-                    <label className="aclc-label" htmlFor="floorArea">Floor Area</label>
+                    <label htmlFor="floorArea" className="block text-sm font-semibold text-gray-900 mb-2">
+                      Floor Area
+                    </label>
                     <input
                       id="floorArea"
-                      className="acld-input acld-input-compact"
+                      className="w-full h-11 px-4 border border-gray-300 rounded-lg bg-white text-gray-900 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
                       type="number"
                       min={0}
                       value={floorArea}
@@ -308,24 +324,29 @@ export default function AgentCreateListingBasicInfo() {
                     />
                   </div>
                   <div>
-                    <label className="aclc-label" htmlFor="floorUnit">Unit</label>
-                    <div className="aclc-select-wrap">
+                    <label htmlFor="floorUnit" className="block text-sm font-semibold text-gray-900 mb-2">
+                      Unit
+                    </label>
+                    <div className="relative">
                       <select
-                        className="aclc-select"
+                        id="floorUnit"
+                        className="w-full h-11 px-4 pr-10 border border-gray-300 rounded-lg bg-white text-gray-900 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all appearance-none cursor-pointer"
                         value={floorUnit}
                         onChange={(e) => setFloorUnit(e.target.value as 'Square Meters' | 'Square Feet')}
                       >
                         <option value="Square Meters">Square Meters</option>
                         <option value="Square Feet">Square Feet</option>
                       </select>
-                      <FiChevronDown className="aclc-select-caret" />
+                      <FiChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none" />
                     </div>
                   </div>
                   <div>
-                    <label className="aclc-label" htmlFor="lotArea">Lot Area</label>
+                    <label htmlFor="lotArea" className="block text-sm font-semibold text-gray-900 mb-2">
+                      Lot Area
+                    </label>
                     <input
                       id="lotArea"
-                      className="acld-input acld-input-compact"
+                      className="w-full h-11 px-4 border border-gray-300 rounded-lg bg-white text-gray-900 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
                       type="number"
                       min={0}
                       value={lotArea}
@@ -334,42 +355,43 @@ export default function AgentCreateListingBasicInfo() {
                   </div>
                 </div>
               </div>
+            </div>
 
-              {/* Location Section */}
-              <div>
-                <h3 style={{ fontSize: '1.125rem', fontWeight: 600, marginBottom: '12px', color: '#111827' }}>Location</h3>
-                
-                <div style={{ marginTop: '12px' }}>
-                  <LocationMap
-                    latitude={latitude || null}
-                    longitude={longitude || null}
-                    onLocationChange={(lat, lng) => {
-                      setLatitude(lat)
-                      setLongitude(lng)
-                    }}
-                    onAddressChange={(address) => {
-                      if (address.country) setCountry(address.country)
-                      if (address.state) setState(address.state)
-                      if (address.city) setCity(address.city)
-                      if (address.street) setStreet(address.street)
-                    }}
-                  />
-                </div>
-
-                {/* Hidden inputs for location data (kept for backward compatibility) */}
-                <input type="hidden" name="country" value={country} />
-                <input type="hidden" name="state" value={state} />
-                <input type="hidden" name="city" value={city} />
-                <input type="hidden" name="street" value={street} />
-                <input type="hidden" name="latitude" value={latitude} />
-                <input type="hidden" name="longitude" value={longitude} />
+            {/* Location Card */}
+            <div className="bg-gray-50 rounded-lg p-5 border border-gray-200">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-200">Location</h3>
+              
+              <div className="mt-4">
+                <LocationMap
+                  latitude={latitude || null}
+                  longitude={longitude || null}
+                  onLocationChange={(lat, lng) => {
+                    setLatitude(lat)
+                    setLongitude(lng)
+                  }}
+                  onAddressChange={(address) => {
+                    if (address.country) setCountry(address.country)
+                    if (address.state) setState(address.state)
+                    if (address.city) setCity(address.city)
+                    if (address.street) setStreet(address.street)
+                  }}
+                />
               </div>
+
+              {/* Hidden inputs for location data (kept for backward compatibility) */}
+              <input type="hidden" name="country" value={country} />
+              <input type="hidden" name="state" value={state} />
+              <input type="hidden" name="city" value={city} />
+              <input type="hidden" name="street" value={street} />
+              <input type="hidden" name="latitude" value={latitude} />
+              <input type="hidden" name="longitude" value={longitude} />
             </div>
           </div>
 
-          <div style={{ marginTop: '2rem', display: 'flex', justifyContent: 'flex-end' }}>
+          {/* Footer Actions */}
+          <div className="px-6 py-5 border-t border-gray-200 bg-gray-50 flex justify-end">
             <button
-              className="aclc-next-btn"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white font-semibold text-sm rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm hover:shadow-md"
               disabled={!canProceed}
               onClick={() => {
                 updateData({
@@ -394,7 +416,7 @@ export default function AgentCreateListingBasicInfo() {
               type="button"
             >
               <span>Next: Visuals & Features</span>
-              <FiArrowRight />
+              <FiArrowRight className="w-4 h-4" />
             </button>
           </div>
         </div>

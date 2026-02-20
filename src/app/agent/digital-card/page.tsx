@@ -80,7 +80,7 @@ export default function AgentDigitalCard() {
     <div className="flex min-h-screen bg-gray-100 font-outfit"> {/* agent-dashboard */}
       <AppSidebar/>
 
-      <main className="ml-[280px] flex-1 w-[calc(100%-280px)] p-8 min-h-screen lg:ml-[240px] lg:w-[calc(100%-240px)] lg:p-6 md:ml-0 md:w-full md:p-4 md:pt-20"> {/* agent-main */}
+      <main className="main-with-sidebar flex-1 p-8 min-h-screen lg:p-6 md:p-4 md:pt-20"> {/* agent-main */}
         <AgentHeader 
           title="Digital Business Card" 
           subtitle="Share your professional contact information." 

@@ -1,247 +1,406 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import AppSidebar from '../../../components/common/AppSidebar'
+import BrokerHeader from '../../../components/broker/BrokerHeader'
+import EditPropertyModal from '../../../components/agent/EditPropertyModal'
+import { brokerApi } from '../../../api'
+import type { Property } from '../../../types'
 import {
-  FiBell,
-  FiPlus,
-  FiChevronDown,
+  FiCheckCircle,
+  FiEye,
+  FiHome,
+  FiMapPin,
+  FiSearch,
+  FiSlash,
 } from 'react-icons/fi'
+import { ASSETS } from '@/utils/assets'
+import { resolvePropertyImage } from '@/utils/imageResolver'
+import PropertiesMap from '../../../components/agent/PropertiesMap'
 // import './page.css' // Removed - converted to Tailwind
 
-interface Listing {
+type ListingStatus = 'active' | 'rented' | 'hidden'
+
+interface ListingCard {
   id: number
-  propertyTitle: string
-  listedBy: string
-  role: 'Agent' | 'Unit Manager'
-  category: string
-  priceRange: string
-  status: 'Active' | 'Pending' | 'Rented' | 'Featured'
+  title: string
+  address: string
+  rating: number
+  views: number
+  image: string
+  status: ListingStatus
 }
 
-const listingsData: Listing[] = [
-  {
-    id: 1,
-    propertyTitle: 'Modern Studio in BGC',
-    listedBy: 'Angelo Reyes',
-    role: 'Agent',
-    category: 'Studio',
-    priceRange: '₱25k – ₱30k',
-    status: 'Active',
-  },
-  {
-    id: 2,
-    propertyTitle: 'Luxury Loft Unit 4B',
-    listedBy: 'Gabo Dela Cruz',
-    role: 'Unit Manager',
-    category: 'Condo',
-    priceRange: '₱85k – ₱100k',
-    status: 'Active',
-  },
-  {
-    id: 3,
-    propertyTitle: 'Pet-Friendly Villa',
-    listedBy: 'Sofia Mendoza',
-    role: 'Agent',
-    category: 'House & Lot',
-    priceRange: '₱120k – ₱150k',
-    status: 'Pending',
-  },
-  {
-    id: 4,
-    propertyTitle: 'Cozy Apartment QC',
-    listedBy: 'Marco Valdez',
-    role: 'Agent',
-    category: 'Apartment',
-    priceRange: '₱15k – ₱20k',
-    status: 'Rented',
-  },
-  {
-    id: 5,
-    propertyTitle: 'Skyline Penthouse',
-    listedBy: 'Camille Santos',
-    role: 'Unit Manager',
-    category: 'Condo',
-    priceRange: '₱200k+',
-    status: 'Featured',
-  },
-]
-
 export default function ListingsPage() {
-  const [selectedListings, setSelectedListings] = useState<number[]>([])
-  const [showFilter, setShowFilter] = useState(false)
+  const [listings, setListings] = useState<ListingCard[]>([])
+  const [properties, setProperties] = useState<Property[]>([])
+  const [loading, setLoading] = useState(true)
+  const [totalProperties, setTotalProperties] = useState(0)
+  const [activeProperties, setActiveProperties] = useState(0)
+  const [rentedProperties, setRentedProperties] = useState(0)
+  const [hiddenProperties, setHiddenProperties] = useState(0)
+  const [editingProperty, setEditingProperty] = useState<Property | null>(null)
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [selectedFilter, setSelectedFilter] = useState<string>('all') // 'all' or property type
 
-  const allSelected = selectedListings.length === listingsData.length && listingsData.length > 0
+  useEffect(() => {
+    const fetchBrokerListings = async () => {
+      try {
+        setLoading(true)
+        // Get broker's properties (broker's own + team agents' properties)
+        const propertiesResponse = await brokerApi.getProperties()
+        const propertiesArray = Array.isArray(propertiesResponse) ? propertiesResponse : (propertiesResponse as any).data || []
+        
+        setProperties(propertiesArray)
+        
+        // Transform properties to ListingCard format
+        const transformedListings: ListingCard[] = propertiesArray.map((property: Property) => {
+          const address = property.street_address 
+            ? `${property.street_address}, ${property.city || property.location || 'N/A'}`
+            : property.location || 'Address not available'
+          
+          // Determine status based on property data
+          let status: ListingStatus = 'active'
+          if (!property.published_at) {
+            status = 'hidden'
+          }
+          
+          // Use image_url if available (from backend), otherwise fall back to resolving image
+          let imageUrl = property.image_url
+          if (!imageUrl && property.image_path) {
+            imageUrl = resolvePropertyImage(property.image_path, property.id)
+          }
+          if (!imageUrl && property.image) {
+            imageUrl = resolvePropertyImage(property.image, property.id)
+          }
+          if (!imageUrl) {
+            imageUrl = resolvePropertyImage(null, property.id)
+          }
+          
+          return {
+            id: property.id,
+            title: property.title,
+            address: address,
+            rating: 4, // Default rating, could be fetched from reviews API
+            views: 0, // Could be tracked separately
+            image: imageUrl,
+            status: status
+          }
+        })
+        
+        setListings(transformedListings)
+        
+        // Calculate stats
+        setTotalProperties(propertiesArray.length)
+        setActiveProperties(propertiesArray.filter(p => p.published_at).length)
+        setRentedProperties(0) // Would need additional data
+        setHiddenProperties(propertiesArray.filter(p => !p.published_at).length)
+      } catch (error: any) {
+        console.error('Error fetching broker listings:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
 
-  const toggleSelectAll = () => {
-    if (allSelected) {
-      setSelectedListings([])
-    } else {
-      setSelectedListings(listingsData.map((l) => l.id))
+    fetchBrokerListings()
+  }, [])
+
+  const handleEditClick = async (listingId: number) => {
+    try {
+      // Fetch full property details - use broker API to ensure access control
+      const property = properties.find(p => p.id === listingId)
+      if (property) {
+        setEditingProperty(property)
+        setIsModalOpen(true)
+      } else {
+        alert('Property not found.')
+      }
+    } catch (error: any) {
+      console.error('Error fetching property details:', error)
+      alert('Failed to load property details. Please try again.')
     }
   }
 
-  const toggleSelect = (id: number) => {
-    setSelectedListings((prev) =>
-      prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]
+  const handleModalClose = () => {
+    setIsModalOpen(false)
+    setEditingProperty(null)
+  }
+
+  const handlePropertyUpdate = () => {
+    // Refresh the listings
+    const fetchBrokerListings = async () => {
+      try {
+        const propertiesResponse = await brokerApi.getProperties()
+        const propertiesArray = Array.isArray(propertiesResponse) ? propertiesResponse : (propertiesResponse as any).data || []
+        
+        setProperties(propertiesArray)
+        
+        const transformedListings: ListingCard[] = propertiesArray.map((property: Property) => {
+          const address = property.street_address 
+            ? `${property.street_address}, ${property.city || property.location || 'N/A'}`
+            : property.location || 'Address not available'
+          
+          let status: ListingStatus = 'active'
+          if (!property.published_at) {
+            status = 'hidden'
+          }
+          
+          let imageUrl = property.image_url
+          if (!imageUrl && property.image_path) {
+            imageUrl = resolvePropertyImage(property.image_path, property.id)
+          }
+          if (!imageUrl && property.image) {
+            imageUrl = resolvePropertyImage(property.image, property.id)
+          }
+          if (!imageUrl) {
+            imageUrl = resolvePropertyImage(null, property.id)
+          }
+          
+          return {
+            id: property.id,
+            title: property.title,
+            address: address,
+            rating: 4,
+            views: 0,
+            image: imageUrl,
+            status: status
+          }
+        })
+        
+        setListings(transformedListings)
+        setTotalProperties(propertiesArray.length)
+        setActiveProperties(propertiesArray.filter(p => p.published_at).length)
+        setHiddenProperties(propertiesArray.filter(p => !p.published_at).length)
+      } catch (error) {
+        console.error('Error refreshing listings:', error)
+      }
+    }
+    fetchBrokerListings()
+  }
+
+  const handlePropertyDelete = () => {
+    // Refresh the listings
+    handlePropertyUpdate()
+  }
+
+  const renderStars = (rating: number) => {
+    return (
+      <div className="flex gap-0.5"> {/* aml-rating */}
+        {Array.from({ length: 5 }).map((_, idx) => {
+          const starNumber = idx + 1
+          return (
+            <span
+              key={starNumber}
+              className={`text-lg leading-none ${starNumber <= rating ? 'text-[#FFC107]' : 'text-gray-300'}`} /* aml-star */
+              aria-hidden="true"
+            >
+              ★
+            </span>
+          )
+        })}
+      </div>
     )
   }
 
-  const getStatusClass = (status: string) => {
-    switch (status) {
-      case 'Active': return 'active'
-      case 'Pending': return 'pending'
-      case 'Rented': return 'rented'
-      case 'Featured': return 'featured'
-      default: return ''
-    }
-  }
-
   return (
-    <div className="flex min-h-screen bg-gray-100 font-outfit"> {/* broker-dashboard */}
-      <AppSidebar />
-      <main className="ml-[280px] flex-1 w-[calc(100%-280px)] p-8 min-h-screen lg:ml-[240px] lg:w-[calc(100%-240px)] lg:p-6 md:ml-0 md:w-full md:p-4 md:pt-15"> {/* broker-main */}
-        {/* Header */}
-        <header className="flex items-center justify-between mb-7 md:flex-col md:items-start md:gap-3.5"> {/* broker-header */}
-          <div> {/* broker-header-left */}
-            <h1 className="text-2xl font-bold text-gray-900 m-0 mb-1 md:text-xl">Listings</h1>
-            <p className="text-sm text-gray-400 m-0">Manage your team members&apos; created listings.</p>
-          </div>
-          <div className="flex items-center gap-3.5 md:w-full md:justify-between md:gap-2.5"> {/* broker-header-right */}
-            <button className="w-10.5 h-10.5 rounded-full border border-gray-200 bg-white flex items-center justify-center cursor-pointer text-gray-600 text-lg transition-all hover:bg-gray-50 hover:text-gray-900 md:w-9.5 md:h-9.5 md:text-base md:flex-shrink-0"> {/* broker-notification-btn */}
-              <FiBell />
-            </button>
-            <a href="/broker/create-listing" className="bg-blue-600 text-white border-none py-2.5 px-5.5 rounded-lg text-sm font-semibold cursor-pointer flex items-center gap-2 transition-colors no-underline hover:bg-blue-700 md:py-2.25 md:px-4.5 md:text-xs md:flex-1 md:justify-center md:min-w-0"> {/* broker-add-listing-btn */}
-              <FiPlus />
-              Add Listing
-            </a>
-          </div>
-        </header>
+    <div className="flex min-h-screen bg-gray-100 font-outfit"> {/* agent-dashboard */}
+      <AppSidebar/>
+      <main className="main-with-sidebar flex-1 min-h-screen"> {/* broker-main */}
+        <div className="p-8 lg:py-6 md:py-4 md:pt-20">
+          <BrokerHeader 
+            title="Listings" 
+            subtitle="Manage and track all your team's property listings." 
+          />
 
-        {/* Listings Table */}
-        <div className="bg-white rounded-2xl shadow-sm py-7 px-8 mt-2 md:py-5 md:px-3 md:rounded-xl sm:py-3 sm:px-2 sm:rounded-lg"> {/* bl-table-card */}
-          <div className="flex items-center justify-between mb-5 md:flex-col md:items-start md:gap-3 md:mb-4 sm:mb-3"> {/* bl-table-header */}
-            <h3 className="text-lg font-bold text-slate-800 md:text-base sm:text-base">Listings</h3> {/* bl-table-title */}
-            <button
-              className="flex items-center gap-1.5 bg-gray-50 border border-gray-200 rounded-lg py-2 px-4.5 text-sm text-slate-600 cursor-pointer transition-colors hover:border-gray-300 md:w-full md:justify-center md:py-2.5 md:px-4.5 md:text-sm sm:py-2.25 sm:px-4 sm:text-xs" // bl-filter-btn
-              onClick={() => setShowFilter(!showFilter)}
-            >
-              Filter <FiChevronDown />
-            </button>
-          </div>
-
-          {/* Desktop Table View */}
-          <div className="overflow-x-auto md:hidden"> {/* bl-table-wrapper */}
-            <table className="w-full border-collapse min-w-[800px] lg:min-w-[700px]"> {/* bl-table */}
-              <thead>
-                <tr>
-                  <th className="w-11 text-center text-left py-3 px-3.5 text-xs font-semibold text-slate-400 uppercase tracking-wider border-b-[1.5px] border-slate-100 whitespace-nowrap"> {/* bl-th-check */}
-                    <input
-                      type="checkbox"
-                      checked={allSelected}
-                      onChange={toggleSelectAll}
-                      className="w-4.5 h-4.5 accent-blue-600 cursor-pointer rounded" // bl-checkbox
-                    />
-                  </th>
-                  <th className="text-left py-3 px-3.5 text-xs font-semibold text-slate-400 uppercase tracking-wider border-b-[1.5px] border-slate-100 whitespace-nowrap">Property Title</th>
-                  <th className="text-left py-3 px-3.5 text-xs font-semibold text-slate-400 uppercase tracking-wider border-b-[1.5px] border-slate-100 whitespace-nowrap">Listed By</th>
-                  <th className="text-left py-3 px-3.5 text-xs font-semibold text-slate-400 uppercase tracking-wider border-b-[1.5px] border-slate-100 whitespace-nowrap">Role</th>
-                  <th className="text-left py-3 px-3.5 text-xs font-semibold text-slate-400 uppercase tracking-wider border-b-[1.5px] border-slate-100 whitespace-nowrap">Category</th>
-                  <th className="text-left py-3 px-3.5 text-xs font-semibold text-slate-400 uppercase tracking-wider border-b-[1.5px] border-slate-100 whitespace-nowrap">Price Range</th>
-                  <th className="text-left py-3 px-3.5 text-xs font-semibold text-slate-400 uppercase tracking-wider border-b-[1.5px] border-slate-100 whitespace-nowrap">Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                {listingsData.map((listing) => (
-                  <tr key={listing.id} className="hover:bg-slate-50">
-                    <td className="w-11 text-center py-3.5 px-3.5 text-base text-slate-700 border-b border-slate-100 last:border-b-0 align-middle"> {/* bl-td-check */}
-                      <input
-                        type="checkbox"
-                        checked={selectedListings.includes(listing.id)}
-                        onChange={() => toggleSelect(listing.id)}
-                        className="w-4.5 h-4.5 accent-blue-600 cursor-pointer rounded" // bl-checkbox
-                      />
-                    </td>
-                    <td className="py-3.5 px-3.5 text-base text-slate-700 border-b border-slate-100 last:border-b-0 align-middle font-semibold text-slate-800">{listing.propertyTitle}</td> {/* bl-td-title */}
-                    <td className="py-3.5 px-3.5 text-base text-slate-700 border-b border-slate-100 last:border-b-0 align-middle text-slate-600">{listing.listedBy}</td> {/* bl-td-by */}
-                    <td className="py-3.5 px-3.5 text-base text-slate-700 border-b border-slate-100 last:border-b-0 align-middle text-slate-500">{listing.role}</td> {/* bl-td-role */}
-                    <td className="py-3.5 px-3.5 text-base text-slate-700 border-b border-slate-100 last:border-b-0 align-middle text-slate-500">{listing.category}</td> {/* bl-td-category */}
-                    <td className="py-3.5 px-3.5 text-base text-slate-700 border-b border-slate-100 last:border-b-0 align-middle font-medium text-slate-700">{listing.priceRange}</td> {/* bl-td-price */}
-                    <td className="py-3.5 px-3.5 text-base text-slate-700 border-b border-slate-100 last:border-b-0 align-middle"> {/* bl-td-status */}
-                      <span className={`inline-block py-1 px-3.5 rounded-full text-xs font-semibold text-center min-w-[72px] md:text-xs md:py-0.75 md:px-3 md:min-w-[65px] sm:text-[11px] sm:py-0.75 sm:px-2.5 sm:min-w-[60px] ${
-                        listing.status === 'Active' ? 'bg-emerald-200 text-emerald-700' :
-                        listing.status === 'Pending' ? 'bg-amber-100 text-amber-700' :
-                        listing.status === 'Rented' ? 'bg-slate-100 text-slate-600' :
-                        listing.status === 'Featured' ? 'bg-blue-100 text-blue-600' : ''
-                      }`}> {/* bl-status-badge */}
-                        {listing.status}
-                      </span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-
-          {/* Mobile Card View */}
-          <div className="hidden md:block"> {/* bl-mobile-cards */}
-            <div className="flex items-center justify-end mb-4 pb-3 border-b border-slate-100 sm:mb-3 sm:pb-2.5"> {/* bl-mobile-header-actions */}
-              <label className="flex items-center gap-2 text-sm text-slate-600 cursor-pointer font-medium sm:text-xs"> {/* bl-mobile-select-all */}
-                <input
-                  type="checkbox"
-                  checked={allSelected}
-                  onChange={toggleSelectAll}
-                  className="w-4.5 h-4.5 accent-blue-600 cursor-pointer rounded" // bl-checkbox
-                />
-                <span>Select All</span>
-              </label>
-            </div>
-            {listingsData.map((listing) => (
-              <div key={listing.id} className="bg-slate-50 border border-gray-200 rounded-xl p-4 mb-3 transition-all hover:shadow-md hover:border-slate-300 md:p-3.5 sm:p-3 sm:mb-2.5 sm:rounded-lg"> {/* bl-mobile-card */}
-                <div className="flex items-center justify-between mb-3"> {/* bl-mobile-card-header */}
-                  <label className="flex items-center cursor-pointer"> {/* bl-mobile-checkbox-label */}
-                    <input
-                      type="checkbox"
-                      checked={selectedListings.includes(listing.id)}
-                      onChange={() => toggleSelect(listing.id)}
-                      className="w-4.5 h-4.5 accent-blue-600 cursor-pointer rounded" // bl-checkbox
-                    />
-                  </label>
-                  <span className={`inline-block py-1 px-3.5 rounded-full text-xs font-semibold text-center min-w-[72px] md:text-xs md:py-0.75 md:px-3 md:min-w-[65px] sm:text-[11px] sm:py-0.75 sm:px-2.5 sm:min-w-[60px] ${
-                    listing.status === 'Active' ? 'bg-emerald-200 text-emerald-700' :
-                    listing.status === 'Pending' ? 'bg-amber-100 text-amber-700' :
-                    listing.status === 'Rented' ? 'bg-slate-100 text-slate-600' :
-                    listing.status === 'Featured' ? 'bg-blue-100 text-blue-600' : ''
-                  }`}> {/* bl-status-badge */}
-                    {listing.status}
-                  </span>
+          <div className="flex flex-col gap-4.5"> {/* aml-page */}
+            <div className="grid grid-cols-4 gap-6 lg:grid-cols-2 md:grid-cols-1"> {/* aml-stats */}
+              <div className="bg-white rounded-xl p-6 flex items-start gap-4 shadow-sm border border-gray-100"> {/* metric-card orange */}
+                <div className="w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0 text-xl bg-orange-100 text-orange-600"> {/* metric-icon */}
+                  <FiHome />
                 </div>
-                <div className="flex flex-col gap-2.5"> {/* bl-mobile-card-body */}
-                  <h4 className="text-base font-semibold text-slate-800 m-0 mb-2 md:text-sm md:mb-2.5 sm:text-sm sm:mb-2.5">{listing.propertyTitle}</h4> {/* bl-mobile-title */}
-                  <div className="flex flex-col gap-2 sm:gap-1.5"> {/* bl-mobile-details */}
-                    <div className="flex items-center justify-between text-sm md:text-xs md:flex-wrap sm:text-xs sm:flex-wrap"> {/* bl-mobile-detail-row */}
-                      <span className="text-slate-600 font-medium md:text-xs sm:text-xs">Listed By:</span> {/* bl-mobile-label */}
-                      <span className="text-slate-700 font-medium text-right md:text-xs sm:text-xs">{listing.listedBy}</span> {/* bl-mobile-value */}
+                <div className="flex-1 flex flex-col gap-1"> {/* metric-content */}
+                  <div className="flex justify-between items-baseline gap-3"> {/* aml-stat-top */}
+                    <h3 className="text-sm font-semibold text-gray-700 m-0">Total Properties</h3>
+                    <span className="text-xs font-semibold whitespace-nowrap text-green-600">&nbsp;</span> {/* aml-stat-delta positive */}
+                  </div>
+                  <p className="text-3xl font-bold text-gray-900 m-0 leading-none">{loading ? '...' : totalProperties}</p> {/* metric-value */}
+                </div>
+              </div>
+
+              <div className="bg-white rounded-xl p-6 flex items-start gap-4 shadow-sm border border-gray-100"> {/* metric-card blue */}
+                <div className="w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0 text-xl bg-blue-100 text-blue-600"> {/* metric-icon */}
+                  <FiCheckCircle />
+                </div>
+                <div className="flex-1 flex flex-col gap-1"> {/* metric-content */}
+                  <div className="flex justify-between items-baseline gap-3"> {/* aml-stat-top */}
+                    <h3 className="text-sm font-semibold text-gray-700 m-0">Total Active</h3>
+                    <span className="text-xs font-semibold whitespace-nowrap text-green-600">&nbsp;</span> {/* aml-stat-delta positive */}
+                  </div>
+                  <p className="text-3xl font-bold text-gray-900 m-0 leading-none">{loading ? '...' : activeProperties}</p> {/* metric-value */}
+                </div>
+              </div>
+
+              <div className="bg-white rounded-xl p-6 flex items-start gap-4 shadow-sm border border-gray-100"> {/* metric-card green */}
+                <div className="w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0 text-xl bg-emerald-100 text-emerald-600"> {/* metric-icon */}
+                  <FiCheckCircle />
+                </div>
+                <div className="flex-1 flex flex-col gap-1"> {/* metric-content */}
+                  <div className="flex justify-between items-baseline gap-3"> {/* aml-stat-top */}
+                    <h3 className="text-sm font-semibold text-gray-700 m-0">Total Rented</h3>
+                    <span className="text-xs font-medium whitespace-nowrap text-gray-500">&nbsp;</span> {/* aml-stat-delta muted */}
+                  </div>
+                  <p className="text-3xl font-bold text-gray-900 m-0 leading-none">{loading ? '...' : rentedProperties}</p> {/* metric-value */}
+                </div>
+              </div>
+
+              <div className="bg-white rounded-xl p-6 flex items-start gap-4 shadow-sm border border-gray-100"> {/* metric-card red */}
+                <div className="w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0 text-xl bg-red-100 text-red-600"> {/* metric-icon */}
+                  <FiSlash />
+                </div>
+                <div className="flex-1 flex flex-col gap-1"> {/* metric-content */}
+                  <div className="flex justify-between items-baseline gap-3"> {/* aml-stat-top */}
+                    <h3 className="text-sm font-semibold text-gray-700 m-0">Total Hide</h3>
+                    <span className="text-xs font-medium whitespace-nowrap text-gray-500">&nbsp;</span> {/* aml-stat-delta muted */}
+                  </div>
+                  <p className="text-3xl font-bold text-gray-900 m-0 leading-none">{loading ? '...' : hiddenProperties}</p> {/* metric-value */}
+                </div>
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-3.5"> {/* aml-search-map */}
+              <div className="flex gap-3 items-stretch"> {/* aml-search-row */}
+                <div className="flex-1 flex items-center gap-2.5 bg-white border border-gray-200 rounded-[10px] py-3.5 px-4"> {/* aml-search */}
+                  <FiSearch className="text-gray-400 text-lg" /> {/* aml-search-icon */}
+                  <input className="border-0 outline-0 w-full text-[15px] text-gray-900 bg-transparent placeholder:text-gray-400" placeholder="Search Location..." /> {/* aml-search-input */}
+                </div>
+                <button className="inline-flex items-center gap-2.5 px-4.5 min-w-[120px] border-0 rounded-[10px] bg-blue-600 text-white font-bold cursor-pointer shadow-sm transition-all duration-200 hover:bg-blue-700 active:scale-[0.98]" type="button"> {/* aml-find-btn */}
+                  <FiSearch />
+                  <span>Find</span>
+                </button>
+              </div>
+
+              <div className="bg-white rounded-xl overflow-hidden border border-gray-200 h-[400px]"> {/* aml-map */}
+                <PropertiesMap 
+                  properties={properties}
+                  agentId={null}
+                  className="w-full h-full border-0"
+                />
+              </div>
+            </div>
+
+            <div className="flex items-center gap-4.5 text-gray-500 text-[13px] py-1 px-0.5 overflow-x-auto scrollbar-none"> {/* aml-filters */}
+              {(() => {
+                // Calculate property type counts
+                const typeCounts: Record<string, number> = {}
+                properties.forEach((property) => {
+                  const type = property.type || 'Other'
+                  typeCounts[type] = (typeCounts[type] || 0) + 1
+                })
+                
+                // Get unique property types sorted by count (descending)
+                const propertyTypes = Object.keys(typeCounts).sort((a, b) => typeCounts[b] - typeCounts[a])
+                
+                return (
+                  <>
+                    <label className="inline-flex items-center gap-2.5 cursor-pointer"> {/* aml-filter */}
+                      <input 
+                        type="checkbox" 
+                        checked={selectedFilter === 'all'}
+                        onChange={() => setSelectedFilter('all')}
+                        className="w-4 h-4 accent-blue-600"
+                      />
+                      <span>All({totalProperties})</span>
+                    </label>
+                    {propertyTypes.map((type) => (
+                      <button
+                        key={type}
+                        type="button"
+                        className={`bg-transparent border-0 text-gray-500 text-[13px] cursor-pointer py-1.5 px-2 rounded-lg whitespace-nowrap flex-shrink-0 transition-all duration-200 hover:bg-gray-100 hover:text-gray-900 ${selectedFilter === type ? 'bg-blue-50 text-blue-600 font-semibold' : ''}`} /* aml-filter-pill */
+                        onClick={() => setSelectedFilter(type)}
+                      >
+                        {type}({typeCounts[type]})
+                      </button>
+                    ))}
+                  </>
+                )
+              })()}
+            </div>
+
+            <div className="grid grid-cols-2 gap-5.5 mt-1.5 lg:grid-cols-1"> {/* aml-grid */}
+              {loading ? (
+                <div className="p-8 text-center col-span-full">Loading listings...</div>
+              ) : (() => {
+                // Filter listings based on selected filter
+                const filteredListings = selectedFilter === 'all' 
+                  ? listings 
+                  : listings.filter((l) => {
+                      const property = properties.find(p => p.id === l.id)
+                      return property?.type === selectedFilter
+                    })
+                
+                return filteredListings.length === 0 ? (
+                  <div className="p-8 text-center col-span-full">
+                    {selectedFilter === 'all' 
+                      ? 'No listings yet. Create your first listing!'
+                      : `No ${selectedFilter} properties found.`
+                    }
+                  </div>
+                ) : (
+                  filteredListings.map((l) => (
+                  <div key={l.id} className="bg-white rounded-[14px] border border-gray-200 overflow-hidden shadow-sm flex gap-0"> {/* aml-card */}
+                  <div className="relative w-[190px] min-w-[190px] bg-gray-100"> {/* aml-card-media */}
+                    <img
+                      src={l.image}
+                      alt={l.title}
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement
+                        target.src = ASSETS.PLACEHOLDER_PROPERTY_MAIN
+                      }}
+                    />
+                    <div className="absolute top-2.5 left-2.5 bg-white/90 backdrop-blur-sm rounded-full w-7 h-7 flex items-center justify-center text-blue-600 text-sm shadow-sm" title="Pinned"> {/* aml-pin */}
+                      <FiMapPin />
                     </div>
-                    <div className="flex items-center justify-between text-sm md:text-xs md:flex-wrap sm:text-xs sm:flex-wrap"> {/* bl-mobile-detail-row */}
-                      <span className="text-slate-600 font-medium md:text-xs sm:text-xs">Role:</span> {/* bl-mobile-label */}
-                      <span className="text-slate-700 font-medium text-right md:text-xs sm:text-xs">{listing.role}</span> {/* bl-mobile-value */}
+                    <button 
+                      className="absolute bottom-2.5 right-2.5 bg-blue-600 text-white text-xs font-semibold py-1.5 px-3.5 rounded-lg border-0 cursor-pointer transition-all duration-200 hover:bg-blue-700 active:scale-95" 
+                      type="button"
+                      onClick={() => handleEditClick(l.id)}
+                    > {/* aml-edit-btn */}
+                      Edit
+                    </button>
+                  </div>
+
+                  <div className="flex-1 p-4 flex flex-col gap-2.5"> {/* aml-card-body */}
+                    <div className="font-semibold text-base text-gray-900 leading-snug line-clamp-2">{l.title}</div> {/* aml-card-title */}
+                    <div className="flex items-start gap-1.5 text-gray-600 text-sm"> {/* aml-card-address */}
+                      <FiMapPin className="flex-shrink-0 mt-0.5 text-base" /> {/* aml-address-icon */}
+                      <span className="line-clamp-2">{l.address}</span>
                     </div>
-                    <div className="flex items-center justify-between text-sm md:text-xs md:flex-wrap sm:text-xs sm:flex-wrap"> {/* bl-mobile-detail-row */}
-                      <span className="text-slate-600 font-medium md:text-xs sm:text-xs">Category:</span> {/* bl-mobile-label */}
-                      <span className="text-slate-700 font-medium text-right md:text-xs sm:text-xs">{listing.category}</span> {/* bl-mobile-value */}
-                    </div>
-                    <div className="flex items-center justify-between text-sm md:text-xs md:flex-wrap sm:text-xs sm:flex-wrap"> {/* bl-mobile-detail-row */}
-                      <span className="text-slate-600 font-medium md:text-xs sm:text-xs">Price Range:</span> {/* bl-mobile-label */}
-                      <span className="text-slate-700 font-medium text-right font-semibold text-slate-800 md:text-xs sm:text-xs">{listing.priceRange}</span> {/* bl-mobile-value bl-mobile-price */}
+
+                    <div className="flex items-center justify-between gap-3 mt-auto pt-2 border-t border-gray-100"> {/* aml-card-meta */}
+                      {renderStars(l.rating)}
+                      <div className="flex items-center gap-1.5 text-gray-600 text-xs"> {/* aml-views */}
+                        <FiEye className="text-sm" />
+                        <span>Viewed({l.views})</span>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            ))}
+                  ))
+                )
+              })()}
+            </div>
           </div>
         </div>
       </main>
+
+      <EditPropertyModal
+        property={editingProperty}
+        isOpen={isModalOpen}
+        onClose={handleModalClose}
+        onUpdate={handlePropertyUpdate}
+        onDelete={handlePropertyDelete}
+      />
     </div>
   )
 }

@@ -15,7 +15,8 @@ import {
   FiArrowLeft,
   FiArrowRight,
   FiUpload,
-  FiDollarSign
+  FiDollarSign,
+  FiChevronDown
 } from 'react-icons/fi'
 // Converted to Tailwind CSS
 
@@ -289,244 +290,260 @@ export default function AgentCreateListingOwnerReview() {
 
 
   return (
-    <div className="agent-dashboard">
+    <div className="flex min-h-screen bg-gray-50 font-outfit">
       <AppSidebar/>
-      <main className="agent-main">
+      <main className="main-with-sidebar flex-1 p-8 min-h-screen lg:p-6 md:p-4">
         <AgentHeader 
           title="Create Listing" 
           subtitle="Add owner information and review your listing." 
         />
 
-        <div className="flex items-center gap-2 text-xl font-semibold text-gray-900 my-1.5 mx-0 mb-4"> {/* aclc-breadcrumb */}
-          <span className="text-gray-900">Create Listing</span> {/* aclc-breadcrumb-strong */}
-          <span className="text-gray-400 font-medium">&gt;</span> {/* aclc-breadcrumb-sep */}
-          <span className="text-gray-400 font-semibold">Owner Info & Review</span> {/* aclc-breadcrumb-muted */}
+        {/* Breadcrumb */}
+        <div className="flex items-center gap-2 text-lg font-semibold text-gray-900 mb-4">
+          <span className="text-gray-900">Create Listing</span>
+          <span className="text-gray-400 font-medium">&gt;</span>
+          <span className="text-gray-400 font-semibold">Owner Info & Review</span>
         </div>
 
-        <div className="flex items-center gap-4 p-5 mb-6 bg-white rounded-xl shadow-sm md:flex-col md:items-start"> {/* section-card aclc-stepper-card */}
-          <div className="flex items-center gap-3 min-w-[220px]"> {/* aclc-stepper-left */}
+        {/* Progress Stepper Card */}
+        <div className="flex items-center gap-4 p-6 mb-6 bg-white rounded-xl shadow-sm border border-gray-100 md:flex-col md:items-start">
+          <div className="flex items-center gap-3 min-w-[220px]">
             <ProgressRing percent={100} />
-            <div className="text-sm font-semibold text-gray-600">Completion Status</div> {/* aclc-stepper-left-title */}
+            <div className="text-sm font-semibold text-gray-600">Completion Status</div>
           </div>
 
-          <div className="flex-1 grid grid-cols-4 items-start gap-0 md:w-full md:overflow-x-auto md:pb-1.5 md:justify-start"> {/* aclc-steps */}
+          <div className="flex-1 grid grid-cols-3 items-start gap-0 md:w-full md:overflow-x-auto md:pb-1.5 md:justify-start">
             {stepLabels.map((label, idx) => {
               const step = idx + 1
               const isActive = step === 3
               const isDone = step < 3
               return (
-                <div className="flex flex-col items-center min-w-0 flex-shrink-0" key={label}> {/* aclc-step */}
-                  <div className="w-full flex items-center relative"> {/* aclc-step-top */}
-                    <div className={`w-11 h-11 rounded-full flex items-center justify-center font-bold text-base flex-shrink-0 relative z-10 ${isActive ? 'bg-blue-600 text-white' : isDone ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-400'}`}> {/* aclc-step-circle */}
+                <div className="flex flex-col items-center min-w-0 flex-shrink-0" key={label}>
+                  <div className="w-full flex items-center relative">
+                    <div className={`w-11 h-11 rounded-full flex items-center justify-center font-bold text-base flex-shrink-0 relative z-10 ${isActive ? 'bg-blue-600 text-white' : isDone ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-400'}`}>
                       {isDone ? <FiCheck className="text-lg" /> : step}
                     </div>
                     {step !== stepLabels.length && (
-                      <div className={`h-1.5 rounded-full flex-1 ml-2 mr-2 min-w-0 ${step < 3 ? 'bg-blue-600' : 'bg-gray-200'}`} /> // aclc-step-line
+                      <div className={`h-1.5 rounded-full flex-1 ml-2 mr-2 min-w-0 ${step < 3 ? 'bg-blue-600' : 'bg-gray-200'}`} />
                     )}
                   </div>
-                  <div className={`mt-2 text-xs font-semibold text-center leading-tight ${isActive ? 'text-blue-600' : 'text-gray-400'}`}>{label}</div> {/* aclc-step-label */}
+                  <div className={`mt-2 text-xs font-semibold text-center leading-tight ${isActive ? 'text-blue-600' : 'text-gray-400'}`}>{label}</div>
                 </div>
               )
             })}
           </div>
         </div>
 
-        <div className="section-card aclc-form-card">
-          <h2 className="aclc-form-title">Owner Information & Review</h2>
-          
+        {/* Main Form Card */}
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+          <div className="px-6 py-5 border-b border-gray-200 bg-gray-50">
+            <h2 className="text-2xl font-bold text-gray-900">Owner Information & Review</h2>
+            <p className="text-sm text-gray-600 mt-1">Complete owner details and review your listing before publishing</p>
+          </div>
+
           {isProcessing && (
-            <div className="acpu-processing-notice">
-              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <div className="mx-6 mt-6 p-4 bg-amber-50 border border-amber-200 rounded-lg flex items-start gap-3">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" className="flex-shrink-0 mt-0.5">
                 <path d="M10 18C14.4183 18 18 14.4183 18 10C18 5.58172 14.4183 2 10 2C5.58172 2 2 5.58172 2 10C2 14.4183 5.58172 18 10 18Z" stroke="#FE8E0A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                 <path d="M10 6V10M10 14H10.01" stroke="#FE8E0A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
-              <div>
+              <div className="text-sm text-amber-800">
                 <strong>Note:</strong> Your account is currently under review. Your listing will be saved but won't be visible to users until your account is approved.
               </div>
             </div>
           )}
 
-          {/* Two Column Layout: Owner Info (Left) and Property Summary (Right) */}
-          <div className="owner-review-two-column">
-            {/* Left Column: Property Owner Information */}
-            <div>
-              <h3 style={{ fontSize: '1.125rem', fontWeight: 600, marginBottom: '1rem', color: '#111827' }}>Property Owner Information</h3>
-              
-              <div className="acoi-section" style={{ marginBottom: '1.5rem' }}>
-                <h3 className="acoi-section-title">RAPA Upload</h3>
-                <div className="acoi-file-upload">
-                  <input
-                    type="file"
-                    id="rapa-upload"
-                    className="acoi-file-input"
-                    onChange={handleFileChange}
-                    accept=".pdf,.doc,.docx"
-                  />
-                  <label htmlFor="rapa-upload" className="acoi-file-label">
-                    <FiUpload className="acoi-file-icon" />
-                    <span>Choose File</span>
-                  </label>
-                  <span className="acoi-file-name">
-                    {rapaFile ? rapaFile.name : 'No file chosen'}
-                  </span>
+          <div className="p-6">
+            {/* Two Column Layout: Owner Info (Left) and Property Summary (Right) */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* Left Column: Property Owner Information */}
+              <div className="space-y-6">
+                <h3 className="text-lg font-semibold text-gray-900">Property Owner Information</h3>
+                
+                {/* RAPA Upload Card */}
+                <div className="bg-gray-50 rounded-lg p-5 border border-gray-200">
+                  <h4 className="text-sm font-semibold text-gray-900 mb-3 pb-2 border-b border-gray-200">RAPA Upload</h4>
+                  <div className="space-y-2">
+                    <input
+                      type="file"
+                      id="rapa-upload"
+                      className="hidden"
+                      onChange={handleFileChange}
+                      accept=".pdf,.doc,.docx"
+                    />
+                    <label 
+                      htmlFor="rapa-upload" 
+                      className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-semibold text-gray-700 cursor-pointer hover:bg-gray-50 transition-colors"
+                    >
+                      <FiUpload className="w-4 h-4" />
+                      <span>Choose File</span>
+                    </label>
+                    <div className="text-sm text-gray-600 mt-2">
+                      {rapaFile ? (
+                        <span className="font-medium text-gray-900">{rapaFile.name}</span>
+                      ) : (
+                        <span className="text-gray-500">No file chosen</span>
+                      )}
+                    </div>
+                  </div>
                 </div>
-              </div>
 
-              <div className="acoi-section">
-                <h3 className="acoi-section-title">Lessor/Property Owner Info</h3>
-                <div className="acoi-form-grid">
-                  <div className="acoi-form-group">
-                    <label className="aclc-label" htmlFor="firstname">Firstname</label>
-                    <input
-                      id="firstname"
-                      type="text"
-                      className="acld-input"
-                      placeholder="Enter First Name"
-                      value={formData.firstname}
-                      onChange={(e) => handleInputChange('firstname', e.target.value)}
-                    />
-                  </div>
-                  <div className="acoi-form-group">
-                    <label className="aclc-label" htmlFor="lastname">Lastname</label>
-                    <input
-                      id="lastname"
-                      type="text"
-                      className="acld-input"
-                      placeholder="Enter Last Name"
-                      value={formData.lastname}
-                      onChange={(e) => handleInputChange('lastname', e.target.value)}
-                    />
-                  </div>
-                  <div className="acoi-form-group">
-                    <label className="aclc-label" htmlFor="phone">Phone</label>
-                    <div className="acoi-phone-input">
-                      <div className="aclc-select-wrap acoi-country-code">
-                        <select
-                          className="aclc-select"
-                          value={countryCode}
-                          onChange={(e) => setCountryCode(e.target.value)}
-                        >
-                          <option value="+63">(+63) Philippines</option>
-                          <option value="+1">(+1) United States</option>
-                          <option value="+44">(+44) United Kingdom</option>
-                        </select>
-                        <div className="aclc-select-caret">▼</div>
-                      </div>
+                {/* Owner Info Card */}
+                <div className="bg-gray-50 rounded-lg p-5 border border-gray-200">
+                  <h4 className="text-sm font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-200">Lessor/Property Owner Info</h4>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="sm:col-span-1">
+                      <label className="block text-sm font-semibold text-gray-900 mb-2" htmlFor="firstname">Firstname</label>
                       <input
-                        id="phone"
-                        type="tel"
-                        className="acld-input acoi-phone-number"
-                        placeholder="Enter Phone Number"
-                        value={formData.phone}
-                        onChange={(e) => handleInputChange('phone', e.target.value)}
+                        id="firstname"
+                        type="text"
+                        className="w-full h-11 px-4 border border-gray-300 rounded-lg bg-white text-gray-900 text-sm font-medium placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                        placeholder="Enter First Name"
+                        value={formData.firstname}
+                        onChange={(e) => handleInputChange('firstname', e.target.value)}
+                      />
+                    </div>
+                    <div className="sm:col-span-1">
+                      <label className="block text-sm font-semibold text-gray-900 mb-2" htmlFor="lastname">Lastname</label>
+                      <input
+                        id="lastname"
+                        type="text"
+                        className="w-full h-11 px-4 border border-gray-300 rounded-lg bg-white text-gray-900 text-sm font-medium placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                        placeholder="Enter Last Name"
+                        value={formData.lastname}
+                        onChange={(e) => handleInputChange('lastname', e.target.value)}
+                      />
+                    </div>
+                    <div className="sm:col-span-2">
+                      <label className="block text-sm font-semibold text-gray-900 mb-2" htmlFor="phone">Phone</label>
+                      <div className="flex gap-2">
+                        <div className="relative w-40 flex-shrink-0">
+                          <select
+                            className="w-full h-11 px-4 pr-10 border border-gray-300 rounded-lg bg-white text-gray-900 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all appearance-none cursor-pointer"
+                            value={countryCode}
+                            onChange={(e) => setCountryCode(e.target.value)}
+                          >
+                            <option value="+63">(+63) Philippines</option>
+                            <option value="+1">(+1) United States</option>
+                            <option value="+44">(+44) United Kingdom</option>
+                          </select>
+                          <FiChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none" />
+                        </div>
+                        <input
+                          id="phone"
+                          type="tel"
+                          className="flex-1 h-11 px-4 border border-gray-300 rounded-lg bg-white text-gray-900 text-sm font-medium placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                          placeholder="Enter Phone Number"
+                          value={formData.phone}
+                          onChange={(e) => handleInputChange('phone', e.target.value)}
+                        />
+                      </div>
+                    </div>
+                    <div className="sm:col-span-2">
+                      <label className="block text-sm font-semibold text-gray-900 mb-2" htmlFor="email">Email</label>
+                      <input
+                        id="email"
+                        type="email"
+                        className="w-full h-11 px-4 border border-gray-300 rounded-lg bg-white text-gray-900 text-sm font-medium placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                        placeholder="Enter Email"
+                        value={formData.email}
+                        onChange={(e) => handleInputChange('email', e.target.value)}
+                      />
+                    </div>
+                    <div className="sm:col-span-1">
+                      <label className="block text-sm font-semibold text-gray-900 mb-2" htmlFor="ownerCountry">Country</label>
+                      <div className="relative">
+                        <select
+                          id="ownerCountry"
+                          className="w-full h-11 px-4 pr-10 border border-gray-300 rounded-lg bg-white text-gray-900 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all appearance-none cursor-pointer"
+                          value={formData.country}
+                          onChange={(e) => handleInputChange('country', e.target.value)}
+                        >
+                          <option value="Philippines">Philippines</option>
+                          <option value="United States">United States</option>
+                          <option value="United Kingdom">United Kingdom</option>
+                        </select>
+                        <FiChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none" />
+                      </div>
+                    </div>
+                    <div className="sm:col-span-1">
+                      <label className="block text-sm font-semibold text-gray-900 mb-2" htmlFor="ownerState">State/Province</label>
+                      <div className="relative">
+                        <select
+                          id="ownerState"
+                          className="w-full h-11 px-4 pr-10 border border-gray-300 rounded-lg bg-white text-gray-900 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all appearance-none cursor-pointer"
+                          value={formData.state}
+                          onChange={(e) => handleInputChange('state', e.target.value)}
+                        >
+                          <option value="">--Select State/Province--</option>
+                          <option value="Metro Manila">Metro Manila</option>
+                          <option value="Calabarzon">Calabarzon</option>
+                          <option value="Central Luzon">Central Luzon</option>
+                        </select>
+                        <FiChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none" />
+                      </div>
+                    </div>
+                    <div className="sm:col-span-1">
+                      <label className="block text-sm font-semibold text-gray-900 mb-2" htmlFor="ownerCity">City</label>
+                      <div className="relative">
+                        <select
+                          id="ownerCity"
+                          className="w-full h-11 px-4 pr-10 border border-gray-300 rounded-lg bg-white text-gray-900 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all appearance-none cursor-pointer"
+                          value={formData.city}
+                          onChange={(e) => handleInputChange('city', e.target.value)}
+                        >
+                          <option value="">--Select City--</option>
+                          <option value="Manila">Manila</option>
+                          <option value="Makati">Makati</option>
+                          <option value="Quezon City">Quezon City</option>
+                        </select>
+                        <FiChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none" />
+                      </div>
+                    </div>
+                    <div className="sm:col-span-2">
+                      <label className="block text-sm font-semibold text-gray-900 mb-2" htmlFor="streetAddress">Street Address</label>
+                      <input
+                        id="streetAddress"
+                        type="text"
+                        className="w-full h-11 px-4 border border-gray-300 rounded-lg bg-white text-gray-900 text-sm font-medium placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                        placeholder="Enter Street Address"
+                        value={formData.streetAddress}
+                        onChange={(e) => handleInputChange('streetAddress', e.target.value)}
                       />
                     </div>
                   </div>
-                  <div className="acoi-form-group">
-                    <label className="aclc-label" htmlFor="email">Email</label>
-                    <input
-                      id="email"
-                      type="email"
-                      className="acld-input"
-                      placeholder="Enter Email"
-                      value={formData.email}
-                      onChange={(e) => handleInputChange('email', e.target.value)}
-                    />
-                  </div>
-                  <div className="acoi-form-group">
-                    <label className="aclc-label" htmlFor="ownerCountry">Country</label>
-                    <div className="aclc-select-wrap">
-                      <select
-                        id="ownerCountry"
-                        className="aclc-select"
-                        value={formData.country}
-                        onChange={(e) => handleInputChange('country', e.target.value)}
-                      >
-                        <option value="Philippines">Philippines</option>
-                        <option value="United States">United States</option>
-                        <option value="United Kingdom">United Kingdom</option>
-                      </select>
-                      <div className="aclc-select-caret">▼</div>
-                    </div>
-                  </div>
-                  <div className="acoi-form-group">
-                    <label className="aclc-label" htmlFor="ownerState">State/Province</label>
-                    <div className="aclc-select-wrap">
-                      <select
-                        id="ownerState"
-                        className="aclc-select"
-                        value={formData.state}
-                        onChange={(e) => handleInputChange('state', e.target.value)}
-                      >
-                        <option value="">--Select State/Province--</option>
-                        <option value="Metro Manila">Metro Manila</option>
-                        <option value="Calabarzon">Calabarzon</option>
-                        <option value="Central Luzon">Central Luzon</option>
-                      </select>
-                      <div className="aclc-select-caret">▼</div>
-                    </div>
-                  </div>
-                  <div className="acoi-form-group">
-                    <label className="aclc-label" htmlFor="ownerCity">City</label>
-                    <div className="aclc-select-wrap">
-                      <select
-                        id="ownerCity"
-                        className="aclc-select"
-                        value={formData.city}
-                        onChange={(e) => handleInputChange('city', e.target.value)}
-                      >
-                        <option value="">--Select City--</option>
-                        <option value="Manila">Manila</option>
-                        <option value="Makati">Makati</option>
-                        <option value="Quezon City">Quezon City</option>
-                      </select>
-                      <div className="aclc-select-caret">▼</div>
-                    </div>
-                  </div>
-                  <div className="acoi-form-group acoi-full-width">
-                    <label className="aclc-label" htmlFor="streetAddress">Street Address</label>
-                    <input
-                      id="streetAddress"
-                      type="text"
-                      className="acld-input"
-                      placeholder="Enter Street Address"
-                      value={formData.streetAddress}
-                      onChange={(e) => handleInputChange('streetAddress', e.target.value)}
-                    />
-                  </div>
                 </div>
-              </div>
 
-              {/* Pricing Section */}
-              <div className="acoi-section">
-                <h3 className="acoi-section-title">Pricing</h3>
-                <div className="acpr-row" style={{ marginTop: '12px' }}>
-                  <div className="acpr-column">
-                    <div className="acpr-column-label">Price *</div>
-                    <div className="acpr-form-group">
-                      <div className="acpr-price-input-wrapper">
-                        <div className="acpr-price-icon">
-                          <FiDollarSign />
+                {/* Pricing Card */}
+                <div className="bg-gray-50 rounded-lg p-5 border border-gray-200">
+                  <h4 className="text-sm font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-200">Pricing</h4>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-900 mb-2">
+                        Price <span className="text-red-500">*</span>
+                      </label>
+                      <div className="relative">
+                        <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+                          <FiDollarSign className="w-5 h-5" />
                         </div>
                         <input
                           id="price"
                           type="text"
-                          className="acpr-price-input"
+                          className="w-full h-11 pl-11 pr-4 border border-gray-300 rounded-lg bg-white text-gray-900 text-sm font-medium placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
                           placeholder="Price"
                           value={price}
                           onChange={(e) => setPrice(e.target.value)}
                         />
                       </div>
                     </div>
-                  </div>
-
-                  <div className="acpr-column">
-                    <div className="acpr-column-label">Price Type *</div>
-                    <div className="acpr-form-group">
-                      <div className="aclc-select-wrap">
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-900 mb-2">
+                        Price Type <span className="text-red-500">*</span>
+                      </label>
+                      <div className="relative">
                         <select
                           id="price-type"
-                          className="aclc-select"
+                          className="w-full h-11 px-4 pr-10 border border-gray-300 rounded-lg bg-white text-gray-900 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all appearance-none cursor-pointer"
                           value={priceType}
                           onChange={(e) => setPriceType(e.target.value as 'Monthly' | 'Weekly' | 'Daily' | 'Yearly')}
                         >
@@ -535,88 +552,116 @@ export default function AgentCreateListingOwnerReview() {
                           <option value="Daily">Daily</option>
                           <option value="Yearly">Yearly</option>
                         </select>
-                        <div className="aclc-select-caret">▼</div>
+                        <FiChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none" />
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
 
-            {/* Right Column: Property Summary */}
-            <div>
-              <h3 style={{ fontSize: '1.125rem', fontWeight: 600, marginBottom: '1rem', color: '#111827' }}>Property Summary</h3>
-              
-              <div className="acpu-summary-section" style={{ border: '1px solid #E5E7EB', borderRadius: '8px', padding: '1.5rem', backgroundColor: '#F9FAFB' }}>
-                <div className="acpu-summary-content">
-                  <div className="acpu-summary-row">
-                    <div className="acpu-summary-label">Category</div>
-                    <div className="acpu-summary-value-group">
-                      <div className="acpu-summary-value">{propertyData.category}</div>
-                      <button className="acpu-edit-btn" onClick={() => handleEdit('category')} type="button">
-                        <FiEdit className="acpu-edit-icon" />
-                        <span>Edit</span>
-                      </button>
+              {/* Right Column: Property Summary */}
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">Property Summary</h3>
+                
+                <div className="bg-gray-50 rounded-lg p-5 border border-gray-200 sticky top-6">
+                  <div className="space-y-4">
+                    <div className="flex items-start justify-between py-2 border-b border-gray-200 last:border-0">
+                      <div className="text-sm font-semibold text-gray-600">Category</div>
+                      <div className="flex items-center gap-2">
+                        <div className="text-sm font-medium text-gray-900 text-right">{propertyData.category}</div>
+                        <button 
+                          className="inline-flex items-center gap-1 px-2 py-1 text-xs font-semibold text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded transition-colors" 
+                          onClick={() => handleEdit('category')} 
+                          type="button"
+                        >
+                          <FiEdit className="w-3 h-3" />
+                          <span>Edit</span>
+                        </button>
+                      </div>
                     </div>
-                  </div>
-                  <div className="acpu-summary-row">
-                    <div className="acpu-summary-label">Title</div>
-                    <div className="acpu-summary-value-group">
-                      <div className="acpu-summary-value">{propertyData.title}</div>
-                      <button className="acpu-edit-btn" onClick={() => handleEdit('title')} type="button">
-                        <FiEdit className="acpu-edit-icon" />
-                        <span>Edit</span>
-                      </button>
+                    <div className="flex items-start justify-between py-2 border-b border-gray-200 last:border-0">
+                      <div className="text-sm font-semibold text-gray-600">Title</div>
+                      <div className="flex items-center gap-2">
+                        <div className="text-sm font-medium text-gray-900 text-right max-w-xs truncate">{propertyData.title}</div>
+                        <button 
+                          className="inline-flex items-center gap-1 px-2 py-1 text-xs font-semibold text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded transition-colors" 
+                          onClick={() => handleEdit('title')} 
+                          type="button"
+                        >
+                          <FiEdit className="w-3 h-3" />
+                          <span>Edit</span>
+                        </button>
+                      </div>
                     </div>
-                  </div>
-                  <div className="acpu-summary-row">
-                    <div className="acpu-summary-label">Price</div>
-                    <div className="acpu-summary-value-group">
-                      <div className="acpu-summary-value">{propertyData.price} ({propertyData.priceType})</div>
-                      <button className="acpu-edit-btn" onClick={() => handleEdit('price')} type="button">
-                        <FiEdit className="acpu-edit-icon" />
-                        <span>Edit</span>
-                      </button>
+                    <div className="flex items-start justify-between py-2 border-b border-gray-200 last:border-0">
+                      <div className="text-sm font-semibold text-gray-600">Price</div>
+                      <div className="flex items-center gap-2">
+                        <div className="text-sm font-medium text-gray-900 text-right">{propertyData.price} ({propertyData.priceType})</div>
+                        <button 
+                          className="inline-flex items-center gap-1 px-2 py-1 text-xs font-semibold text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded transition-colors" 
+                          onClick={() => handleEdit('price')} 
+                          type="button"
+                        >
+                          <FiEdit className="w-3 h-3" />
+                          <span>Edit</span>
+                        </button>
+                      </div>
                     </div>
-                  </div>
-                  <div className="acpu-summary-row">
-                    <div className="acpu-summary-label">Location</div>
-                    <div className="acpu-summary-value-group">
-                      <div className="acpu-summary-value">{propertyData.location}</div>
-                      <button className="acpu-edit-btn" onClick={() => handleEdit('location')} type="button">
-                        <FiEdit className="acpu-edit-icon" />
-                        <span>Edit</span>
-                      </button>
+                    <div className="flex items-start justify-between py-2 border-b border-gray-200 last:border-0">
+                      <div className="text-sm font-semibold text-gray-600">Location</div>
+                      <div className="flex items-center gap-2">
+                        <div className="text-sm font-medium text-gray-900 text-right max-w-xs truncate">{propertyData.location}</div>
+                        <button 
+                          className="inline-flex items-center gap-1 px-2 py-1 text-xs font-semibold text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded transition-colors" 
+                          onClick={() => handleEdit('location')} 
+                          type="button"
+                        >
+                          <FiEdit className="w-3 h-3" />
+                          <span>Edit</span>
+                        </button>
+                      </div>
                     </div>
-                  </div>
-                  <div className="acpu-summary-row">
-                    <div className="acpu-summary-label">Bedrooms</div>
-                    <div className="acpu-summary-value-group">
-                      <div className="acpu-summary-value">{propertyData.bedrooms}</div>
-                      <button className="acpu-edit-btn" onClick={() => handleEdit('bedrooms')} type="button">
-                        <FiEdit className="acpu-edit-icon" />
-                        <span>Edit</span>
-                      </button>
+                    <div className="flex items-start justify-between py-2 border-b border-gray-200 last:border-0">
+                      <div className="text-sm font-semibold text-gray-600">Bedrooms</div>
+                      <div className="flex items-center gap-2">
+                        <div className="text-sm font-medium text-gray-900 text-right">{propertyData.bedrooms}</div>
+                        <button 
+                          className="inline-flex items-center gap-1 px-2 py-1 text-xs font-semibold text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded transition-colors" 
+                          onClick={() => handleEdit('bedrooms')} 
+                          type="button"
+                        >
+                          <FiEdit className="w-3 h-3" />
+                          <span>Edit</span>
+                        </button>
+                      </div>
                     </div>
-                  </div>
-                  <div className="acpu-summary-row">
-                    <div className="acpu-summary-label">Bathrooms</div>
-                    <div className="acpu-summary-value-group">
-                      <div className="acpu-summary-value">{propertyData.bathrooms}</div>
-                      <button className="acpu-edit-btn" onClick={() => handleEdit('bathrooms')} type="button">
-                        <FiEdit className="acpu-edit-icon" />
-                        <span>Edit</span>
-                      </button>
+                    <div className="flex items-start justify-between py-2 border-b border-gray-200 last:border-0">
+                      <div className="text-sm font-semibold text-gray-600">Bathrooms</div>
+                      <div className="flex items-center gap-2">
+                        <div className="text-sm font-medium text-gray-900 text-right">{propertyData.bathrooms}</div>
+                        <button 
+                          className="inline-flex items-center gap-1 px-2 py-1 text-xs font-semibold text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded transition-colors" 
+                          onClick={() => handleEdit('bathrooms')} 
+                          type="button"
+                        >
+                          <FiEdit className="w-3 h-3" />
+                          <span>Edit</span>
+                        </button>
+                      </div>
                     </div>
-                  </div>
-                  <div className="acpu-summary-row">
-                    <div className="acpu-summary-label">Floor Area</div>
-                    <div className="acpu-summary-value-group">
-                      <div className="acpu-summary-value">{propertyData.floorArea}</div>
-                      <button className="acpu-edit-btn" onClick={() => handleEdit('floorArea')} type="button">
-                        <FiEdit className="acpu-edit-icon" />
-                        <span>Edit</span>
-                      </button>
+                    <div className="flex items-start justify-between py-2 border-b border-gray-200 last:border-0">
+                      <div className="text-sm font-semibold text-gray-600">Floor Area</div>
+                      <div className="flex items-center gap-2">
+                        <div className="text-sm font-medium text-gray-900 text-right">{propertyData.floorArea}</div>
+                        <button 
+                          className="inline-flex items-center gap-1 px-2 py-1 text-xs font-semibold text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded transition-colors" 
+                          onClick={() => handleEdit('floorArea')} 
+                          type="button"
+                        >
+                          <FiEdit className="w-3 h-3" />
+                          <span>Edit</span>
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -624,17 +669,18 @@ export default function AgentCreateListingOwnerReview() {
             </div>
           </div>
 
-          <div className="acpu-footer-actions" style={{ marginTop: '2rem' }}>
+          {/* Footer Actions */}
+          <div className="px-6 py-5 border-t border-gray-200 bg-gray-50 flex justify-between gap-3">
             <button
-              className="acld-prev-btn"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-white text-gray-700 font-semibold text-sm rounded-lg border border-gray-300 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-all shadow-sm hover:shadow-md"
               onClick={() => router.push('/agent/create-listing/visuals-features')}
               type="button"
             >
-              <FiArrowLeft />
+              <FiArrowLeft className="w-4 h-4" />
               <span>Previous</span>
             </button>
             <button
-              className="aclc-next-btn"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white font-semibold text-sm rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm hover:shadow-md"
               onClick={handlePublish}
               type="button"
               disabled={isSubmitting || isCompressing || !price}
@@ -646,7 +692,7 @@ export default function AgentCreateListingOwnerReview() {
                     ? `Publishing... ${uploadProgress > 0 ? `${uploadProgress}%` : ''}` 
                     : 'Publish Listing'}
               </span>
-              <FiArrowRight />
+              <FiArrowRight className="w-4 h-4" />
             </button>
           </div>
         </div>

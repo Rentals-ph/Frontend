@@ -26,8 +26,7 @@ import {
   FiMove,
   FiCheck,
   FiX,
-  FiExternalLink,
-  FiBell
+  FiExternalLink
 } from 'react-icons/fi'
 
 interface PageBuilderProps {
@@ -661,8 +660,8 @@ export default function PageBuilder({ userType }: PageBuilderProps) {
     <div className="flex min-h-screen bg-gray-100 font-outfit"> {/* agent-dashboard */}
       <AppSidebar/>
 
-      <main className="ml-[280px] flex-1 w-[calc(100%-280px)] min-h-screen lg:ml-[240px] lg:w-[calc(100%-240px)] md:ml-[200px] md:w-[calc(100%-200px)] md:ml-0 md:w-full"> {/* agent-main */}
-        <div className="px-4 sm:px-6 md:px-10 lg:px-[150px] py-8 lg:py-6 md:py-4 md:pt-15">
+      <main className="main-with-sidebar flex-1 min-h-screen"> {/* agent-main */}
+        <div className="p-8 lg:py-6 md:py-4 md:pt-15">
           {userType === 'agent' ? (
             <AgentHeader 
               title={activeTab === 'profile' ? "Page Builder > Profile" : "Page Builder > Property"} 
@@ -679,9 +678,6 @@ export default function PageBuilder({ userType }: PageBuilderProps) {
                 </p>
               </div>
               <div className="flex items-center gap-3.5 md:w-full md:justify-between md:gap-2.5">
-                <button className="w-11 h-11 rounded-xl border-0 bg-white flex items-center justify-center text-gray-600 text-xl cursor-pointer transition-all duration-200 shadow-sm hover:bg-gray-50 hover:text-blue-600">
-                  <FiBell />
-                </button>
                 <a href="/broker/create-listing" className="inline-flex items-center gap-2 py-2.5 px-5 bg-blue-600 text-white text-sm font-semibold rounded-xl border-0 no-underline cursor-pointer transition-all duration-200 shadow-sm hover:bg-blue-700 active:scale-[0.98]">
                   <FiPlus />
                   Add Listing

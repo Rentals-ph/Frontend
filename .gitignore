@@ -12,6 +12,8 @@ package-lock.json
 /dist
 .next/
 
+gitignore.md
+.gitignore
 
 # Misc
 .DS_Store
@@ -44,3 +46,7 @@ Thumbs.db
 .next/*
 .next/app-build-manifest.json
 .next/server/server-reference-manifest.json
+.next/server/app-paths-manifest.json
+
+next-env.d.ts
+tsconfig.json

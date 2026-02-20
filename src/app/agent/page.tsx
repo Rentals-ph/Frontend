@@ -1,9 +1,10 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import Link from 'next/link'
 import AppSidebar from '../../components/common/AppSidebar'
 import AgentHeader from '../../components/agent/AgentHeader'
+import EditPropertyModal from '../../components/agent/EditPropertyModal'
 import { propertiesApi, agentsApi } from '../../api'
 import type { Property } from '../../types'
 import { ASSETS } from '@/utils/assets'
@@ -27,6 +28,17 @@ import {
 } from 'react-icons/fi'
 // import './page.css' // Removed - converted to Tailwind
 
+const BANNER_BACKGROUNDS: string[] = [
+  ASSETS.BG_HERO_LANDING,
+  ASSETS.BG_CONTACT_US,
+  ASSETS.BG_TESTIMONIALS,
+  ASSETS.BG_LOGIN,
+  ASSETS.BG_BLOG,
+  ASSETS.BG_NEWS,
+  ASSETS.BG_CONTACT_HORIZONTAL,
+  ASSETS.BG_CONTACT_VERTICAL,
+].filter(Boolean)
+
 interface ListingData {
   id?: number
   title: string
@@ -39,6 +51,7 @@ interface ListingData {
 export default function AgentDashboard() {
   const [previewListing, setPreviewListing] = useState<ListingData | null>(null)
   const [listings, setListings] = useState<ListingData[]>([])
+  const [recentProperties, setRecentProperties] = useState<Property[]>([])
   const [loading, setLoading] = useState(true)
   const [stats, setStats] = useState({
     totalListings: 0,
@@ -47,88 +60,71 @@ export default function AgentDashboard() {
     unreadMessages: 0
   })
   const [statsLoading, setStatsLoading] = useState(true)
+  const [editingProperty, setEditingProperty] = useState<Property | null>(null)
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false)
+  const [createBannerBg] = useState(() =>
+    BANNER_BACKGROUNDS.length > 0
+      ? BANNER_BACKGROUNDS[Math.floor(Math.random() * BANNER_BACKGROUNDS.length)]
+      : undefined
+  )
+
+  const fetchAgentData = useCallback(async () => {
+    try {
+      const agent = await agentsApi.getCurrent()
+      if (!agent?.id) {
+        setLoading(false)
+        return
+      }
+      const properties = await propertiesApi.getByAgentId(agent.id)
+      if (!properties || !Array.isArray(properties)) {
+        setLoading(false)
+        return
+      }
+      const recent = properties.slice(0, 3)
+      setRecentProperties(recent)
+      const transformedListings: ListingData[] = recent.map((property: Property) => {
+        const area = property.area ? `${property.area}${property.floor_area_unit || ' sqm'}` : 'N/A'
+        const price = property.price_type
+          ? `₱${property.price.toLocaleString()}/${property.price_type}`
+          : `₱${property.price.toLocaleString()}/month`
+        const imageUrl = property.image_url || property.image || ASSETS.PLACEHOLDER_PROPERTY_MAIN
+        return {
+          id: property.id,
+          title: property.title,
+          image: imageUrl,
+          details: `${property.bedrooms} Bedrooms • ${property.bathrooms} Bathroom${property.bathrooms > 1 ? 's' : ''} • ${area}`,
+          price: price,
+          status: property.published_at ? 'active' : 'pending'
+        }
+      })
+      setListings(transformedListings)
+    } catch (error: any) {
+      console.error('Error fetching agent listings:', error)
+    } finally {
+      setLoading(false)
+    }
+  }, [])
+
+  const fetchDashboardStats = useCallback(async () => {
+    try {
+      const dashboardStats = await agentsApi.getDashboardStats()
+      setStats({
+        totalListings: dashboardStats.total_listings,
+        activeListings: dashboardStats.active_listings,
+        totalRevenue: dashboardStats.total_revenue,
+        unreadMessages: dashboardStats.unread_messages
+      })
+    } catch (error) {
+      console.error('Error fetching dashboard stats:', error)
+    } finally {
+      setStatsLoading(false)
+    }
+  }, [])
 
   useEffect(() => {
-    const fetchAgentData = async () => {
-      try {
-        // Get current agent
-        const agent = await agentsApi.getCurrent()
-        
-        if (!agent) {
-          console.error('No agent found. Please ensure you are logged in.')
-          setLoading(false)
-          return
-        }
-        
-        if (!agent.id) {
-          console.error('Agent ID is missing')
-          setLoading(false)
-          return
-        }
-        
-        // Fetch properties for this agent
-        const properties = await propertiesApi.getByAgentId(agent.id)
-        
-        if (!properties || !Array.isArray(properties)) {
-          console.error('Invalid properties response:', properties)
-          setLoading(false)
-          return
-        }
-        
-        // Transform properties to ListingData format
-        const transformedListings: ListingData[] = properties.slice(0, 3).map((property: Property) => {
-          const area = property.area ? `${property.area}${property.floor_area_unit || ' sqm'}` : 'N/A'
-          const price = property.price_type 
-            ? `₱${property.price.toLocaleString()}/${property.price_type}`
-            : `₱${property.price.toLocaleString()}/month`
-          
-          // Use image_url if available (from backend), otherwise fall back to image or placeholder
-          const imageUrl = property.image_url || property.image || ASSETS.PLACEHOLDER_PROPERTY_MAIN
-          
-          return {
-            id: property.id,
-            title: property.title,
-            image: imageUrl,
-            details: `${property.bedrooms} Bedrooms • ${property.bathrooms} Bathroom${property.bathrooms > 1 ? 's' : ''} • ${area}`,
-            price: price,
-            status: property.published_at ? 'active' : 'pending'
-          }
-        })
-        
-        setListings(transformedListings)
-      } catch (error: any) {
-        console.error('Error fetching agent listings:', error)
-        if (error.response?.status === 401) {
-          console.error('Unauthorized. Please log in again.')
-        } else if (error.response?.status === 404) {
-          console.error('Agent not found.')
-        } else {
-          console.error('Failed to fetch properties:', error.message || error)
-        }
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    const fetchDashboardStats = async () => {
-      try {
-        const dashboardStats = await agentsApi.getDashboardStats()
-        setStats({
-          totalListings: dashboardStats.total_listings,
-          activeListings: dashboardStats.active_listings,
-          totalRevenue: dashboardStats.total_revenue,
-          unreadMessages: dashboardStats.unread_messages
-        })
-      } catch (error) {
-        console.error('Error fetching dashboard stats:', error)
-      } finally {
-        setStatsLoading(false)
-      }
-    }
-
     fetchAgentData()
     fetchDashboardStats()
-  }, [])
+  }, [fetchAgentData, fetchDashboardStats])
 
   const handleViewClick = (listing: ListingData) => {
     setPreviewListing(listing)
@@ -137,6 +133,30 @@ export default function AgentDashboard() {
   const handleClosePreview = () => {
     setPreviewListing(null)
   }
+
+  const handleEditClick = (listingId: number | undefined) => {
+    if (listingId == null) return
+    const property = recentProperties.find((p) => p.id === listingId) ?? null
+    setEditingProperty(property)
+    setIsEditModalOpen(true)
+  }
+
+  const handleEditModalClose = () => {
+    setIsEditModalOpen(false)
+    setEditingProperty(null)
+  }
+
+  const handlePropertyUpdate = () => {
+    fetchAgentData()
+    fetchDashboardStats()
+  }
+
+  const handlePropertyDelete = () => {
+    handleEditModalClose()
+    fetchAgentData()
+    fetchDashboardStats()
+  }
+
   return (
     <div className="flex min-h-screen bg-gray-100 font-outfit">
       <AppSidebar/>
@@ -218,27 +238,29 @@ export default function AgentDashboard() {
         </div>
 
         {/* Create New Listing Banner */}
-        <div className="mb-8">
+        <div className="mb-8 px-10">
           <div
             className="p-6 md:p-8 shadow-lg text-white overflow-hidden rounded-xl relative bg-gradient-to-r from-blue-600 to-blue-700"
             style={{
-              backgroundImage: `url(${ASSETS.BG_CREATE_LISTING})`,
-              backgroundSize: 'cover' ,
+              ...(createBannerBg && {
+                backgroundImage: `linear-gradient(to right, rgba(37, 99, 235, 0.85), rgba(29, 78, 216, 0.85)), url(${createBannerBg})`,
+              }),
+              backgroundSize: 'cover',
               backgroundPosition: 'center',
               backgroundRepeat: 'no-repeat',
             }}
           >
             <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
               <div className="flex items-center gap-4 flex-1">
-                <div className="w-12 h-12 md:w-16 md:h-16 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center flex-shrink-0">
-                  <FiPlus className="text-white text-2xl md:text-3xl" />
+                <div className="w-12 h-12 md:w-16 md:h-16 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center flex-shrink-0 shadow-[0_2px_8px_rgba(0,0,0,0.25),0_0_1px_rgba(0,0,0,0.4)]">
+                  <FiPlus className="text-white text-2xl md:text-3xl drop-shadow-[0_1px_2px_rgba(0,0,0,0.4)]" />
                 </div>
                 <div>
-                  <h2 className="text-xl md:text-2xl font-bold mb-1">Create New Listing</h2>
-                  <p className="text-blue-100 text-sm md:text-base">Add a new property to your portfolio and reach thousands of potential tenants.</p>
+                  <h2 className="text-xl md:text-2xl font-bold mb-1 text-white" style={{ textShadow: '0 1px 3px rgba(0,0,0,0.35), 0 0 12px rgba(0,0,0,0.2)' }}>Create New Listing</h2>
+                  <p className="text-blue-100 text-sm md:text-base" style={{ textShadow: '0 1px 2px rgba(0,0,0,0.4), 0 0 8px rgba(0,0,0,0.2)' }}>Add a new property to your portfolio and reach thousands of potential tenants.</p>
                 </div>
               </div>
-              <Link href="/agent/create-listing" className="px-6 md:px-8 py-3 bg-white text-blue-600 rounded-xl font-semibold hover:bg-blue-50 transition-all duration-200 flex items-center gap-2 shadow-md hover:shadow-lg whitespace-nowrap">
+              <Link href="/agent/create-listing" className="px-6 md:px-8 py-3 bg-white text-blue-600 rounded-xl font-semibold hover:bg-blue-50 transition-all duration-200 flex items-center gap-2 shadow-[0_2px_8px_rgba(0,0,0,0.2)] hover:shadow-[0_4px_14px_rgba(0,0,0,0.25)] whitespace-nowrap">
                 Get Started
                 <FiArrowRight />
               </Link>
@@ -282,7 +304,12 @@ export default function AgentDashboard() {
                         {listing.status === 'active' ? 'Active' : 'Pending'}
                       </span>
                       <div className="flex gap-2">
-                        <button className="w-8 h-8 rounded-lg bg-white hover:bg-blue-50 flex items-center justify-center text-gray-600 hover:text-blue-600 transition-colors duration-200 border border-gray-200" title="Edit">
+                        <button
+                          type="button"
+                          className="w-8 h-8 rounded-lg bg-white hover:bg-blue-50 flex items-center justify-center text-gray-600 hover:text-blue-600 transition-colors duration-200 border border-gray-200"
+                          title="Edit"
+                          onClick={() => handleEditClick(listing.id)}
+                        >
                           <FiEdit3 />
                         </button>
                         <button 
@@ -320,6 +347,14 @@ export default function AgentDashboard() {
       </main>
 
      
+      <EditPropertyModal
+        property={editingProperty}
+        isOpen={isEditModalOpen}
+        onClose={handleEditModalClose}
+        onUpdate={handlePropertyUpdate}
+        onDelete={handlePropertyDelete}
+      />
+
       {previewListing && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4" onClick={handleClosePreview}>
           <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl" onClick={(e) => e.stopPropagation()}>

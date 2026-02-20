@@ -182,3 +182,8 @@ img {
 .bg-gray-100 ul + p {
   margin-top: 12px;
 }
+
+/* Next.js dev overlay portal - no position override (use framework default) */
+nextjs-portal {
+  position: fixed !important;
+}

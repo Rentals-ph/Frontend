@@ -197,9 +197,17 @@ const Navbar = () => {
 
   return (
     <>
-      <header className="relative z-[1000] bg-white shadow-md">
-        <div className="flex items-center justify-between px-3 sm:px-4 py-3 sm:py-5 md:px-10 lg:px-20 max-w-full">
-          <div className="flex items-center">
+      <header className="relative z-[1000] bg-white shadow-md overflow-x-hidden">
+        <div className="flex items-center justify-between gap-2 px-3 sm:px-4 py-3 sm:py-5 md:px-10 lg:px-20 max-w-full min-w-0">
+          {/* Mobile Menu Button - left side, shown below lg */}
+          <button 
+            className="lg:hidden flex items-center justify-center bg-transparent border-none cursor-pointer text-rental-blue-600 p-2 flex-shrink-0"
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            aria-label="Toggle menu"
+          >
+            {isMobileMenuOpen ? <FiX size={24} /> : <FiMenu size={24} />}
+          </button>
+          <div className="flex items-center flex-shrink-0">
             <Link href="/">
               <img
                 src={ASSETS.LOGO_HERO_MAIN}
@@ -209,34 +217,34 @@ const Navbar = () => {
             </Link>
           </div>
 
-          {/* Desktop Navigation Centered */}
-          <div className="hidden md:flex flex-1 justify-center items-center min-w-0">
-            <nav className="flex items-center gap-0 lg:gap-8 justify-center w-full">
-              <Link href="/" className={`text-rental-blue-600 font-outfit text-sm md:text-base px-1 md:px-2 lg:px-2.5 whitespace-nowrap transition-colors hover:text-rental-orange-500 ${pathname === '/' ? 'font-extrabold tracking-[0.15em]' : 'font-normal'}`}>
+          {/* Desktop Navigation Centered - lg breakpoint so nav fits without overflow */}
+          <div className="hidden lg:flex flex-1 justify-center items-center min-w-0 overflow-hidden">
+            <nav className="flex items-center gap-0 xl:gap-4 2xl:gap-8 justify-center w-full min-w-0">
+              <Link href="/" className={`text-rental-blue-600 font-outfit text-sm lg:text-base px-1 lg:px-2 xl:px-2.5 whitespace-nowrap transition-colors hover:text-rental-orange-500 ${pathname === '/' ? 'font-extrabold tracking-[0.15em]' : 'font-normal'}`}>
                 HOME
               </Link>
-              <Link href="/about" className={`text-rental-blue-600 font-outfit text-sm md:text-base px-1 md:px-2 lg:px-2.5 whitespace-nowrap transition-colors hover:text-rental-orange-500 ${pathname === '/about' ? 'font-extrabold tracking-[0.15em]' : 'font-normal'}`}>
+              <Link href="/about" className={`text-rental-blue-600 font-outfit text-sm lg:text-base px-1 lg:px-2 xl:px-2.5 whitespace-nowrap transition-colors hover:text-rental-orange-500 ${pathname === '/about' ? 'font-extrabold tracking-[0.15em]' : 'font-normal'}`}>
                 ABOUT US
               </Link>
-              <Link href="/properties" className={`text-rental-blue-600 font-outfit text-sm md:text-base px-1 md:px-2 lg:px-2.5 whitespace-nowrap transition-colors hover:text-rental-orange-500 ${pathname === '/properties' ? 'font-extrabold tracking-[0.15em]' : 'font-normal'}`}>
+              <Link href="/properties" className={`text-rental-blue-600 font-outfit text-sm lg:text-base px-1 lg:px-2 xl:px-2.5 whitespace-nowrap transition-colors hover:text-rental-orange-500 ${pathname === '/properties' ? 'font-extrabold tracking-[0.15em]' : 'font-normal'}`}>
                 PROPERTIES
               </Link>
-              <Link href="/rent-managers" className={`text-rental-blue-600 font-outfit text-sm md:text-base px-1 md:px-2 lg:px-2.5 whitespace-nowrap transition-colors hover:text-rental-orange-500 ${pathname === '/rent-managers' ? 'font-extrabold tracking-[0.15em]' : 'font-normal'}`}>
+              <Link href="/rent-managers" className={`text-rental-blue-600 font-outfit text-sm lg:text-base px-1 lg:px-2 xl:px-2.5 whitespace-nowrap transition-colors hover:text-rental-orange-500 ${pathname === '/rent-managers' ? 'font-extrabold tracking-[0.15em]' : 'font-normal'}`}>
                 RENT MANAGERS
               </Link>
-              <Link href="/blog" className={`text-rental-blue-600 font-outfit text-sm md:text-base px-1 md:px-2 lg:px-2.5 whitespace-nowrap transition-colors hover:text-rental-orange-500 ${pathname === '/blog' ? 'font-extrabold tracking-[0.15em]' : 'font-normal'}`}>
+              <Link href="/blog" className={`text-rental-blue-600 font-outfit text-sm lg:text-base px-1 lg:px-2 xl:px-2.5 whitespace-nowrap transition-colors hover:text-rental-orange-500 ${pathname === '/blog' ? 'font-extrabold tracking-[0.15em]' : 'font-normal'}`}>
                 BLOG  
               </Link>
-              <Link href="/news" className={`text-rental-blue-600 font-outfit text-sm md:text-base px-1 md:px-2 lg:px-2.5 whitespace-nowrap transition-colors hover:text-rental-orange-500 ${pathname === '/news' ? 'font-extrabold tracking-[0.15em]' : 'font-normal'}`}>
+              <Link href="/news" className={`text-rental-blue-600 font-outfit text-sm lg:text-base px-1 lg:px-2 xl:px-2.5 whitespace-nowrap transition-colors hover:text-rental-orange-500 ${pathname === '/news' ? 'font-extrabold tracking-[0.15em]' : 'font-normal'}`}>
                 NEWS
               </Link>
-              <Link href="/contact" className={`text-rental-blue-600 font-outfit text-sm md:text-base px-1 md:px-2 lg:px-2.5 whitespace-nowrap transition-colors hover:text-rental-orange-500 ${pathname === '/contact' ? 'font-extrabold tracking-[0.15em]' : 'font-normal'}`}>
+              <Link href="/contact" className={`text-rental-blue-600 font-outfit text-sm lg:text-base px-1 lg:px-2 xl:px-2.5 whitespace-nowrap transition-colors hover:text-rental-orange-500 ${pathname === '/contact' ? 'font-extrabold tracking-[0.15em]' : 'font-normal'}`}>
                 CONTACT US
               </Link>
             </nav>
           </div>
           {/* User/Profile section remains right-aligned */}
-          <div className="hidden md:flex items-center justify-end">
+          <div className="hidden lg:flex items-center justify-end flex-shrink-0">
             {isUserLoggedIn ? (
               <div className="relative" ref={userMenuRef}>
                 <button 
@@ -308,32 +316,41 @@ const Navbar = () => {
               <button className="rounded-full !border-2 !border-rental-orange-500 bg-transparent text-rental-orange-500 px-3 sm:px-5 h-10 sm:h-12 font-outfit text-xs sm:text-sm md:text-base font-medium cursor-pointer inline-flex items-center justify-center hover:bg-rental-orange-500 hover:text-white transition-colors" onClick={handleLoginClick}>
                 <span className="hidden sm:inline">Login / Register</span>
                 <span className="sm:hidden">Login</span>
-              </button>
-            )}
-          </div>
 
-          {/* Mobile Menu Button */}
+          {/* Mobile Menu Button - shown below lg so nav doesn't overflow */}
           <button 
-            className="md:hidden flex items-center justify-center bg-transparent border-none cursor-pointer text-rental-blue-600 p-2"
+            className="lg:hidden flex items-center justify-center bg-transparent border-none cursor-pointer text-rental-blue-600 p-2 flex-shrink-0"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             aria-label="Toggle menu"
           >
             {isMobileMenuOpen ? <FiX size={24} /> : <FiMenu size={24} />}
           </button>
+
+          {/* Mobile Menu Button - shown below lg so nav doesn't overflow */}
+          <button 
+            className="lg:hidden flex items-center justify-center bg-transparent border-none cursor-pointer text-rental-blue-600 p-2 flex-shrink-0"
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            aria-label="Toggle menu"
+          >
+            {isMobileMenuOpen ? <FiX size={24} /> : <FiMenu size={24} />}
+          </button>
+              </button>
+            )}
+          </div>
         </div>
 
         {/* Mobile Sidebar Overlay */}
         {isMobileMenuOpen && (
           <div 
-            className="md:hidden fixed inset-0 bg-black/50 z-[999] transition-opacity duration-300"
+            className="lg:hidden fixed inset-0 bg-black/50 z-[999] transition-opacity duration-300"
             onClick={() => setIsMobileMenuOpen(false)}
           />
         )}
 
-        {/* Mobile Sidebar - Right Positioned */}
+        {/* Mobile Sidebar - Left Positioned */}
         <nav 
           ref={mobileMenuRef}
-          className={`md:hidden fixed top-0 right-0 h-full w-[280px] sm:w-[320px] bg-white shadow-2xl z-[1000] overflow-y-auto ${
+          className={`lg:hidden fixed top-0 left-0 h-full w-[280px] sm:w-[320px] bg-white shadow-2xl z-[1000] overflow-y-auto ${
             isMobileMenuOpen ? '' : 'hidden'
           }`}
           onClick={(e) => e.stopPropagation()}

@@ -242,7 +242,7 @@ export default function AgentMyListings() {
           return (
             <span
               key={starNumber}
-              className={`text-lg leading-none ${starNumber <= rating ? 'text-[#FFC107]' : 'text-gray-300'}`} /* aml-star */
+              className={`text-base sm:text-lg leading-none ${starNumber <= rating ? 'text-[#FFC107]' : 'text-gray-300'}`} /* aml-star */
               aria-hidden="true"
             >
               ★
@@ -263,76 +263,76 @@ export default function AgentMyListings() {
           subtitle="Manage and track all your property listings." 
         />
 
-        <div className="flex flex-col gap-4.5"> {/* aml-page */}
+        <div className="flex flex-col gap-4 sm:gap-4.5"> {/* aml-page */}
           
 
-          <div className="grid grid-cols-4 gap-6 lg:grid-cols-2 md:grid-cols-1"> {/* aml-stats */}
-            <div className="bg-white rounded-xl p-6 flex items-start gap-4 shadow-sm border border-gray-100"> {/* metric-card orange */}
-              <div className="w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0 text-xl bg-orange-100 text-orange-600"> {/* metric-icon */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 md:gap-6"> {/* aml-stats */}
+            <div className="bg-white rounded-xl p-4 sm:p-5 md:p-6 flex items-start gap-3 sm:gap-4 shadow-sm border border-gray-100"> {/* metric-card orange */}
+              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg flex items-center justify-center flex-shrink-0 text-lg sm:text-xl bg-orange-100 text-orange-600"> {/* metric-icon */}
                 <FiHome />
               </div>
-              <div className="flex-1 flex flex-col gap-1"> {/* metric-content */}
-                <div className="flex justify-between items-baseline gap-3"> {/* aml-stat-top */}
-                  <h3 className="text-sm font-semibold text-gray-700 m-0">Total Properties</h3>
-                  <span className="text-xs font-semibold whitespace-nowrap text-green-600">&nbsp;</span> {/* aml-stat-delta positive */}
+              <div className="flex-1 flex flex-col gap-0.5 sm:gap-1 min-w-0"> {/* metric-content */}
+                <div className="flex justify-between items-baseline gap-2 sm:gap-3"> {/* aml-stat-top */}
+                  <h3 className="text-xs sm:text-sm font-semibold text-gray-700 m-0 truncate">Total Properties</h3>
+                  <span className="text-xs font-semibold whitespace-nowrap text-green-600 flex-shrink-0">&nbsp;</span> {/* aml-stat-delta positive */}
                 </div>
-                <p className="text-3xl font-bold text-gray-900 m-0 leading-none">{loading ? '...' : totalProperties}</p> {/* metric-value */}
+                <p className="text-2xl sm:text-3xl font-bold text-gray-900 m-0 leading-none">{loading ? '...' : totalProperties}</p> {/* metric-value */}
               </div>
             </div>
 
-            <div className="bg-white rounded-xl p-6 flex items-start gap-4 shadow-sm border border-gray-100"> {/* metric-card blue */}
-              <div className="w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0 text-xl bg-blue-100 text-blue-600"> {/* metric-icon */}
+            <div className="bg-white rounded-xl p-4 sm:p-5 md:p-6 flex items-start gap-3 sm:gap-4 shadow-sm border border-gray-100"> {/* metric-card blue */}
+              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg flex items-center justify-center flex-shrink-0 text-lg sm:text-xl bg-blue-100 text-blue-600"> {/* metric-icon */}
                 <FiCheckCircle />
               </div>
-              <div className="flex-1 flex flex-col gap-1"> {/* metric-content */}
-                <div className="flex justify-between items-baseline gap-3"> {/* aml-stat-top */}
-                  <h3 className="text-sm font-semibold text-gray-700 m-0">Total Active</h3>
-                  <span className="text-xs font-semibold whitespace-nowrap text-green-600">&nbsp;</span> {/* aml-stat-delta positive */}
+              <div className="flex-1 flex flex-col gap-0.5 sm:gap-1 min-w-0"> {/* metric-content */}
+                <div className="flex justify-between items-baseline gap-2 sm:gap-3"> {/* aml-stat-top */}
+                  <h3 className="text-xs sm:text-sm font-semibold text-gray-700 m-0 truncate">Total Active</h3>
+                  <span className="text-xs font-semibold whitespace-nowrap text-green-600 flex-shrink-0">&nbsp;</span> {/* aml-stat-delta positive */}
                 </div>
-                <p className="text-3xl font-bold text-gray-900 m-0 leading-none">{loading ? '...' : activeProperties}</p> {/* metric-value */}
+                <p className="text-2xl sm:text-3xl font-bold text-gray-900 m-0 leading-none">{loading ? '...' : activeProperties}</p> {/* metric-value */}
               </div>
             </div>
 
-            <div className="bg-white rounded-xl p-6 flex items-start gap-4 shadow-sm border border-gray-100"> {/* metric-card green */}
-              <div className="w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0 text-xl bg-emerald-100 text-emerald-600"> {/* metric-icon */}
+            <div className="bg-white rounded-xl p-4 sm:p-5 md:p-6 flex items-start gap-3 sm:gap-4 shadow-sm border border-gray-100"> {/* metric-card green */}
+              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg flex items-center justify-center flex-shrink-0 text-lg sm:text-xl bg-emerald-100 text-emerald-600"> {/* metric-icon */}
                 <FiCheckCircle />
               </div>
-              <div className="flex-1 flex flex-col gap-1"> {/* metric-content */}
-                <div className="flex justify-between items-baseline gap-3"> {/* aml-stat-top */}
-                  <h3 className="text-sm font-semibold text-gray-700 m-0">Total Rented</h3>
-                  <span className="text-xs font-medium whitespace-nowrap text-gray-500">&nbsp;</span> {/* aml-stat-delta muted */}
+              <div className="flex-1 flex flex-col gap-0.5 sm:gap-1 min-w-0"> {/* metric-content */}
+                <div className="flex justify-between items-baseline gap-2 sm:gap-3"> {/* aml-stat-top */}
+                  <h3 className="text-xs sm:text-sm font-semibold text-gray-700 m-0 truncate">Total Rented</h3>
+                  <span className="text-xs font-medium whitespace-nowrap text-gray-500 flex-shrink-0">&nbsp;</span> {/* aml-stat-delta muted */}
                 </div>
-                <p className="text-3xl font-bold text-gray-900 m-0 leading-none">{loading ? '...' : rentedProperties}</p> {/* metric-value */}
+                <p className="text-2xl sm:text-3xl font-bold text-gray-900 m-0 leading-none">{loading ? '...' : rentedProperties}</p> {/* metric-value */}
               </div>
             </div>
 
-            <div className="bg-white rounded-xl p-6 flex items-start gap-4 shadow-sm border border-gray-100"> {/* metric-card red */}
-              <div className="w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0 text-xl bg-red-100 text-red-600"> {/* metric-icon */}
+            <div className="bg-white rounded-xl p-4 sm:p-5 md:p-6 flex items-start gap-3 sm:gap-4 shadow-sm border border-gray-100"> {/* metric-card red */}
+              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg flex items-center justify-center flex-shrink-0 text-lg sm:text-xl bg-red-100 text-red-600"> {/* metric-icon */}
                 <FiSlash />
               </div>
-              <div className="flex-1 flex flex-col gap-1"> {/* metric-content */}
-                <div className="flex justify-between items-baseline gap-3"> {/* aml-stat-top */}
-                  <h3 className="text-sm font-semibold text-gray-700 m-0">Total Hide</h3>
-                  <span className="text-xs font-medium whitespace-nowrap text-gray-500">&nbsp;</span> {/* aml-stat-delta muted */}
+              <div className="flex-1 flex flex-col gap-0.5 sm:gap-1 min-w-0"> {/* metric-content */}
+                <div className="flex justify-between items-baseline gap-2 sm:gap-3"> {/* aml-stat-top */}
+                  <h3 className="text-xs sm:text-sm font-semibold text-gray-700 m-0 truncate">Total Hide</h3>
+                  <span className="text-xs font-medium whitespace-nowrap text-gray-500 flex-shrink-0">&nbsp;</span> {/* aml-stat-delta muted */}
                 </div>
-                <p className="text-3xl font-bold text-gray-900 m-0 leading-none">{loading ? '...' : hiddenProperties}</p> {/* metric-value */}
+                <p className="text-2xl sm:text-3xl font-bold text-gray-900 m-0 leading-none">{loading ? '...' : hiddenProperties}</p> {/* metric-value */}
               </div>
             </div>
           </div>
 
-          <div className="flex flex-col gap-3.5"> {/* aml-search-map */}
-            <div className="flex gap-3 items-stretch"> {/* aml-search-row */}
-              <div className="flex-1 flex items-center gap-2.5 bg-white border border-gray-200 rounded-[10px] py-3.5 px-4"> {/* aml-search */}
-                <FiSearch className="text-gray-400 text-lg" /> {/* aml-search-icon */}
-                <input className="border-0 outline-0 w-full text-[15px] text-gray-900 bg-transparent placeholder:text-gray-400" placeholder="Search Location..." /> {/* aml-search-input */}
+          <div className="flex flex-col gap-3 sm:gap-3.5"> {/* aml-search-map */}
+            <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 items-stretch"> {/* aml-search-row */}
+              <div className="flex-1 flex items-center gap-2 sm:gap-2.5 bg-white border border-gray-200 rounded-[10px] py-3 sm:py-3.5 px-3 sm:px-4"> {/* aml-search */}
+                <FiSearch className="text-gray-400 text-base sm:text-lg flex-shrink-0" /> {/* aml-search-icon */}
+                <input className="border-0 outline-0 w-full min-w-0 text-sm sm:text-[15px] text-gray-900 bg-transparent placeholder:text-gray-400" placeholder="Search Location..." /> {/* aml-search-input */}
               </div>
-              <button className="inline-flex items-center gap-2.5 px-4.5 min-w-[120px] border-0 rounded-[10px] bg-blue-600 text-white font-bold cursor-pointer shadow-sm transition-all duration-200 hover:bg-blue-700 active:scale-[0.98]" type="button"> {/* aml-find-btn */}
-                <FiSearch />
+              <button className="inline-flex items-center justify-center gap-2 sm:gap-2.5 px-4 sm:px-4.5 min-w-0 sm:min-w-[120px] border-0 rounded-[10px] bg-blue-600 text-white text-sm sm:text-base font-bold cursor-pointer shadow-sm transition-all duration-200 hover:bg-blue-700 active:scale-[0.98]" type="button"> {/* aml-find-btn */}
+                <FiSearch className="flex-shrink-0" />
                 <span>Find</span>
               </button>
             </div>
 
-            <div className="bg-white rounded-xl overflow-hidden border border-gray-200 h-90"> {/* aml-map */}
+            <div className="bg-white rounded-xl overflow-hidden border border-gray-200 h-64 sm:h-72 md:h-80 lg:h-[22rem] min-h-[200px]"> {/* aml-map */}
               <PropertiesMap 
                 properties={properties}
                 agentId={currentAgentId}
@@ -341,7 +341,7 @@ export default function AgentMyListings() {
             </div>
           </div>
 
-          <div className="flex items-center gap-4.5 text-gray-500 text-[13px] py-1 px-0.5 overflow-x-auto scrollbar-none"> {/* aml-filters */}
+          <div className="flex items-center gap-3 sm:gap-4.5 text-gray-500 text-xs sm:text-[13px] py-1 px-0.5 overflow-x-auto scrollbar-none"> {/* aml-filters */}
             {(() => {
               // Calculate property type counts
               const typeCounts: Record<string, number> = {}
@@ -355,12 +355,12 @@ export default function AgentMyListings() {
               
               return (
                 <>
-                  <label className="inline-flex items-center gap-2.5 cursor-pointer"> {/* aml-filter */}
+                  <label className="inline-flex items-center gap-2 sm:gap-2.5 cursor-pointer"> {/* aml-filter */}
                     <input 
                       type="checkbox" 
                       checked={selectedFilter === 'all'}
                       onChange={() => setSelectedFilter('all')}
-                      className="w-4 h-4 accent-blue-600"
+                      className="w-3.5 h-3.5 sm:w-4 sm:h-4 accent-blue-600 flex-shrink-0"
                     />
                     <span>All({totalProperties})</span>
                   </label>
@@ -368,7 +368,7 @@ export default function AgentMyListings() {
                     <button
                       key={type}
                       type="button"
-                      className={`bg-transparent border-0 text-gray-500 text-[13px] cursor-pointer py-1.5 px-2 rounded-lg whitespace-nowrap flex-shrink-0 transition-all duration-200 hover:bg-gray-100 hover:text-gray-900 ${selectedFilter === type ? 'bg-blue-50 text-blue-600 font-semibold' : ''}`} /* aml-filter-pill */
+                      className={`bg-transparent border-0 text-gray-500 text-xs sm:text-[13px] cursor-pointer py-1 sm:py-1.5 px-1.5 sm:px-2 rounded-lg whitespace-nowrap flex-shrink-0 transition-all duration-200 hover:bg-gray-100 hover:text-gray-900 ${selectedFilter === type ? 'bg-blue-50 text-blue-600 font-semibold' : ''}`} /* aml-filter-pill */
                       onClick={() => setSelectedFilter(type)}
                     >
                       {type}({typeCounts[type]})
@@ -379,9 +379,9 @@ export default function AgentMyListings() {
             })()}
           </div>
 
-          <div className="grid grid-cols-2 gap-5.5 mt-1.5 lg:grid-cols-1"> {/* aml-grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mt-1.5"> {/* aml-grid */}
             {loading ? (
-              <div className="p-8 text-center col-span-full">Loading listings...</div>
+              <div className="p-6 sm:p-8 text-center col-span-full text-sm sm:text-base">Loading listings...</div>
             ) : (() => {
               // Filter listings based on selected filter
               const filteredListings = selectedFilter === 'all' 
@@ -392,7 +392,7 @@ export default function AgentMyListings() {
                   })
               
               return filteredListings.length === 0 ? (
-                <div className="p-8 text-center col-span-full">
+                <div className="p-6 sm:p-8 text-center col-span-full text-sm sm:text-base text-gray-600">
                   {selectedFilter === 'all' 
                     ? 'No listings yet. Create your first listing!'
                     : `No ${selectedFilter} properties found.`
@@ -400,8 +400,8 @@ export default function AgentMyListings() {
                 </div>
               ) : (
                 filteredListings.map((l) => (
-                <div key={l.id} className="bg-white rounded-[14px] border border-gray-200 overflow-hidden shadow-sm flex gap-0"> {/* aml-card */}
-                <div className="relative w-[190px] min-w-[190px] bg-gray-100"> {/* aml-card-media */}
+                <div key={l.id} className="bg-white rounded-[12px] sm:rounded-[14px] border border-gray-200 overflow-hidden shadow-sm flex flex-col sm:flex-row gap-0"> {/* aml-card */}
+                <div className="relative w-full sm:w-[140px] sm:min-w-[140px] md:w-[190px] md:min-w-[190px] aspect-[16/10] sm:aspect-auto sm:h-auto bg-gray-100 flex-shrink-0"> {/* aml-card-media */}
                   <img
                     src={l.image}
                     alt={l.title}
@@ -411,11 +411,11 @@ export default function AgentMyListings() {
                       target.src = ASSETS.PLACEHOLDER_PROPERTY_MAIN
                     }}
                   />
-                  <div className="absolute top-2.5 left-2.5 bg-white/90 backdrop-blur-sm rounded-full w-7 h-7 flex items-center justify-center text-blue-600 text-sm shadow-sm" title="Pinned"> {/* aml-pin */}
+                  <div className="absolute top-2 left-2 sm:top-2.5 sm:left-2.5 bg-white/90 backdrop-blur-sm rounded-full w-6 h-6 sm:w-7 sm:h-7 flex items-center justify-center text-blue-600 text-xs sm:text-sm shadow-sm" title="Pinned"> {/* aml-pin */}
                     <FiMapPin />
                   </div>
                   <button 
-                    className="absolute bottom-2.5 right-2.5 bg-blue-600 text-white text-xs font-semibold py-1.5 px-3.5 rounded-lg border-0 cursor-pointer transition-all duration-200 hover:bg-blue-700 active:scale-95" 
+                    className="absolute bottom-2 right-2 sm:bottom-2.5 sm:right-2.5 bg-blue-600 text-white text-[10px] sm:text-xs font-semibold py-1 px-2.5 sm:py-1.5 sm:px-3.5 rounded-lg border-0 cursor-pointer transition-all duration-200 hover:bg-blue-700 active:scale-95" 
                     type="button"
                     onClick={() => handleEditClick(l.id)}
                   > {/* aml-edit-btn */}
@@ -423,17 +423,17 @@ export default function AgentMyListings() {
                   </button>
                 </div>
 
-                <div className="flex-1 p-4 flex flex-col gap-2.5"> {/* aml-card-body */}
-                  <div className="font-semibold text-base text-gray-900 leading-snug line-clamp-2">{l.title}</div> {/* aml-card-title */}
-                  <div className="flex items-start gap-1.5 text-gray-600 text-sm"> {/* aml-card-address */}
-                    <FiMapPin className="flex-shrink-0 mt-0.5 text-base" /> {/* aml-address-icon */}
-                    <span className="line-clamp-2">{l.address}</span>
+                <div className="flex-1 p-3 sm:p-4 flex flex-col gap-2 sm:gap-2.5 min-w-0"> {/* aml-card-body */}
+                  <div className="font-semibold text-sm sm:text-base text-gray-900 leading-snug line-clamp-2">{l.title}</div> {/* aml-card-title */}
+                  <div className="flex items-start gap-1.5 text-gray-600 text-xs sm:text-sm"> {/* aml-card-address */}
+                    <FiMapPin className="flex-shrink-0 mt-0.5 text-sm sm:text-base" /> {/* aml-address-icon */}
+                    <span className="line-clamp-2 min-w-0">{l.address}</span>
                   </div>
 
-                  <div className="flex items-center justify-between gap-3 mt-auto pt-2 border-t border-gray-100"> {/* aml-card-meta */}
+                  <div className="flex items-center justify-between gap-2 sm:gap-3 mt-auto pt-2 border-t border-gray-100"> {/* aml-card-meta */}
                     {renderStars(l.rating)}
-                    <div className="flex items-center gap-1.5 text-gray-600 text-xs"> {/* aml-views */}
-                      <FiEye className="text-sm" />
+                    <div className="flex items-center gap-1 sm:gap-1.5 text-gray-600 text-[10px] sm:text-xs"> {/* aml-views */}
+                      <FiEye className="text-xs sm:text-sm flex-shrink-0" />
                       <span>Viewed({l.views})</span>
                     </div>
                   </div>

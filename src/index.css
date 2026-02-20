@@ -183,7 +183,7 @@ img {
   margin-top: 12px;
 }
 
-/* Next.js dev overlay portal - no position override (use framework default) */
+/* Next.js dev overlay portal - prevent it from affecting layout (see nextjs#70675) */
 nextjs-portal {
-  position: fixed !important;
+  position: absolute !important;
 }

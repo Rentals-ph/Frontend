@@ -48,6 +48,7 @@ function VerticalPropertyCard({
   const [showSharePopup, setShowSharePopup] = useState(false)
   const [imageHovered, setImageHovered] = useState(false)
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
+  const shareButtonRef = useRef<HTMLButtonElement>(null)
   const sharePopupRef = useRef<HTMLDivElement>(null)
 
   const displayImages = imagesProp?.length ? imagesProp : [image]
@@ -74,9 +75,9 @@ function VerticalPropertyCard({
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (sharePopupRef.current && !sharePopupRef.current.contains(event.target as Node)) {
-        setShowSharePopup(false)
-      }
+      const target = event.target as Node
+      if (shareButtonRef.current?.contains(target) || sharePopupRef.current?.contains(target)) return
+      setShowSharePopup(false)
     }
     if (showSharePopup) document.addEventListener('mousedown', handleClickOutside)
     return () => document.removeEventListener('mousedown', handleClickOutside)
@@ -268,8 +269,9 @@ function VerticalPropertyCard({
           >
             <FiHeart className="w-5 h-5" />
           </button>
-          <div className="relative" ref={sharePopupRef}>
+          <div className="relative">
             <button
+              ref={shareButtonRef}
               type="button"
               onClick={(e) => {
                 e.stopPropagation()
@@ -286,7 +288,10 @@ function VerticalPropertyCard({
               </svg>
             </button>
             {showSharePopup && (
-              <div className="absolute bottom-full left-0 mb-1 bg-white rounded-xl shadow-lg border border-gray-200 p-1.5 z-[1000] min-w-[140px] flex flex-col gap-0.5">
+              <div
+                ref={sharePopupRef}
+                className="absolute bottom-full left-0 mb-1 bg-white rounded-xl shadow-lg border border-gray-200 p-1.5 z-[1000] min-w-[140px] flex flex-col gap-0.5"
+              >
                 <button type="button" className="flex items-center gap-2 px-2.5 py-2 rounded-lg hover:bg-gray-100 text-left text-sm font-medium text-gray-700" onClick={(e) => { e.stopPropagation(); handleShare('facebook') }}>
                   <span className="text-[#1877F2]">Facebook</span>
                 </button>

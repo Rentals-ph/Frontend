@@ -7,6 +7,8 @@ import {
   FiFileText,
   FiBarChart2,
   FiImage,
+  FiBell,
+  FiPlus,
 } from 'react-icons/fi'
 
 export default function BrokerDownloadables() {
@@ -82,9 +84,19 @@ export default function BrokerDownloadables() {
               <div className="downloadable-icon-container">
                 <FiImage className="downloadable-icon" />
               </div>
-            ))}
+              <div className="downloadable-content">
+                <h3 className="downloadable-name">Property Photos</h3>
+              </div>
+              <button 
+                className="download-button"
+                onClick={() => handleDownload('property-photos')}
+                aria-label="Download Property Photos"
+              >
+                <FiDownload className="download-icon" />
+              </button>
+            </div>
           </div>
-        </section>
+        </div>
       </main>
     </div>
   )

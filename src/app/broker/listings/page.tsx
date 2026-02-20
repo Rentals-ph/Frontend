@@ -92,9 +92,9 @@ export default function ListingsPage() {
         
         // Calculate stats
         setTotalProperties(propertiesArray.length)
-        setActiveProperties(propertiesArray.filter(p => p.published_at).length)
+        setActiveProperties(propertiesArray.filter((p: Property) => p.published_at).length)
         setRentedProperties(0) // Would need additional data
-        setHiddenProperties(propertiesArray.filter(p => !p.published_at).length)
+        setHiddenProperties(propertiesArray.filter((p: Property) => !p.published_at).length)
       } catch (error: any) {
         console.error('Error fetching broker listings:', error)
       } finally {
@@ -169,8 +169,8 @@ export default function ListingsPage() {
         
         setListings(transformedListings)
         setTotalProperties(propertiesArray.length)
-        setActiveProperties(propertiesArray.filter(p => p.published_at).length)
-        setHiddenProperties(propertiesArray.filter(p => !p.published_at).length)
+        setActiveProperties(propertiesArray.filter((p: Property) => p.published_at).length)
+        setHiddenProperties(propertiesArray.filter((p: Property) => !p.published_at).length)
       } catch (error) {
         console.error('Error refreshing listings:', error)
       }

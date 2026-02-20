@@ -1,6 +1,5 @@
 'use client'
 
-import { useEffect, useState } from 'react'
 import AppSidebar from '../../components/common/AppSidebar'
 import DashboardHeader from '../../components/common/DashboardHeader'
 import { 
@@ -13,13 +12,6 @@ import {
 // import './page.css' // Removed - converted to Tailwind
 
 export default function AdminDashboard() {
-  const [userName, setUserName] = useState('John Admin')
-
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      setUserName(localStorage.getItem('admin_name') || 'John Admin')
-    }
-  }, [])
 
   return (
     <div className="flex min-h-screen bg-gray-100 font-outfit">
@@ -28,10 +20,7 @@ export default function AdminDashboard() {
         <DashboardHeader
           title="Dashboard Overview"
           subtitle="Welcome back, Admin"
-          userName={userName}
-          userRole="Administrator"
           showNotifications={true}
-          avatarFallback="JD"
         />
 
         <div className="grid grid-cols-4 gap-6 mb-8 lg:grid-cols-2 md:grid-cols-1">

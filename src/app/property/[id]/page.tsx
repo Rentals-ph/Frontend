@@ -379,58 +379,64 @@ export default function PropertyDetailsPage() {
             <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
               {/* Left Column */}
               <div className="lg:col-span-3 space-y-6">
-                {/* Property Images */}
+                {/* Property Images - Gallery with carousel */}
                 <div className="bg-white rounded-lg shadow-md p-4">
-                  <div 
-                    className="w-full h-[400px] mb-4 rounded-lg overflow-hidden cursor-pointer"
-                    onClick={() => {
-                      setModalImageIndex(selectedImageIndex)
-                      setShowImageModal(true)
-                    }}
-                  >
-                    {property && (() => {
-                      const allImages = getPropertyImages(property)
-                      const currentImage = allImages[selectedImageIndex] || allImages[0] || ASSETS.PLACEHOLDER_PROPERTY_MAIN
-                      return (
-                        <img 
-                          src={currentImage} 
-                          alt={property.title}
-                          className="w-full h-full object-cover"
-                          key={`main-${selectedImageIndex}-${currentImage.substring(0, 20)}`}
-                          onError={(e) => {
-                            e.currentTarget.src = ASSETS.PLACEHOLDER_PROPERTY_MAIN
-                          }}
-                        />
-                      )
-                    })()}
-                  </div>
-                  <div className="flex gap-2 overflow-x-auto">
-                    {property && (() => {
-                      const allImages = getPropertyImages(property)
-                      return allImages.map((image, index) => (
-                        <div 
-                          key={`img-${index}-${image.substring(0, 20)}`}
-                          className={`flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden cursor-pointer border-2 ${
-                            index === selectedImageIndex ? 'border-blue-600' : 'border-gray-200'
-                          }`}
+                  {property && (() => {
+                    const allImages = getPropertyImages(property)
+                    const currentImage = allImages[selectedImageIndex] || allImages[0] || ASSETS.PLACEHOLDER_PROPERTY_MAIN
+                    const hasMultiple = allImages.length > 1
+                    return (
+                      <>
+                        <div
+                          className="relative w-full h-[400px] mb-4 rounded-lg overflow-hidden cursor-pointer select-none bg-gray-100"
                           onClick={() => {
-                            setSelectedImageIndex(index)
-                            setModalImageIndex(index)
+                            setModalImageIndex(selectedImageIndex)
+                            setShowImageModal(true)
                           }}
+                          onContextMenu={(e) => e.preventDefault()}
                         >
-                          <img 
-                            src={image} 
-                            alt={`Property view ${index + 1}`}
-                            className="w-full h-full object-cover"
+                          <img
+                            src={currentImage}
+                            alt={property.title}
+                            className="w-full h-full object-cover pointer-events-none"
+                            draggable={false}
+                            onContextMenu={(e) => e.preventDefault()}
                             onError={(e) => {
                               e.currentTarget.src = ASSETS.PLACEHOLDER_PROPERTY_MAIN
                             }}
                           />
                         </div>
-                      ))
-                    })()}
-                  </div>
-                  <p className="text-sm text-gray-500 mt-2">{getPropertyImages(property).length} Photos</p>
+                        <div className="flex gap-2 overflow-x-auto pb-1">
+                          {allImages.map((image, index) => (
+                            <div
+                              key={`img-${index}-${image.substring(0, 20)}`}
+                              className={`flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden cursor-pointer border-2 select-none ${
+                                index === selectedImageIndex ? 'border-blue-600' : 'border-gray-200'
+                              }`}
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                setSelectedImageIndex(index)
+                                setModalImageIndex(index)
+                              }}
+                              onContextMenu={(e) => e.preventDefault()}
+                            >
+                              <img
+                                src={image}
+                                alt={`Property view ${index + 1}`}
+                                className="w-full h-full object-cover pointer-events-none"
+                                draggable={false}
+                                onContextMenu={(e) => e.preventDefault()}
+                                onError={(e) => {
+                                  e.currentTarget.src = ASSETS.PLACEHOLDER_PROPERTY_MAIN
+                                }}
+                              />
+                            </div>
+                          ))}
+                        </div>
+                        <p className="text-sm text-gray-500 mt-2">{allImages.length} Photos</p>
+                      </>
+                    )
+                  })()}
                 </div>
 
                 {/* Property Overview */}
@@ -699,7 +705,10 @@ export default function PropertyDetailsPage() {
                     const propertySize = prop.area 
                       ? `${prop.area} sqft` 
                       : `${(prop.bedrooms * 15 + prop.bathrooms * 5)} sqft`
-                    
+                    const mainImg = prop.image_url || prop.image || ASSETS.PLACEHOLDER_PROPERTY_MAIN
+                    const images = (prop.images_url && prop.images_url.length > 0)
+                      ? [mainImg, ...(prop.images_url || []).filter((u): u is string => !!u && u !== mainImg)]
+                      : undefined
                     return (
                       <div key={prop.id}>
                         <VerticalPropertyCard
@@ -708,7 +717,8 @@ export default function PropertyDetailsPage() {
                           date={formatDate(prop.published_at)}
                           price={formatPrice(prop.price)}
                           title={prop.title}
-                          image={prop.image_url || prop.image || ASSETS.PLACEHOLDER_PROPERTY_MAIN}
+                          image={mainImg}
+                          images={images}
                           rentManagerName={
                             prop.agent?.first_name && prop.agent?.last_name
                               ? `${prop.agent.first_name} ${prop.agent.last_name}`
@@ -741,7 +751,7 @@ export default function PropertyDetailsPage() {
 
       <Footer />
 
-      {/* Image Modal */}
+      {/* Gallery overlay with carousel - right-click disabled */}
       {showImageModal && property && (() => {
         const images = getPropertyImages(property)
         const currentIndex = modalImageIndex
@@ -750,110 +760,116 @@ export default function PropertyDetailsPage() {
 
         const handleNext = (e: React.MouseEvent) => {
           e.stopPropagation()
-          if (hasNext) {
-            setModalImageIndex(currentIndex + 1)
-          }
+          setModalImageIndex((i) => (i + 1) % images.length)
         }
 
         const handlePrev = (e: React.MouseEvent) => {
           e.stopPropagation()
-          if (hasPrev) {
-            setModalImageIndex(currentIndex - 1)
-          }
+          setModalImageIndex((i) => (i - 1 + images.length) % images.length)
         }
 
         return (
-          <div 
-            className="image-modal-overlay"
+          <div
+            className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/95 p-4"
             onClick={() => setShowImageModal(false)}
+            onContextMenu={(e) => e.preventDefault()}
+            role="dialog"
+            aria-modal="true"
+            aria-label="Image gallery"
           >
-            <div 
-              className="image-modal-content"
+            <div
+              className="relative flex flex-col w-full max-w-6xl h-full max-h-[90vh]"
               onClick={(e) => e.stopPropagation()}
+              onContextMenu={(e) => e.preventDefault()}
             >
-              <button 
-                className="image-modal-close"
+              <button
+                type="button"
                 onClick={() => setShowImageModal(false)}
-                aria-label="Close image"
+                className="absolute top-0 right-0 z-20 w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-colors -translate-y-2 translate-x-2 md:translate-x-0 md:translate-y-0 md:top-4 md:right-4"
+                aria-label="Close gallery"
               >
-                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path
-                    d="M18 6L6 18M6 6l12 12"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6">
+                  <path d="M18 6L6 18M6 6l12 12" />
                 </svg>
               </button>
-              
-              {hasPrev && (
-                <button 
-                  className="image-modal-arrow image-modal-arrow-left"
-                  onClick={handlePrev}
-                  aria-label="Previous image"
+
+              <div className="relative flex-1 flex items-center justify-center min-h-0">
+                {images.length > 1 && (
+                  <button
+                    type="button"
+                    onClick={handlePrev}
+                    className="absolute left-2 md:left-4 top-1/2 -translate-y-1/2 z-10 w-12 h-12 rounded-full bg-white/90 hover:bg-white shadow-lg flex items-center justify-center text-gray-800 transition-colors"
+                    aria-label="Previous image"
+                  >
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-6 h-6">
+                      <path d="M15 18l-6-6 6-6" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </button>
+                )}
+
+                <div
+                  className="flex-1 flex items-center justify-center max-h-[70vh] select-none"
+                  onContextMenu={(e) => e.preventDefault()}
                 >
-                  <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path
-                      d="M15 18l-6-6 6-6"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                </button>
-              )}
+                  <img
+                    src={images[currentIndex] || ASSETS.PLACEHOLDER_PROPERTY_MAIN}
+                    alt={`${property.title} - Image ${currentIndex + 1}`}
+                    className="max-w-full max-h-[70vh] w-auto h-auto object-contain pointer-events-none"
+                    draggable={false}
+                    onContextMenu={(e) => e.preventDefault()}
+                    onError={(e) => {
+                      e.currentTarget.src = ASSETS.PLACEHOLDER_PROPERTY_MAIN
+                    }}
+                    style={{ userSelect: 'none', WebkitUserSelect: 'none' }}
+                  />
+                </div>
 
-              <img 
-                src={images[currentIndex] || ASSETS.PLACEHOLDER_PROPERTY_MAIN} 
-                alt={`${property.title} - Image ${currentIndex + 1}`}
-                className="image-modal-img"
-                onError={(e) => {
-                  // Fallback to placeholder if image fails to load
-                  e.currentTarget.src = ASSETS.PLACEHOLDER_PROPERTY_MAIN
-                }}
-              />
+                {images.length > 1 && (
+                  <button
+                    type="button"
+                    onClick={handleNext}
+                    className="absolute right-2 md:right-4 top-1/2 -translate-y-1/2 z-10 w-12 h-12 rounded-full bg-white/90 hover:bg-white shadow-lg flex items-center justify-center text-gray-800 transition-colors"
+                    aria-label="Next image"
+                  >
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-6 h-6">
+                      <path d="M9 18l6-6-6-6" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </button>
+                )}
+              </div>
 
-              {hasNext && (
-                <button 
-                  className="image-modal-arrow image-modal-arrow-right"
-                  onClick={handleNext}
-                  aria-label="Next image"
-                >
-                  <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path
-                      d="M9 18l6-6-6-6"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                </button>
-              )}
-
-              <div className="image-modal-thumbnails">
+              <div className="flex gap-2 overflow-x-auto py-4 justify-center shrink-0">
                 {images.map((image, index) => (
-                  <div
+                  <button
+                    type="button"
                     key={`thumb-${index}-${image?.substring(0, 20) || index}`}
-                    className={`image-modal-thumbnail ${index === currentIndex ? 'active' : ''}`}
                     onClick={(e) => {
                       e.stopPropagation()
                       setModalImageIndex(index)
                     }}
+                    onContextMenu={(e) => e.preventDefault()}
+                    className={`flex-shrink-0 w-16 h-16 rounded-lg overflow-hidden border-2 transition-colors ${
+                      index === currentIndex ? 'border-white ring-2 ring-white/50' : 'border-white/30 hover:border-white/60'
+                    }`}
                   >
-                    <img 
-                      src={image || ASSETS.PLACEHOLDER_PROPERTY_MAIN} 
-                      alt={`${property.title} - Thumbnail ${index + 1}`}
+                    <img
+                      src={image || ASSETS.PLACEHOLDER_PROPERTY_MAIN}
+                      alt=""
+                      className="w-full h-full object-cover pointer-events-none select-none"
+                      draggable={false}
+                      onContextMenu={(e) => e.preventDefault()}
                       onError={(e) => {
-                        // Fallback to placeholder if image fails to load
                         e.currentTarget.src = ASSETS.PLACEHOLDER_PROPERTY_MAIN
                       }}
+                      style={{ userSelect: 'none', pointerEvents: 'none' }}
                     />
-                  </div>
+                  </button>
                 ))}
               </div>
+
+              <p className="text-center text-white/80 text-sm pb-2">
+                {currentIndex + 1} / {images.length}
+              </p>
             </div>
           </div>
         )

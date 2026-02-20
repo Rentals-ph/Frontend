@@ -20,8 +20,6 @@ import {
   FiDollarSign,
   FiLayers,
   FiMessageCircle,
-  FiMenu,
-  FiX,
   FiSettings,
   FiCheckSquare,
   FiGrid,
@@ -113,8 +111,7 @@ function AppSidebar() {
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (sidebarRef.current && !sidebarRef.current.contains(event.target as Node)) {
-        const target = event.target as HTMLElement
-        if (!target.closest('.mobile-menu-toggle')) setIsMobileMenuOpen(false)
+        setIsMobileMenuOpen(false)
       }
     }
 
@@ -187,7 +184,7 @@ function AppSidebar() {
   }
 
   const navLinkClass = (active: boolean) =>
-    `flex items-center gap-2.5 px-3 py-2.5 rounded-lg no-underline text-[13px] font-medium transition-all flex-shrink-0 ${active ? 'bg-blue-50 text-blue-500' : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900'} ${isCollapsed ? 'lg:justify-center lg:px-2' : ''}`
+    `flex items-center gap-2.5 px-3 py-2.5 rounded-lg no-underline text-[13px] font-medium transition-all flex-shrink-0 ${active ? 'bg-blue-50 text-blue-500' : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900'} ${isCollapsed ? 'md:justify-center md:px-2' : ''}`
 
   const NavLink = ({
     href,
@@ -303,16 +300,6 @@ function AppSidebar() {
 
   return (
     <>
-      {/* Mobile menu toggle - only on tablet/mobile (below lg) */}
-      <button
-        type="button"
-        className="mobile-menu-toggle fixed top-4 left-4 z-[1001] lg:hidden bg-white border border-gray-200 rounded-lg p-2.5 cursor-pointer text-gray-900 shadow-[0_2px_4px_rgba(0,0,0,0.1)] transition-all flex items-center justify-center hover:bg-gray-50 hover:shadow-[0_4px_6px_rgba(0,0,0,0.15)] max-[480px]:top-3 max-[480px]:left-3 max-[480px]:p-2 min-h-[44px] min-w-[44px]"
-        onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-        aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
-      >
-        {isMobileMenuOpen ? <FiX size={24} aria-hidden /> : <FiMenu size={24} aria-hidden />}
-      </button>
-
       {/* Mobile Overlay */}
       {isMobileMenuOpen && (
         <div 
@@ -324,57 +311,62 @@ function AppSidebar() {
       {/* Sidebar */}
       <aside 
         ref={sidebarRef}
-        className={`w-[280px] max-[480px]:w-[260px] bg-white border-r border-gray-200 flex flex-col fixed h-screen overflow-hidden z-[1000] md:-translate-x-full md:transition-transform md:duration-300 md:ease-in-out transition-[width] duration-200 ${isCollapsed ? 'lg:w-[72px]' : 'lg:w-60'} ${isMobileMenuOpen ? 'md:translate-x-0' : ''}`}
+        className={`w-[280px] max-[480px]:w-[260px] bg-white border-r border-gray-200 flex flex-col fixed h-screen overflow-hidden z-[1000] md:-translate-x-full md:transition-transform md:duration-300 md:ease-in-out transition-[width] duration-200 ${isCollapsed ? 'md:w-[72px]' : 'lg:w-60'} ${isMobileMenuOpen ? 'md:translate-x-0' : ''}`}
       >
-        <div className={`p-2.5 border-b border-gray-200 flex-shrink-0 ${isCollapsed ? 'lg:px-2 lg:overflow-visible' : ''}`}>
-          <div className={`flex items-center justify-center w-full mb-1 ${isCollapsed ? 'lg:mb-0' : ''}`}>
-            <Link href="/" className={isCollapsed ? 'lg:flex lg:justify-center' : ''}>
+        <div className={`p-2.5 border-b border-gray-200 flex-shrink-0 ${isCollapsed ? 'md:px-2 md:overflow-visible' : ''}`}>
+          <div className={`flex items-center justify-center w-full mb-1 ${isCollapsed ? 'md:mb-0' : ''}`}>
+            <Link href="/" className={isCollapsed ? 'md:flex md:justify-center' : ''}>
               <img
                 src={ASSETS.LOGO_HERO_MAIN}
                 alt="Rentals.ph logo"
-                className={`h-[60px] md:h-[50px] w-auto max-w-full object-contain ${isCollapsed ? 'lg:!h-[60px] lg:!w-[60px] lg:!min-w-[60px] lg:max-w-none' : ''}`}
+                className={`h-[60px] md:h-[50px] w-auto max-w-full object-contain ${isCollapsed ? 'md:!h-[60px] md:!w-[60px] md:!min-w-[60px] md:max-w-none' : ''}`}
               />
             </Link>
           </div>
-          {/* Collapse toggle - desktop only */}
+          {/* Collapse toggle - visible whenever sidebar is shown (md and up) so it persists across resolution changes */}
           <button
             type="button"
             onClick={() => setIsCollapsed((c) => !c)}
-            className="hidden lg:flex items-center justify-center w-full mt-2 py-1.5 rounded-lg text-gray-500 hover:bg-gray-100 hover:text-gray-700 transition-colors"
+            className="hidden md:flex items-center justify-center w-full mt-2 py-1.5 rounded-lg text-gray-500 hover:bg-gray-100 hover:text-gray-700 transition-colors"
             aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
           >
             {isCollapsed ? <FiChevronRight className="text-lg" /> : <FiChevronLeft className="text-lg" />}
           </button>
         </div>
 
-        <nav className="p-3 lg:py-2.5 lg:px-2 md:p-3 flex flex-col gap-4 lg:gap-3 md:gap-4 flex-1 overflow-y-auto overflow-x-hidden min-h-0 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-gray-300 [&::-webkit-scrollbar-thumb]:rounded [&::-webkit-scrollbar-thumb:hover]:bg-gray-400" onClick={handleNavClick}>
+        <nav className={`p-3 lg:py-2.5 lg:px-2 md:p-3 flex flex-col gap-4 lg:gap-3 md:gap-4 flex-1 overflow-y-auto overflow-x-hidden min-h-0 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-gray-300 [&::-webkit-scrollbar-thumb]:rounded [&::-webkit-scrollbar-thumb:hover]:bg-gray-400 ${isCollapsed ? 'md:py-2.5 md:px-2 md:gap-3' : ''}`} onClick={handleNavClick}>
           {isAdminRoute ? renderAdminSidebar() : isBrokerRoute ? renderBrokerSidebar() : renderAgentSidebar()}
         </nav>
 
         {(isBrokerRoute || isAgentRoute) && (
           <div className="relative flex-shrink-0" ref={logoutRef}>
             {showLogoutDropdown && (
-              <div className="absolute bottom-full left-3 right-3 bg-white border border-gray-200 rounded-[10px] shadow-[0_-4px_16px_rgba(0,0,0,0.12)] p-1.5 mb-1.5 z-[100] animate-[slideUpFade_0.15s_ease-out]">
+              <div className={`absolute bottom-full left-3 right-3 bg-white border border-gray-200 rounded-[10px] shadow-[0_-4px_16px_rgba(0,0,0,0.12)] p-1.5 mb-1.5 z-[100] animate-[slideUpFade_0.15s_ease-out] ${isCollapsed ? 'left-2 right-2 flex flex-col gap-0.5' : ''}`}>
                 <button 
-                  className="flex items-center gap-2.5 w-full px-3.5 py-2.5 bg-transparent border-none rounded-lg text-sm font-medium text-gray-900 cursor-pointer transition-colors hover:bg-gray-50" 
+                  className={`flex items-center w-full bg-transparent border-none rounded-lg text-sm font-medium text-gray-900 cursor-pointer transition-colors hover:bg-gray-50 ${isCollapsed ? 'justify-center px-2 py-2.5' : 'gap-2.5 px-3.5 py-2.5'}`}
                   onClick={() => {
                     router.push(isBrokerRoute ? '/broker/account' : '/agent/account')
                     setShowLogoutDropdown(false)
                   }}
+                  title="Account"
                 >
                   <FiUser className="text-lg flex-shrink-0" />
-                  <span>Account</span>
+                  {!isCollapsed && <span>Account</span>}
                 </button>
-                <button className="flex items-center gap-2.5 w-full px-3.5 py-2.5 bg-transparent border-none rounded-lg text-sm font-medium text-red-500 cursor-pointer transition-colors hover:bg-red-50" onClick={handleLogout}>
+                <button
+                  className={`flex items-center w-full bg-transparent border-none rounded-lg text-sm font-medium text-red-500 cursor-pointer transition-colors hover:bg-red-50 ${isCollapsed ? 'justify-center px-2 py-2.5' : 'gap-2.5 px-3.5 py-2.5'}`}
+                  onClick={handleLogout}
+                  title="Logout"
+                >
                   <FiLogOut className="text-lg flex-shrink-0" />
-                  <span>Logout</span>
+                  {!isCollapsed && <span>Logout</span>}
                 </button>
               </div>
             )}
             <div 
-              className={`flex items-center gap-2.5 px-5 py-4 border-t border-gray-200 flex-shrink-0 transition-colors cursor-pointer hover:bg-gray-100 ${isCollapsed ? 'lg:justify-center lg:px-2 lg:py-3' : ''}`}
+              className={`flex items-center gap-2.5 px-5 py-4 border-t border-gray-200 flex-shrink-0 transition-colors cursor-pointer hover:bg-gray-100 ${isCollapsed ? 'md:justify-center md:px-2 md:py-3' : ''}`}
               onClick={() => setShowLogoutDropdown(!showLogoutDropdown)}
-              title={isCollapsed ? 'Account' : undefined}
+              title={isCollapsed ? 'Account / Logout' : undefined}
             >
               <div className="w-9 h-9 rounded-full overflow-hidden flex-shrink-0 bg-gray-200">
                 <img

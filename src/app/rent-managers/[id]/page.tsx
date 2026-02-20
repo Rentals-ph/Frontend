@@ -606,6 +606,10 @@ export default function RentManagerDetailsPage() {
                         ? `${p.area} sqft` 
                         : `${(p.bedrooms * 15 + p.bathrooms * 5)} sqft`
                       
+                      const mainImg = p.image_url || p.image || ASSETS.PLACEHOLDER_PROPERTY_MAIN
+                      const images = (p.images_url && p.images_url.length > 0)
+                        ? [mainImg, ...(p.images_url || []).filter((u): u is string => !!u && u !== mainImg)]
+                        : undefined
                       return viewMode === 'horizontal' ? (
                         <HorizontalPropertyCard
                           key={p.id}
@@ -614,7 +618,8 @@ export default function RentManagerDetailsPage() {
                           date={formatDate(p.published_at)}
                           price={formatPrice(p.price)}
                           title={p.title}
-                          image={p.image_url || p.image || ASSETS.PLACEHOLDER_PROPERTY_MAIN}
+                          image={mainImg}
+                          images={images}
                           rentManagerName={manager.name}
                           rentManagerRole={manager.role}
                           bedrooms={p.bedrooms}
@@ -631,7 +636,8 @@ export default function RentManagerDetailsPage() {
                             date={formatDate(p.published_at)}
                             price={formatPrice(p.price)}
                             title={p.title}
-                            image={p.image_url || p.image || ASSETS.PLACEHOLDER_PROPERTY_MAIN}
+                            image={mainImg}
+                            images={images}
                             rentManagerName={manager.name}
                             rentManagerRole={manager.role}
                             bedrooms={p.bedrooms}

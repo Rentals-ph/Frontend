@@ -182,3 +182,8 @@ img {
 .bg-gray-100 ul + p {
   margin-top: 12px;
 }
+
+/* Next.js dev overlay portal - prevent it from affecting layout (see nextjs#70675) */
+nextjs-portal {
+  position: absolute !important;
+}

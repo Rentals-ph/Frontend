@@ -84,6 +84,10 @@ function PropertiesForRent() {
                 ? `${property.area} sqft` 
                 : `${(property.bedrooms * 15 + property.bathrooms * 5)} sqft`
               
+              const mainImage = property.image_url || property.image || ASSETS.PLACEHOLDER_PROPERTY_MAIN
+              const images = (property.images_url && property.images_url.length > 0)
+                ? [mainImage, ...(property.images_url || []).filter((u): u is string => !!u && u !== mainImage)]
+                : undefined
               return (
                 <VerticalPropertyCard
                   key={property.id}
@@ -92,7 +96,8 @@ function PropertiesForRent() {
                   date={formatDate(property.published_at)}
                   price={formatPrice(property.price)}
                   title={property.title}
-                  image={property.image_url || property.image || ASSETS.PLACEHOLDER_PROPERTY_MAIN}
+                  image={mainImage}
+                  images={images}
                   rentManagerName={property.rent_manager?.name || 'Rental.Ph Official'}
                   rentManagerRole={getRentManagerRole(property.rent_manager?.is_official)}
                   bedrooms={property.bedrooms}

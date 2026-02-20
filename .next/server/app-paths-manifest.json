@@ -1,7 +1,9 @@
 {
-  "/broker/listings/page": "app/broker/listings/page.js",
-  "/broker/inbox/page": "app/broker/inbox/page.js",
+  "/blog/page": "app/blog/page.js",
+  "/news/page": "app/news/page.js",
+  "/page": "app/page.js",
+  "/broker/account/page": "app/broker/account/page.js",
   "/broker/team/page": "app/broker/team/page.js",
-  "/broker/company-profile/page": "app/broker/company-profile/page.js",
-  "/broker/approvals/page": "app/broker/approvals/page.js"
+  "/broker/page": "app/broker/page.js",
+  "/broker/listings/page": "app/broker/listings/page.js"
 }

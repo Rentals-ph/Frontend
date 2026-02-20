@@ -104,6 +104,47 @@
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
       "static/chunks/app/agent/create-listing/owner-review/page.js"
+    ],
+    "/broker/company-profile/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/broker/company-profile/page.js"
+    ],
+    "/broker/listings/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/css/app/broker/listings/page.css",
+      "static/chunks/app/broker/listings/page.js"
+    ],
+    "/broker/approvals/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/broker/approvals/page.js"
+    ],
+    "/broker/page-builder/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/broker/page-builder/page.js"
+    ],
+    "/broker/reports/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/broker/reports/page.js"
+    ],
+    "/broker/inbox/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/broker/inbox/page.js"
+    ],
+    "/broker/downloadables/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/broker/downloadables/page.js"
+    ],
+    "/broker/digital-card/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/broker/digital-card/page.js"
     ]
   }
 }

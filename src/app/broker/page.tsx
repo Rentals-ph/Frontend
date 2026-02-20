@@ -197,7 +197,7 @@ export default function BrokerDashboard() {
     <div className="flex min-h-screen bg-gray-100 font-outfit"> {/* broker-dashboard */}
       <AppSidebar />
       <main className="main-with-sidebar flex-1 min-h-screen"> {/* broker-main */}
-        <div className="px-4 sm:px-6 md:px-10 lg:px-[150px] py-8 lg:py-6 md:py-4 md:pt-15">
+        <div className="p-8 lg:py-6 md:py-4 md:pt-15">
           <BrokerHeader 
             title="Dashboard Overview" 
             subtitle={`Welcome back, ${userName.split(' ')[0]}! Here's what's happening with your team.`} 

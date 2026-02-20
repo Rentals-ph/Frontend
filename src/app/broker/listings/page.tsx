@@ -206,7 +206,7 @@ export default function ListingsPage() {
     <div className="flex min-h-screen bg-gray-100 font-outfit"> {/* agent-dashboard */}
       <AppSidebar/>
       <main className="main-with-sidebar flex-1 min-h-screen"> {/* broker-main */}
-        <div className="px-4 sm:px-6 md:px-10 lg:px-[150px] py-8 lg:py-6 md:py-4 md:pt-20">
+        <div className="p-8 lg:py-6 md:py-4 md:pt-20">
           <BrokerHeader 
             title="Listings" 
             subtitle="Manage and track all your team's property listings." 

@@ -1,24 +1,27 @@
 'use client'
 
 import AppSidebar from '../../../components/common/AppSidebar'
-import { 
-  FiBell,
-  FiPlus,
+import BrokerHeader from '../../../components/broker/BrokerHeader'
+import {
   FiDownload,
   FiFileText,
   FiBarChart2,
-  FiImage
+  FiImage,
 } from 'react-icons/fi'
-// import '../../agent/downloadables/page.css' // Removed - file doesn't exist
-// import '../broker-shared.css' // Removed - converted to Tailwind
 
 export default function BrokerDownloadables() {
   const handleDownload = (type: string) => {
     console.log(`Downloading ${type}`)
   }
 
+  const items = [
+    { id: 'lease-agreements', label: 'Lease Agreements', icon: FiFileText },
+    { id: 'financial-report', label: 'Financial Report', icon: FiBarChart2 },
+    { id: 'property-photos', label: 'Property Photos', icon: FiImage },
+  ]
+
   return (
-    <div className="flex min-h-screen bg-gray-100 font-outfit"> {/* broker-dashboard */}
+    <div className="flex min-h-screen bg-[#F8F9FA] font-outfit">
       <AppSidebar />
 
       <main className="main-with-sidebar flex-1 p-8 min-h-screen lg:p-6 md:p-4 md:pt-15"> {/* broker-main */}
@@ -79,19 +82,9 @@ export default function BrokerDownloadables() {
               <div className="downloadable-icon-container">
                 <FiImage className="downloadable-icon" />
               </div>
-              <div className="downloadable-content">
-                <h3 className="downloadable-name">Property Photos</h3>
-              </div>
-              <button 
-                className="download-button"
-                onClick={() => handleDownload('property-photos')}
-                aria-label="Download Property Photos"
-              >
-                <FiDownload className="download-icon" />
-              </button>
-            </div>
+            ))}
           </div>
-        </div>
+        </section>
       </main>
     </div>
   )

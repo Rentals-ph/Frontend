@@ -1,10 +1,20 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useMemo } from 'react'
 import AppSidebar from '../../../components/common/AppSidebar'
 import BrokerHeader from '../../../components/broker/BrokerHeader'
 import { brokerApi } from '../../../api'
 import type { Team, TeamMember } from '../../../api/endpoints/broker'
+import {
+  DndContext,
+  DragOverlay,
+  useSensor,
+  useSensors,
+  PointerSensor,
+  closestCenter,
+  useDraggable,
+  useDroppable,
+} from '@dnd-kit/core'
 import {
   FiPlus,
   FiEdit,
@@ -19,6 +29,9 @@ import {
   FiAlertCircle,
   FiX,
   FiCheck,
+  FiArrowUp,
+  FiArrowDown,
+  FiFilter,
 } from 'react-icons/fi'
 
 interface TeamMemberDisplay {
@@ -30,7 +43,22 @@ interface TeamMemberDisplay {
   inquiryChannels: string[]
   status: 'Active' | 'Inactive' | 'Pending'
   joinDate: string
+  joinDateRaw?: string // For sorting
 }
+
+interface AvailableAgent {
+  id: number
+  name: string
+  role: 'Unit Manager' | 'Agent'
+  status: 'Active' | 'Inactive' | 'Pending'
+  joinDate: string
+  joinDateRaw?: string
+  email?: string
+  listings: number
+}
+
+type SortField = 'name' | 'joinDate' | 'role' | 'status'
+type SortDirection = 'asc' | 'desc'
 
 function ActionMenu({ memberId, onClose }: { memberId: number; onClose: () => void }) {
   const menuRef = useRef<HTMLDivElement>(null)
@@ -63,6 +91,75 @@ function ActionMenu({ memberId, onClose }: { memberId: number; onClose: () => vo
   )
 }
 
+function DraggableAgent({ agent }: { agent: AvailableAgent }) {
+  const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
+    id: `agent-${agent.id}`,
+    data: { agent },
+  })
+
+  const style = transform
+    ? {
+        transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
+        opacity: isDragging ? 0.5 : 1,
+      }
+    : { opacity: isDragging ? 0.5 : 1 }
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      {...listeners}
+      {...attributes}
+      className={`bg-white rounded-lg border border-gray-200 p-4 mb-3 cursor-grab active:cursor-grabbing hover:shadow-md transition-all duration-200 ${
+        isDragging ? 'shadow-lg border-blue-400' : ''
+      }`}
+    >
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3 flex-1">
+          <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white text-sm font-bold">
+            {agent.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()}
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="font-semibold text-gray-900 truncate">{agent.name}</div>
+            <div className="text-xs text-gray-500 flex items-center gap-2 mt-1">
+              <span>{agent.role}</span>
+              <span>•</span>
+              <span className={`${
+                agent.status.toLowerCase() === 'active' ? 'text-emerald-600' :
+                agent.status.toLowerCase() === 'inactive' ? 'text-gray-500' :
+                'text-amber-600'
+              }`}>
+                {agent.status}
+              </span>
+            </div>
+          </div>
+        </div>
+        <div className="text-xs text-gray-500 ml-4">
+          {agent.joinDate}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function DroppableTeam({ team, children }: { team: Team; children: React.ReactNode }) {
+  const { setNodeRef, isOver } = useDroppable({
+    id: `team-${team.id}`,
+    data: { team },
+  })
+
+  return (
+    <div
+      ref={setNodeRef}
+      className={`transition-all duration-200 ${
+        isOver ? 'ring-2 ring-blue-500 ring-offset-2 bg-blue-50' : ''
+      }`}
+    >
+      {children}
+    </div>
+  )
+}
+
 export default function TeamManagementPage() {
   const [selectedMembers, setSelectedMembers] = useState<number[]>([])
   const [openMenuId, setOpenMenuId] = useState<number | null>(null)
@@ -72,6 +169,9 @@ export default function TeamManagementPage() {
   const [agents, setAgents] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [showCreateTeamForm, setShowCreateTeamForm] = useState(false)
+  const [activeId, setActiveId] = useState<string | null>(null)
+  const [sortField, setSortField] = useState<SortField>('name')
+  const [sortDirection, setSortDirection] = useState<SortDirection>('asc')
   const [newTeam, setNewTeam] = useState({
     name: '',
     description: '',
@@ -82,6 +182,14 @@ export default function TeamManagementPage() {
     teamColor: '#2563EB',
     teamIcon: 'home' as 'home' | 'key' | 'grid' | 'star',
   })
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    })
+  )
 
   useEffect(() => {
     const fetchData = async () => {
@@ -111,6 +219,7 @@ export default function TeamManagementPage() {
             inquiryChannels: ['WhatsApp', 'Email'], // Default
             status: agent.status === 'approved' ? 'Active' : 'Pending',
             joinDate: teamMembership?.joined_at ? new Date(teamMembership.joined_at).toLocaleDateString() : 'N/A',
+            joinDateRaw: teamMembership?.joined_at || agent.created_at || new Date().toISOString(),
           }
         })
         
@@ -124,6 +233,128 @@ export default function TeamManagementPage() {
 
     fetchData()
   }, [])
+
+  // Get assigned agent IDs
+  const assignedAgentIds = useMemo(() => {
+    return new Set(
+      teams.flatMap(team => (team.members || []).map((member: TeamMember) => member.agent_id))
+    )
+  }, [teams])
+
+  // Filter available agents (not assigned to any team)
+  const availableAgents = useMemo(() => {
+    return agents
+      .filter((agent: any) => !assignedAgentIds.has(agent.id))
+      .map((agent: any): AvailableAgent => ({
+        id: agent.id,
+        name: `${agent.first_name || ''} ${agent.last_name || ''}`.trim() || 'Unknown',
+        role: 'Agent',
+        status: agent.status === 'approved' ? 'Active' : 'Pending',
+        joinDate: agent.created_at ? new Date(agent.created_at).toLocaleDateString() : 'N/A',
+        joinDateRaw: agent.created_at || new Date().toISOString(),
+        email: agent.email,
+        listings: 0,
+      }))
+  }, [agents, assignedAgentIds])
+
+  // Sort available agents
+  const sortedAvailableAgents = useMemo(() => {
+    const sorted = [...availableAgents]
+    sorted.sort((a, b) => {
+      let comparison = 0
+      
+      switch (sortField) {
+        case 'name':
+          comparison = a.name.localeCompare(b.name)
+          break
+        case 'joinDate':
+          const dateA = new Date(a.joinDateRaw || '').getTime()
+          const dateB = new Date(b.joinDateRaw || '').getTime()
+          comparison = dateA - dateB
+          break
+        case 'role':
+          comparison = a.role.localeCompare(b.role)
+          break
+        case 'status':
+          comparison = a.status.localeCompare(b.status)
+          break
+      }
+      
+      return sortDirection === 'asc' ? comparison : -comparison
+    })
+    
+    return sorted
+  }, [availableAgents, sortField, sortDirection])
+
+  const handleSort = (field: SortField) => {
+    if (sortField === field) {
+      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc')
+    } else {
+      setSortField(field)
+      setSortDirection('asc')
+    }
+  }
+
+  const handleDragStart = (event: any) => {
+    setActiveId(event.active.id)
+  }
+
+  const handleDragEnd = async (event: any) => {
+    const { active, over } = event
+    
+    if (!over) {
+      setActiveId(null)
+      return
+    }
+
+    const activeId = active.id as string
+    const overId = over.id as string
+
+    // Check if dragging an agent to a team
+    if (activeId.startsWith('agent-') && overId.startsWith('team-')) {
+      const agentId = parseInt(activeId.replace('agent-', ''))
+      const teamId = parseInt(overId.replace('team-', ''))
+      
+      try {
+        await brokerApi.assignAgentToTeam(teamId, agentId, 'member')
+        
+        // Refresh data
+        const [teamsData, agentsData] = await Promise.all([
+          brokerApi.getTeams(),
+          brokerApi.getAgents(),
+        ])
+        
+        setTeams(teamsData)
+        setAgents(agentsData)
+        
+        // Update team members display
+        const members: TeamMemberDisplay[] = agentsData.map((agent: any) => {
+          const teamMembership = teamsData
+            .flatMap(team => team.members || [])
+            .find((member: TeamMember) => member.agent_id === agent.id)
+          
+          return {
+            id: agent.id,
+            name: `${agent.first_name || ''} ${agent.last_name || ''}`.trim() || 'Unknown',
+            role: teamMembership?.role === 'Unit Manager' ? 'Unit Manager' : 'Agent',
+            reportsTo: null,
+            listings: 0,
+            inquiryChannels: ['WhatsApp', 'Email'],
+            status: agent.status === 'approved' ? 'Active' : 'Pending',
+            joinDate: teamMembership?.joined_at ? new Date(teamMembership.joined_at).toLocaleDateString() : 'N/A',
+            joinDateRaw: teamMembership?.joined_at || agent.created_at || new Date().toISOString(),
+          }
+        })
+        
+        setTeamMembers(members)
+      } catch (error: any) {
+        console.error('Error assigning agent to team:', error)
+        alert('Failed to assign agent to team. Please try again.')
+      }
+    }
+    
+    setActiveId(null)
+  }
 
   const allSelected = selectedMembers.length === teamMembers.length && teamMembers.length > 0
 
@@ -182,8 +413,34 @@ export default function TeamManagementPage() {
       })
       
       // Refresh data
-      const teamsData = await brokerApi.getTeams()
+      const [teamsData, agentsData] = await Promise.all([
+        brokerApi.getTeams(),
+        brokerApi.getAgents(),
+      ])
+      
       setTeams(teamsData)
+      setAgents(agentsData)
+      
+      // Update team members display
+      const members: TeamMemberDisplay[] = agentsData.map((agent: any) => {
+        const teamMembership = teamsData
+          .flatMap(team => team.members || [])
+          .find((member: TeamMember) => member.agent_id === agent.id)
+        
+        return {
+          id: agent.id,
+          name: `${agent.first_name || ''} ${agent.last_name || ''}`.trim() || 'Unknown',
+          role: teamMembership?.role === 'Unit Manager' ? 'Unit Manager' : 'Agent',
+          reportsTo: null,
+          listings: 0,
+          inquiryChannels: ['WhatsApp', 'Email'],
+          status: agent.status === 'approved' ? 'Active' : 'Pending',
+          joinDate: teamMembership?.joined_at ? new Date(teamMembership.joined_at).toLocaleDateString() : 'N/A',
+          joinDateRaw: teamMembership?.joined_at || agent.created_at || new Date().toISOString(),
+        }
+      })
+      
+      setTeamMembers(members)
     } catch (error: any) {
       console.error('Error creating team:', error)
       alert('Failed to create team. Please try again.')
@@ -220,332 +477,73 @@ export default function TeamManagementPage() {
         />
 
         {/* Main Content Grid */}
-        <div className="grid grid-cols-[1fr_400px] gap-6 lg:grid-cols-2">
-          {/* All Users - Left Column */}
-          <div className="bg-white rounded-[14px] p-6 shadow-sm border border-gray-100">
-            <div className="flex items-center justify-between mb-6 md:flex-col md:items-start md:gap-4">
-              <div className="flex items-center justify-between w-full">
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCenter}
+          onDragStart={handleDragStart}
+          onDragEnd={handleDragEnd}
+        >
+          <div className="grid grid-cols-[1fr_400px] gap-6 lg:grid-cols-2">
+            {/* Available Agents - Left Column */}
+            <div className="bg-white rounded-[14px] p-6 shadow-sm border border-gray-100">
+              <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center shadow-sm">
                     <FiUser className="w-5 h-5 text-white" />
                   </div>
                   <div>
-                    <h3 className="text-lg font-bold text-gray-900 m-0">All Users</h3>
-                    <p className="text-xs text-gray-500 m-0 mt-0.5">{teamMembers.length} team members</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-3">
-                  <div className="hidden md:flex items-center gap-2 px-3 py-1.5 bg-gray-50 rounded-lg border border-gray-200">
-                    <input
-                      type="checkbox"
-                      checked={allSelected}
-                      onChange={toggleSelectAll}
-                      className="w-4 h-4 rounded border-gray-300 text-blue-600 cursor-pointer focus:ring-2 focus:ring-blue-500"
-                      id="mobile-select-all"
-                    />
-                    <label htmlFor="mobile-select-all" className="text-sm font-medium text-gray-700 cursor-pointer">
-                      Select all
-                    </label>
+                    <h3 className="text-lg font-bold text-gray-900 m-0">Available Agents</h3>
+                    <p className="text-xs text-gray-500 m-0 mt-0.5">{sortedAvailableAgents.length} available agents</p>
                   </div>
                 </div>
               </div>
-            </div>
 
-          {/* Desktop Table View */}
-          <div className="overflow-x-auto md:hidden">
-            <table className="w-full border-collapse min-w-[1100px]">
-              <thead className="bg-gradient-to-r from-blue-50 to-indigo-50">
-                <tr>
-                  <th className="py-3 px-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-blue-200 w-12">
-                    <input
-                      type="checkbox"
-                      checked={allSelected}
-                      onChange={toggleSelectAll}
-                      className="w-4 h-4 rounded border-gray-300 text-blue-600 cursor-pointer focus:ring-2 focus:ring-blue-500"
-                    />
-                  </th>
-                  <th className="py-3 px-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-blue-200">
-                    <div className="flex items-center gap-1.5">
-                      <FiUser className="w-3.5 h-3.5 text-blue-600" />
-                      <span>Name</span>
-                    </div>
-                  </th>
-                  <th className="py-3 px-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-blue-200">
-                    <div className="flex items-center gap-1.5">
-                      <FiStar className="w-3.5 h-3.5 text-amber-500" />
-                      <span>Role</span>
-                    </div>
-                  </th>
-                  <th className="py-3 px-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-blue-200">
-                    <div className="flex items-center gap-1.5">
-                      <FiUser className="w-3.5 h-3.5 text-purple-500" />
-                      <span>Reports to</span>
-                    </div>
-                  </th>
-                  <th className="py-3 px-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-blue-200">
-                    <div className="flex items-center gap-1.5">
-                      <FiHome className="w-3.5 h-3.5 text-emerald-500" />
-                      <span>Listings</span>
-                    </div>
-                  </th>
-                  <th className="py-3 px-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-blue-200">
-                    <div className="flex items-center gap-1.5">
-                      <FiGrid className="w-3.5 h-3.5 text-cyan-500" />
-                      <span>Channels</span>
-                    </div>
-                  </th>
-                  <th className="py-3 px-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-blue-200">
-                    <div className="flex items-center gap-1.5">
-                      <FiCheck className="w-3.5 h-3.5 text-green-500" />
-                      <span>Status</span>
-                    </div>
-                  </th>
-                  <th className="py-3 px-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-blue-200">
-                    <div className="flex items-center gap-1.5">
-                      <FiKey className="w-3.5 h-3.5 text-orange-500" />
-                      <span>Join Date</span>
-                    </div>
-                  </th>
-                  <th className="py-3 px-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-blue-200">
-                    <div className="flex items-center gap-1.5">
-                      <FiMoreVertical className="w-3.5 h-3.5 text-gray-500" />
-                      <span>Actions</span>
-                    </div>
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
+              {/* Sorting Controls */}
+              <div className="mb-4 p-3 bg-gray-50 rounded-lg border border-gray-200">
+                <div className="flex items-center gap-2 mb-2">
+                  <FiFilter className="w-4 h-4 text-gray-500" />
+                  <span className="text-sm font-medium text-gray-700">Sort by:</span>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {(['name', 'joinDate', 'role', 'status'] as SortField[]).map((field) => (
+                    <button
+                      key={field}
+                      onClick={() => handleSort(field)}
+                      className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all duration-200 flex items-center gap-1.5 ${
+                        sortField === field
+                          ? 'bg-blue-600 text-white'
+                          : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
+                      }`}
+                    >
+                      <span className="capitalize">{field === 'joinDate' ? 'Join Date' : field}</span>
+                      {sortField === field && (
+                        sortDirection === 'asc' ? (
+                          <FiArrowUp className="w-3 h-3" />
+                        ) : (
+                          <FiArrowDown className="w-3 h-3" />
+                        )
+                      )}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Available Agents List */}
+              <div className="max-h-[600px] overflow-y-auto">
                 {loading ? (
-                  <tr>
-                    <td colSpan={9} className="py-8 text-center text-gray-500">Loading team members...</td>
-                  </tr>
-                ) : teamMembers.length === 0 ? (
-                  <tr>
-                    <td colSpan={9} className="py-8 text-center text-gray-500">No team members yet. Create a team and add agents.</td>
-                  </tr>
+                  <div className="py-8 text-center text-gray-500">Loading available agents...</div>
+                ) : sortedAvailableAgents.length === 0 ? (
+                  <div className="py-8 text-center text-gray-500">
+                    <p className="mb-2">All agents are assigned to teams.</p>
+                    <p className="text-sm text-gray-400">Create a new team or remove agents from existing teams to see them here.</p>
+                  </div>
                 ) : (
-                  teamMembers.map((member) => (
-                    <tr key={member.id} className="hover:bg-blue-50/50 transition-colors duration-150 border-b border-gray-100">
-                      <td className="py-3 px-4 w-12">
-                        <input
-                          type="checkbox"
-                          checked={selectedMembers.includes(member.id)}
-                          onChange={() => toggleSelect(member.id)}
-                          className="w-4 h-4 rounded border-gray-300 text-blue-600 cursor-pointer focus:ring-2 focus:ring-blue-500"
-                        />
-                      </td>
-                      <td className="py-3 px-4">
-                        <div className="flex items-center gap-2">
-                          <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white text-xs font-bold">
-                            {member.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()}
-                          </div>
-                          <span className="font-semibold text-gray-900">{member.name}</span>
-                        </div>
-                      </td>
-                      <td className="py-3 px-4">
-                        <div className="flex items-center gap-2">
-                          <FiStar className={`w-4 h-4 ${member.role === 'Unit Manager' ? 'text-amber-500' : 'text-gray-400'}`} />
-                          <span className="text-gray-700">{member.role}</span>
-                        </div>
-                      </td>
-                      <td className="py-3 px-4">
-                        <div className="flex items-center gap-2">
-                          {member.reportsTo ? (
-                            <>
-                              <FiUser className="w-4 h-4 text-purple-500" />
-                              <span className="text-gray-600">{member.reportsTo}</span>
-                            </>
-                          ) : (
-                            <span className="text-gray-400">&mdash;</span>
-                          )}
-                        </div>
-                      </td>
-                      <td className="py-3 px-4 text-center">
-                        <div className="flex items-center justify-center gap-1.5">
-                          <FiHome className="w-4 h-4 text-emerald-500" />
-                          <span className="text-gray-700 font-medium">{member.listings}</span>
-                        </div>
-                      </td>
-                      <td className="py-3 px-4">
-                        <div className="flex items-center gap-1.5">
-                          <FiGrid className="w-4 h-4 text-cyan-500" />
-                          <span className="text-gray-600 text-sm">{formatChannels(member.inquiryChannels)}</span>
-                        </div>
-                      </td>
-                      <td className="py-3 px-4">
-                        <div className="flex items-center gap-2">
-                          <FiCheck className={`w-4 h-4 ${
-                            member.status.toLowerCase() === 'active' ? 'text-emerald-500' :
-                            member.status.toLowerCase() === 'inactive' ? 'text-gray-400' :
-                            'text-amber-500'
-                          }`} />
-                          <span className={`inline-block py-1 px-2.5 rounded-md text-xs font-semibold ${
-                            member.status.toLowerCase() === 'active' ? 'bg-emerald-100 text-emerald-700' :
-                            member.status.toLowerCase() === 'inactive' ? 'bg-gray-100 text-gray-600' :
-                            'bg-amber-100 text-amber-700'
-                          }`}>
-                            {member.status}
-                          </span>
-                        </div>
-                      </td>
-                      <td className="py-3 px-4">
-                        <div className="flex items-center gap-2">
-                          <FiKey className="w-4 h-4 text-orange-500" />
-                          <span className="text-gray-600 text-sm">{member.joinDate}</span>
-                        </div>
-                      </td>
-                      <td className="py-3 px-4">
-                        <div className="flex items-center gap-2">
-                          <button className="w-8 h-8 rounded-lg border-0 flex items-center justify-center text-blue-600 bg-blue-50 cursor-pointer transition-all duration-200 hover:bg-blue-100 hover:shadow-sm" title="Edit">
-                            <FiEdit className="w-4 h-4" />
-                          </button>
-                          <button className="w-8 h-8 rounded-lg border-0 flex items-center justify-center text-red-600 bg-red-50 cursor-pointer transition-all duration-200 hover:bg-red-100 hover:shadow-sm" title="Delete">
-                            <FiTrash2 className="w-4 h-4" />
-                          </button>
-                          <button className="w-8 h-8 rounded-lg border-0 flex items-center justify-center text-amber-600 bg-amber-50 cursor-pointer transition-all duration-200 hover:bg-amber-100 hover:shadow-sm" title="Reassign">
-                            <FiRefreshCw className="w-4 h-4" />
-                          </button>
-                          <div className="relative">
-                            <button
-                              className="w-8 h-8 rounded-lg border-0 flex items-center justify-center text-gray-600 bg-gray-100 cursor-pointer transition-all duration-200 hover:bg-gray-200 hover:shadow-sm"
-                              title="More"
-                              onClick={() =>
-                                setOpenMenuId(openMenuId === member.id ? null : member.id)
-                              }
-                            >
-                              <FiMoreVertical className="w-4 h-4" />
-                            </button>
-                            {openMenuId === member.id && (
-                              <ActionMenu
-                                memberId={member.id}
-                                onClose={() => setOpenMenuId(null)}
-                              />
-                            )}
-                          </div>
-                        </div>
-                      </td>
-                    </tr>
+                  sortedAvailableAgents.map((agent) => (
+                    <DraggableAgent key={agent.id} agent={agent} />
                   ))
                 )}
-              </tbody>
-            </table>
-          </div>
-
-          {/* Mobile Card View */}
-          <div className="hidden md:grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-3">
-            {loading ? (
-              <div className="py-8 text-center text-gray-500">Loading team members...</div>
-            ) : teamMembers.length === 0 ? (
-              <div className="py-8 text-center text-gray-500">No team members yet. Create a team and add agents.</div>
-            ) : (
-              teamMembers.map((member) => {
-                const isExpanded = expandedMemberId === member.id
-                const statusColor = member.status.toLowerCase() === 'active' ? 'bg-emerald-500' :
-                                  member.status.toLowerCase() === 'inactive' ? 'bg-gray-400' :
-                                  'bg-amber-500'
-                
-                return (
-                  <div 
-                    key={member.id} 
-                    className={`bg-gray-50 rounded-lg border border-gray-200 transition-all duration-200 cursor-pointer hover:shadow-sm ${
-                      isExpanded ? 'p-2.5' : 'p-2'
-                    }`}
-                    onClick={() => setExpandedMemberId(isExpanded ? null : member.id)}
-                  >
-                    {/* Collapsed View - Name and Status Color */}
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2 flex-1 min-w-0">
-                        <div className={`w-2 h-2 rounded-full ${statusColor} flex-shrink-0`}></div>
-                        <h3 className="text-sm font-bold text-gray-900 m-0 truncate">{member.name}</h3>
-                      </div>
-                      <div className="flex items-center gap-2 flex-shrink-0">
-                        <input
-                          type="checkbox"
-                          checked={selectedMembers.includes(member.id)}
-                          onChange={(e) => {
-                            e.stopPropagation()
-                            toggleSelect(member.id)
-                          }}
-                          onClick={(e) => e.stopPropagation()}
-                          className="w-4 h-4 rounded border-gray-300 text-blue-600 cursor-pointer focus:ring-2 focus:ring-blue-500"
-                        />
-                        <div className="relative">
-                          <button
-                            className="flex items-center justify-center w-6 h-6 rounded border-0 text-gray-600 bg-gray-100 cursor-pointer transition-all duration-200 hover:bg-gray-200"
-                            title="More"
-                            onClick={(e) => {
-                              e.stopPropagation()
-                              setOpenMenuId(openMenuId === member.id ? null : member.id)
-                            }}
-                          >
-                            <FiMoreVertical className="w-3.5 h-3.5" />
-                          </button>
-                          {openMenuId === member.id && (
-                            <ActionMenu
-                              memberId={member.id}
-                              onClose={() => setOpenMenuId(null)}
-                            />
-                          )}
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Expanded View - All Details */}
-                    {isExpanded && (
-                      <div className="mt-3 pt-3 border-t border-gray-200 space-y-3">
-                        {/* Role & Status Section */}
-                        <div className="grid grid-cols-2 gap-2 text-xs">
-                          <div>
-                            <span className="text-[10px] font-medium text-gray-500 uppercase block mb-1">Role</span>
-                            <span className="text-xs font-semibold text-gray-900">{member.role}</span>
-                          </div>
-                          <div>
-                            <span className="text-[10px] font-medium text-gray-500 uppercase block mb-1">Status</span>
-                            <span className={`inline-block py-0.5 px-1.5 rounded text-[10px] font-semibold ${
-                              member.status.toLowerCase() === 'active' ? 'bg-emerald-100 text-emerald-700' :
-                              member.status.toLowerCase() === 'inactive' ? 'bg-gray-100 text-gray-600' :
-                              'bg-amber-100 text-amber-700'
-                            }`}>
-                              {member.status}
-                            </span>
-                          </div>
-                        </div>
-
-                        {/* Reports To Section */}
-                        <div>
-                          <span className="text-[10px] font-medium text-gray-500 uppercase block mb-1">Reports To</span>
-                          <span className="text-xs font-semibold text-gray-900">
-                            {member.reportsTo || <span className="text-gray-400">&mdash;</span>}
-                          </span>
-                        </div>
-
-                        {/* Performance Section */}
-                        <div className="grid grid-cols-2 gap-2 text-xs">
-                          <div>
-                            <span className="text-[10px] font-medium text-gray-500 uppercase block mb-1">Listings</span>
-                            <span className="text-xs font-semibold text-gray-900">{member.listings}</span>
-                          </div>
-                          <div>
-                            <span className="text-[10px] font-medium text-gray-500 uppercase block mb-1">Join Date</span>
-                            <span className="text-xs font-semibold text-gray-900">{member.joinDate}</span>
-                          </div>
-                        </div>
-
-                        {/* Channels Section */}
-                        <div>
-                          <span className="text-[10px] font-medium text-gray-500 uppercase block mb-1">Inquiry Channels</span>
-                          <span className="text-xs text-gray-600">
-                            {formatChannels(member.inquiryChannels)}
-                          </span>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                )
-              })
-            )}
-          </div>
-          </div>
+              </div>
+            </div>
 
           {/* My Teams - Right Column */}
           <div className="flex flex-col gap-4 h-fit">
@@ -721,10 +719,8 @@ export default function TeamManagementPage() {
                 const regularMembers = teamMembersList.filter((m: TeamMember) => m.role !== 'Unit Manager' && m.role !== 'manager')
                 
                 return (
-                  <div
-                    key={team.id}
-                    className="bg-white rounded-[14px] p-6 shadow-sm border border-gray-200"
-                  >
+                  <DroppableTeam key={team.id} team={team}>
+                    <div className="bg-white rounded-[14px] p-6 shadow-sm border border-gray-200">
                     <div className="flex items-center justify-between mb-4">
                       <div className="flex items-center gap-3">
                         <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center text-2xl text-blue-600">
@@ -786,12 +782,37 @@ export default function TeamManagementPage() {
                         <div className="text-xs text-gray-600">Response</div>
                       </div>
                     </div>
-                  </div>
+                    </div>
+                  </DroppableTeam>
                 )
               })
             )}
           </div>
-        </div>
+          </div>
+          
+          {/* Drag Overlay */}
+          <DragOverlay>
+            {activeId && activeId.startsWith('agent-') ? (
+              (() => {
+                const agentId = parseInt(activeId.replace('agent-', ''))
+                const agent = sortedAvailableAgents.find(a => a.id === agentId)
+                return agent ? (
+                  <div className="bg-white rounded-lg border-2 border-blue-400 p-4 shadow-xl opacity-90">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white text-sm font-bold">
+                        {agent.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()}
+                      </div>
+                      <div>
+                        <div className="font-semibold text-gray-900">{agent.name}</div>
+                        <div className="text-xs text-gray-500">{agent.role}</div>
+                      </div>
+                    </div>
+                  </div>
+                ) : null
+              })()
+            ) : null}
+          </DragOverlay>
+        </DndContext>
       </main>
     </div>
   )

@@ -31,8 +31,6 @@ yarn-error.log*
 *.swo
 *~
 
-./next/
-
 # OS
 Thumbs.db
 

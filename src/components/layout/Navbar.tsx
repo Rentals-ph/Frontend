@@ -212,7 +212,7 @@ const Navbar = () => {
 
   return (
     <>
-      <header className="relative z-[9998] bg-white shadow-md overflow-x-hidden overflow-y-hidden">
+      <header className="relative z-[1] bg-white shadow-md overflow-x-hidden overflow-y-hidden">
         <div className="flex items-center justify-between gap-2 px-3 sm:px-4 py-3 sm:py-5 md:px-10 lg:px-20 max-w-full min-w-0 overflow-x-hidden overflow-y-hidden">
           {/* Mobile: toggle + logo side by side. Desktop: logo only in this group */}
           <div className="flex items-center gap-2 flex-shrink-0">

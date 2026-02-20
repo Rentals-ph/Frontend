@@ -668,7 +668,7 @@ export default function PageBuilder({ userType }: PageBuilderProps) {
               subtitle={activeTab === 'profile' ? "Customize your public profile page" : "Customize your property page"} 
             />
           ) : (
-            <header className="flex items-center justify-between mb-7 md:flex-col md:items-start md:gap-3.5">
+            <header className="flex items-center justify-between mb-4 md:flex-col md:items-start md:gap-3.5">
               <div className="flex flex-col gap-1">
                 <h1 className="text-2xl font-bold text-gray-900 m-0 mb-1 md:text-xl">
                   {activeTab === 'profile' ? 'Page Builder > Profile' : 'Page Builder > Property'}
@@ -677,12 +677,7 @@ export default function PageBuilder({ userType }: PageBuilderProps) {
                   {activeTab === 'profile' ? 'Customize your public profile page' : 'Customize your property page'}
                 </p>
               </div>
-              <div className="flex items-center gap-3.5 md:w-full md:justify-between md:gap-2.5">
-                <a href="/broker/create-listing" className="inline-flex items-center gap-2 py-2.5 px-5 bg-blue-600 text-white text-sm font-semibold rounded-xl border-0 no-underline cursor-pointer transition-all duration-200 shadow-sm hover:bg-blue-700 active:scale-[0.98]">
-                  <FiPlus />
-                  Add Listing
-                </a>
-              </div>
+             
             </header>
           )}
           
@@ -697,7 +692,7 @@ export default function PageBuilder({ userType }: PageBuilderProps) {
             </button>
           </div>
 
-          <div className="grid grid-cols-[1fr_1.5fr] gap-6 lg:grid-cols-2"> {/* page-builder-container */}
+          <div className="grid grid-cols-[1fr_1fr] gap-6 lg:grid-cols-[1fr_2fr]"> {/* page-builder-container */}
           {/* Left Column - Customization */}
           <div className="flex flex-col gap-6"> {/* page-builder-left */}
             {activeTab === 'profile' ? (
@@ -736,54 +731,9 @@ export default function PageBuilder({ userType }: PageBuilderProps) {
                   </div>
                 </div>
 
-                {/* Profile Section */}
-                <div className="bg-white rounded-2xl p-6 shadow-sm">
-                  <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wider mb-4">Profile</h3>
-                  <div className="flex flex-col gap-4">
-                    <div className="relative w-24 h-24 mx-auto">
-                      <img 
-                        src={profileImage || ASSETS.PLACEHOLDER_PROFILE} 
-                        alt="Profile"
-                        className="w-full h-full rounded-full object-cover"
-                        onError={(e) => {
-                          const target = e.target as HTMLImageElement;
-                          target.style.display = 'none';
-                        }}
-                      />
-                      <div className="absolute inset-0 w-full h-full rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-semibold text-lg hidden">
-                        JA
-                      </div>
-                    </div>
-                    <input
-                      type="file"
-                      ref={profileImageInputRef}
-                      accept="image/*"
-                      className="hidden"
-                      onChange={(e) => handleImageInputChange(e, 'profile')}
-                    />
-                    <button 
-                      className="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-blue-600 text-white text-sm font-medium rounded-lg border-0 cursor-pointer transition-colors hover:bg-blue-700"
-                      onClick={() => profileImageInputRef.current?.click()}
-                    >
-                      <FiUpload className="w-4 h-4" />
-                      Upload Image
-                    </button>
-                    <textarea
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-white text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-y min-h-[100px]"
-                      placeholder="This is my bio..."
-                      value={bio}
-                      onChange={(e) => setBio(e.target.value)}
-                    />
-                  </div>
-                </div>
-
                 {/* Profile Card Section */}
                 <div className="bg-white rounded-2xl p-6 shadow-sm">
                   <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wider mb-4">Profile Card</h3>
-                  <div className="p-3 bg-blue-50 rounded-lg mb-4 text-sm text-blue-900">
-                    <strong>ℹ️ Note:</strong> Profile card uses the same image and bio from Profile section above. 
-                    You can customize the name and role separately.
-                  </div>
                   <div className="flex flex-col gap-4">
                     <div className="relative w-20 h-20 mx-auto group">
                       <img 
@@ -1197,28 +1147,7 @@ export default function PageBuilder({ userType }: PageBuilderProps) {
                       </div>
                     </div>
 
-                    {/* Contact Information */}
-                    <div className="bg-white rounded-2xl p-6 shadow-sm">
-                      <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wider mb-4">Contact Information</h3>
-                      <div className="p-3 bg-blue-50 rounded-lg mb-4 text-sm text-blue-900">
-                        <strong>ℹ️ Note:</strong> Contact information is synced with your Profile page builder. 
-                        Update your contact details in the Profile tab.
-                      </div>
-                      <div className="grid grid-cols-2 gap-3">
-                        <div className="flex flex-col gap-2">
-                          <label className="text-xs font-medium text-gray-700">Phone Number</label>
-                          <div className="px-3 py-2.5 border border-gray-300 rounded-lg bg-gray-50 text-sm text-gray-500">
-                            {contactInfo.phone || 'Not set - Edit in Profile tab'}
-                          </div>
-                        </div>
-                        <div className="flex flex-col gap-2">
-                          <label className="text-xs font-medium text-gray-700">Email Address</label>
-                          <div className="px-3 py-2.5 border border-gray-300 rounded-lg bg-gray-50 text-sm text-gray-500">
-                            {contactInfo.email || 'Not set - Edit in Profile tab'}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
+                    
 
                     {/* Profile Card - Synced with Profile Page Builder */}
                     <div className="bg-white rounded-2xl p-6 shadow-sm">
@@ -1235,10 +1164,6 @@ export default function PageBuilder({ userType }: PageBuilderProps) {
                             <FiEyeOff className="w-5 h-5" />
                           )}
                         </button>
-                      </div>
-                      <div className="p-3 bg-blue-50 rounded-lg mb-4 text-sm text-blue-900">
-                        <strong>ℹ️ Note:</strong> Profile card automatically syncs with your Profile page builder. 
-                        Update your profile image, bio, and contact info in the Profile tab to see changes here.
                       </div>
                       <div className="flex flex-col gap-4">
                         <div className="w-20 h-20 mx-auto rounded-full overflow-hidden bg-gray-200">

@@ -218,11 +218,11 @@ export default function AgentDashboard() {
         </div>
 
         {/* Create New Listing Banner */}
-        <div className="mb-8 px-10">
+        <div className="mb-8">
           <div
             className="p-6 md:p-8 shadow-lg text-white overflow-hidden rounded-xl relative bg-gradient-to-r from-blue-600 to-blue-700"
             style={{
-              backgroundImage: 'url(/assets/images/create-listing-banner-bg.png)',
+              backgroundImage: `url(${ASSETS.BG_CREATE_LISTING})`,
               backgroundSize: 'cover' ,
               backgroundPosition: 'center',
               backgroundRepeat: 'no-repeat',

@@ -1,7 +1,7 @@
 {
   "/page": "app/page.js",
-  "/agent/page": "app/agent/page.js",
-  "/broker/page": "app/broker/page.js",
-  "/broker/team/page": "app/broker/team/page.js",
-  "/agent/inbox/page": "app/agent/inbox/page.js"
+  "/agent/page-builder/page": "app/agent/page-builder/page.js",
+  "/agent/inbox/page": "app/agent/inbox/page.js",
+  "/agent/listings/page": "app/agent/listings/page.js",
+  "/agent/create-listing/page": "app/agent/create-listing/page.js"
 }

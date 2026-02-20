@@ -41,4 +41,6 @@ Thumbs.db
 /public/storage/images/**/*
 !/public/storage/images/**/.gitkeep
 
-.next/
+.next/*
+.next/app-build-manifest.json
+.next/server/server-reference-manifest.json

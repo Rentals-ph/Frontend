@@ -13,6 +13,8 @@ import {
   FiBarChart2,
   FiFileText,
   FiBookOpen,
+  FiChevronRight, 
+  FiChevronLeft,
   FiLayout,
   FiUsers,
   FiDollarSign,
@@ -59,21 +61,23 @@ function AppSidebar() {
   const isBrokerRoute = pathname?.startsWith('/broker')
 
   useEffect(() => {
-    // Only check unread messages for agent routes
-    if (!isAgentRoute) return
+    // Check unread messages for agent and broker routes
+    if (!isAgentRoute && !isBrokerRoute) return
 
     const checkUnreadMessages = () => {
-      // Check if account is processing (this would show as a notification in inbox)
-      const registrationStatus = localStorage.getItem('agent_registration_status')
-      const agentStatus = localStorage.getItem('agent_status')
-      
       let hasUnread = false
       
-      if (registrationStatus === 'processing' || 
-          agentStatus === 'processing' || 
-          agentStatus === 'pending' || 
-          agentStatus === 'under_review') {
-        hasUnread = true
+      if (isAgentRoute) {
+        // Check if account is processing (this would show as a notification in inbox)
+        const registrationStatus = localStorage.getItem('agent_registration_status')
+        const agentStatus = localStorage.getItem('agent_status')
+        
+        if (registrationStatus === 'processing' || 
+            agentStatus === 'processing' || 
+            agentStatus === 'pending' || 
+            agentStatus === 'under_review') {
+          hasUnread = true
+        }
       }
 
       // Check for unread messages count
@@ -98,7 +102,7 @@ function AppSidebar() {
       window.removeEventListener('storage', checkUnreadMessages)
       clearInterval(interval)
     }
-  }, [isAgentRoute])
+  }, [isAgentRoute, isBrokerRoute])
 
   // Close mobile menu when route changes
   useEffect(() => {
@@ -268,79 +272,16 @@ function AppSidebar() {
   // Broker sidebar content
   const renderBrokerSidebar = () => (
     <>
-      <Link
-        href="/broker"
-        className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg no-underline text-gray-500 text-[13px] font-medium transition-all ${isActive('/broker') ? 'bg-blue-50 text-blue-500' : 'hover:bg-gray-50 hover:text-gray-900'}`}
-      >
-        <FiGrid className="text-lg" />
-        <span>Dashboard</span>
-      </Link>
-      <Link
-        href="/broker/company-profile"
-        className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg no-underline text-gray-500 text-[13px] font-medium transition-all ${isActive('/broker/company-profile') ? 'bg-blue-50 text-blue-500' : 'hover:bg-gray-50 hover:text-gray-900'}`}
-      >
-        <FiLayout className="text-lg" />
-        <span>Company Profile</span>
-      </Link>
-      <Link
-        href="/broker/team"
-        className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg no-underline text-gray-500 text-[13px] font-medium transition-all ${isActive('/broker/team') ? 'bg-blue-50 text-blue-500' : 'hover:bg-gray-50 hover:text-gray-900'}`}
-      >
-        <FiUsers className="text-lg" />
-        <span>Team Management</span>
-      </Link>
-      <Link
-        href="/broker/listings"
-        className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg no-underline text-gray-500 text-[13px] font-medium transition-all ${isActive('/broker/listings') ? 'bg-blue-50 text-blue-500' : 'hover:bg-gray-50 hover:text-gray-900'}`}
-      >
-        <FiHome className="text-lg" />
-        <span>Listings</span>
-      </Link>
-      <Link
-        href="/broker/approvals"
-        className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg no-underline text-gray-500 text-[13px] font-medium transition-all ${isActive('/broker/approvals') ? 'bg-blue-50 text-blue-500' : 'hover:bg-gray-50 hover:text-gray-900'}`}
-      >
-        <FiCheckSquare className="text-lg" />
-        <span>Agent Approvals</span>
-      </Link>
-      <Link
-        href="/broker/page-builder"
-        className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg no-underline text-gray-500 text-[13px] font-medium transition-all ${isActive('/broker/page-builder') ? 'bg-blue-50 text-blue-500' : 'hover:bg-gray-50 hover:text-gray-900'}`}
-      >
-        <FiFileText className="text-lg" />
-        <span>Page Builder</span>
-      </Link>
-      <Link
-        href="/broker/reports"
-        className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg no-underline text-gray-500 text-[13px] font-medium transition-all ${isActive('/broker/reports') ? 'bg-blue-50 text-blue-500' : 'hover:bg-gray-50 hover:text-gray-900'}`}
-      >
-        <FiBarChart2 className="text-lg" />
-        <span>Reports</span>
-      </Link>
-      <Link
-        href="/broker/inbox"
-        className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg no-underline text-gray-500 text-[13px] font-medium transition-all ${isActive('/broker/inbox') ? 'bg-blue-50 text-blue-500' : 'hover:bg-gray-50 hover:text-gray-900'}`}
-      >
-        <div className="relative inline-flex items-center justify-center">
-          <FiMail className="text-lg" />
-          {hasUnreadMessages && <span className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white shadow-[0_0_0_1px_rgba(0,0,0,0.1)]"></span>}
-        </div>
-        <span>Inbox</span>
-      </Link>
-      <Link
-        href="/broker/downloadables"
-        className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg no-underline text-gray-500 text-[13px] font-medium transition-all ${isActive('/broker/downloadables') ? 'bg-blue-50 text-blue-500' : 'hover:bg-gray-50 hover:text-gray-900'}`}
-      >
-        <FiDownload className="text-lg" />
-        <span>Downloadables</span>
-      </Link>
-      <Link
-        href="/broker/digital-card"
-        className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg no-underline text-gray-500 text-[13px] font-medium transition-all ${isActive('/broker/digital-card') ? 'bg-blue-50 text-blue-500' : 'hover:bg-gray-50 hover:text-gray-900'}`}
-      >
-        <FiCreditCard className="text-lg" />
-        <span>Digital Business Card</span>
-      </Link>
+      <NavLink href="/broker" icon={FiGrid} label="Dashboard" active={isActive('/broker') && !pathname?.includes('/broker/')} />
+      <NavLink href="/broker/company-profile" icon={FiLayout} label="Company Profile" active={isActive('/broker/company-profile')} />
+      <NavLink href="/broker/team" icon={FiUsers} label="Team Management" active={isActive('/broker/team')} />
+      <NavLink href="/broker/listings" icon={FiHome} label="Listings" active={isActive('/broker/listings')} />
+      <NavLink href="/broker/approvals" icon={FiCheckSquare} label="Agent Approvals" active={isActive('/broker/approvals')} />
+      <NavLink href="/broker/page-builder" icon={FiFileText} label="Page Builder" active={isActive('/broker/page-builder')} />
+      <NavLink href="/broker/reports" icon={FiBarChart2} label="Reports" active={isActive('/broker/reports')} />
+      <NavLink href="/broker/inbox" icon={FiMail} label="Inbox" active={isActive('/broker/inbox')} badge />
+      <NavLink href="/broker/downloadables" icon={FiDownload} label="Downloadables" active={isActive('/broker/downloadables')} />
+      <NavLink href="/broker/digital-card" icon={FiCreditCard} label="Digital Business Card" active={isActive('/broker/digital-card')} />
     </>
   )
 
@@ -410,14 +351,14 @@ function AppSidebar() {
           {isAdminRoute ? renderAdminSidebar() : isBrokerRoute ? renderBrokerSidebar() : renderAgentSidebar()}
         </nav>
 
-        {isBrokerRoute && (
+        {(isBrokerRoute || isAgentRoute) && (
           <div className="relative flex-shrink-0" ref={logoutRef}>
             {showLogoutDropdown && (
               <div className="absolute bottom-full left-3 right-3 bg-white border border-gray-200 rounded-[10px] shadow-[0_-4px_16px_rgba(0,0,0,0.12)] p-1.5 mb-1.5 z-[100] animate-[slideUpFade_0.15s_ease-out]">
                 <button 
                   className="flex items-center gap-2.5 w-full px-3.5 py-2.5 bg-transparent border-none rounded-lg text-sm font-medium text-gray-900 cursor-pointer transition-colors hover:bg-gray-50" 
                   onClick={() => {
-                    router.push('/broker/account')
+                    router.push(isBrokerRoute ? '/broker/account' : '/agent/account')
                     setShowLogoutDropdown(false)
                   }}
                 >
@@ -453,7 +394,7 @@ function AppSidebar() {
               {!isCollapsed && (
                 <div className="flex flex-col gap-px flex-1 min-w-0">
                   <span className="text-[13px] font-semibold text-gray-900 whitespace-nowrap overflow-hidden text-ellipsis">John Anderson</span>
-                  <span className="text-[11px] text-gray-400">Broker</span>
+                  <span className="text-[11px] text-gray-400">{isBrokerRoute ? 'Broker' : 'Agent'}</span>
                 </div>
               )}
             </div>

@@ -205,7 +205,7 @@ export default function ListingsPage() {
   return (
     <div className="flex min-h-screen bg-gray-100 font-outfit"> {/* agent-dashboard */}
       <AppSidebar/>
-      <main className="ml-[280px] flex-1 w-[calc(100%-280px)] min-h-screen lg:ml-[240px] lg:w-[calc(100%-240px)] md:ml-0 md:w-full"> {/* broker-main */}
+      <main className="main-with-sidebar flex-1 min-h-screen"> {/* broker-main */}
         <div className="px-4 sm:px-6 md:px-10 lg:px-[150px] py-8 lg:py-6 md:py-4 md:pt-20">
           <BrokerHeader 
             title="Listings" 

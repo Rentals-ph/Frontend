@@ -1,9 +1,14 @@
 {
   "pages": {
-    "/page": [
+    "/broker/team/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/page.js"
+      "static/chunks/app/broker/team/page.js"
+    ],
+    "/broker/layout": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/broker/layout.js"
     ],
     "/layout": [
       "static/chunks/webpack.js",
@@ -11,20 +16,10 @@
       "static/css/app/layout.css",
       "static/chunks/app/layout.js"
     ],
-    "/broker/page": [
+    "/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/broker/page.js"
-    ],
-    "/broker/layout": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/broker/layout.js"
-    ],
-    "/broker/team/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/broker/team/page.js"
+      "static/chunks/app/page.js"
     ],
     "/agent/page": [
       "static/chunks/webpack.js",
@@ -36,15 +31,79 @@
       "static/chunks/main-app.js",
       "static/chunks/app/agent/layout.js"
     ],
-    "/agent/page-builder/page": [
+    "/broker/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/agent/page-builder/page.js"
+      "static/chunks/app/broker/page.js"
+    ],
+    "/about/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/about/page.js"
+    ],
+    "/properties/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/css/app/properties/page.css",
+      "static/chunks/app/properties/page.js"
+    ],
+    "/agent/create-listing/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/agent/create-listing/page.js"
+    ],
+    "/agent/create-listing/layout": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/agent/create-listing/layout.js"
+    ],
+    "/agent/create-listing/basic-info/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/css/app/agent/create-listing/basic-info/page.css",
+      "static/chunks/app/agent/create-listing/basic-info/page.js"
+    ],
+    "/agent/listing-assistant/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/css/app/agent/listing-assistant/page.css",
+      "static/chunks/app/agent/listing-assistant/page.js"
+    ],
+    "/agent/listings/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/css/app/agent/listings/page.css",
+      "static/chunks/app/agent/listings/page.js"
+    ],
+    "/agent/create-listing/visuals-features/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/agent/create-listing/visuals-features/page.js"
+    ],
+    "/rent-managers/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/rent-managers/page.js"
+    ],
+    "/blog/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/blog/page.js"
     ],
     "/agent/inbox/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
       "static/chunks/app/agent/inbox/page.js"
+    ],
+    "/agent/page-builder/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/agent/page-builder/page.js"
+    ],
+    "/agent/create-listing/owner-review/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/agent/create-listing/owner-review/page.js"
     ]
   }
 }

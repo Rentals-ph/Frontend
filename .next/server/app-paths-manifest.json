@@ -1,9 +1,0 @@
-{
-  "/blog/page": "app/blog/page.js",
-  "/news/page": "app/news/page.js",
-  "/page": "app/page.js",
-  "/broker/account/page": "app/broker/account/page.js",
-  "/broker/team/page": "app/broker/team/page.js",
-  "/broker/page": "app/broker/page.js",
-  "/broker/listings/page": "app/broker/listings/page.js"
-}

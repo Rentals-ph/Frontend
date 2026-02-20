@@ -26,8 +26,7 @@ import {
   FiMove,
   FiCheck,
   FiX,
-  FiExternalLink,
-  FiBell
+  FiExternalLink
 } from 'react-icons/fi'
 
 interface PageBuilderProps {
@@ -679,9 +678,6 @@ export default function PageBuilder({ userType }: PageBuilderProps) {
                 </p>
               </div>
               <div className="flex items-center gap-3.5 md:w-full md:justify-between md:gap-2.5">
-                <button className="w-11 h-11 rounded-xl border-0 bg-white flex items-center justify-center text-gray-600 text-xl cursor-pointer transition-all duration-200 shadow-sm hover:bg-gray-50 hover:text-blue-600">
-                  <FiBell />
-                </button>
                 <a href="/broker/create-listing" className="inline-flex items-center gap-2 py-2.5 px-5 bg-blue-600 text-white text-sm font-semibold rounded-xl border-0 no-underline cursor-pointer transition-all duration-200 shadow-sm hover:bg-blue-700 active:scale-[0.98]">
                   <FiPlus />
                   Add Listing
@@ -2110,21 +2106,27 @@ export default function PageBuilder({ userType }: PageBuilderProps) {
 
       {/* Full Page Preview Modal */}
       {showFullPreview && (
-        <div className="full-preview-overlay" onClick={() => setShowFullPreview(false)}>
-          <div className="full-preview-container" onClick={(e) => e.stopPropagation()}>
-            <div className="full-preview-header">
-              <h2 className="full-preview-title">
+        <div 
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto"
+          onClick={() => setShowFullPreview(false)}
+        >
+          <div 
+            className="bg-white rounded-2xl shadow-2xl w-full max-w-6xl max-h-[90vh] flex flex-col my-8"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between p-6 border-b border-gray-200 sticky top-0 bg-white rounded-t-2xl z-10">
+              <h2 className="text-xl font-bold text-gray-900">
                 {activeTab === 'profile' ? 'Profile Page Preview' : 'Property Page Preview'}
               </h2>
               <button 
-                className="full-preview-close"
+                className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
                 onClick={() => setShowFullPreview(false)}
                 aria-label="Close preview"
               >
-                <FiX />
+                <FiX className="w-5 h-5" />
               </button>
             </div>
-            <div className="full-preview-content">
+            <div className="overflow-y-auto flex-1 p-6">
               {activeTab === 'profile' ? (
                 <div className="full-preview-page">
                   {/* Profile Preview */}
@@ -2252,7 +2254,7 @@ export default function PageBuilder({ userType }: PageBuilderProps) {
                   )}
                 </div>
               ) : (
-                <div className="full-preview-property-page">
+                <div className="bg-white rounded-2xl p-6 px-4 sm:px-6 md:px-10">
                   {/* Property Preview */}
                   {layoutSections.map((section) => {
                     if (!section.visible) return null
@@ -2260,22 +2262,21 @@ export default function PageBuilder({ userType }: PageBuilderProps) {
                     switch (section.id) {
                       case 'hero':
                         return (
-                          <div key={section.id} className="full-preview-property-hero-section">
+                          <div key={section.id} className="mb-6">
                             <div 
-                              className="full-preview-property-hero-image"
+                              className="relative w-full h-96 rounded-2xl overflow-hidden"
                               style={{
                                 backgroundImage: heroImage ? `url(${heroImage})` : 'none',
                                 backgroundColor: heroImage ? 'transparent' : '#E5E7EB',
                                 backgroundSize: 'cover',
                                 backgroundPosition: 'center',
-                                position: 'relative',
                                 filter: `brightness(${100 - overallDarkness}%)`
                               }}
                             >
-                              <div className="full-preview-property-hero-overlay">
-                                <h1 className="full-preview-property-hero-title">{mainHeading || 'Property Title'}</h1>
-                                <p className="full-preview-property-hero-tagline">{tagline || 'Property tagline will appear here...'}</p>
-                                <button className="full-preview-property-hero-price-btn">
+                              <div className="absolute inset-0 bg-black/30 flex flex-col items-center justify-center text-center px-6">
+                                <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">{mainHeading || 'Property Title'}</h1>
+                                <p className="text-lg md:text-xl text-white/90 mb-6">{tagline || 'Property tagline will appear here...'}</p>
+                                <button className="px-6 py-3 bg-blue-600 text-white font-semibold rounded-xl hover:bg-blue-700 transition-colors">
                                   Starts at {propertyPrice || 'Price'} /mo
                                 </button>
                               </div>
@@ -2285,29 +2286,29 @@ export default function PageBuilder({ userType }: PageBuilderProps) {
                       
                       case 'propertyDescription':
                         return (
-                          <div key={section.id} className="full-preview-property-about-section">
-                            <h2 className="full-preview-property-section-heading">About</h2>
-                            <p className="full-preview-property-about-text">{propertyDescription || 'Property description will appear here...'}</p>
+                          <div key={section.id} className="mb-6">
+                            <h2 className="text-2xl font-bold text-gray-900 mb-3">About</h2>
+                            <p className="text-gray-700 leading-relaxed">{propertyDescription || 'Property description will appear here...'}</p>
                           </div>
                         )
                       
                       case 'propertyImages':
                         return (
-                          <div key={section.id} className="full-preview-property-inside-section">
-                            <h2 className="full-preview-property-section-heading">What's Inside?</h2>
-                            <div className="full-preview-property-inside-images">
+                          <div key={section.id} className="mb-6">
+                            <h2 className="text-2xl font-bold text-gray-900 mb-4">What's Inside?</h2>
+                            <div className="grid grid-cols-3 gap-4">
                               {propertyImages.length > 0 ? (
                                 propertyImages.map((image, index) => (
                                   <div 
                                     key={index} 
-                                    className="full-preview-property-inside-image-item"
+                                    className="aspect-square rounded-lg overflow-hidden bg-gray-200"
                                     style={{ borderRadius: getCornerRadiusClass() }}
                                   >
-                                    <img src={image} alt={`Interior ${index + 1}`} />
+                                    <img src={image} alt={`Interior ${index + 1}`} className="w-full h-full object-cover" />
                                   </div>
                                 ))
                               ) : (
-                                <p style={{ color: '#6B7280', fontStyle: 'italic' }}>Property images will appear here...</p>
+                                <p className="text-gray-500 italic col-span-3">Property images will appear here...</p>
                               )}
                             </div>
                           </div>
@@ -2317,7 +2318,7 @@ export default function PageBuilder({ userType }: PageBuilderProps) {
                         return (
                           <div 
                             key={section.id}
-                            className="full-preview-property-agent-card"
+                            className="p-6 mb-6 text-white"
                             style={{
                               backgroundColor: selectedBrandColor === 'white' ? '#3B82F6' : 
                                              selectedBrandColor === 'dark' ? '#1F2937' :
@@ -2326,33 +2327,35 @@ export default function PageBuilder({ userType }: PageBuilderProps) {
                               borderRadius: getCornerRadiusClass()
                             }}
                           >
-                            <div className="full-preview-property-agent-content">
-                              <div className="full-preview-property-agent-image-wrapper">
-                                <img src={profileImage || profileCardImage} alt={profileCardName || 'Agent'} className="full-preview-property-agent-image" />
+                            <div className="flex gap-4">
+                              <div className="flex-shrink-0">
+                                <div className="w-20 h-20 rounded-full overflow-hidden bg-white/20 border-2 border-white/30">
+                                  <img src={profileImage || profileCardImage || ASSETS.PLACEHOLDER_PROFILE} alt={profileCardName || 'Agent'} className="w-full h-full object-cover" />
+                                </div>
                               </div>
-                              <div className="full-preview-property-agent-info">
-                                <h3 className="full-preview-property-agent-name">{profileCardName || 'Your Name'}</h3>
-                                <p className="full-preview-property-agent-role">{profileCardRole || 'Property Agent'}</p>
-                                <p className="full-preview-property-agent-quote">{bio || profileCardBio || 'Your bio from Profile page'}</p>
-                                <div className="full-preview-property-agent-icons">
+                              <div className="flex-1">
+                                <h3 className="text-xl font-bold text-white mb-1">{profileCardName || 'Your Name'}</h3>
+                                <p className="text-sm text-white/80 mb-3">{profileCardRole || 'Property Agent'}</p>
+                                <p className="text-sm text-white/90 mb-4">{bio || profileCardBio || 'Your bio from Profile page'}</p>
+                                <div className="flex items-center gap-3">
                                   {contactInfo.email && (
-                                    <a href={`mailto:${contactInfo.email}`} className="full-preview-property-agent-icon">
-                                      <FiMail />
+                                    <a href={`mailto:${contactInfo.email}`} className="w-8 h-8 rounded-full bg-white/20 backdrop-blur-sm text-white hover:bg-white/30 transition-colors flex items-center justify-center">
+                                      <FiMail className="w-4 h-4" />
                                     </a>
                                   )}
                                   {contactInfo.phone && (
-                                    <a href={`tel:${contactInfo.phone}`} className="full-preview-property-agent-icon">
-                                      <FiPhone />
+                                    <a href={`tel:${contactInfo.phone}`} className="w-8 h-8 rounded-full bg-white/20 backdrop-blur-sm text-white hover:bg-white/30 transition-colors flex items-center justify-center">
+                                      <FiPhone className="w-4 h-4" />
                                     </a>
                                   )}
                                   {contactInfo.message && (
-                                    <a href={contactInfo.message} className="full-preview-property-agent-icon" target="_blank" rel="noopener noreferrer">
-                                      <FiMessageCircle />
+                                    <a href={contactInfo.message} className="w-8 h-8 rounded-full bg-white/20 backdrop-blur-sm text-white hover:bg-white/30 transition-colors flex items-center justify-center" target="_blank" rel="noopener noreferrer">
+                                      <FiMessageCircle className="w-4 h-4" />
                                     </a>
                                   )}
                                   {contactInfo.website && (
-                                    <a href={contactInfo.website} className="full-preview-property-agent-icon" target="_blank" rel="noopener noreferrer">
-                                      <FiGlobe />
+                                    <a href={contactInfo.website} className="w-8 h-8 rounded-full bg-white/20 backdrop-blur-sm text-white hover:bg-white/30 transition-colors flex items-center justify-center" target="_blank" rel="noopener noreferrer">
+                                      <FiGlobe className="w-4 h-4" />
                                     </a>
                                   )}
                                 </div>
@@ -2367,52 +2370,54 @@ export default function PageBuilder({ userType }: PageBuilderProps) {
                   })}
 
                   {/* Ready To View? Section */}
-                  <div className="full-preview-property-contact-section">
-                    <div className="full-preview-property-contact-left">
-                      <h2 className="full-preview-property-section-heading">Ready To View?</h2>
-                      <p className="full-preview-property-contact-text">Schedule a tour or ask any questions about the property.</p>
-                      <div className="full-preview-property-contact-info">
-                        <div className="full-preview-property-contact-item">
-                          <FiPhone className="full-preview-property-contact-icon" />
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <div>
+                      <h2 className="text-2xl font-bold text-gray-900 mb-2">Ready To View?</h2>
+                      <p className="text-gray-600 mb-4">Schedule a tour or ask any questions about the property.</p>
+                      <div className="flex flex-col gap-3">
+                        <div className="flex items-center gap-3 text-gray-700">
+                          <FiPhone className="w-5 h-5 text-gray-500" />
                           <span>{contactInfo.phone || 'Phone number'}</span>
                         </div>
-                        <div className="full-preview-property-contact-item">
-                          <FiMail className="full-preview-property-contact-icon" />
+                        <div className="flex items-center gap-3 text-gray-700">
+                          <FiMail className="w-5 h-5 text-gray-500" />
                           <span>{contactInfo.email || 'Email address'}</span>
                         </div>
                       </div>
                     </div>
-                    <div className="full-preview-property-contact-form">
-                      <h3 className="full-preview-property-form-title">Contact {profileCardName || 'Agent'}</h3>
-                      <input
-                        type="text"
-                        className="full-preview-property-form-input"
-                        placeholder="Your name"
-                        value={contactFormName}
-                        onChange={(e) => setContactFormName(e.target.value)}
-                      />
-                      <input
-                        type="email"
-                        className="full-preview-property-form-input"
-                        placeholder="Your email"
-                        value={contactFormEmail}
-                        onChange={(e) => setContactFormEmail(e.target.value)}
-                      />
-                      <textarea
-                        className="full-preview-property-form-textarea"
-                        placeholder="Your message"
-                        value={contactFormMessage}
-                        onChange={(e) => setContactFormMessage(e.target.value)}
-                        rows={4}
-                      />
-                      <button 
-                        className="full-preview-property-form-submit-btn"
-                        onClick={handleContactFormSubmit}
-                        type="submit"
-                      >
-                        <span>Send Inquiry</span>
-                        <FiMessageCircle />
-                      </button>
+                    <div className="bg-gray-50 rounded-lg p-6">
+                      <h3 className="text-lg font-semibold text-gray-900 mb-4">Contact {profileCardName || 'Agent'}</h3>
+                      <div className="flex flex-col gap-3">
+                        <input
+                          type="text"
+                          className="w-full px-4 py-2.5 border border-gray-300 rounded-lg bg-white text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          placeholder="Your name"
+                          value={contactFormName}
+                          onChange={(e) => setContactFormName(e.target.value)}
+                        />
+                        <input
+                          type="email"
+                          className="w-full px-4 py-2.5 border border-gray-300 rounded-lg bg-white text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          placeholder="Your email"
+                          value={contactFormEmail}
+                          onChange={(e) => setContactFormEmail(e.target.value)}
+                        />
+                        <textarea
+                          className="w-full px-4 py-2.5 border border-gray-300 rounded-lg bg-white text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-y"
+                          placeholder="Your message"
+                          value={contactFormMessage}
+                          onChange={(e) => setContactFormMessage(e.target.value)}
+                          rows={4}
+                        />
+                        <button 
+                          className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors"
+                          onClick={handleContactFormSubmit}
+                          type="submit"
+                        >
+                          <span>Send Inquiry</span>
+                          <FiMessageCircle className="w-4 h-4" />
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>

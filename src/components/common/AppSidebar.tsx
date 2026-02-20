@@ -24,6 +24,7 @@ import {
   FiCheckSquare,
   FiGrid,
   FiLogOut,
+  FiUser,
 } from 'react-icons/fi'
 
 
@@ -324,13 +325,6 @@ function AppSidebar() {
         <FiCreditCard className="text-lg" />
         <span>Digital Business Card</span>
       </Link>
-      <Link
-        href="/broker/settings"
-        className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg no-underline text-gray-500 text-[13px] font-medium transition-all ${isActive('/broker/settings') ? 'bg-blue-50 text-blue-500' : 'hover:bg-gray-50 hover:text-gray-900'}`}
-      >
-        <FiSettings className="text-lg" />
-        <span>Settings</span>
-      </Link>
     </>
   )
 
@@ -430,6 +424,16 @@ function AppSidebar() {
           <div className="relative flex-shrink-0" ref={logoutRef}>
             {showLogoutDropdown && (
               <div className="absolute bottom-full left-3 right-3 bg-white border border-gray-200 rounded-[10px] shadow-[0_-4px_16px_rgba(0,0,0,0.12)] p-1.5 mb-1.5 z-[100] animate-[slideUpFade_0.15s_ease-out]">
+                <button 
+                  className="flex items-center gap-2.5 w-full px-3.5 py-2.5 bg-transparent border-none rounded-lg text-sm font-medium text-gray-900 cursor-pointer transition-colors hover:bg-gray-50" 
+                  onClick={() => {
+                    router.push('/broker/account')
+                    setShowLogoutDropdown(false)
+                  }}
+                >
+                  <FiUser className="text-lg flex-shrink-0" />
+                  <span>Account</span>
+                </button>
                 <button className="flex items-center gap-2.5 w-full px-3.5 py-2.5 bg-transparent border-none rounded-lg text-sm font-medium text-red-500 cursor-pointer transition-colors hover:bg-red-50" onClick={handleLogout}>
                   <FiLogOut className="text-lg flex-shrink-0" />
                   <span>Logout</span>

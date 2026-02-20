@@ -11,6 +11,21 @@
       "static/css/app/layout.css",
       "static/chunks/app/layout.js"
     ],
+    "/broker/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/broker/page.js"
+    ],
+    "/broker/layout": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/broker/layout.js"
+    ],
+    "/broker/team/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/broker/team/page.js"
+    ],
     "/agent/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
@@ -26,15 +41,10 @@
       "static/chunks/main-app.js",
       "static/chunks/app/agent/page-builder/page.js"
     ],
-    "/about/page": [
+    "/agent/inbox/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/about/page.js"
-    ],
-    "/property/[id]/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/property/[id]/page.js"
+      "static/chunks/app/agent/inbox/page.js"
     ]
   }
 }

@@ -4,6 +4,7 @@
  */
 
 import React from 'react'
+import { getAsset } from '@/utils/assets'
 import type { ListingAssistantMessage } from '../../types/listingAssistant'
 
 interface MessageButton {
@@ -32,68 +33,86 @@ export function MessageBubble({ message, isLatest = false, buttons }: MessageBub
 
   return (
     <div 
-      className={`flex ${isUser ? 'justify-end' : 'justify-start'} mb-4`}
+      className={`flex flex-col w-full ${isUser ? 'items-end' : 'items-start'} mb-4`}
     >
-      <div className="flex flex-col max-w-[85%] md:max-w-[75%]">
-        <div 
-          className={`
-            ${isUser 
-              ? 'bg-blue-600 text-white rounded-2xl rounded-br-md' 
-              : 'bg-white border border-gray-200 text-gray-800 rounded-2xl rounded-bl-md shadow-sm'
-            }
-            px-4 py-3
-            ${isLatest && !isUser ? 'animate-fade-in' : ''}
-          `}
+      {isUser ? (
+        <div className="max-w-[75%] !border-2 !border-[#002978] p-3 px-4 rounded-xl font-outfit text-sm leading-relaxed break-words text-left bg-[#205ED7] text-white rounded-br-sm shadow-sm"
+          style={{
+            borderWidth: '2px',
+            borderStyle: 'solid',
+            borderColor: '#002978',
+          }}
         >
-          {/* Message content */}
-          <div className={`text-sm leading-relaxed whitespace-pre-wrap ${isUser ? '' : 'prose prose-sm max-w-none'}`}>
-            {message.content}
-          </div>
-          
-          {/* Timestamp */}
-          <div 
-            className={`
-              text-xs mt-1.5
-              ${isUser ? 'text-blue-200' : 'text-gray-400'}
-            `}
-          >
-            {formattedTime}
+          <div className="whitespace-pre-wrap">{message.content}</div>
+          {formattedTime && (
+            <div className="text-xs mt-1.5 text-blue-200">
+              {formattedTime}
+            </div>
+          )}
+        </div>
+      ) : (
+        <div className="flex items-start gap-2 max-w-[75%]">
+          <img 
+            src={getAsset('LOGO_AI')} 
+            alt="AI Logo" 
+            className="w-12 h-12 flex-shrink-0"
+          />
+          <div className="relative">
+            {/* Speech bubble pointer pointing to the logo - top left */}
+            <div 
+              className="relative overflow-hidden p-3 px-4 bg-white !border-2 !border-[#002978] rounded-xl rounded-tl-sm shadow-lg font-outfit text-sm leading-relaxed break-words text-left"
+              style={{
+                borderWidth: '2px',
+                borderStyle: 'solid',
+                borderColor: '#002978',
+                boxShadow: '0 4px 12px rgba(0, 41, 120, 0.15), 0 2px 4px rgba(0, 41, 120, 0.1)',
+              }}
+            >
+              <div className="relative z-10 whitespace-pre-wrap text-gray-800">
+                {message.content}
+              </div>
+              {formattedTime && (
+                <div className="text-xs mt-1.5 text-gray-400">
+                  {formattedTime}
+                </div>
+              )}
+            </div>
           </div>
         </div>
-        
-        {/* Buttons below AI messages */}
-        {!isUser && buttons && buttons.length > 0 && (
-          <div className="mt-2 flex flex-wrap gap-2">
-            {buttons.map((button, idx) => {
-              let buttonClass = 'px-4 py-2 rounded-lg transition-colors text-sm font-medium shadow-sm'
-              
-              switch (button.variant) {
-                case 'selected':
-                  buttonClass += ' bg-blue-700 text-white hover:bg-blue-800'
-                  break
-                case 'primary':
-                  buttonClass += ' bg-blue-600 text-white hover:bg-blue-700'
-                  break
-                case 'success':
-                  buttonClass += ' bg-green-600 text-white hover:bg-green-700'
-                  break
-                default:
-                  buttonClass += ' bg-blue-600 text-white hover:bg-blue-700'
-              }
-              
-              return (
-                <button
-                  key={idx}
-                  onClick={button.onClick}
-                  className={buttonClass}
-                >
-                  {button.label}
-                </button>
-              )
-            })}
-          </div>
-        )}
-      </div>
+      )}
+      
+      {/* Buttons below AI messages */}
+      {!isUser && buttons && buttons.length > 0 && (
+        <div className="mt-2 ml-14 flex flex-wrap gap-2">
+          {buttons.map((button, idx) => {
+            let buttonClass = 'px-4 py-2 rounded-lg transition-colors text-sm font-medium shadow-sm'
+            
+            switch (button.variant) {
+              case 'selected':
+                buttonClass += ' bg-blue-700 text-white hover:bg-blue-800'
+                break
+              case 'primary':
+                buttonClass += ' bg-blue-600 text-white hover:bg-blue-700'
+                break
+              case 'success':
+                buttonClass += ' bg-green-600 text-white hover:bg-green-700'
+                break
+              default:
+                buttonClass += ' bg-blue-600 text-white hover:bg-blue-700'
+            }
+            
+            return (
+              <button
+                key={idx}
+                onClick={button.onClick}
+                className={buttonClass}
+              >
+                {button.label}
+              </button>
+            )
+          })}
+        </div>
+      )}
     </div>
   )
 }
@@ -104,12 +123,27 @@ export function MessageBubble({ message, isLatest = false, buttons }: MessageBub
  */
 export function TypingIndicator() {
   return (
-    <div className="flex justify-start mb-4">
-      <div className="bg-white border border-gray-200 rounded-2xl rounded-bl-md px-4 py-3 shadow-sm">
-        <div className="flex items-center gap-1">
-          <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-          <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-          <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+    <div className="flex items-start gap-2 mb-4">
+      <img 
+        src={getAsset('LOGO_AI')} 
+        alt="AI Logo" 
+        className="w-12 h-12 flex-shrink-0"
+      />
+      <div className="relative">
+        <div 
+          className="relative overflow-hidden p-3 px-4 bg-white !border-2 !border-[#002978] rounded-xl rounded-tl-sm shadow-lg font-outfit"
+          style={{
+            borderWidth: '2px',
+            borderStyle: 'solid',
+            borderColor: '#002978',
+            boxShadow: '0 4px 12px rgba(0, 41, 120, 0.15), 0 2px 4px rgba(0, 41, 120, 0.1)',
+          }}
+        >
+          <div className="flex items-center gap-1">
+            <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+            <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+            <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+          </div>
         </div>
       </div>
     </div>

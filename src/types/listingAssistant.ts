@@ -68,6 +68,7 @@ export interface ExtractedPropertyData {
   description?: string | null;
   status?: ListingStatus | null;
   price_type?: PriceType | null;
+  description_template?: DescriptionTemplate | null;
   
   // Location coordinates
   latitude?: number | null;
@@ -318,6 +319,7 @@ export const FIELD_LABELS: Record<keyof ExtractedPropertyData, string> = {
   description: 'Description',
   status: 'Listing Status',
   price_type: 'Price Type',
+  description_template: 'Description Template',
   latitude: 'Latitude',
   longitude: 'Longitude',
   images: 'Images',

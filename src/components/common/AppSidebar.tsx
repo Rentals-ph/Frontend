@@ -289,52 +289,16 @@ function AppSidebar() {
   // Agent sidebar content
   const renderAgentSidebar = () => (
     <>
-      {/*<Link
-        href="/"
-        className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg no-underline text-gray-500 text-[13px] font-medium transition-all ${isActive('/') && !pathname?.includes('//') ? 'bg-blue-50 text-blue-500' : 'hover:bg-gray-50 hover:text-gray-900'}`}
-      >
-        <FiLayout className="text-lg" />
-        <span>Home</span>
-      </Link>*/}
+      <NavLink href="/" icon={FiLayout} label="Home" active={isActive('/') && !pathname?.includes('//')} />
       <NavLink href="/agent" icon={FiHome} label="Dashboard" active={isActive('/agent') && !pathname?.includes('/agent/')} />
       <NavLink href="/agent/inbox" icon={FiMail} label="Inbox" active={isActive('/agent/inbox')} badge />
-      {/* <Link
-        href="/agent/downloadables"
-        className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg no-underline text-gray-500 text-[13px] font-medium transition-all ${isActive('/agent/downloadables') ? 'bg-blue-50 text-blue-500' : 'hover:bg-gray-50 hover:text-gray-900'}`}
-      >
-        <FiDownload className="text-lg" />
-        <span>Downloadables</span>
-      </Link> 
-      <Link
-        href="/agent/digital-card"
-        className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg no-underline text-gray-500 text-[13px] font-medium transition-all ${isActive('/agent/digital-card') ? 'bg-blue-50 text-blue-500' : 'hover:bg-gray-50 hover:text-gray-900'}`}
-      >
-        <FiCreditCard className="text-lg" />
-        <span>Digital Business Card</span>
-      </Link>*/}
+      <NavLink href="/agent/downloadables" icon={FiDownload} label="Downloadables" active={isActive('/agent/downloadables')} />
+      <NavLink href="/agent/digital-card" icon={FiCreditCard} label="Digital Business Card" active={isActive('/agent/digital-card')} />
       <NavLink href="/agent/page-builder" icon={FiSettings} label="Page Builder" active={isActive('/agent/page-builder')} />
       <NavLink href="/agent/listings" icon={FiList} label="My Listings" active={isActive('/agent/listings')} />
-        {/* <Link
-          href="/agent/tracker"
-          className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg no-underline text-gray-500 text-[13px] font-medium transition-all ${isActive('/agent/tracker') ? 'bg-blue-50 text-blue-500' : 'hover:bg-gray-50 hover:text-gray-900'}`}
-        >
-          <FiBarChart2 className="text-lg" />
-          <span>Rental Tracker</span>
-        </Link>
-        <Link
-          href="/agent/rent-estimate"
-          className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg no-underline text-gray-500 text-[13px] font-medium transition-all ${isActive('/agent/rent-estimate') ? 'bg-blue-50 text-blue-500' : 'hover:bg-gray-50 hover:text-gray-900'}`}
-        >
-          <FiFileText className="text-lg" />
-          <span>Rent Estimate</span>
-        </Link>
-        <Link
-          href="/agent/blogs"
-          className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg no-underline text-gray-500 text-[13px] font-medium transition-all ${isActive('/agent/blogs') ? 'bg-blue-50 text-blue-500' : 'hover:bg-gray-50 hover:text-gray-900'}`}
-        >
-          <FiBookOpen className="text-lg" />
-          <span>Share Blogs</span>
-        </Link>*/}
+      <NavLink href="/agent/tracker" icon={FiBarChart2} label="Rental Tracker" active={isActive('/agent/tracker')} />
+      <NavLink href="/agent/rent-estimate" icon={FiFileText} label="Rent Estimate" active={isActive('/agent/rent-estimate')} />
+      <NavLink href="/agent/blogs" icon={FiBookOpen} label="Share Blogs" active={isActive('/agent/blogs')} />
     </>
   )
 

@@ -91,7 +91,7 @@ function PropertiesForRent() {
                 : undefined
               const agentImage = property.agent
                 ? resolveAgentAvatar(
-                    property.agent.image || property.agent.avatar || (property.agent as any).profile_image,
+                    (property.agent as any).image || (property.agent as any).avatar || (property.agent as any).profile_image,
                     property.agent.id
                   )
                 : undefined

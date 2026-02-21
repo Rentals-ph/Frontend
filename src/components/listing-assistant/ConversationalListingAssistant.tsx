@@ -14,8 +14,6 @@ import type {
   ListingAssistantMessage,
   DataWarning,
   UploadedImage,
-  DescriptionTemplate,
-  PropertyType,
 } from '../../types/listingAssistant'
 import {
   PROPERTY_TYPE_LABELS,
@@ -71,17 +69,23 @@ export function ConversationalListingAssistant({
   
   // Refs
   const messagesEndRef = useRef<HTMLDivElement>(null)
+  const messagesContainerRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLTextAreaElement>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   // Scroll to bottom
   const scrollToBottom = useCallback(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+    if (messagesContainerRef.current) {
+      messagesContainerRef.current.scrollTo({
+        top: messagesContainerRef.current.scrollHeight,
+        behavior: 'smooth'
+      })
+    }
   }, [])
 
   useEffect(() => {
     scrollToBottom()
-  }, [messages, scrollToBottom])
+  }, [messages, isLoading, scrollToBottom])
 
   // Initialize conversation
   useEffect(() => {
@@ -1040,22 +1044,6 @@ export function ConversationalListingAssistant({
               style={{ width: `${calculateProgress()}%` }}
             />
           </div>
-          <div className="text-xs text-gray-500">
-            {calculateProgress()}% Complete • Step {REQUIRED_FIELDS.length - missingFields.length}/{REQUIRED_FIELDS.length}
-          </div>
-          <div className="mt-2 grid grid-cols-2 gap-2 text-sm">
-            {REQUIRED_FIELDS.slice(0, 4).map(field => {
-              const value = extractedData[field as keyof ExtractedPropertyData]
-              return (
-                <div key={field} className="flex items-center gap-2">
-                  <span className="text-gray-500">{FIELD_LABELS[field as keyof typeof FIELD_LABELS]}:</span>
-                  <span className="font-medium text-gray-800">
-                    {value ? String(value) : '—'}
-                  </span>
-                </div>
-              )
-            })}
-          </div>
         </div>
       )}
 
@@ -1069,7 +1057,7 @@ export function ConversationalListingAssistant({
       )}
 
       {/* Messages Area */}
-      <div className="flex-1 overflow-y-auto p-4 bg-gray-50">
+      <div ref={messagesContainerRef} className="flex-1 overflow-y-auto p-4 bg-gray-50">
         {messages.map((msg, idx) => {
           const isLatestMessage = idx === messages.length - 1
           const isLatestAssistantMessage = isLatestMessage && msg.role === 'assistant' && !isLoading
@@ -1126,8 +1114,8 @@ export function ConversationalListingAssistant({
                         ...response.extracted_data,
                         location: address,
                         address: address,
-                        latitude: String(latitude),
-                        longitude: String(longitude),
+                        latitude: Number(latitude),
+                        longitude: Number(longitude),
                       })
                       setMissingFields(response.missing_fields)
                       setFormReady(response.form_ready)
@@ -1274,7 +1262,7 @@ export function ConversationalListingAssistant({
                   }
                   setMessages(prev => [...prev, aiMessage])
                   
-                  if (onListingSubmitted) {
+                  if (onListingSubmitted && response.property_id !== undefined) {
                     onListingSubmitted(response.property_id)
                   }
                 } catch (err: any) {
@@ -1354,7 +1342,7 @@ export function ConversationalListingAssistant({
             </div>
           )}
 
-          <div className="flex items-end gap-2">
+          <div className="flex items-center gap-2">
             <div className="flex-1">
               <textarea
                 ref={inputRef}
@@ -1374,14 +1362,14 @@ export function ConversationalListingAssistant({
                   'Type your message...'
                 }
                 rows={1}
-                className="w-full resize-none rounded-lg border border-gray-300 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full resize-none rounded-lg border border-gray-300 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 min-h-[42px]"
                 disabled={isLoading}
               />
             </div>
             <button
               onClick={handleTextSubmit}
               disabled={!inputValue.trim() || isLoading}
-              className="px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed"
+              className="px-4 py-3 h-[42px] bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed flex items-center justify-center whitespace-nowrap"
             >
               Send
             </button>
@@ -1413,8 +1401,8 @@ export function ConversationalListingAssistant({
                       await listingAssistantApi.saveMapCoordinates(conversationId, lat, lng)
                       setExtractedData(prev => ({
                         ...prev,
-                        latitude: String(lat),
-                        longitude: String(lng),
+                        latitude: Number(lat),
+                        longitude: Number(lng),
                       }))
                     } catch (err: any) {
                       setError(err.message || 'Failed to save location')

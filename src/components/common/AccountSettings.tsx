@@ -25,6 +25,8 @@ export interface EditFormData {
   email: string
   countryCode: string
   contactNumber: string
+  whatsapp?: string
+  facebook?: string
   aboutYourself: string
   addressLine1: string
   country: string
@@ -294,6 +296,36 @@ export default function AccountSettings({
                         className="flex-1 px-4 py-3 border border-gray-300 rounded-lg text-sm text-gray-900 bg-white transition-all font-inherit focus:outline-none focus:border-blue-500 focus:shadow-[0_0_0_3px_rgba(59,130,246,0.1)]"
                       />
                     </div>
+                  </div>
+
+                  <div className="flex flex-col gap-2">
+                    <label htmlFor="whatsapp" className="text-sm font-medium text-gray-700">
+                      WhatsApp Number
+                    </label>
+                    <input
+                      type="text"
+                      id="whatsapp"
+                      name="whatsapp"
+                      value={editFormData.whatsapp || ''}
+                      onChange={onEditFormChange}
+                      className="px-4 py-3 border border-gray-300 rounded-lg text-sm text-gray-900 bg-white transition-all font-inherit focus:outline-none focus:border-blue-500 focus:shadow-[0_0_0_3px_rgba(59,130,246,0.1)]"
+                      placeholder="e.g., +63 912 345 6789"
+                    />
+                  </div>
+
+                  <div className="flex flex-col gap-2">
+                    <label htmlFor="facebook" className="text-sm font-medium text-gray-700">
+                      Facebook Profile URL
+                    </label>
+                    <input
+                      type="text"
+                      id="facebook"
+                      name="facebook"
+                      value={editFormData.facebook || ''}
+                      onChange={onEditFormChange}
+                      className="px-4 py-3 border border-gray-300 rounded-lg text-sm text-gray-900 bg-white transition-all font-inherit focus:outline-none focus:border-blue-500 focus:shadow-[0_0_0_3px_rgba(59,130,246,0.1)]"
+                      placeholder="e.g., https://facebook.com/yourprofile"
+                    />
                   </div>
 
                   <div className="flex flex-col gap-2 col-span-2 lg:col-span-1">

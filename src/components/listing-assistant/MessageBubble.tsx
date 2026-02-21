@@ -6,12 +6,20 @@
 import React from 'react'
 import type { ListingAssistantMessage } from '../../types/listingAssistant'
 
+interface MessageButton {
+  label: string
+  value: string | number
+  onClick: () => void
+  variant?: 'default' | 'selected' | 'primary' | 'success'
+}
+
 interface MessageBubbleProps {
   message: ListingAssistantMessage
   isLatest?: boolean
+  buttons?: MessageButton[]
 }
 
-export function MessageBubble({ message, isLatest = false }: MessageBubbleProps) {
+export function MessageBubble({ message, isLatest = false, buttons }: MessageBubbleProps) {
   const isUser = message.role === 'user'
   
   const formattedTime = message.timestamp
@@ -26,31 +34,65 @@ export function MessageBubble({ message, isLatest = false }: MessageBubbleProps)
     <div 
       className={`flex ${isUser ? 'justify-end' : 'justify-start'} mb-4`}
     >
-      <div 
-        className={`
-          max-w-[85%] md:max-w-[75%]
-          ${isUser 
-            ? 'bg-blue-600 text-white rounded-2xl rounded-br-md' 
-            : 'bg-white border border-gray-200 text-gray-800 rounded-2xl rounded-bl-md shadow-sm'
-          }
-          px-4 py-3
-          ${isLatest && !isUser ? 'animate-fade-in' : ''}
-        `}
-      >
-        {/* Message content */}
-        <div className={`text-sm leading-relaxed whitespace-pre-wrap ${isUser ? '' : 'prose prose-sm max-w-none'}`}>
-          {message.content}
-        </div>
-        
-        {/* Timestamp */}
+      <div className="flex flex-col max-w-[85%] md:max-w-[75%]">
         <div 
           className={`
-            text-xs mt-1.5
-            ${isUser ? 'text-blue-200' : 'text-gray-400'}
+            ${isUser 
+              ? 'bg-blue-600 text-white rounded-2xl rounded-br-md' 
+              : 'bg-white border border-gray-200 text-gray-800 rounded-2xl rounded-bl-md shadow-sm'
+            }
+            px-4 py-3
+            ${isLatest && !isUser ? 'animate-fade-in' : ''}
           `}
         >
-          {formattedTime}
+          {/* Message content */}
+          <div className={`text-sm leading-relaxed whitespace-pre-wrap ${isUser ? '' : 'prose prose-sm max-w-none'}`}>
+            {message.content}
+          </div>
+          
+          {/* Timestamp */}
+          <div 
+            className={`
+              text-xs mt-1.5
+              ${isUser ? 'text-blue-200' : 'text-gray-400'}
+            `}
+          >
+            {formattedTime}
+          </div>
         </div>
+        
+        {/* Buttons below AI messages */}
+        {!isUser && buttons && buttons.length > 0 && (
+          <div className="mt-2 flex flex-wrap gap-2">
+            {buttons.map((button, idx) => {
+              let buttonClass = 'px-4 py-2 rounded-lg transition-colors text-sm font-medium shadow-sm'
+              
+              switch (button.variant) {
+                case 'selected':
+                  buttonClass += ' bg-blue-700 text-white hover:bg-blue-800'
+                  break
+                case 'primary':
+                  buttonClass += ' bg-blue-600 text-white hover:bg-blue-700'
+                  break
+                case 'success':
+                  buttonClass += ' bg-green-600 text-white hover:bg-green-700'
+                  break
+                default:
+                  buttonClass += ' bg-blue-600 text-white hover:bg-blue-700'
+              }
+              
+              return (
+                <button
+                  key={idx}
+                  onClick={button.onClick}
+                  className={buttonClass}
+                >
+                  {button.label}
+                </button>
+              )
+            })}
+          </div>
+        )}
       </div>
     </div>
   )

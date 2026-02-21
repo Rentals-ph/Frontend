@@ -117,6 +117,7 @@ export interface ProcessMessageResponse {
   description: string | null;
   warnings: DataWarning[];
   messages: ListingAssistantMessage[];
+  current_step?: string | null;
 }
 
 /**
@@ -131,6 +132,7 @@ export interface StartConversationResponse {
   form_ready: boolean;
   can_generate_description: boolean;
   messages: ListingAssistantMessage[];
+  current_step?: string | null;
 }
 
 /**
@@ -145,6 +147,7 @@ export interface GetConversationResponse {
   can_generate_description: boolean;
   messages: ListingAssistantMessage[];
   status: ConversationStatus;
+  current_step?: string | null;
 }
 
 /**
@@ -194,6 +197,7 @@ export interface GenerateDescriptionResponse {
   extracted_data?: ExtractedPropertyData;
   error?: string;
   template?: DescriptionTemplate;
+  ai_generated_description?: string;
 }
 
 /**
@@ -267,6 +271,7 @@ export const REQUIRED_FIELDS: (keyof ExtractedPropertyData)[] = [
   'property_type',
   'location',
   'price',
+  'price_type',
   'bedrooms',
   'bathrooms',
 ];

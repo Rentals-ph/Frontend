@@ -171,6 +171,61 @@ export async function deleteImage(
   return response.data
 }
 
+/**
+ * Auto-save draft progress
+ */
+export async function autoSave(
+  conversationId: string,
+  currentStep?: string,
+  data?: Partial<ExtractedPropertyData>
+): Promise<{ success: boolean; conversation_id: string; current_step?: string; extracted_data: ExtractedPropertyData }> {
+  const response = await apiClient.post(
+    `${BASE_PATH}/${conversationId}/auto-save`,
+    { current_step: currentStep, data }
+  )
+  return response.data
+}
+
+/**
+ * Save map coordinates
+ */
+export async function saveMapCoordinates(
+  conversationId: string,
+  latitude: number,
+  longitude: number
+): Promise<{ success: boolean; latitude: string; longitude: string }> {
+  const response = await apiClient.post(
+    `${BASE_PATH}/${conversationId}/map-coordinates`,
+    { latitude, longitude }
+  )
+  return response.data
+}
+
+/**
+ * Set field value via button
+ */
+export async function setField(
+  conversationId: string,
+  field: string,
+  value: string | number,
+  nextStep?: string
+): Promise<{
+  success: boolean;
+  field: string;
+  value: string | number;
+  current_step?: string;
+  extracted_data: ExtractedPropertyData;
+  missing_fields: string[];
+  form_ready: boolean;
+  ai_response: string;
+}> {
+  const response = await apiClient.post(
+    `${BASE_PATH}/${conversationId}/set-field`,
+    { field, value, next_step: nextStep }
+  )
+  return response.data
+}
+
 // Export all functions as named exports and as default object
 export const listingAssistantApi = {
   processMessage,
@@ -184,6 +239,9 @@ export const listingAssistantApi = {
   submitListing,
   uploadImages,
   deleteImage,
+  autoSave,
+  saveMapCoordinates,
+  setField,
 }
 
 export default listingAssistantApi

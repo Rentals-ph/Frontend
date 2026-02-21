@@ -103,7 +103,15 @@ apiClient.interceptors.response.use(
       errorInfo.message = error.message
     }
     
-    console.error('API Error:', errorInfo)
+    // Log error with more details for debugging
+    if (process.env.NODE_ENV === 'development') {
+      console.error('API Error:', errorInfo)
+    } else {
+      // In production, only log if there's meaningful error info
+      if (errorInfo.message || errorInfo.status || errorInfo.data) {
+        console.error('API Error:', errorInfo)
+      }
+    }
     
     return Promise.reject(error)
   }

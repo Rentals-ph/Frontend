@@ -30,7 +30,7 @@ export default function AgentShareBlogs() {
     <div className="flex min-h-screen bg-gray-100 font-outfit">
       <AppSidebar />
 
-      <main className="ml-[280px] flex-1 w-[calc(100%-280px)] p-0 min-h-screen lg:ml-[240px] lg:w-[calc(100%-240px)] md:ml-[200px] md:w-[calc(100%-200px)]">
+      <main className="main-with-sidebar flex-1 p-0 min-h-screen">
         <div className="pt-8 px-8 pb-0 mb-0 sm:pt-6 sm:px-[18px]">
           <AgentHeader 
             title="Share Blogs" 

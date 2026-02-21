@@ -6,6 +6,7 @@ import { propertiesApi } from '../../api'
 import type { Property } from '../../types'
 import type { PaginatedResponse } from '../../api/types'
 import { ASSETS } from '@/utils/assets'
+import { resolveAgentAvatar } from '@/utils/imageResolver'
 
 function PropertiesForRent() {
   const [properties, setProperties] = useState<Property[]>([])
@@ -84,6 +85,16 @@ function PropertiesForRent() {
                 ? `${property.area} sqft` 
                 : `${(property.bedrooms * 15 + property.bathrooms * 5)} sqft`
               
+              const mainImage = property.image_url || property.image || ASSETS.PLACEHOLDER_PROPERTY_MAIN
+              const images = (property.images_url && property.images_url.length > 0)
+                ? [mainImage, ...(property.images_url || []).filter((u): u is string => !!u && u !== mainImage)]
+                : undefined
+              const agentImage = property.agent
+                ? resolveAgentAvatar(
+                    (property.agent as any).image || (property.agent as any).avatar || (property.agent as any).profile_image,
+                    property.agent.id
+                  )
+                : undefined
               return (
                 <VerticalPropertyCard
                   key={property.id}
@@ -92,9 +103,17 @@ function PropertiesForRent() {
                   date={formatDate(property.published_at)}
                   price={formatPrice(property.price)}
                   title={property.title}
-                  image={property.image_url || property.image || ASSETS.PLACEHOLDER_PROPERTY_MAIN}
-                  rentManagerName={property.rent_manager?.name || 'Rental.Ph Official'}
-                  rentManagerRole={getRentManagerRole(property.rent_manager?.is_official)}
+                  image={mainImage}
+                  images={images}
+                  rentManagerName={property.agent?.first_name && property.agent?.last_name
+                    ? `${property.agent.first_name} ${property.agent.last_name}`
+                    : property.agent?.full_name
+                    || property.rent_manager?.name
+                    || 'Rental.Ph Official'}
+                  rentManagerRole={property.agent
+                    ? getRentManagerRole(property.agent.verified)
+                    : getRentManagerRole(property.rent_manager?.is_official)}
+                  rentManagerImage={agentImage}
                   bedrooms={property.bedrooms}
                   bathrooms={property.bathrooms}
                   parking={0}

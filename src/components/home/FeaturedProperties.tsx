@@ -2,11 +2,12 @@
 
 import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
-import HorizontalPropertyCard from '../common/VerticalPropertyCard'
+import VerticalPropertyCard from '../common/VerticalPropertyCard'
 import { propertiesApi } from '../../api'
 import type { Property } from '../../types'
 import type { PaginatedResponse } from '../../api/types'
 import { ASSETS } from '@/utils/assets'
+import { resolveAgentAvatar } from '@/utils/imageResolver'
 
 const FeaturedProperties = () => {
   const [selectedLocation, setSelectedLocation] = useState('All Locations')
@@ -109,19 +110,16 @@ const FeaturedProperties = () => {
 
       // Only scroll if not paused
       if (!isPaused) {
-        // Get the width of one card (including gap)
-        const firstCard = carousel.querySelector('.vertical-property-card') as HTMLElement
-        if (firstCard) {
-          const cardWidth = firstCard.offsetWidth
-          const gap = 28 // gap between cards (matches CSS)
+        const firstSlot = carousel.querySelector('.featured-property-card-slot') as HTMLElement
+        if (firstSlot) {
+          const cardWidth = firstSlot.offsetWidth
+          const gap = 28 // gap-7 = 1.75rem
           const itemWidth = cardWidth + gap
-          const totalItems = 6 // original items count
+          const totalItems = 6 // one set of cards
           const resetPoint = itemWidth * totalItems
 
-          // Increment scroll position
           carousel.scrollLeft += scrollSpeed
 
-          // When we've scrolled through one complete set, reset seamlessly
           if (carousel.scrollLeft >= resetPoint) {
             carousel.scrollLeft = 0
           }
@@ -169,46 +167,68 @@ const FeaturedProperties = () => {
         </div>
       </div>
 
-      <div className="relative w-full mt-6" style={{ overflow: 'visible' }}>
+      <div className="relative w-full mt-6 overflow-hidden">
         <div 
-          className="flex gap-7 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+          className="flex gap-7 overflow-x-auto overflow-y-visible [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden pb-2"
           ref={propertyCarouselRef}
           onMouseEnter={() => setIsPaused(true)}
           onMouseLeave={() => setIsPaused(false)}
-          style={{ scrollBehavior: 'auto', overflowX: 'scroll', overflowY: 'visible' }}
+          style={{ scrollBehavior: 'auto' }}
         >
           {loading ? (
-            <div className="p-8 text-center w-full">Loading properties...</div>
+            <div className="p-8 text-center w-full min-w-0">Loading properties...</div>
           ) : featuredProperties.length > 0 ? (
-            // Render items multiple times for seamless infinite loop
+            // Render items multiple times for seamless infinite loop; each card in a fixed-width slot so they display properly
             Array.from({ length: 4 }).map((_, setIndex) => (
-              featuredProperties.slice(0, 6).map((property, index) => {
+              featuredProperties.slice(0, 6).map((property) => {
                 const propertySize = property.area 
                   ? `${property.area} sqft` 
                   : `${(property.bedrooms * 15 + property.bathrooms * 5)} sqft`
                 
+                const mainImage = property.image_url || property.image || ASSETS.PLACEHOLDER_PROPERTY_MAIN
+                const images = (property.images_url && property.images_url.length > 0)
+                  ? [mainImage, ...(property.images_url || []).filter((u): u is string => !!u && u !== mainImage)]
+                  : undefined
+                const agentImage = property.agent
+                  ? resolveAgentAvatar(
+                      (property.agent as any).image || (property.agent as any).avatar || (property.agent as any).profile_image,
+                      property.agent.id
+                    )
+                  : undefined
                 return (
-                  <HorizontalPropertyCard 
+                  <div
                     key={`property-${setIndex}-${property.id}`}
-                    id={property.id}
-                    propertyType={property.type}
-                    date={formatDate(property.published_at)}
-                    price={formatPrice(property.price)}
-                    title={property.title}
-                    image={property.image_url || property.image || ASSETS.PLACEHOLDER_PROPERTY_MAIN}
-                    rentManagerName={property.rent_manager?.name || 'Rental.Ph Official'}
-                    rentManagerRole={getRentManagerRole(property.rent_manager?.is_official)}
-                    bedrooms={property.bedrooms}
-                    bathrooms={property.bathrooms}
-                    parking={0}
-                    propertySize={propertySize}
-                    location={property.location}
-                  />
+                    className="featured-property-card-slot flex-shrink-0 w-[320px] min-w-[320px]"
+                  >
+                    <VerticalPropertyCard 
+                      id={property.id}
+                      propertyType={property.type}
+                      date={formatDate(property.published_at)}
+                      price={formatPrice(property.price)}
+                      title={property.title}
+                      image={mainImage}
+                      images={images}
+                      rentManagerName={property.agent?.first_name && property.agent?.last_name
+                        ? `${property.agent.first_name} ${property.agent.last_name}`
+                        : property.agent?.full_name
+                        || property.rent_manager?.name
+                        || 'Rental.Ph Official'}
+                      rentManagerRole={property.agent
+                        ? getRentManagerRole(property.agent.verified)
+                        : getRentManagerRole(property.rent_manager?.is_official)}
+                      rentManagerImage={agentImage}
+                      bedrooms={property.bedrooms}
+                      bathrooms={property.bathrooms}
+                      parking={0}
+                      propertySize={propertySize}
+                      location={property.location}
+                    />
+                  </div>
                 )
               })
             ))
           ) : (
-            <div className="p-8 text-center w-full">No featured properties available</div>
+            <div className="p-8 text-center w-full min-w-0">No featured properties available</div>
           )}
         </div>
       </div>

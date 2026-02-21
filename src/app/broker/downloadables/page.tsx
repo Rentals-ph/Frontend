@@ -1,27 +1,32 @@
 'use client'
 
 import AppSidebar from '../../../components/common/AppSidebar'
-import { 
-  FiBell,
-  FiPlus,
+import BrokerHeader from '../../../components/broker/BrokerHeader'
+import {
   FiDownload,
   FiFileText,
   FiBarChart2,
-  FiImage
+  FiImage,
+  FiBell,
+  FiPlus,
 } from 'react-icons/fi'
-// import '../../agent/downloadables/page.css' // Removed - file doesn't exist
-// import '../broker-shared.css' // Removed - converted to Tailwind
 
 export default function BrokerDownloadables() {
   const handleDownload = (type: string) => {
     console.log(`Downloading ${type}`)
   }
 
+  const items = [
+    { id: 'lease-agreements', label: 'Lease Agreements', icon: FiFileText },
+    { id: 'financial-report', label: 'Financial Report', icon: FiBarChart2 },
+    { id: 'property-photos', label: 'Property Photos', icon: FiImage },
+  ]
+
   return (
-    <div className="flex min-h-screen bg-gray-100 font-outfit"> {/* broker-dashboard */}
+    <div className="flex min-h-screen bg-[#F8F9FA] font-outfit">
       <AppSidebar />
 
-      <main className="ml-[280px] flex-1 w-[calc(100%-280px)] p-8 min-h-screen lg:ml-[240px] lg:w-[calc(100%-240px)] lg:p-6 md:ml-0 md:w-full md:p-4 md:pt-15"> {/* broker-main */}
+      <main className="main-with-sidebar flex-1 p-8 min-h-screen lg:p-6 md:p-4 md:pt-15"> {/* broker-main */}
         {/* Broker Header */}
         <header className="broker-header">
           <div className="broker-header-left">

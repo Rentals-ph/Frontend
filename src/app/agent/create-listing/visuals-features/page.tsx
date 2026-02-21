@@ -194,170 +194,164 @@ export default function AgentCreateListingVisualsFeatures() {
   }
 
   return (
-    <div className="agent-dashboard">
+    <div className="flex min-h-screen bg-gray-50 font-outfit">
       <AppSidebar/>
-      <main className="agent-main">
+      <main className="main-with-sidebar flex-1 p-8 min-h-screen lg:p-6 md:p-4">
         <AgentHeader 
           title="Create Listing" 
           subtitle="Add visuals and features." 
         />
 
-        <div className="aclc-breadcrumb">
-          <span className="aclc-breadcrumb-strong">Create Listing</span>
-          <span className="aclc-breadcrumb-sep">&gt;</span>
-          <span className="aclc-breadcrumb-muted">Visuals & Features</span>
+        {/* Breadcrumb */}
+        <div className="flex items-center gap-2 text-lg font-semibold text-gray-900 mb-4">
+          <span className="text-gray-900">Create Listing</span>
+          <span className="text-gray-400 font-medium">&gt;</span>
+          <span className="text-gray-400 font-semibold">Visuals & Features</span>
         </div>
 
-        <div className="section-card aclc-stepper-card">
-          <div className="aclc-stepper-left">
+        {/* Progress Stepper Card */}
+        <div className="flex items-center gap-4 p-6 mb-6 bg-white rounded-xl shadow-sm border border-gray-100 md:flex-col md:items-start">
+          <div className="flex items-center gap-3 min-w-[220px]">
             <ProgressRing percent={50} />
-            <div className="aclc-stepper-left-text">
-              <div className="aclc-stepper-left-title">Completion Status</div>
-            </div>
+            <div className="text-sm font-semibold text-gray-600">Completion Status</div>
           </div>
 
-          <div className="aclc-steps">
+          <div className="flex-1 grid grid-cols-3 items-start gap-0 md:w-full md:overflow-x-auto md:pb-1.5 md:justify-start">
             {stepLabels.map((label, idx) => {
               const step = idx + 1
               const isActive = step === 2
               const isDone = step < 2
               return (
-                <div className="aclc-step" key={label}>
-                  <div className="aclc-step-top">
-                    <div className={`aclc-step-circle ${isActive ? 'active' : ''} ${isDone ? 'done' : ''}`}>
-                      {isDone ? <FiCheck /> : step}
+                <div className="flex flex-col items-center min-w-0 flex-shrink-0" key={label}>
+                  <div className="w-full flex items-center relative">
+                    <div className={`w-11 h-11 rounded-full flex items-center justify-center font-bold text-base flex-shrink-0 relative z-10 ${isActive ? 'bg-blue-600 text-white' : isDone ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-400'}`}>
+                      {isDone ? <FiCheck className="text-lg" /> : step}
                     </div>
                     {step !== stepLabels.length && (
-                      <div className={`aclc-step-line ${step < 2 ? 'done' : ''}`} />
+                      <div className={`h-1.5 rounded-full flex-1 ml-2 mr-2 min-w-0 ${step < 2 ? 'bg-blue-600' : 'bg-gray-200'}`} />
                     )}
                   </div>
-                  <div className={`aclc-step-label ${isActive ? 'active' : ''}`}>{label}</div>
+                  <div className={`mt-2 text-xs font-semibold text-center leading-tight ${isActive ? 'text-blue-600' : 'text-gray-400'}`}>{label}</div>
                 </div>
               )
             })}
           </div>
         </div>
 
-        <div className="section-card aclc-form-card">
-          <h2 className="aclc-form-title">Property Visuals & Features</h2>
+        {/* Main Form Card */}
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+          <div className="px-6 py-5 border-b border-gray-200 bg-gray-50">
+            <h2 className="text-2xl font-bold text-gray-900">Property Visuals & Features</h2>
+            <p className="text-sm text-gray-600 mt-1">Upload images and select amenities for your property</p>
+          </div>
 
-          {/* Images Section */}
-          <div style={{ marginBottom: '2rem' }}>
-            <h3 style={{ fontSize: '1.125rem', fontWeight: 600, marginBottom: '1rem', color: '#111827' }}>Property Images</h3>
-            
-            <input
-              type="file"
-              ref={fileInputRef}
-              onChange={handleFileSelect}
-              accept="image/*"
-              multiple
-              style={{ display: 'none' }}
-            />
-            <div
-              className="acpi-dropzone"
-              onDrop={handleDrop}
-              onDragOver={handleDragOver}
-              onClick={() => fileInputRef.current?.click()}
-              role="button"
-              tabIndex={0}
-            >
-              <FiUploadCloud className="acpi-dropzone-icon" />
-              <p className="acpi-dropzone-title">Drop files here or click to upload</p>
-              <p className="acpi-dropzone-text">
-                Upload high-quality images of your property (max 10mb each)
-              </p>
-            </div>
-            
-            {images.length > 0 && (
-              <div style={{ marginTop: '1rem', display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
-                {images.map((image, index) => (
-                  <div key={index} style={{ position: 'relative', display: 'inline-block' }}>
-                    <img
-                      src={thumbnails[index] || URL.createObjectURL(image)}
-                      alt={`Preview ${index + 1}`}
-                      style={{ width: '100px', height: '100px', objectFit: 'cover', borderRadius: '8px' }}
-                      loading="lazy"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => handleRemoveImage(index)}
-                      style={{
-                        position: 'absolute',
-                        top: '-8px',
-                        right: '-8px',
-                        background: 'red',
-                        color: 'white',
-                        border: 'none',
-                        borderRadius: '50%',
-                        width: '24px',
-                        height: '24px',
-                        cursor: 'pointer',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        fontSize: '18px',
-                        lineHeight: '1',
-                      }}
-                    >
-                      ×
-                    </button>
-                  </div>
-                ))}
+          <div className="p-6 space-y-6">
+            {/* Images Section Card */}
+            <div className="bg-gray-50 rounded-lg p-5 border border-gray-200">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-200">Property Images</h3>
+              
+              <input
+                type="file"
+                ref={fileInputRef}
+                onChange={handleFileSelect}
+                accept="image/*"
+                multiple
+                className="hidden"
+              />
+              <div
+                className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center cursor-pointer transition-all hover:border-blue-500 hover:bg-blue-50/50"
+                onDrop={handleDrop}
+                onDragOver={handleDragOver}
+                onClick={() => fileInputRef.current?.click()}
+                role="button"
+                tabIndex={0}
+              >
+                <FiUploadCloud className="w-12 h-12 text-gray-400 mx-auto mb-3" />
+                <p className="text-base font-semibold text-gray-900 mb-1">Drop files here or click to upload</p>
+                <p className="text-sm text-gray-600">
+                  Upload high-quality images of your property (max 10mb each)
+                </p>
               </div>
-            )}
-
-            <div className="acpi-video-section" style={{ marginTop: '1.5rem' }}>
-              <div className="acpi-video-label-row">
-                <span className="acpi-video-label">Video Link (Optional)</span>
-              </div>
-              <div className="acpi-video-input-row">
-                <div className="acpi-video-icon-wrap">
-                  <FiPlayCircle className="acpi-video-icon" />
+              
+              {images.length > 0 && (
+                <div className="mt-4 flex flex-wrap gap-3">
+                  {images.map((image, index) => (
+                    <div key={index} className="relative inline-block group">
+                      <img
+                        src={thumbnails[index] || URL.createObjectURL(image)}
+                        alt={`Preview ${index + 1}`}
+                        className="w-24 h-24 object-cover rounded-lg border border-gray-200"
+                        loading="lazy"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveImage(index)}
+                        className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center text-sm font-bold hover:bg-red-600 transition-colors shadow-md"
+                        aria-label="Remove image"
+                      >
+                        ×
+                      </button>
+                    </div>
+                  ))}
                 </div>
-                <input
-                  className="acpi-video-input"
-                  placeholder="Enter Youtube/video link"
-                  value={videoUrl}
-                  onChange={(e) => setVideoUrl(e.target.value)}
-                />
+              )}
+
+              {/* Video Section */}
+              <div className="mt-6">
+                <label className="block text-sm font-semibold text-gray-900 mb-2">
+                  Video Link (Optional)
+                </label>
+                <div className="relative">
+                  <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+                    <FiPlayCircle className="w-5 h-5" />
+                  </div>
+                  <input
+                    className="w-full h-11 pl-11 pr-4 border border-gray-300 rounded-lg bg-white text-gray-900 text-sm font-medium placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                    placeholder="Enter Youtube/video link"
+                    value={videoUrl}
+                    onChange={(e) => setVideoUrl(e.target.value)}
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Features & Amenities Section Card */}
+            <div className="bg-gray-50 rounded-lg p-5 border border-gray-200">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-200">Features & Amenities</h3>
+              
+              <div className="space-y-4">
+                <div>
+                  <h4 className="text-sm font-semibold text-gray-700 mb-3">Amenities</h4>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+                    {amenitiesList.map((amenity) => (
+                      <label key={amenity} className="flex items-center gap-2 cursor-pointer select-none p-2 rounded-lg hover:bg-white transition-colors">
+                        <input
+                          type="checkbox"
+                          className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 cursor-pointer"
+                          checked={amenities.includes(amenity)}
+                          onChange={() => handleAmenityChange(amenity)}
+                        />
+                        <span className="text-sm font-medium text-gray-900">{amenity}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
               </div>
             </div>
           </div>
 
-          {/* Attributes Section */}
-          <div style={{ borderTop: '1px solid #E5E7EB', paddingTop: '2rem' }}>
-            <h3 style={{ fontSize: '1.125rem', fontWeight: 600, marginBottom: '1rem', color: '#111827' }}>Features & Amenities</h3>
-            
-            <div className="acat-section">
-              <h3 className="acat-section-title">Amenities</h3>
-              <div className="acat-checkbox-grid">
-                {amenitiesList.map((amenity) => (
-                  <label key={amenity} className="acat-checkbox-label">
-                    <input
-                      type="checkbox"
-                      className="acat-checkbox"
-                      checked={amenities.includes(amenity)}
-                      onChange={() => handleAmenityChange(amenity)}
-                    />
-                    <span className="acat-checkbox-text">{amenity}</span>
-                  </label>
-                ))}
-              </div>
-            </div>
-
-          </div>
-
-          <div style={{ marginTop: '2rem', display: 'flex', justifyContent: 'space-between' }}>
+          {/* Footer Actions */}
+          <div className="px-6 py-5 border-t border-gray-200 bg-gray-50 flex justify-between gap-3">
             <button
-              className="acld-prev-btn"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-white text-gray-700 font-semibold text-sm rounded-lg border border-gray-300 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-all shadow-sm hover:shadow-md"
               onClick={() => router.push('/agent/create-listing/basic-info')}
               type="button"
             >
-              <FiArrowLeft />
+              <FiArrowLeft className="w-4 h-4" />
               <span>Previous</span>
             </button>
             <button
-              className="aclc-next-btn"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white font-semibold text-sm rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all shadow-sm hover:shadow-md"
               onClick={() => {
                 updateData({ images, videoUrl, amenities })
                 router.push('/agent/create-listing/owner-review')
@@ -365,7 +359,7 @@ export default function AgentCreateListingVisualsFeatures() {
               type="button"
             >
               <span>Next: Owner Info & Review</span>
-              <FiArrowRight />
+              <FiArrowRight className="w-4 h-4" />
             </button>
           </div>
         </div>

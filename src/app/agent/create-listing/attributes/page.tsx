@@ -96,7 +96,7 @@ export default function AgentCreateListingAttributes() {
     <div className="agent-dashboard">
       <AppSidebar/>
 
-      <main className="agent-main">
+      <main className="main-with-sidebar flex-1 p-8 min-h-screen lg:p-6 md:p-4">
         <AgentHeader 
           title="Create Listing" 
           subtitle="Add property attributes and amenities." 

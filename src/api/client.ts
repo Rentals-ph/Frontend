@@ -75,14 +75,43 @@ apiClient.interceptors.response.use(
       // You can add redirect logic here if needed
     }
     
-    // Log error for debugging
-    console.error('API Error:', {
-      url: error.config?.url,
-      method: error.config?.method,
-      status: error.response.status,
-      statusText: error.response.statusText,
-      data: error.response.data,
-    })
+    // Log error for debugging - safely extract all properties
+    const errorInfo: Record<string, any> = {
+      url: error.config?.url || 'unknown',
+      method: error.config?.method?.toUpperCase() || 'unknown',
+      status: error.response?.status || 'unknown',
+      statusText: error.response?.statusText || 'unknown',
+    }
+    
+    // Safely extract response data (might be circular or non-serializable)
+    try {
+      if (error.response?.data) {
+        // Try to stringify to check if it's serializable
+        JSON.stringify(error.response.data)
+        errorInfo.data = error.response.data
+      } else {
+        errorInfo.data = null
+      }
+    } catch (e) {
+      // If data is not serializable, just log a message
+      errorInfo.data = '[Non-serializable data]'
+      errorInfo.dataType = typeof error.response?.data
+    }
+    
+    // Add error message if available
+    if (error.message) {
+      errorInfo.message = error.message
+    }
+    
+    // Log error with more details for debugging
+    if (process.env.NODE_ENV === 'development') {
+      console.error('API Error:', errorInfo)
+    } else {
+      // In production, only log if there's meaningful error info
+      if (errorInfo.message || errorInfo.status || errorInfo.data) {
+        console.error('API Error:', errorInfo)
+      }
+    }
     
     return Promise.reject(error)
   }

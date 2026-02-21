@@ -1,11 +1,30 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useCallback } from 'react'
+import { useRouter } from 'next/navigation'
 import AppSidebar from '../../components/common/AppSidebar'
 import AgentHeader from '../../components/agent/AgentHeader'
 import { ASSETS } from '@/utils/assets'
-import { pageBuilderApi, propertiesApi, testimonialsApi } from '@/api'
+import { pageBuilderApi, propertiesApi, testimonialsApi, apiClient } from '@/api'
 import type { Property, Testimonial } from '@/types'
+import { toast, ToastContainer } from '@/utils/toast'
+import { 
+  DndContext, 
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent
+} from '@dnd-kit/core'
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  useSortable,
+  verticalListSortingStrategy
+} from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
 import { 
   FiSettings,
   FiUpload,
@@ -26,7 +45,15 @@ import {
   FiMove,
   FiCheck,
   FiX,
-  FiExternalLink
+  FiExternalLink,
+  FiCopy,
+  FiMonitor,
+  FiTablet,
+  FiSmartphone,
+  FiRotateCcw,
+  FiRotateCw,
+  FiHelpCircle,
+  FiSave
 } from 'react-icons/fi'
 
 interface PageBuilderProps {
@@ -118,6 +145,38 @@ export default function PageBuilder({ userType }: PageBuilderProps) {
   const [selectedBrandColor, setSelectedBrandColor] = useState('white')
   const [selectedCornerRadius, setSelectedCornerRadius] = useState('soft')
   
+  // Global design settings
+  const [globalDesign, setGlobalDesign] = useState({
+    fontFamily: 'Inter',
+    fontSize: '16px',
+    spacing: 'normal',
+    borderStyle: 'none',
+    shadow: 'none'
+  })
+  
+  // Section-level styling (layout template, font, colors, background)
+  const [sectionStyles, setSectionStyles] = useState<Record<string, {
+    layoutTemplate: string
+    fontFamily: string
+    fontSize: string
+    textColor: string
+    backgroundColor: string
+    padding: string
+    borderStyle: string
+    borderColor: string
+    shadow: string
+  }>>({})
+  
+  // Section renaming state
+  const [editingSectionName, setEditingSectionName] = useState<string | null>(null)
+  const [newSectionName, setNewSectionName] = useState('')
+  
+  // Add new section state
+  const [showAddSectionModal, setShowAddSectionModal] = useState(false)
+  const [newSectionType, setNewSectionType] = useState('custom')
+  const [newSectionTitle, setNewSectionTitle] = useState('')
+  const [newSectionContent, setNewSectionContent] = useState('')
+  
   // Page builder data state
   const [pageBuilderId, setPageBuilderId] = useState<number | null>(null)
   const [isLoading, setIsLoading] = useState(true)
@@ -135,6 +194,26 @@ export default function PageBuilder({ userType }: PageBuilderProps) {
   const [availableTestimonials, setAvailableTestimonials] = useState<Testimonial[]>([])
   const [loadingProperties, setLoadingProperties] = useState(false)
   const [loadingTestimonials, setLoadingTestimonials] = useState(false)
+  
+  // New features state
+  const router = useRouter()
+  const [previewMode, setPreviewMode] = useState<'desktop' | 'tablet' | 'mobile'>('desktop')
+  const [showPreview, setShowPreview] = useState(false)
+  const [history, setHistory] = useState<any[]>([])
+  const [historyIndex, setHistoryIndex] = useState(-1)
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false)
+  const [autoSaveStatus, setAutoSaveStatus] = useState<'saved' | 'saving' | 'unsaved' | 'error'>('saved')
+  const [openSectionId, setOpenSectionId] = useState<string | null>(null)
+  const [showShortcutsModal, setShowShortcutsModal] = useState(false)
+  const [uploadingImages, setUploadingImages] = useState<Record<string, number>>({})
+  
+  // Drag and drop sensors
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  )
   
   // Load available properties and testimonials
   useEffect(() => {
@@ -162,6 +241,112 @@ export default function PageBuilder({ userType }: PageBuilderProps) {
     loadAvailableData()
   }, [])
   
+  // Helper function to capture current state for history
+  const captureState = useCallback(() => {
+    return {
+      selectedTheme,
+      showBio,
+      showContactNumber,
+      showExperienceStats,
+      showFeaturedListings,
+      showTestimonials,
+      bio,
+      profileImage,
+      contactInfo,
+      experienceStats,
+      featuredListings,
+      testimonials,
+      heroImage,
+      mainHeading,
+      tagline,
+      overallDarkness,
+      propertyDescription,
+      propertyImages,
+      propertyPrice,
+      profileCardName,
+      profileCardRole,
+      profileCardBio,
+      profileCardImage,
+      sectionVisibility,
+      layoutSections,
+      selectedBrandColor,
+      selectedCornerRadius,
+      globalDesign,
+      sectionStyles,
+    }
+  }, [
+    selectedTheme, showBio, showContactNumber, showExperienceStats, showFeaturedListings, showTestimonials,
+    bio, profileImage, contactInfo, experienceStats, featuredListings, testimonials,
+    heroImage, mainHeading, tagline, overallDarkness, propertyDescription, propertyImages, propertyPrice,
+    profileCardName, profileCardRole, profileCardBio, profileCardImage,
+    sectionVisibility, layoutSections, selectedBrandColor, selectedCornerRadius, globalDesign, sectionStyles
+  ])
+  
+  // Helper function to restore state from history
+  const restoreState = useCallback((state: any) => {
+    if (state.selectedTheme !== undefined) setSelectedTheme(state.selectedTheme)
+    if (state.showBio !== undefined) setShowBio(state.showBio)
+    if (state.showContactNumber !== undefined) setShowContactNumber(state.showContactNumber)
+    if (state.showExperienceStats !== undefined) setShowExperienceStats(state.showExperienceStats)
+    if (state.showFeaturedListings !== undefined) setShowFeaturedListings(state.showFeaturedListings)
+    if (state.showTestimonials !== undefined) setShowTestimonials(state.showTestimonials)
+    if (state.bio !== undefined) setBio(state.bio)
+    if (state.profileImage !== undefined) setProfileImage(state.profileImage)
+    if (state.contactInfo !== undefined) setContactInfo(state.contactInfo)
+    if (state.experienceStats !== undefined) setExperienceStats(state.experienceStats)
+    if (state.featuredListings !== undefined) setFeaturedListings(state.featuredListings)
+    if (state.testimonials !== undefined) setTestimonials(state.testimonials)
+    if (state.heroImage !== undefined) setHeroImage(state.heroImage)
+    if (state.mainHeading !== undefined) setMainHeading(state.mainHeading)
+    if (state.tagline !== undefined) setTagline(state.tagline)
+    if (state.overallDarkness !== undefined) setOverallDarkness(state.overallDarkness)
+    if (state.propertyDescription !== undefined) setPropertyDescription(state.propertyDescription)
+    if (state.propertyImages !== undefined) setPropertyImages(state.propertyImages)
+    if (state.propertyPrice !== undefined) setPropertyPrice(state.propertyPrice)
+    if (state.profileCardName !== undefined) setProfileCardName(state.profileCardName)
+    if (state.profileCardRole !== undefined) setProfileCardRole(state.profileCardRole)
+    if (state.profileCardBio !== undefined) setProfileCardBio(state.profileCardBio)
+    if (state.profileCardImage !== undefined) setProfileCardImage(state.profileCardImage)
+    if (state.sectionVisibility !== undefined) setSectionVisibility(state.sectionVisibility)
+    if (state.layoutSections !== undefined) setLayoutSections(state.layoutSections)
+    if (state.globalDesign !== undefined) setGlobalDesign(state.globalDesign)
+    if (state.sectionStyles !== undefined) setSectionStyles(state.sectionStyles)
+    if (state.selectedBrandColor !== undefined) setSelectedBrandColor(state.selectedBrandColor)
+    if (state.selectedCornerRadius !== undefined) setSelectedCornerRadius(state.selectedCornerRadius)
+  }, [])
+  
+  // Add to history
+  const addToHistory = useCallback(() => {
+    const currentState = captureState()
+    const newHistory = history.slice(0, historyIndex + 1)
+    newHistory.push(currentState)
+    // Limit to 50 states
+    if (newHistory.length > 50) {
+      newHistory.shift()
+    } else {
+      setHistoryIndex(newHistory.length - 1)
+    }
+    setHistory(newHistory)
+  }, [captureState, history, historyIndex])
+  
+  // Undo
+  const handleUndo = useCallback(() => {
+    if (historyIndex > 0) {
+      const prevState = history[historyIndex - 1]
+      restoreState(prevState)
+      setHistoryIndex(historyIndex - 1)
+    }
+  }, [history, historyIndex, restoreState])
+  
+  // Redo
+  const handleRedo = useCallback(() => {
+    if (historyIndex < history.length - 1) {
+      const nextState = history[historyIndex + 1]
+      restoreState(nextState)
+      setHistoryIndex(historyIndex + 1)
+    }
+  }, [history, historyIndex, restoreState])
+  
   // Load page builder data on mount
   useEffect(() => {
     const loadPageBuilder = async () => {
@@ -180,85 +365,110 @@ export default function PageBuilder({ userType }: PageBuilderProps) {
           setPageUrl(pageData.page_url || null)
           setPageSlug(pageData.page_slug || null)
           
+          // Load by slug if available to get the most up-to-date data
+          let dataToUse = pageData
+          if (pageData.page_slug) {
+            try {
+              const slugData = await pageBuilderApi.getBySlugForEdit(pageData.page_slug)
+              // Use slug data if available, otherwise use pageData
+              if (slugData) {
+                dataToUse = slugData
+              }
+            } catch (error) {
+              console.error('Error loading by slug:', error)
+            }
+          }
+          
           // Load profile data
-          if (activeTab === 'profile' && pageData.page_type === 'profile') {
-            if (pageData.selected_theme) setSelectedTheme(pageData.selected_theme)
-            if (pageData.bio !== undefined) setBio(pageData.bio)
-            if (pageData.show_bio !== undefined) setShowBio(pageData.show_bio)
-            if (pageData.show_contact_number !== undefined) setShowContactNumber(pageData.show_contact_number)
-            if (pageData.show_experience_stats !== undefined) setShowExperienceStats(pageData.show_experience_stats)
-            if (pageData.show_featured_listings !== undefined) setShowFeaturedListings(pageData.show_featured_listings)
-            if (pageData.show_testimonials !== undefined) setShowTestimonials(pageData.show_testimonials)
-            if (pageData.profile_image) setProfileImage(pageData.profile_image)
-            if (pageData.contact_info) {
+          if (activeTab === 'profile' && dataToUse.page_type === 'profile') {
+            if (dataToUse.selected_theme) setSelectedTheme(dataToUse.selected_theme)
+            if (dataToUse.bio !== undefined) setBio(dataToUse.bio || '')
+            if (dataToUse.show_bio !== undefined) setShowBio(dataToUse.show_bio)
+            if (dataToUse.show_contact_number !== undefined) setShowContactNumber(dataToUse.show_contact_number)
+            if (dataToUse.show_experience_stats !== undefined) setShowExperienceStats(dataToUse.show_experience_stats)
+            if (dataToUse.show_featured_listings !== undefined) setShowFeaturedListings(dataToUse.show_featured_listings)
+            if (dataToUse.show_testimonials !== undefined) setShowTestimonials(dataToUse.show_testimonials)
+            if (dataToUse.profile_image) setProfileImage(dataToUse.profile_image)
+            if (dataToUse.contact_info) {
               setContactInfo({
-                email: pageData.contact_info.email || '',
-                phone: pageData.contact_info.phone || '',
-                message: pageData.contact_info.message || '',
-                website: pageData.contact_info.website || ''
+                email: dataToUse.contact_info.email || '',
+                phone: dataToUse.contact_info.phone || '',
+                message: dataToUse.contact_info.message || '',
+                website: dataToUse.contact_info.website || ''
               })
             }
-            if (pageData.experience_stats) setExperienceStats(pageData.experience_stats)
-            if (pageData.featured_listings) setFeaturedListings(pageData.featured_listings as Property[])
-            if (pageData.testimonials) setTestimonials(pageData.testimonials as Testimonial[])
+            if (dataToUse.experience_stats) setExperienceStats(dataToUse.experience_stats || [])
+            if (dataToUse.featured_listings) setFeaturedListings(dataToUse.featured_listings as Property[] || [])
+            if (dataToUse.testimonials) setTestimonials(dataToUse.testimonials as Testimonial[] || [])
             // Load profile card fields - always load if they exist, even if empty
-            if (pageData.profile_card_name !== undefined) setProfileCardName(pageData.profile_card_name || '')
-            if (pageData.profile_card_role !== undefined) setProfileCardRole(pageData.profile_card_role || '')
-            if (pageData.profile_card_bio !== undefined) setProfileCardBio(pageData.profile_card_bio || '')
-            if (pageData.profile_card_image !== undefined) setProfileCardImage(pageData.profile_card_image || '')
+            if (dataToUse.profile_card_name !== undefined) setProfileCardName(dataToUse.profile_card_name || '')
+            if (dataToUse.profile_card_role !== undefined) setProfileCardRole(dataToUse.profile_card_role || '')
+            if (dataToUse.profile_card_bio !== undefined) setProfileCardBio(dataToUse.profile_card_bio || '')
+            if (dataToUse.profile_card_image !== undefined) setProfileCardImage(dataToUse.profile_card_image || '')
           }
           
           // Load property data
-          if (activeTab === 'property' && pageData.page_type === 'property') {
-            if (pageData.hero_image) setHeroImage(pageData.hero_image)
-            if (pageData.main_heading) setMainHeading(pageData.main_heading)
-            if (pageData.tagline) setTagline(pageData.tagline)
-            if (pageData.overall_darkness !== undefined) setOverallDarkness(pageData.overall_darkness)
-            if (pageData.property_description) setPropertyDescription(pageData.property_description)
-            if (pageData.property_images) setPropertyImages(pageData.property_images)
-            if (pageData.property_price) setPropertyPrice(pageData.property_price)
-            // Contact info is loaded from contact_info object above
-            if (pageData.section_visibility) {
-              setSectionVisibility({
-                hero: pageData.section_visibility.hero ?? false,
-                propertyDescription: pageData.section_visibility.propertyDescription ?? true,
-                propertyImages: pageData.section_visibility.propertyImages ?? true,
-                profileCard: pageData.section_visibility.profileCard ?? true
+          if (activeTab === 'property' && dataToUse.page_type === 'property') {
+            if (dataToUse.hero_image) setHeroImage(dataToUse.hero_image)
+            if (dataToUse.main_heading) setMainHeading(dataToUse.main_heading)
+            if (dataToUse.tagline) setTagline(dataToUse.tagline)
+            if (dataToUse.overall_darkness !== undefined) setOverallDarkness(dataToUse.overall_darkness)
+            if (dataToUse.property_description) setPropertyDescription(dataToUse.property_description)
+            if (dataToUse.property_images) setPropertyImages(dataToUse.property_images)
+            if (dataToUse.property_price) setPropertyPrice(dataToUse.property_price)
+            
+            // Load contact info, experience stats, featured listings, and testimonials for property pages
+            if (dataToUse.contact_info) {
+              setContactInfo({
+                email: dataToUse.contact_info.email || '',
+                phone: dataToUse.contact_info.phone || '',
+                message: dataToUse.contact_info.message || '',
+                website: dataToUse.contact_info.website || ''
               })
             }
-            if (pageData.layout_sections) setLayoutSections(pageData.layout_sections)
-            if (pageData.selected_brand_color) setSelectedBrandColor(pageData.selected_brand_color)
-            if (pageData.selected_corner_radius) setSelectedCornerRadius(pageData.selected_corner_radius)
+            if (dataToUse.show_contact_number !== undefined) setShowContactNumber(dataToUse.show_contact_number)
+            if (dataToUse.show_experience_stats !== undefined) setShowExperienceStats(dataToUse.show_experience_stats)
+            if (dataToUse.show_featured_listings !== undefined) setShowFeaturedListings(dataToUse.show_featured_listings)
+            if (dataToUse.show_testimonials !== undefined) setShowTestimonials(dataToUse.show_testimonials)
+            if (dataToUse.experience_stats) setExperienceStats(dataToUse.experience_stats || [])
+            if (dataToUse.featured_listings) setFeaturedListings((dataToUse.featured_listings as Property[]) || [])
+            if (dataToUse.testimonials) setTestimonials((dataToUse.testimonials as Testimonial[]) || [])
             
-            // Sync profile card with profile page builder data
+            // Load profile card fields
+            if (dataToUse.profile_card_name !== undefined) setProfileCardName(dataToUse.profile_card_name || '')
+            if (dataToUse.profile_card_role !== undefined) setProfileCardRole(dataToUse.profile_card_role || '')
+            if (dataToUse.profile_card_bio !== undefined) setProfileCardBio(dataToUse.profile_card_bio || '')
+            if (dataToUse.profile_card_image !== undefined) setProfileCardImage(dataToUse.profile_card_image || '')
+            
+            if (dataToUse.section_visibility) {
+              setSectionVisibility({
+                hero: dataToUse.section_visibility.hero ?? false,
+                propertyDescription: dataToUse.section_visibility.propertyDescription ?? true,
+                propertyImages: dataToUse.section_visibility.propertyImages ?? true,
+                profileCard: dataToUse.section_visibility.profileCard ?? true
+              })
+            }
+            if (dataToUse.layout_sections) setLayoutSections(dataToUse.layout_sections)
+            if ((dataToUse as any).global_design) setGlobalDesign((dataToUse as any).global_design)
+            if ((dataToUse as any).section_styles) setSectionStyles((dataToUse as any).section_styles)
+            if (dataToUse.selected_brand_color) setSelectedBrandColor(dataToUse.selected_brand_color)
+            if (dataToUse.selected_corner_radius) setSelectedCornerRadius(dataToUse.selected_corner_radius)
+            
+            // Sync profile card with profile page builder data (only if property page data doesn't have it)
             if (profilePageData) {
-              // Use profile image for profile card image
-              if (profilePageData.profile_image) {
+              // Use profile image for profile card image only if property page doesn't have one
+              if (!dataToUse.profile_card_image && profilePageData.profile_image) {
                 setProfileCardImage(profilePageData.profile_image)
               }
-              // Use bio for profile card bio
-              if (profilePageData.bio) {
+              // Use bio for profile card bio only if property page doesn't have one
+              if (!dataToUse.profile_card_bio && profilePageData.bio) {
                 setProfileCardBio(profilePageData.bio)
               }
-              // Use contact info for profile card
-              if (profilePageData.contact_info) {
-                const contactInfo = profilePageData.contact_info
-                setContactInfo(prev => ({ 
-                  ...prev, 
-                  email: contactInfo.email || prev.email,
-                  phone: contactInfo.phone || prev.phone
-                }))
-              }
-            } else {
-              // Fallback to property page data if profile page doesn't exist
-              if (pageData.profile_card_name !== undefined) setProfileCardName(pageData.profile_card_name || '')
-              if (pageData.profile_card_role !== undefined) setProfileCardRole(pageData.profile_card_role || '')
-              if (pageData.profile_card_bio !== undefined) setProfileCardBio(pageData.profile_card_bio || '')
-              if (pageData.profile_card_image !== undefined) setProfileCardImage(pageData.profile_card_image || '')
+              // Don't overwrite contact info, listings, or testimonials from property page - they should be saved separately
             }
           }
         } else {
-          // If no property page exists, still load profile data for profile card
+          // If no page exists for this tab, still load profile data for profile card (property mode)
           if (activeTab === 'property' && profilePageData) {
             if (profilePageData.profile_image) {
               setProfileCardImage(profilePageData.profile_image)
@@ -286,6 +496,244 @@ export default function PageBuilder({ userType }: PageBuilderProps) {
     loadPageBuilder()
   }, [activeTab])
   
+  // Helper to collect all page data
+  const collectPageData = useCallback(() => {
+    return {
+      // Profile mode fields
+      selected_theme: selectedTheme,
+      bio: bio,
+      show_bio: showBio,
+      show_contact_number: showContactNumber,
+      show_experience_stats: showExperienceStats,
+      show_featured_listings: showFeaturedListings,
+      show_testimonials: showTestimonials,
+      profile_image: profileImage,
+      contact_info: contactInfo,
+      experience_stats: experienceStats,
+      featured_listings: featuredListings,
+      testimonials: testimonials,
+      
+      // Property mode fields
+      hero_image: heroImage,
+      main_heading: mainHeading,
+      tagline: tagline,
+      overall_darkness: overallDarkness,
+      property_description: propertyDescription,
+      property_images: propertyImages,
+      property_price: propertyPrice,
+      contact_phone: contactInfo.phone,
+      contact_email: contactInfo.email,
+      
+      // Profile card fields
+      profile_card_name: profileCardName,
+      profile_card_role: profileCardRole,
+      profile_card_bio: profileCardBio,
+      profile_card_image: profileCardImage,
+      
+      // Layout and design fields
+      section_visibility: sectionVisibility,
+      layout_sections: layoutSections,
+      selected_brand_color: selectedBrandColor,
+      selected_corner_radius: selectedCornerRadius,
+      global_design: globalDesign,
+      section_styles: sectionStyles,
+    }
+  }, [
+    selectedTheme, bio, showBio, showContactNumber, showExperienceStats, showFeaturedListings, showTestimonials,
+    profileImage, contactInfo, experienceStats, featuredListings, testimonials,
+    heroImage, mainHeading, tagline, overallDarkness, propertyDescription, propertyImages, propertyPrice,
+    profileCardName, profileCardRole, profileCardBio, profileCardImage,
+    sectionVisibility, layoutSections, selectedBrandColor, selectedCornerRadius, globalDesign, sectionStyles
+  ])
+  
+  // Auto-save every 30 seconds
+  useEffect(() => {
+    if (!hasUnsavedChanges || isSaving) return
+    
+    const interval = setInterval(async () => {
+      if (hasUnsavedChanges && !isSaving) {
+        try {
+          setAutoSaveStatus('saving')
+          const pageData = collectPageData()
+          const savePayload = {
+            user_type: userType,
+            page_type: activeTab as 'profile' | 'property',
+            page_data: pageData,
+            page_slug: pageSlug || undefined,
+          }
+          await pageBuilderApi.save(savePayload)
+          setAutoSaveStatus('saved')
+          setHasUnsavedChanges(false)
+        } catch (error: any) {
+          console.error('Auto-save failed:', error)
+          setAutoSaveStatus('error')
+        }
+      }
+    }, 30000) // 30 seconds
+    
+    return () => clearInterval(interval)
+  }, [hasUnsavedChanges, isSaving, collectPageData, userType, activeTab, pageSlug])
+  
+  // Image upload handler
+  const handleImageUpload = async (file: File, type: 'profile' | 'hero' | 'profileCard' | 'property', fieldId?: string) => {
+    // Validate file
+    if (!file.type.startsWith('image/')) {
+      toast.error('Please select a valid image file')
+      return
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error('Image size must be less than 5MB')
+      return
+    }
+    
+    const uploadId = fieldId || type
+    setUploadingImages(prev => ({ ...prev, [uploadId]: 0 }))
+    
+    try {
+      const formData = new FormData()
+      formData.append('file', file)
+      
+      // Use apiClient for proper authentication and base URL
+      const response = await apiClient.post('/upload', formData)
+      
+      if (!response.data.success) {
+        const errorMsg = response.data.message || 'Upload failed'
+        const errors = response.data.errors
+        const fullError = errors ? `${errorMsg}: ${JSON.stringify(errors)}` : errorMsg
+        throw new Error(fullError)
+      }
+      
+      const imageUrl = response.data.url || response.data.path
+      
+      // Update the appropriate state
+      switch (type) {
+        case 'profile':
+          setProfileImage(imageUrl)
+          break
+        case 'hero':
+          setHeroImage(imageUrl)
+          break
+        case 'profileCard':
+          setProfileCardImage(imageUrl)
+          break
+        case 'property':
+          setPropertyImages(prev => [...prev, imageUrl])
+          break
+      }
+      
+      setHasUnsavedChanges(true)
+      addToHistory()
+      toast.success('Image uploaded successfully')
+    } catch (error: any) {
+      console.error('Error uploading image:', error)
+      console.error('Error response:', error.response?.data)
+      
+      // Extract detailed error message
+      let errorMessage = 'Unknown error'
+      if (error.response?.data) {
+        const data = error.response.data
+        if (data.message) {
+          errorMessage = data.message
+        } else if (data.errors) {
+          // Format validation errors
+          const errorList = Object.entries(data.errors)
+            .map(([field, messages]: [string, any]) => {
+              const msgList = Array.isArray(messages) ? messages.join(', ') : messages
+              return `${field}: ${msgList}`
+            })
+            .join('; ')
+          errorMessage = errorList || 'Validation failed'
+        }
+      } else if (error.message) {
+        errorMessage = error.message
+      }
+      
+      toast.error('Failed to upload image: ' + errorMessage)
+    } finally {
+      setUploadingImages(prev => {
+        const newState = { ...prev }
+        delete newState[uploadId]
+        return newState
+      })
+    }
+  }
+  
+  // Handle drag and drop for images
+  const handleImageDrop = (e: React.DragEvent, type: 'profile' | 'hero' | 'profileCard' | 'property', fieldId?: string) => {
+    e.preventDefault()
+    const file = e.dataTransfer.files[0]
+    if (file) {
+      handleImageUpload(file, type, fieldId)
+    }
+  }
+  
+  // Handle drag over for images
+  const handleImageDragOver = (e: React.DragEvent) => {
+    e.preventDefault()
+  }
+  
+  // Keyboard shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Ctrl+S or Cmd+S to save
+      if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+        e.preventDefault()
+        handleSaveChanges()
+      }
+      // Ctrl+Z to undo
+      if ((e.ctrlKey || e.metaKey) && e.key === 'z' && !e.shiftKey) {
+        e.preventDefault()
+        handleUndo()
+      }
+      // Ctrl+Shift+Z or Ctrl+Y to redo
+      if ((e.ctrlKey || e.metaKey) && (e.shiftKey && e.key === 'z') || e.key === 'y') {
+        e.preventDefault()
+        handleRedo()
+      }
+      // Ctrl+P to toggle preview
+      if ((e.ctrlKey || e.metaKey) && e.key === 'p') {
+        e.preventDefault()
+        setShowPreview(!showPreview)
+      }
+      // Escape to close modals/panels
+      if (e.key === 'Escape') {
+        setShowShortcutsModal(false)
+        setOpenSectionId(null)
+      }
+    }
+    
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [handleUndo, handleRedo, showPreview])
+  
+  // Unsaved changes warning
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (hasUnsavedChanges) {
+        e.preventDefault()
+        e.returnValue = ''
+      }
+    }
+    
+    window.addEventListener('beforeunload', handleBeforeUnload)
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload)
+  }, [hasUnsavedChanges])
+  
+  // Intercept Next.js router navigation
+  useEffect(() => {
+    const handleRouteChange = () => {
+      if (hasUnsavedChanges) {
+        const confirmed = window.confirm('You have unsaved changes. Are you sure you want to leave?')
+        if (!confirmed) {
+          router.back()
+        }
+      }
+    }
+    
+    // Note: Next.js 13+ App Router doesn't have router events like Pages Router
+    // We'll handle this in the component that triggers navigation
+  }, [hasUnsavedChanges, router])
+  
   const brandColors = [
     { id: 'white', color: '#FFFFFF' },
     { id: 'dark', color: '#1F2937' },
@@ -311,14 +759,38 @@ export default function PageBuilder({ userType }: PageBuilderProps) {
     ))
   }
   
-  const moveSection = (index: number, direction: 'up' | 'down') => {
-    const newSections = [...layoutSections]
-    if (direction === 'up' && index > 0) {
-      [newSections[index], newSections[index - 1]] = [newSections[index - 1], newSections[index]]
+  // Drag and drop handler for sections
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event
+    
+    if (over && active.id !== over.id) {
+      setLayoutSections((items) => {
+        const oldIndex = items.findIndex(item => item.id === active.id)
+        const newIndex = items.findIndex(item => item.id === over.id)
+        const newItems = arrayMove(items, oldIndex, newIndex)
+        setHasUnsavedChanges(true)
+        addToHistory()
+        return newItems
+      })
+    }
+  }
+  
+  // Duplicate section
+  const duplicateSection = (sectionId: string) => {
+    const section = layoutSections.find(s => s.id === sectionId)
+    if (section) {
+      const newId = `${sectionId}-copy-${Date.now()}`
+      const newSection = { ...section, id: newId }
+      const index = layoutSections.findIndex(s => s.id === sectionId)
+      const newSections = [...layoutSections]
+      newSections.splice(index + 1, 0, newSection)
       setLayoutSections(newSections)
-    } else if (direction === 'down' && index < newSections.length - 1) {
-      [newSections[index], newSections[index + 1]] = [newSections[index + 1], newSections[index]]
-      setLayoutSections(newSections)
+      setSectionVisibility(prev => ({
+        ...prev,
+        [newId]: section.visible
+      }))
+      setHasUnsavedChanges(true)
+      addToHistory()
     }
   }
   
@@ -329,35 +801,220 @@ export default function PageBuilder({ userType }: PageBuilderProps) {
       delete newVisibility[sectionId as keyof typeof prev]
       return newVisibility
     })
+    setSectionStyles(prev => {
+      const newStyles = { ...prev }
+      delete newStyles[sectionId]
+      return newStyles
+    })
+    setHasUnsavedChanges(true)
+    addToHistory()
   }
   
-  // File upload handlers
-  const handleFileUpload = (file: File, type: 'profile' | 'hero' | 'profileCard' | 'property') => {
-    const reader = new FileReader()
-    reader.onloadend = () => {
-      const result = reader.result as string
-      switch (type) {
-        case 'profile':
-          setProfileImage(result)
-          break
-        case 'hero':
-          setHeroImage(result)
-          break
-        case 'profileCard':
-          setProfileCardImage(result)
-          break
-        case 'property':
-          setPropertyImages(prev => [...prev, result])
-          break
+  // Rename section
+  const renameSection = (sectionId: string, newName: string) => {
+    if (!newName.trim()) return
+    setLayoutSections(prev => prev.map(section => 
+      section.id === sectionId ? { ...section, name: newName.trim() } : section
+    ))
+    setEditingSectionName(null)
+    setNewSectionName('')
+    setHasUnsavedChanges(true)
+    addToHistory()
+  }
+  
+  // Get default section style
+  const getDefaultSectionStyle = () => ({
+    layoutTemplate: 'default',
+    fontFamily: globalDesign.fontFamily,
+    fontSize: globalDesign.fontSize,
+    textColor: '#1F2937',
+    backgroundColor: 'transparent',
+    padding: 'normal',
+    borderStyle: 'none',
+    borderColor: '#E5E7EB',
+    shadow: 'none'
+  })
+  
+  // Update section style
+  const updateSectionStyle = (sectionId: string, styleUpdates: Partial<typeof sectionStyles[string]>) => {
+    setSectionStyles(prev => ({
+      ...prev,
+      [sectionId]: {
+        ...getDefaultSectionStyle(),
+        ...prev[sectionId],
+        ...styleUpdates
       }
-    }
-    reader.readAsDataURL(file)
+    }))
+    setHasUnsavedChanges(true)
+    addToHistory()
   }
   
-  const handleImageInputChange = (e: React.ChangeEvent<HTMLInputElement>, type: 'profile' | 'hero' | 'profileCard' | 'property') => {
+  // Add new section
+  const addNewSection = () => {
+    if (!newSectionTitle.trim()) return
+    
+    const newId = `custom-${Date.now()}`
+    const newSection = {
+      id: newId,
+      name: newSectionTitle.trim(),
+      visible: true,
+      type: newSectionType,
+      content: newSectionContent
+    }
+    
+    setLayoutSections(prev => [...prev, newSection])
+    setSectionVisibility(prev => ({ ...prev, [newId]: true }))
+    setSectionStyles(prev => ({
+      ...prev,
+      [newId]: getDefaultSectionStyle()
+    }))
+    
+    setShowAddSectionModal(false)
+    setNewSectionTitle('')
+    setNewSectionContent('')
+    setNewSectionType('custom')
+    setHasUnsavedChanges(true)
+    addToHistory()
+  }
+  
+  // Get section style for rendering
+  const getSectionStyle = (sectionId: string) => {
+    const style = sectionStyles[sectionId] || getDefaultSectionStyle()
+    return {
+      fontFamily: style.fontFamily,
+      fontSize: style.fontSize,
+      color: style.textColor,
+      backgroundColor: style.backgroundColor,
+      padding: style.padding === 'small' ? '0.5rem' : style.padding === 'large' ? '2rem' : '1rem',
+      borderStyle: style.borderStyle,
+      borderColor: style.borderColor,
+      boxShadow: style.shadow === 'small' ? '0 1px 2px rgba(0,0,0,0.05)' : 
+                 style.shadow === 'medium' ? '0 4px 6px rgba(0,0,0,0.1)' :
+                 style.shadow === 'large' ? '0 10px 15px rgba(0,0,0,0.15)' : 'none'
+    }
+  }
+  
+  // Sortable section item component
+  function SortableSectionItem({ section, index }: { section: { id: string; name: string; visible: boolean }, index: number }) {
+    const {
+      attributes,
+      listeners,
+      setNodeRef,
+      transform,
+      transition,
+      isDragging,
+    } = useSortable({ id: section.id })
+    
+    const style = {
+      transform: CSS.Transform.toString(transform),
+      transition,
+      opacity: isDragging ? 0.5 : 1,
+    }
+    
+    return (
+      <div
+        ref={setNodeRef}
+        style={style}
+        className={`flex items-center gap-3 p-3 bg-gray-50 rounded-lg border border-gray-200 hover:border-gray-300 transition-colors ${
+          !section.visible ? 'opacity-50' : ''
+        }`}
+      >
+        <div
+          {...attributes}
+          {...listeners}
+          className="cursor-grab active:cursor-grabbing text-gray-400 hover:text-gray-600"
+        >
+          <FiMove className="w-5 h-5" />
+        </div>
+        {editingSectionName === section.id ? (
+          <input
+            type="text"
+            value={newSectionName || section.name}
+            onChange={(e) => setNewSectionName(e.target.value)}
+            onBlur={() => {
+              if (newSectionName.trim()) {
+                renameSection(section.id, newSectionName)
+              } else {
+                setEditingSectionName(null)
+                setNewSectionName('')
+              }
+            }}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                if (newSectionName.trim()) {
+                  renameSection(section.id, newSectionName)
+                }
+              } else if (e.key === 'Escape') {
+                setEditingSectionName(null)
+                setNewSectionName('')
+              }
+            }}
+            className="flex-1 px-2 py-1 text-sm border border-blue-500 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            autoFocus
+          />
+        ) : (
+          <span 
+            className="flex-1 text-sm font-medium text-gray-900 cursor-pointer hover:text-blue-600"
+            onClick={() => {
+              setEditingSectionName(section.id)
+              setNewSectionName(section.name)
+            }}
+            title="Click to rename"
+          >
+            {section.name}
+          </span>
+        )}
+        <div className="flex items-center gap-2">
+          <button
+            className="p-2 text-gray-500 hover:text-gray-700 transition-colors"
+            onClick={() => {
+              setOpenSectionId(openSectionId === section.id ? null : section.id)
+            }}
+            aria-label="Section settings"
+            title="Section settings"
+          >
+            <FiSettings className="w-4 h-4" />
+          </button>
+          <button
+            className="p-2 text-gray-500 hover:text-gray-700 transition-colors"
+            onClick={() => {
+              toggleSectionVisibility(section.id)
+              setHasUnsavedChanges(true)
+              addToHistory()
+            }}
+            aria-label="Toggle visibility"
+          >
+            {section.visible ? (
+              <FiEye className="w-4 h-4" />
+            ) : (
+              <FiEyeOff className="w-4 h-4" />
+            )}
+          </button>
+          <button
+            className="p-2 text-gray-500 hover:text-gray-700 transition-colors"
+            onClick={() => duplicateSection(section.id)}
+            aria-label="Duplicate section"
+            title="Duplicate section"
+          >
+            <FiCopy className="w-4 h-4" />
+          </button>
+          <button
+            className="p-2 text-red-500 hover:text-red-700 transition-colors"
+            onClick={() => deleteSection(section.id)}
+            aria-label="Delete section"
+          >
+            <FiTrash2 className="w-4 h-4" />
+          </button>
+        </div>
+      </div>
+    )
+  }
+  
+  // Legacy file upload handler (for backward compatibility)
+  const handleImageInputChange = (e: React.ChangeEvent<HTMLInputElement>, type: 'profile' | 'hero' | 'profileCard' | 'property', fieldId?: string) => {
     const file = e.target.files?.[0]
-    if (file && file.type.startsWith('image/')) {
-      handleFileUpload(file, type)
+    if (file) {
+      handleImageUpload(file, type, fieldId)
     }
   }
   
@@ -506,61 +1163,20 @@ export default function PageBuilder({ userType }: PageBuilderProps) {
   const handleSaveChanges = async () => {
     try {
       setIsSaving(true)
+      setAutoSaveStatus('saving')
       
-      // Collect all page customization data into a single object
-      const pageData = {
-        // Profile mode fields
-        selected_theme: selectedTheme,
-        bio: bio,
-        show_bio: showBio,
-        show_contact_number: showContactNumber,
-        show_experience_stats: showExperienceStats,
-        show_featured_listings: showFeaturedListings,
-        show_testimonials: showTestimonials,
-        profile_image: profileImage,
-        contact_info: contactInfo,
-        experience_stats: experienceStats,
-        featured_listings: featuredListings,
-        testimonials: testimonials,
-        
-        // Property mode fields
-        hero_image: heroImage,
-        main_heading: mainHeading,
-        tagline: tagline,
-        overall_darkness: overallDarkness,
-        property_description: propertyDescription,
-        property_images: propertyImages,
-        property_price: propertyPrice,
-        contact_phone: contactInfo.phone,
-        contact_email: contactInfo.email,
-        
-        // Profile card fields - always save the actual values from state
-        profile_card_name: profileCardName,
-        profile_card_role: profileCardRole,
-        profile_card_bio: profileCardBio,
-        profile_card_image: profileCardImage,
-        
-        // Layout and design fields
-        section_visibility: sectionVisibility,
-        layout_sections: layoutSections,
-        selected_brand_color: selectedBrandColor,
-        selected_corner_radius: selectedCornerRadius,
-      }
+      const pageData = collectPageData()
       
       // Send to backend with page_data structure
       const savePayload = {
         user_type: userType,
         page_type: activeTab as 'profile' | 'property',
         page_data: pageData,
+        page_slug: pageSlug || undefined,
       }
       
-      let savedData
-      if (pageBuilderId) {
-        savedData = await pageBuilderApi.update(pageBuilderId, savePayload)
-      } else {
-        savedData = await pageBuilderApi.save(savePayload)
-        setPageBuilderId(savedData.id || null)
-      }
+      const savedData = await pageBuilderApi.save(savePayload)
+      setPageBuilderId(savedData.id || null)
       
       // Update page URL and slug if available
       if (savedData.page_url) {
@@ -570,11 +1186,14 @@ export default function PageBuilder({ userType }: PageBuilderProps) {
         setPageSlug(savedData.page_slug)
       }
       setIsPublished(savedData.is_published || false)
+      setHasUnsavedChanges(false)
+      setAutoSaveStatus('saved')
       
-      alert('Changes saved successfully!')
+      toast.success('Changes saved successfully!')
     } catch (error: any) {
       console.error('Error saving page builder:', error)
-      alert('Failed to save changes: ' + (error.response?.data?.message || error.message))
+      setAutoSaveStatus('error')
+      toast.error('Failed to save changes: ' + (error.response?.data?.message || error.message))
     } finally {
       setIsSaving(false)
     }
@@ -582,14 +1201,19 @@ export default function PageBuilder({ userType }: PageBuilderProps) {
   
   // Publish handler
   const handlePublish = async () => {
-    if (!pageBuilderId) {
-      alert('Please save your page first before publishing.')
+    // Save first if there are unsaved changes
+    if (hasUnsavedChanges) {
+      await handleSaveChanges()
+    }
+    
+    if (!pageSlug) {
+      toast.error('Please save your page first before publishing.')
       return
     }
     
     try {
       setIsPublishing(true)
-      const publishedData = await pageBuilderApi.publish(pageBuilderId, !isPublished)
+      const publishedData = await pageBuilderApi.publishBySlug(pageSlug)
       
       setIsPublished(publishedData.is_published || false)
       if (publishedData.page_url) {
@@ -601,13 +1225,13 @@ export default function PageBuilder({ userType }: PageBuilderProps) {
       
       if (publishedData.is_published) {
         setShowPageUrlModal(true)
-        alert('Page published successfully! Your page is now live and shareable.')
+        toast.success('Page published successfully! Your page is now live and shareable.')
       } else {
-        alert('Page unpublished successfully.')
+        toast.success('Page unpublished successfully.')
       }
     } catch (error: any) {
       console.error('Error publishing page:', error)
-      alert('Failed to publish page: ' + (error.response?.data?.message || error.message))
+      toast.error('Failed to publish page: ' + (error.response?.data?.message || error.message))
     } finally {
       setIsPublishing(false)
     }
@@ -660,44 +1284,117 @@ export default function PageBuilder({ userType }: PageBuilderProps) {
     <div className="flex min-h-screen bg-gray-100 font-outfit"> {/* agent-dashboard */}
       <AppSidebar/>
 
-      <main className="ml-[280px] flex-1 w-[calc(100%-280px)] min-h-screen lg:ml-[240px] lg:w-[calc(100%-240px)] md:ml-[200px] md:w-[calc(100%-200px)] md:ml-0 md:w-full"> {/* agent-main */}
-        <div className="px-4 sm:px-6 md:px-10 lg:px-[150px] py-8 lg:py-6 md:py-4 md:pt-15">
+      <main className="main-with-sidebar flex-1 min-h-screen"> {/* agent-main */}
+        <div className="p-8 lg:py-6 md:py-4 md:pt-15">
           {userType === 'agent' ? (
             <AgentHeader 
               title={activeTab === 'profile' ? "Page Builder > Profile" : "Page Builder > Property"} 
               subtitle={activeTab === 'profile' ? "Customize your public profile page" : "Customize your property page"} 
             />
           ) : (
-            <header className="flex items-center justify-between mb-7 md:flex-col md:items-start md:gap-3.5">
-              <div className="flex flex-col gap-1">
-                <h1 className="text-2xl font-bold text-gray-900 m-0 mb-1 md:text-xl">
+            <header className="mb-4 w-full">
+              <div className="flex flex-col gap-1 w-full min-w-0">
+                <h1 className="text-2xl font-bold text-gray-900 m-0 mb-1 md:text-xl break-words">
                   {activeTab === 'profile' ? 'Page Builder > Profile' : 'Page Builder > Property'}
                 </h1>
-                <p className="text-sm text-gray-400 m-0">
+                <p className="text-sm text-gray-400 m-0 break-words">
                   {activeTab === 'profile' ? 'Customize your public profile page' : 'Customize your property page'}
                 </p>
-              </div>
-              <div className="flex items-center gap-3.5 md:w-full md:justify-between md:gap-2.5">
-                <a href="/broker/create-listing" className="inline-flex items-center gap-2 py-2.5 px-5 bg-blue-600 text-white text-sm font-semibold rounded-xl border-0 no-underline cursor-pointer transition-all duration-200 shadow-sm hover:bg-blue-700 active:scale-[0.98]">
-                  <FiPlus />
-                  Add Listing
-                </a>
               </div>
             </header>
           )}
           
-          {/* Preview Button */}
-          <div className="flex justify-end mb-6"> {/* preview-button-container */}
-            <button 
-              className="inline-flex items-center gap-2 py-2.5 px-5 bg-blue-600 text-white text-sm font-semibold rounded-xl border-0 cursor-pointer transition-all duration-200 shadow-sm hover:bg-blue-700" /* full-preview-button */
-              onClick={() => setShowFullPreview(true)}
-            >
-              <FiExternalLink className="text-base" /> {/* preview-icon */}
-              <span>Preview Full Page</span>
-            </button>
+          {/* Toolbar */}
+          <div className="flex items-center justify-between mb-6 p-4 bg-white rounded-xl shadow-sm">
+            <div className="flex items-center gap-3">
+              {/* Undo/Redo */}
+              <button
+                onClick={handleUndo}
+                disabled={historyIndex <= 0}
+                className="p-2 text-gray-600 hover:text-gray-900 disabled:opacity-30 disabled:cursor-not-allowed transition-colors rounded-lg hover:bg-gray-100"
+                title="Undo (Ctrl+Z)"
+              >
+                <FiRotateCcw className="w-5 h-5" />
+              </button>
+              <button
+                onClick={handleRedo}
+                disabled={historyIndex >= history.length - 1}
+                className="p-2 text-gray-600 hover:text-gray-900 disabled:opacity-30 disabled:cursor-not-allowed transition-colors rounded-lg hover:bg-gray-100"
+                title="Redo (Ctrl+Shift+Z)"
+              >
+                <FiRotateCw className="w-5 h-5" />
+              </button>
+              
+              {/* Auto-save Status */}
+              <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-gray-50">
+                {autoSaveStatus === 'saved' && (
+                  <>
+                    <div className="w-2 h-2 rounded-full bg-green-500"></div>
+                    <span className="text-xs text-gray-600">Saved</span>
+                  </>
+                )}
+                {autoSaveStatus === 'saving' && (
+                  <>
+                    <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></div>
+                    <span className="text-xs text-gray-600">Saving...</span>
+                  </>
+                )}
+                {autoSaveStatus === 'unsaved' && (
+                  <>
+                    <div className="w-2 h-2 rounded-full bg-yellow-500"></div>
+                    <span className="text-xs text-gray-600">Unsaved changes</span>
+                  </>
+                )}
+                {autoSaveStatus === 'error' && (
+                  <>
+                    <div className="w-2 h-2 rounded-full bg-red-500"></div>
+                    <span className="text-xs text-gray-600">Save failed</span>
+                  </>
+                )}
+              </div>
+            </div>
+            
+            <div className="flex items-center gap-3">
+              {/* Preview Toggle */}
+              <button
+                onClick={() => setShowPreview(!showPreview)}
+                className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
+                title="Toggle Preview (Ctrl+P)"
+              >
+                {showPreview ? <FiX className="w-4 h-4" /> : <FiExternalLink className="w-4 h-4" />}
+                <span>{showPreview ? 'Hide Preview' : 'Show Preview'}</span>
+              </button>
+              
+              {/* Keyboard Shortcuts */}
+              <button
+                onClick={() => setShowShortcutsModal(true)}
+                className="p-2 text-gray-600 hover:text-gray-900 transition-colors rounded-lg hover:bg-gray-100"
+                title="Keyboard Shortcuts"
+              >
+                <FiHelpCircle className="w-5 h-5" />
+              </button>
+              
+              {/* Full Preview */}
+              <button 
+                className="inline-flex items-center gap-2 py-2 px-4 bg-blue-600 text-white text-sm font-semibold rounded-lg border-0 cursor-pointer transition-all duration-200 shadow-sm hover:bg-blue-700"
+                onClick={() => setShowFullPreview(true)}
+              >
+                <FiExternalLink className="w-4 h-4" />
+                <span>Full Preview</span>
+              </button>
+            </div>
           </div>
+          
+          {/* Loading Spinner */}
+          {isLoading && (
+            <div className="flex items-center justify-center py-12">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+            </div>
+          )}
+          
+          {!isLoading && (
 
-          <div className="grid grid-cols-[1fr_1.5fr] gap-6 lg:grid-cols-2"> {/* page-builder-container */}
+          <div className="grid grid-cols-[1fr_1fr] gap-6 lg:grid-cols-[1fr_2fr]"> {/* page-builder-container */}
           {/* Left Column - Customization */}
           <div className="flex flex-col gap-6"> {/* page-builder-left */}
             {activeTab === 'profile' ? (
@@ -714,76 +1411,9 @@ export default function PageBuilder({ userType }: PageBuilderProps) {
                   </div>
                 </div>
 
-                {/* Themes Section */}
-                <div className="bg-white rounded-2xl p-6 shadow-sm"> {/* builder-section */}
-                  <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wider mb-4">Themes</h3> {/* section-label */}
-                  <div className="grid grid-cols-4 gap-4"> {/* themes-grid */}
-                    {themes.map((theme) => (
-                      <div key={theme.id} className="flex flex-col items-center gap-2">
-                        <button
-                          className={`w-16 h-16 rounded-full border-2 transition-all ${
-                            selectedTheme === theme.id 
-                              ? 'border-blue-600 ring-2 ring-blue-200' 
-                              : 'border-gray-300 hover:border-gray-400'
-                          } ${theme.id === 'white' ? 'border-gray-300' : ''}`}
-                          style={{ backgroundColor: theme.color }}
-                          onClick={() => setSelectedTheme(theme.id)}
-                          aria-label={theme.name}
-                        />
-                        <span className="text-xs font-medium text-gray-700">{theme.name}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Profile Section */}
-                <div className="bg-white rounded-2xl p-6 shadow-sm">
-                  <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wider mb-4">Profile</h3>
-                  <div className="flex flex-col gap-4">
-                    <div className="relative w-24 h-24 mx-auto">
-                      <img 
-                        src={profileImage || ASSETS.PLACEHOLDER_PROFILE} 
-                        alt="Profile"
-                        className="w-full h-full rounded-full object-cover"
-                        onError={(e) => {
-                          const target = e.target as HTMLImageElement;
-                          target.style.display = 'none';
-                        }}
-                      />
-                      <div className="absolute inset-0 w-full h-full rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-semibold text-lg hidden">
-                        JA
-                      </div>
-                    </div>
-                    <input
-                      type="file"
-                      ref={profileImageInputRef}
-                      accept="image/*"
-                      className="hidden"
-                      onChange={(e) => handleImageInputChange(e, 'profile')}
-                    />
-                    <button 
-                      className="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-blue-600 text-white text-sm font-medium rounded-lg border-0 cursor-pointer transition-colors hover:bg-blue-700"
-                      onClick={() => profileImageInputRef.current?.click()}
-                    >
-                      <FiUpload className="w-4 h-4" />
-                      Upload Image
-                    </button>
-                    <textarea
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-white text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-y min-h-[100px]"
-                      placeholder="This is my bio..."
-                      value={bio}
-                      onChange={(e) => setBio(e.target.value)}
-                    />
-                  </div>
-                </div>
-
                 {/* Profile Card Section */}
                 <div className="bg-white rounded-2xl p-6 shadow-sm">
                   <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wider mb-4">Profile Card</h3>
-                  <div className="p-3 bg-blue-50 rounded-lg mb-4 text-sm text-blue-900">
-                    <strong>ℹ️ Note:</strong> Profile card uses the same image and bio from Profile section above. 
-                    You can customize the name and role separately.
-                  </div>
                   <div className="flex flex-col gap-4">
                     <div className="relative w-20 h-20 mx-auto group">
                       <img 
@@ -840,29 +1470,7 @@ export default function PageBuilder({ userType }: PageBuilderProps) {
                 <div className="bg-white rounded-2xl p-6 shadow-sm">
                   <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wider mb-4">Information</h3>
                   <div className="flex flex-col gap-4">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center justify-between flex-1 mr-4">
-                        <span className="text-sm font-medium text-gray-900">Show Bio</span>
-                        <span 
-                          className="text-sm text-blue-600 hover:text-blue-700 cursor-pointer"
-                          onClick={() => {
-                            const newBio = prompt('Edit your bio:', bio)
-                            if (newBio !== null) setBio(newBio)
-                          }}
-                        >
-                          Edit
-                        </span>
-                      </div>
-                      <label className="relative inline-flex items-center cursor-pointer">
-                        <input
-                          type="checkbox"
-                          checked={showBio}
-                          onChange={(e) => setShowBio(e.target.checked)}
-                          className="sr-only peer"
-                        />
-                        <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-                      </label>
-                    </div>
+                    
 
                     <div className="flex items-center justify-between">
                       <div className="flex items-center justify-between flex-1 mr-4">
@@ -993,6 +1601,57 @@ export default function PageBuilder({ userType }: PageBuilderProps) {
                       )}
                     </div>
                   </div>
+                </div>
+
+                {/* Save and Publish Buttons for Profile Mode */}
+                <div className="mt-6 flex flex-col gap-3 p-5 border-t border-gray-200 bg-white rounded-b-2xl">
+                  <button 
+                    className="w-full px-4 py-2.5 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed" 
+                    onClick={handleSaveChanges}
+                    disabled={isSaving || isLoading}
+                  >
+                    {isSaving ? 'Saving...' : 'Save Changes'}
+                  </button>
+                  
+                  {pageBuilderId && (
+                    <>
+                      <button 
+                        className={`w-full px-4 py-2.5 font-semibold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
+                          isPublished 
+                            ? 'bg-green-600 text-white hover:bg-green-700' 
+                            : 'bg-blue-600 text-white hover:bg-blue-700'
+                        }`}
+                        onClick={handlePublish}
+                        disabled={isPublishing || isLoading}
+                      >
+                        {isPublishing ? 'Publishing...' : isPublished ? 'Unpublish Page' : 'Publish Page'}
+                      </button>
+                      
+                      {isPublished && pageUrl && (
+                        <div className="p-3 bg-gray-100 rounded-lg text-sm">
+                          <div className="mb-2 font-semibold text-gray-900">
+                            Your Page URL:
+                          </div>
+                          <div className="flex gap-2 items-center break-all">
+                            <a 
+                              href={pageUrl} 
+                              target="_blank" 
+                              rel="noopener noreferrer"
+                              className="text-blue-600 hover:text-blue-700 flex-1 break-all"
+                            >
+                              {pageUrl}
+                            </a>
+                            <button
+                              onClick={handleCopyUrl}
+                              className="px-3 py-1.5 bg-blue-600 text-white text-xs font-medium rounded hover:bg-blue-700 transition-colors whitespace-nowrap"
+                            >
+                              Copy
+                            </button>
+                          </div>
+                        </div>
+                      )}
+                    </>
+                  )}
                 </div>
               </>
             ) : (
@@ -1197,135 +1856,182 @@ export default function PageBuilder({ userType }: PageBuilderProps) {
                       </div>
                     </div>
 
-                    {/* Contact Information */}
-                    <div className="bg-white rounded-2xl p-6 shadow-sm">
-                      <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wider mb-4">Contact Information</h3>
-                      <div className="p-3 bg-blue-50 rounded-lg mb-4 text-sm text-blue-900">
-                        <strong>ℹ️ Note:</strong> Contact information is synced with your Profile page builder. 
-                        Update your contact details in the Profile tab.
-                      </div>
-                      <div className="grid grid-cols-2 gap-3">
-                        <div className="flex flex-col gap-2">
-                          <label className="text-xs font-medium text-gray-700">Phone Number</label>
-                          <div className="px-3 py-2.5 border border-gray-300 rounded-lg bg-gray-50 text-sm text-gray-500">
-                            {contactInfo.phone || 'Not set - Edit in Profile tab'}
-                          </div>
-                        </div>
-                        <div className="flex flex-col gap-2">
-                          <label className="text-xs font-medium text-gray-700">Email Address</label>
-                          <div className="px-3 py-2.5 border border-gray-300 rounded-lg bg-gray-50 text-sm text-gray-500">
-                            {contactInfo.email || 'Not set - Edit in Profile tab'}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Profile Card - Synced with Profile Page Builder */}
-                    <div className="bg-white rounded-2xl p-6 shadow-sm">
-                      <div className="flex items-center justify-between mb-4">
-                        <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wider">Profile Card</h3>
-                        <button 
-                          className="p-2 text-gray-500 hover:text-gray-700 transition-colors"
-                          onClick={() => toggleSectionVisibility('profileCard')}
-                          aria-label="Toggle visibility"
-                        >
-                          {sectionVisibility.profileCard ? (
-                            <FiEye className="w-5 h-5" />
-                          ) : (
-                            <FiEyeOff className="w-5 h-5" />
-                          )}
-                        </button>
-                      </div>
-                      <div className="p-3 bg-blue-50 rounded-lg mb-4 text-sm text-blue-900">
-                        <strong>ℹ️ Note:</strong> Profile card automatically syncs with your Profile page builder. 
-                        Update your profile image, bio, and contact info in the Profile tab to see changes here.
-                      </div>
-                      <div className="flex flex-col gap-4">
-                        <div className="w-20 h-20 mx-auto rounded-full overflow-hidden bg-gray-200">
-                          <img src={profileImage || profileCardImage || ASSETS.PLACEHOLDER_PROFILE} alt="Profile" className="w-full h-full object-cover" />
-                        </div>
-                        <div className="flex flex-col gap-2">
-                          <div className="px-3 py-2.5 border border-gray-300 rounded-lg bg-gray-50 text-sm text-gray-500 cursor-not-allowed">
-                            {profileCardName || 'Your name from Profile page'}
-                          </div>
-                          <div className="px-3 py-2.5 border border-gray-300 rounded-lg bg-gray-50 text-sm text-gray-500 cursor-not-allowed">
-                            {profileCardRole || 'Property Agent'}
-                          </div>
-                        </div>
-                        <div className="px-3 py-2.5 border border-gray-300 rounded-lg bg-gray-50 text-sm text-gray-500 cursor-not-allowed min-h-[80px]">
-                          {bio || profileCardBio || 'Your bio from Profile page'}
-                        </div>
-                      </div>
-                    </div>
                   </div>
                 )}
 
                 {/* Section Tab */}
                 {leftSidebarTab === 'section' && (
-                  <div className="bg-white rounded-2xl p-6 shadow-sm">
-                    <h2 className="text-lg font-bold text-gray-900 mb-4">Layout Manager</h2>
-                    <div className="flex flex-col gap-2">
-                      {layoutSections.map((section, index) => (
-                        <div 
-                          key={section.id} 
-                          className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg border border-gray-200 hover:border-gray-300 transition-colors"
-                          draggable
-                          onDragStart={() => handleDragStart(index)}
-                          onDragOver={handleDragOver}
-                          onDrop={() => handleDrop(index)}
-                          style={{
-                            cursor: 'move',
-                            opacity: draggedSectionIndex === index ? 0.5 : 1
-                          }}
+                  <div className="flex flex-col gap-4">
+                    <div className="bg-white rounded-2xl p-6 shadow-sm">
+                      <div className="flex items-center justify-between mb-4">
+                        <h2 className="text-lg font-bold text-gray-900">Layout Manager</h2>
+                        <button
+                          className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
+                          onClick={() => setShowAddSectionModal(true)}
                         >
-                          <div className="flex flex-col gap-1">
-                            <button
-                              className="p-1 text-gray-500 hover:text-gray-700 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-                              onClick={() => moveSection(index, 'up')}
-                              disabled={index === 0}
-                              aria-label="Move up"
-                            >
-                              <FiChevronUp className="w-4 h-4" />
-                            </button>
-                            <button
-                              className="p-1 text-gray-500 hover:text-gray-700 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-                              onClick={() => moveSection(index, 'down')}
-                              disabled={index === layoutSections.length - 1}
-                              aria-label="Move down"
-                            >
-                              <FiChevronDown className="w-4 h-4" />
-                            </button>
+                          <FiPlus className="w-4 h-4" />
+                          Add Section
+                        </button>
+                      </div>
+                      <DndContext
+                        sensors={sensors}
+                        collisionDetection={closestCenter}
+                        onDragEnd={handleDragEnd}
+                      >
+                        <SortableContext
+                          items={layoutSections.map(s => s.id)}
+                          strategy={verticalListSortingStrategy}
+                        >
+                          <div className="flex flex-col gap-2">
+                            {layoutSections.map((section, index) => (
+                              <div key={section.id}>
+                                <SortableSectionItem section={section} index={index} />
+                                {/* Section Styling Panel */}
+                                {openSectionId === section.id && (
+                                  <div className="mt-2 p-4 bg-gray-50 rounded-lg border border-gray-200">
+                                    <h4 className="text-sm font-semibold text-gray-900 mb-3">Section Styling</h4>
+                                    <div className="space-y-4">
+                                      {/* Layout Template */}
+                                      <div>
+                                        <label className="block text-xs font-medium text-gray-700 mb-2">Layout Template</label>
+                                        <select
+                                          value={sectionStyles[section.id]?.layoutTemplate || 'default'}
+                                          onChange={(e) => updateSectionStyle(section.id, { layoutTemplate: e.target.value })}
+                                          className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        >
+                                          <option value="default">Default</option>
+                                          <option value="centered">Centered</option>
+                                          <option value="wide">Wide</option>
+                                          <option value="narrow">Narrow</option>
+                                          <option value="split">Split</option>
+                                        </select>
+                                      </div>
+                                      
+                                      {/* Font Family */}
+                                      <div>
+                                        <label className="block text-xs font-medium text-gray-700 mb-2">Font Family</label>
+                                        <select
+                                          value={sectionStyles[section.id]?.fontFamily || globalDesign.fontFamily}
+                                          onChange={(e) => updateSectionStyle(section.id, { fontFamily: e.target.value })}
+                                          className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        >
+                                          <option value="Inter">Inter</option>
+                                          <option value="Roboto">Roboto</option>
+                                          <option value="Open Sans">Open Sans</option>
+                                          <option value="Lato">Lato</option>
+                                          <option value="Montserrat">Montserrat</option>
+                                          <option value="Poppins">Poppins</option>
+                                        </select>
+                                      </div>
+                                      
+                                      {/* Font Size */}
+                                      <div>
+                                        <label className="block text-xs font-medium text-gray-700 mb-2">Font Size</label>
+                                        <select
+                                          value={sectionStyles[section.id]?.fontSize || globalDesign.fontSize}
+                                          onChange={(e) => updateSectionStyle(section.id, { fontSize: e.target.value })}
+                                          className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        >
+                                          <option value="12px">12px</option>
+                                          <option value="14px">14px</option>
+                                          <option value="16px">16px</option>
+                                          <option value="18px">18px</option>
+                                          <option value="20px">20px</option>
+                                          <option value="24px">24px</option>
+                                        </select>
+                                      </div>
+                                      
+                                      {/* Text Color */}
+                                      <div>
+                                        <label className="block text-xs font-medium text-gray-700 mb-2">Text Color</label>
+                                        <div className="flex items-center gap-2">
+                                          <input
+                                            type="color"
+                                            value={sectionStyles[section.id]?.textColor || '#1F2937'}
+                                            onChange={(e) => updateSectionStyle(section.id, { textColor: e.target.value })}
+                                            className="w-12 h-10 border border-gray-300 rounded cursor-pointer"
+                                          />
+                                          <input
+                                            type="text"
+                                            value={sectionStyles[section.id]?.textColor || '#1F2937'}
+                                            onChange={(e) => updateSectionStyle(section.id, { textColor: e.target.value })}
+                                            className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                            placeholder="#1F2937"
+                                          />
+                                        </div>
+                                      </div>
+                                      
+                                      {/* Background Color */}
+                                      <div>
+                                        <label className="block text-xs font-medium text-gray-700 mb-2">Background Color</label>
+                                        <div className="flex items-center gap-2">
+                                          <input
+                                            type="color"
+                                            value={sectionStyles[section.id]?.backgroundColor || '#FFFFFF'}
+                                            onChange={(e) => updateSectionStyle(section.id, { backgroundColor: e.target.value })}
+                                            className="w-12 h-10 border border-gray-300 rounded cursor-pointer"
+                                          />
+                                          <input
+                                            type="text"
+                                            value={sectionStyles[section.id]?.backgroundColor || '#FFFFFF'}
+                                            onChange={(e) => updateSectionStyle(section.id, { backgroundColor: e.target.value })}
+                                            className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                            placeholder="#FFFFFF or transparent"
+                                          />
+                                        </div>
+                                      </div>
+                                      
+                                      {/* Padding */}
+                                      <div>
+                                        <label className="block text-xs font-medium text-gray-700 mb-2">Padding</label>
+                                        <select
+                                          value={sectionStyles[section.id]?.padding || 'normal'}
+                                          onChange={(e) => updateSectionStyle(section.id, { padding: e.target.value })}
+                                          className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        >
+                                          <option value="small">Small</option>
+                                          <option value="normal">Normal</option>
+                                          <option value="large">Large</option>
+                                        </select>
+                                      </div>
+                                      
+                                      {/* Border Style */}
+                                      <div>
+                                        <label className="block text-xs font-medium text-gray-700 mb-2">Border Style</label>
+                                        <select
+                                          value={sectionStyles[section.id]?.borderStyle || 'none'}
+                                          onChange={(e) => updateSectionStyle(section.id, { borderStyle: e.target.value })}
+                                          className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        >
+                                          <option value="none">None</option>
+                                          <option value="solid">Solid</option>
+                                          <option value="dashed">Dashed</option>
+                                          <option value="dotted">Dotted</option>
+                                        </select>
+                                      </div>
+                                      
+                                      {/* Shadow */}
+                                      <div>
+                                        <label className="block text-xs font-medium text-gray-700 mb-2">Shadow</label>
+                                        <select
+                                          value={sectionStyles[section.id]?.shadow || 'none'}
+                                          onChange={(e) => updateSectionStyle(section.id, { shadow: e.target.value })}
+                                          className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        >
+                                          <option value="none">None</option>
+                                          <option value="small">Small</option>
+                                          <option value="medium">Medium</option>
+                                          <option value="large">Large</option>
+                                        </select>
+                                      </div>
+                                    </div>
+                                  </div>
+                                )}
+                              </div>
+                            ))}
                           </div>
-                          <span className="flex-1 text-sm font-medium text-gray-900">{section.name}</span>
-                          <div className="flex items-center gap-2">
-                            <button
-                              className="p-2 text-gray-500 hover:text-gray-700 transition-colors"
-                              onClick={() => toggleSectionVisibility(section.id)}
-                              aria-label="Toggle visibility"
-                            >
-                              {section.visible ? (
-                                <FiEye className="w-4 h-4" />
-                              ) : (
-                                <FiEyeOff className="w-4 h-4" />
-                              )}
-                            </button>
-                            <button
-                              className="p-2 text-red-500 hover:text-red-700 transition-colors"
-                              onClick={() => deleteSection(section.id)}
-                              aria-label="Delete section"
-                            >
-                              <FiTrash2 className="w-4 h-4" />
-                            </button>
-                            <button
-                              className="p-2 text-gray-500 hover:text-gray-700 transition-colors cursor-move"
-                              aria-label="Drag to reorder"
-                              title="Drag to reorder"
-                            >
-                              <FiMove className="w-4 h-4" />
-                            </button>
-                          </div>
-                        </div>
-                      ))}
+                        </SortableContext>
+                      </DndContext>
                     </div>
                   </div>
                 )}
@@ -1375,6 +2081,85 @@ export default function PageBuilder({ userType }: PageBuilderProps) {
                           </button>
                         ))}
                       </div>
+                    </div>
+
+                    {/* Font Family */}
+                    <div className="bg-white rounded-2xl p-6 shadow-sm">
+                      <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wider mb-4">Font Family</h3>
+                      <select
+                        value={globalDesign.fontFamily}
+                        onChange={(e) => setGlobalDesign(prev => ({ ...prev, fontFamily: e.target.value }))}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      >
+                        <option value="Inter">Inter</option>
+                        <option value="Roboto">Roboto</option>
+                        <option value="Open Sans">Open Sans</option>
+                        <option value="Lato">Lato</option>
+                        <option value="Montserrat">Montserrat</option>
+                        <option value="Poppins">Poppins</option>
+                      </select>
+                    </div>
+
+                    {/* Font Size */}
+                    <div className="bg-white rounded-2xl p-6 shadow-sm">
+                      <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wider mb-4">Font Size</h3>
+                      <select
+                        value={globalDesign.fontSize}
+                        onChange={(e) => setGlobalDesign(prev => ({ ...prev, fontSize: e.target.value }))}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      >
+                        <option value="12px">12px</option>
+                        <option value="14px">14px</option>
+                        <option value="16px">16px</option>
+                        <option value="18px">18px</option>
+                        <option value="20px">20px</option>
+                        <option value="24px">24px</option>
+                      </select>
+                    </div>
+
+                    {/* Spacing */}
+                    <div className="bg-white rounded-2xl p-6 shadow-sm">
+                      <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wider mb-4">Spacing</h3>
+                      <select
+                        value={globalDesign.spacing}
+                        onChange={(e) => setGlobalDesign(prev => ({ ...prev, spacing: e.target.value }))}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      >
+                        <option value="compact">Compact</option>
+                        <option value="normal">Normal</option>
+                        <option value="relaxed">Relaxed</option>
+                        <option value="loose">Loose</option>
+                      </select>
+                    </div>
+
+                    {/* Border Style */}
+                    <div className="bg-white rounded-2xl p-6 shadow-sm">
+                      <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wider mb-4">Border Style</h3>
+                      <select
+                        value={globalDesign.borderStyle}
+                        onChange={(e) => setGlobalDesign(prev => ({ ...prev, borderStyle: e.target.value }))}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      >
+                        <option value="none">None</option>
+                        <option value="solid">Solid</option>
+                        <option value="dashed">Dashed</option>
+                        <option value="dotted">Dotted</option>
+                      </select>
+                    </div>
+
+                    {/* Shadow */}
+                    <div className="bg-white rounded-2xl p-6 shadow-sm">
+                      <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wider mb-4">Shadow</h3>
+                      <select
+                        value={globalDesign.shadow}
+                        onChange={(e) => setGlobalDesign(prev => ({ ...prev, shadow: e.target.value }))}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      >
+                        <option value="none">None</option>
+                        <option value="small">Small</option>
+                        <option value="medium">Medium</option>
+                        <option value="large">Large</option>
+                      </select>
                     </div>
                   </div>
                 )}
@@ -1463,58 +2248,72 @@ export default function PageBuilder({ userType }: PageBuilderProps) {
 
               <div className="bg-gray-50 min-h-[1600px] overflow-y-auto p-6">
                 {activeTab === 'profile' && (
-                  <div className="bg-white rounded-2xl p-6 px-4 sm:px-6 md:px-10">
-                    <div className="bg-white rounded-2xl overflow-hidden mb-6">
-                      <div className="relative bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 p-8 pb-16">
-                        <div className="flex flex-col items-center text-center">
-                          <div className="relative w-32 h-32 mb-4">
+                  <div className="bg-white rounded-2xl p-6">
+                    {/* Profile Card Section */}
+                    <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200 mb-6">
+                      <div className="flex flex-col sm:flex-row gap-6">
+                        {/* Profile Image and Basic Info */}
+                        <div className="flex flex-col items-center sm:items-start text-center sm:text-left flex-shrink-0">
+                          <div className="relative w-20 h-20 mb-3">
                             <img 
-                              src={profileImage || ASSETS.PLACEHOLDER_PROFILE} 
+                              src={profileCardImage || profileImage || ASSETS.PLACEHOLDER_PROFILE} 
                               alt={profileCardName || 'Profile'}
-                              className="w-full h-full rounded-full object-cover border-4 border-white shadow-lg"
+                              className="w-full h-full rounded-full object-cover border-2 border-gray-200"
                               onError={(e) => {
                                 const target = e.target as HTMLImageElement;
                                 target.style.display = 'none';
                               }}
                             />
-                            <div className="absolute inset-0 w-full h-full rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-semibold text-2xl border-4 border-white shadow-lg hidden">
-                              JA
-                            </div>
                           </div>
-                          <h2 className="text-3xl font-bold text-white mb-2">{profileCardName || 'Your Name'}</h2>
-                          {showBio && <p className="text-white/90 text-lg mb-4">{bio || 'Your bio will appear here...'}</p>}
-                          {showContactNumber && (
-                            <div className="flex items-center gap-4">
-                              {contactInfo.email && (
-                                <button className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm text-white hover:bg-white/30 transition-colors flex items-center justify-center" title={contactInfo.email}>
-                                  <FiMail className="w-5 h-5" />
-                                </button>
-                              )}
-                              {contactInfo.phone && (
-                                <button className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm text-white hover:bg-white/30 transition-colors flex items-center justify-center" title={contactInfo.phone}>
-                                  <FiPhone className="w-5 h-5" />
-                                </button>
-                              )}
-                              {contactInfo.message && (
-                                <button className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm text-white hover:bg-white/30 transition-colors flex items-center justify-center" title={contactInfo.message}>
-                                  <FiMessageCircle className="w-5 h-5" />
-                                </button>
-                              )}
-                              {contactInfo.website && (
-                                <button className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm text-white hover:bg-white/30 transition-colors flex items-center justify-center" title={contactInfo.website}>
-                                  <FiGlobe className="w-5 h-5" />
-                                </button>
-                              )}
+                          <h3 className="text-lg font-bold text-gray-900 mb-1">{profileCardName || 'Your Name'}</h3>
+                          {profileCardRole && <p className="text-sm text-gray-600 mb-2">{profileCardRole}</p>}
+                        </div>
+
+                        {/* Bio and Details */}
+                        <div className="flex-1 min-w-0">
+                          {profileCardBio && (
+                            <p className="text-sm text-gray-700 mb-4">{profileCardBio}</p>
+                          )}
+                          
+                          {/* Contact Information */}
+                          {showContactNumber && (contactInfo.email || contactInfo.phone || contactInfo.website) && (
+                            <div className="mb-4">
+                              <h4 className="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wide">Contact</h4>
+                              <div className="flex flex-wrap gap-3">
+                                {contactInfo.email && (
+                                  <a href={`mailto:${contactInfo.email}`} className="flex items-center gap-1.5 text-xs text-gray-600 hover:text-blue-600 transition-colors">
+                                    <FiMail className="w-3.5 h-3.5" />
+                                    <span className="truncate max-w-[200px]">{contactInfo.email}</span>
+                                  </a>
+                                )}
+                                {contactInfo.phone && (
+                                  <a href={`tel:${contactInfo.phone}`} className="flex items-center gap-1.5 text-xs text-gray-600 hover:text-blue-600 transition-colors">
+                                    <FiPhone className="w-3.5 h-3.5" />
+                                    <span>{contactInfo.phone}</span>
+                                  </a>
+                                )}
+                                {contactInfo.website && (
+                                  <a href={contactInfo.website} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-xs text-gray-600 hover:text-blue-600 transition-colors">
+                                    <FiGlobe className="w-3.5 h-3.5" />
+                                    <span>Website</span>
+                                  </a>
+                                )}
+                              </div>
                             </div>
                           )}
+
+                          {/* Experience Stats */}
                           {showExperienceStats && experienceStats.length > 0 && (
-                            <div className="flex items-center gap-6 mt-6">
-                              {experienceStats.map((stat, index) => (
-                                <div key={index} className="text-center">
-                                  <div className="text-2xl font-bold text-white">{stat.value}</div>
-                                  <div className="text-sm text-white/80">{stat.label}</div>
-                                </div>
-                              ))}
+                            <div>
+                              <h4 className="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wide">Experience</h4>
+                              <div className="flex flex-wrap gap-4">
+                                {experienceStats.map((stat, index) => (
+                                  <div key={index} className="text-center">
+                                    <div className="text-lg font-bold text-blue-600">{stat.value}</div>
+                                    <div className="text-xs text-gray-600">{stat.label}</div>
+                                  </div>
+                                ))}
+                              </div>
                             </div>
                           )}
                         </div>
@@ -1711,6 +2510,158 @@ export default function PageBuilder({ userType }: PageBuilderProps) {
                       }
                     })}
 
+                    {/* Contact Information Section */}
+                    {showContactNumber && (contactInfo.email || contactInfo.phone || contactInfo.website || contactInfo.message) && (
+                      <div className="mb-6">
+                        <h2 className="text-2xl font-bold text-gray-900 mb-4">Contact Information</h2>
+                        <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            {contactInfo.phone && (
+                              <div className="flex items-center gap-3">
+                                <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
+                                  <FiPhone className="w-5 h-5 text-blue-600" />
+                                </div>
+                                <div>
+                                  <div className="text-xs text-gray-500 mb-1">Phone</div>
+                                  <a href={`tel:${contactInfo.phone}`} className="text-sm font-medium text-gray-900 hover:text-blue-600 transition-colors">
+                                    {contactInfo.phone}
+                                  </a>
+                                </div>
+                              </div>
+                            )}
+                            {contactInfo.email && (
+                              <div className="flex items-center gap-3">
+                                <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
+                                  <FiMail className="w-5 h-5 text-blue-600" />
+                                </div>
+                                <div>
+                                  <div className="text-xs text-gray-500 mb-1">Email</div>
+                                  <a href={`mailto:${contactInfo.email}`} className="text-sm font-medium text-gray-900 hover:text-blue-600 transition-colors">
+                                    {contactInfo.email}
+                                  </a>
+                                </div>
+                              </div>
+                            )}
+                            {contactInfo.website && (
+                              <div className="flex items-center gap-3">
+                                <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
+                                  <FiGlobe className="w-5 h-5 text-blue-600" />
+                                </div>
+                                <div>
+                                  <div className="text-xs text-gray-500 mb-1">Website</div>
+                                  <a href={contactInfo.website} target="_blank" rel="noopener noreferrer" className="text-sm font-medium text-gray-900 hover:text-blue-600 transition-colors">
+                                    Visit Website
+                                  </a>
+                                </div>
+                              </div>
+                            )}
+                            {contactInfo.message && (
+                              <div className="flex items-center gap-3">
+                                <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
+                                  <FiMessageCircle className="w-5 h-5 text-blue-600" />
+                                </div>
+                                <div>
+                                  <div className="text-xs text-gray-500 mb-1">Message</div>
+                                  <a href={contactInfo.message} target="_blank" rel="noopener noreferrer" className="text-sm font-medium text-gray-900 hover:text-blue-600 transition-colors">
+                                    Send Message
+                                  </a>
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Experience Stats Section */}
+                    {showExperienceStats && experienceStats.length > 0 && (
+                      <div className="mb-6">
+                        <h2 className="text-2xl font-bold text-gray-900 mb-4">Experience</h2>
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                          {experienceStats.map((stat, index) => (
+                            <div key={index} className="bg-white rounded-lg p-4 shadow-sm border border-gray-200 text-center">
+                              <div className="text-3xl font-bold text-blue-600 mb-1">{stat.value}</div>
+                              <div className="text-sm text-gray-600">{stat.label}</div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Featured Listings Section */}
+                    {showFeaturedListings && featuredListings.length > 0 && (
+                      <div className="mb-6">
+                        <h2 className="text-2xl font-bold text-gray-900 mb-4">Featured Listings</h2>
+                        <div className="flex gap-4 overflow-x-auto pb-2">
+                          {featuredListings.map((listing) => (
+                            <div key={listing.id} className="flex-shrink-0 w-72 bg-white rounded-lg overflow-hidden shadow-sm border border-gray-200">
+                              <div className="relative">
+                                <div className="absolute top-2 left-2 z-10 flex items-center gap-1 px-2 py-1 bg-blue-600 text-white text-xs font-semibold rounded">
+                                  <FiStar className="w-3 h-3 fill-current" />
+                                  <span>Featured</span>
+                                </div>
+                                <div className="w-full h-48 bg-gray-200">
+                                  <img src={listing.image || ASSETS.PLACEHOLDER_PROPERTY} alt={listing.title} className="w-full h-full object-cover" />
+                                </div>
+                                <button className="absolute top-2 right-2 w-8 h-8 bg-white rounded-full flex items-center justify-center text-gray-600 hover:text-red-500 transition-colors shadow-sm" aria-label="Favorite">
+                                  <FiHeart className="w-4 h-4" />
+                                </button>
+                              </div>
+                              <div className="p-4">
+                                <div className="flex items-center justify-between mb-2">
+                                  <div className="text-lg font-bold text-blue-600">{formatPropertyPrice(listing)}</div>
+                                </div>
+                                <div className="text-sm font-semibold text-gray-900 mb-1 line-clamp-1">{listing.title}</div>
+                                <div className="text-xs text-gray-500 mb-3">{listing.type}</div>
+                                <div className="flex items-center justify-between text-xs text-gray-500">
+                                  <div>{formatPropertyDate(listing)}</div>
+                                  <div className="flex items-center gap-1">
+                                    <span>1</span>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Client Testimonials Section */}
+                    {showTestimonials && testimonials.length > 0 && (
+                      <div className="mb-6">
+                        <h2 className="text-2xl font-bold text-gray-900 mb-4">Client Testimonials</h2>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          {testimonials.map((testimonial) => (
+                            <div key={testimonial.id} className="bg-white rounded-lg p-4 shadow-sm border border-gray-200">
+                              <div className="flex items-center gap-3 mb-3">
+                                <div className="relative w-10 h-10 rounded-full overflow-hidden bg-gray-200 flex-shrink-0">
+                                  <img 
+                                    src={testimonial.avatar || ASSETS.PLACEHOLDER_PROFILE} 
+                                    alt={testimonial.name}
+                                    className="w-full h-full object-cover"
+                                    onError={(e) => {
+                                      const target = e.target as HTMLImageElement;
+                                      target.style.display = 'none';
+                                    }}
+                                  />
+                                  <div className="absolute inset-0 w-full h-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-semibold text-sm hidden">
+                                    {testimonial.name.split(' ').map(n => n[0]).join('')}
+                                  </div>
+                                </div>
+                                <div className="text-sm font-semibold text-gray-900">{testimonial.name}</div>
+                              </div>
+                              <p className="text-sm text-gray-700 italic mb-2">"{testimonial.content}"</p>
+                              {testimonial.role && (
+                                <div className="text-xs text-gray-500">
+                                  {testimonial.role}
+                                </div>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
                     {/* Ready To View? Section */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                       <div>
@@ -1768,6 +2719,7 @@ export default function PageBuilder({ userType }: PageBuilderProps) {
             </div>
           </div>
         </div>
+          )}
         </div>
       </main>
       
@@ -2021,6 +2973,119 @@ export default function PageBuilder({ userType }: PageBuilderProps) {
       )}
 
       {/* Page URL Modal */}
+      {/* Toast Container */}
+      <ToastContainer />
+      
+      {/* Add New Section Modal */}
+      {showAddSectionModal && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onClick={() => setShowAddSectionModal(false)}>
+          <div className="bg-white rounded-xl shadow-xl max-w-md w-full" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center justify-between p-6 border-b border-gray-200">
+              <h3 className="text-lg font-semibold text-gray-900">Add New Section</h3>
+              <button className="p-2 text-gray-400 hover:text-gray-600 transition-colors" onClick={() => setShowAddSectionModal(false)}>
+                <FiX className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="p-6 space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Section Title</label>
+                <input
+                  type="text"
+                  value={newSectionTitle}
+                  onChange={(e) => setNewSectionTitle(e.target.value)}
+                  placeholder="Enter section title"
+                  className="w-full px-3 py-2.5 border border-gray-300 rounded-lg bg-white text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Section Type</label>
+                <select
+                  value={newSectionType}
+                  onChange={(e) => setNewSectionType(e.target.value)}
+                  className="w-full px-3 py-2.5 border border-gray-300 rounded-lg bg-white text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                >
+                  <option value="custom">Custom Content</option>
+                  <option value="text">Text Block</option>
+                  <option value="image">Image Block</option>
+                  <option value="video">Video Block</option>
+                </select>
+              </div>
+              {(newSectionType === 'custom' || newSectionType === 'text') && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Content</label>
+                  <textarea
+                    value={newSectionContent}
+                    onChange={(e) => setNewSectionContent(e.target.value)}
+                    placeholder="Enter section content"
+                    rows={4}
+                    className="w-full px-3 py-2.5 border border-gray-300 rounded-lg bg-white text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-y"
+                  />
+                </div>
+              )}
+              <div className="flex gap-3 pt-2">
+                <button
+                  className="flex-1 px-4 py-2.5 bg-gray-100 text-gray-700 font-semibold rounded-lg hover:bg-gray-200 transition-colors"
+                  onClick={() => {
+                    setShowAddSectionModal(false)
+                    setNewSectionTitle('')
+                    setNewSectionContent('')
+                    setNewSectionType('custom')
+                  }}
+                >
+                  Cancel
+                </button>
+                <button
+                  className="flex-1 px-4 py-2.5 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  onClick={addNewSection}
+                  disabled={!newSectionTitle.trim()}
+                >
+                  Add Section
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      
+      {/* Keyboard Shortcuts Modal */}
+      {showShortcutsModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" onClick={() => setShowShortcutsModal(false)}>
+          <div className="bg-white rounded-xl p-6 max-w-md w-full mx-4" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-bold text-gray-900">Keyboard Shortcuts</h2>
+              <button
+                onClick={() => setShowShortcutsModal(false)}
+                className="p-2 text-gray-400 hover:text-gray-600 transition-colors"
+              >
+                <FiX className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="space-y-3">
+              <div className="flex items-center justify-between py-2 border-b border-gray-200">
+                <span className="text-sm text-gray-700">Save</span>
+                <kbd className="px-2 py-1 bg-gray-100 rounded text-xs font-mono">Ctrl+S</kbd>
+              </div>
+              <div className="flex items-center justify-between py-2 border-b border-gray-200">
+                <span className="text-sm text-gray-700">Undo</span>
+                <kbd className="px-2 py-1 bg-gray-100 rounded text-xs font-mono">Ctrl+Z</kbd>
+              </div>
+              <div className="flex items-center justify-between py-2 border-b border-gray-200">
+                <span className="text-sm text-gray-700">Redo</span>
+                <kbd className="px-2 py-1 bg-gray-100 rounded text-xs font-mono">Ctrl+Shift+Z</kbd>
+              </div>
+              <div className="flex items-center justify-between py-2 border-b border-gray-200">
+                <span className="text-sm text-gray-700">Toggle Preview</span>
+                <kbd className="px-2 py-1 bg-gray-100 rounded text-xs font-mono">Ctrl+P</kbd>
+              </div>
+              <div className="flex items-center justify-between py-2">
+                <span className="text-sm text-gray-700">Close Modal/Panel</span>
+                <kbd className="px-2 py-1 bg-gray-100 rounded text-xs font-mono">Esc</kbd>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      
       {showPageUrlModal && pageUrl && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onClick={() => setShowPageUrlModal(false)}>
           <div className="bg-white rounded-xl shadow-xl max-w-lg w-full" onClick={(e) => e.stopPropagation()}>
@@ -2368,6 +3433,158 @@ export default function PageBuilder({ userType }: PageBuilderProps) {
                         return null
                     }
                   })}
+
+                  {/* Contact Information Section */}
+                  {showContactNumber && (contactInfo.email || contactInfo.phone || contactInfo.website || contactInfo.message) && (
+                    <div className="mb-6">
+                      <h2 className="text-2xl font-bold text-gray-900 mb-4">Contact Information</h2>
+                      <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          {contactInfo.phone && (
+                            <div className="flex items-center gap-3">
+                              <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
+                                <FiPhone className="w-5 h-5 text-blue-600" />
+                              </div>
+                              <div>
+                                <div className="text-xs text-gray-500 mb-1">Phone</div>
+                                <a href={`tel:${contactInfo.phone}`} className="text-sm font-medium text-gray-900 hover:text-blue-600 transition-colors">
+                                  {contactInfo.phone}
+                                </a>
+                              </div>
+                            </div>
+                          )}
+                          {contactInfo.email && (
+                            <div className="flex items-center gap-3">
+                              <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
+                                <FiMail className="w-5 h-5 text-blue-600" />
+                              </div>
+                              <div>
+                                <div className="text-xs text-gray-500 mb-1">Email</div>
+                                <a href={`mailto:${contactInfo.email}`} className="text-sm font-medium text-gray-900 hover:text-blue-600 transition-colors">
+                                  {contactInfo.email}
+                                </a>
+                              </div>
+                            </div>
+                          )}
+                          {contactInfo.website && (
+                            <div className="flex items-center gap-3">
+                              <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
+                                <FiGlobe className="w-5 h-5 text-blue-600" />
+                              </div>
+                              <div>
+                                <div className="text-xs text-gray-500 mb-1">Website</div>
+                                <a href={contactInfo.website} target="_blank" rel="noopener noreferrer" className="text-sm font-medium text-gray-900 hover:text-blue-600 transition-colors">
+                                  Visit Website
+                                </a>
+                              </div>
+                            </div>
+                          )}
+                          {contactInfo.message && (
+                            <div className="flex items-center gap-3">
+                              <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
+                                <FiMessageCircle className="w-5 h-5 text-blue-600" />
+                              </div>
+                              <div>
+                                <div className="text-xs text-gray-500 mb-1">Message</div>
+                                <a href={contactInfo.message} target="_blank" rel="noopener noreferrer" className="text-sm font-medium text-gray-900 hover:text-blue-600 transition-colors">
+                                  Send Message
+                                </a>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Experience Stats Section */}
+                  {showExperienceStats && experienceStats.length > 0 && (
+                    <div className="mb-6">
+                      <h2 className="text-2xl font-bold text-gray-900 mb-4">Experience</h2>
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        {experienceStats.map((stat, index) => (
+                          <div key={index} className="bg-white rounded-lg p-4 shadow-sm border border-gray-200 text-center">
+                            <div className="text-3xl font-bold text-blue-600 mb-1">{stat.value}</div>
+                            <div className="text-sm text-gray-600">{stat.label}</div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Featured Listings Section */}
+                  {showFeaturedListings && featuredListings.length > 0 && (
+                    <div className="mb-6">
+                      <h2 className="text-2xl font-bold text-gray-900 mb-4">Featured Listings</h2>
+                      <div className="flex gap-4 overflow-x-auto pb-2">
+                        {featuredListings.map((listing) => (
+                          <div key={listing.id} className="flex-shrink-0 w-72 bg-white rounded-lg overflow-hidden shadow-sm border border-gray-200">
+                            <div className="relative">
+                              <div className="absolute top-2 left-2 z-10 flex items-center gap-1 px-2 py-1 bg-blue-600 text-white text-xs font-semibold rounded">
+                                <FiStar className="w-3 h-3 fill-current" />
+                                <span>Featured</span>
+                              </div>
+                              <div className="w-full h-48 bg-gray-200">
+                                <img src={listing.image || ASSETS.PLACEHOLDER_PROPERTY} alt={listing.title} className="w-full h-full object-cover" />
+                              </div>
+                              <button className="absolute top-2 right-2 w-8 h-8 bg-white rounded-full flex items-center justify-center text-gray-600 hover:text-red-500 transition-colors shadow-sm" aria-label="Favorite">
+                                <FiHeart className="w-4 h-4" />
+                              </button>
+                            </div>
+                            <div className="p-4">
+                              <div className="flex items-center justify-between mb-2">
+                                <div className="text-lg font-bold text-blue-600">{formatPropertyPrice(listing)}</div>
+                              </div>
+                              <div className="text-sm font-semibold text-gray-900 mb-1 line-clamp-1">{listing.title}</div>
+                              <div className="text-xs text-gray-500 mb-3">{listing.type}</div>
+                              <div className="flex items-center justify-between text-xs text-gray-500">
+                                <div>{formatPropertyDate(listing)}</div>
+                                <div className="flex items-center gap-1">
+                                  <span>1</span>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Client Testimonials Section */}
+                  {showTestimonials && testimonials.length > 0 && (
+                    <div className="mb-6">
+                      <h2 className="text-2xl font-bold text-gray-900 mb-4">Client Testimonials</h2>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {testimonials.map((testimonial) => (
+                          <div key={testimonial.id} className="bg-white rounded-lg p-4 shadow-sm border border-gray-200">
+                            <div className="flex items-center gap-3 mb-3">
+                              <div className="relative w-10 h-10 rounded-full overflow-hidden bg-gray-200 flex-shrink-0">
+                                <img 
+                                  src={testimonial.avatar || ASSETS.PLACEHOLDER_PROFILE} 
+                                  alt={testimonial.name}
+                                  className="w-full h-full object-cover"
+                                  onError={(e) => {
+                                    const target = e.target as HTMLImageElement;
+                                    target.style.display = 'none';
+                                  }}
+                                />
+                                <div className="absolute inset-0 w-full h-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-semibold text-sm hidden">
+                                  {testimonial.name.split(' ').map(n => n[0]).join('')}
+                                </div>
+                              </div>
+                              <div className="text-sm font-semibold text-gray-900">{testimonial.name}</div>
+                            </div>
+                            <p className="text-sm text-gray-700 italic mb-2">"{testimonial.content}"</p>
+                            {testimonial.role && (
+                              <div className="text-xs text-gray-500">
+                                {testimonial.role}
+                              </div>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
 
                   {/* Ready To View? Section */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">

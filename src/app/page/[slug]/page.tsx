@@ -446,6 +446,158 @@ export default function PublicPageBuilderPage() {
             }
           })}
 
+          {/* Contact Information Section */}
+          {pageData.show_contact_number && pageData.contact_info && (pageData.contact_info.email || pageData.contact_info.phone || pageData.contact_info.website || pageData.contact_info.message) && (
+            <div className="mb-6">
+              <h2 className="text-2xl font-bold text-gray-900 mb-4">Contact Information</h2>
+              <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {pageData.contact_info.phone && (
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
+                        <FiPhone className="w-5 h-5 text-blue-600" />
+                      </div>
+                      <div>
+                        <div className="text-xs text-gray-500 mb-1">Phone</div>
+                        <a href={`tel:${pageData.contact_info.phone}`} className="text-sm font-medium text-gray-900 hover:text-blue-600 transition-colors">
+                          {pageData.contact_info.phone}
+                        </a>
+                      </div>
+                    </div>
+                  )}
+                  {pageData.contact_info.email && (
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
+                        <FiMail className="w-5 h-5 text-blue-600" />
+                      </div>
+                      <div>
+                        <div className="text-xs text-gray-500 mb-1">Email</div>
+                        <a href={`mailto:${pageData.contact_info.email}`} className="text-sm font-medium text-gray-900 hover:text-blue-600 transition-colors">
+                          {pageData.contact_info.email}
+                        </a>
+                      </div>
+                    </div>
+                  )}
+                  {pageData.contact_info.website && (
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
+                        <FiGlobe className="w-5 h-5 text-blue-600" />
+                      </div>
+                      <div>
+                        <div className="text-xs text-gray-500 mb-1">Website</div>
+                        <a href={pageData.contact_info.website} target="_blank" rel="noopener noreferrer" className="text-sm font-medium text-gray-900 hover:text-blue-600 transition-colors">
+                          Visit Website
+                        </a>
+                      </div>
+                    </div>
+                  )}
+                  {pageData.contact_info.message && (
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
+                        <FiMessageCircle className="w-5 h-5 text-blue-600" />
+                      </div>
+                      <div>
+                        <div className="text-xs text-gray-500 mb-1">Message</div>
+                        <a href={pageData.contact_info.message} target="_blank" rel="noopener noreferrer" className="text-sm font-medium text-gray-900 hover:text-blue-600 transition-colors">
+                          Send Message
+                        </a>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Experience Stats Section */}
+          {pageData.show_experience_stats && pageData.experience_stats && pageData.experience_stats.length > 0 && (
+            <div className="mb-6">
+              <h2 className="text-2xl font-bold text-gray-900 mb-4">Experience</h2>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {pageData.experience_stats.map((stat: any, index: number) => (
+                  <div key={index} className="bg-white rounded-lg p-4 shadow-sm border border-gray-200 text-center">
+                    <div className="text-3xl font-bold text-blue-600 mb-1">{stat.value}</div>
+                    <div className="text-sm text-gray-600">{stat.label}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Featured Listings Section */}
+          {pageData.show_featured_listings && pageData.featured_listings && pageData.featured_listings.length > 0 && (
+            <div className="mb-6">
+              <h2 className="text-2xl font-bold text-gray-900 mb-4">Featured Listings</h2>
+              <div className="flex gap-4 overflow-x-auto pb-2">
+                {pageData.featured_listings.map((listing: any) => (
+                  <div key={listing.id} className="flex-shrink-0 w-72 bg-white rounded-lg overflow-hidden shadow-sm border border-gray-200">
+                    <div className="relative">
+                      <div className="absolute top-2 left-2 z-10 flex items-center gap-1 px-2 py-1 bg-blue-600 text-white text-xs font-semibold rounded">
+                        <FiStar className="w-3 h-3 fill-current" />
+                        <span>Featured</span>
+                      </div>
+                      <div className="w-full h-48 bg-gray-200">
+                        <img src={listing.image || ASSETS.PLACEHOLDER_PROPERTY} alt={listing.title} className="w-full h-full object-cover" />
+                      </div>
+                      <button className="absolute top-2 right-2 w-8 h-8 bg-white rounded-full flex items-center justify-center text-gray-600 hover:text-red-500 transition-colors shadow-sm" aria-label="Favorite">
+                        <FiHeart className="w-4 h-4" />
+                      </button>
+                    </div>
+                    <div className="p-4">
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="text-lg font-bold text-blue-600">{formatPropertyPrice(listing)}</div>
+                      </div>
+                      <div className="text-sm font-semibold text-gray-900 mb-1 line-clamp-1">{listing.title}</div>
+                      <div className="text-xs text-gray-500 mb-3">{listing.type || listing.category}</div>
+                      <div className="flex items-center justify-between text-xs text-gray-500">
+                        <div>{formatPropertyDate(listing)}</div>
+                        <div className="flex items-center gap-1">
+                          <span>1</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Client Testimonials Section */}
+          {pageData.show_testimonials && pageData.testimonials && pageData.testimonials.length > 0 && (
+            <div className="mb-6">
+              <h2 className="text-2xl font-bold text-gray-900 mb-4">Client Testimonials</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {pageData.testimonials.map((testimonial: any) => (
+                  <div key={testimonial.id} className="bg-white rounded-lg p-4 shadow-sm border border-gray-200">
+                    <div className="flex items-center gap-3 mb-3">
+                      <div className="relative w-10 h-10 rounded-full overflow-hidden bg-gray-200 flex-shrink-0">
+                        <img 
+                          src={testimonial.avatar || ASSETS.PLACEHOLDER_PROFILE} 
+                          alt={testimonial.name}
+                          className="w-full h-full object-cover"
+                          onError={(e) => {
+                            const target = e.target as HTMLImageElement;
+                            target.style.display = 'none';
+                          }}
+                        />
+                        <div className="absolute inset-0 w-full h-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-semibold text-sm hidden">
+                          {testimonial.name?.split(' ').map((n: string) => n[0]).join('') || 'TC'}
+                        </div>
+                      </div>
+                      <div className="text-sm font-semibold text-gray-900">{testimonial.name}</div>
+                    </div>
+                    <p className="text-sm text-gray-700 italic mb-2">"{testimonial.content}"</p>
+                    {testimonial.role && (
+                      <div className="text-xs text-gray-500">
+                        {testimonial.role}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* Ready To View? Section */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
             <div>

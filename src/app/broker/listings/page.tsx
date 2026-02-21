@@ -92,9 +92,9 @@ export default function ListingsPage() {
         
         // Calculate stats
         setTotalProperties(propertiesArray.length)
-        setActiveProperties(propertiesArray.filter(p => p.published_at).length)
+        setActiveProperties(propertiesArray.filter((p: Property) => p.published_at).length)
         setRentedProperties(0) // Would need additional data
-        setHiddenProperties(propertiesArray.filter(p => !p.published_at).length)
+        setHiddenProperties(propertiesArray.filter((p: Property) => !p.published_at).length)
       } catch (error: any) {
         console.error('Error fetching broker listings:', error)
       } finally {
@@ -169,8 +169,8 @@ export default function ListingsPage() {
         
         setListings(transformedListings)
         setTotalProperties(propertiesArray.length)
-        setActiveProperties(propertiesArray.filter(p => p.published_at).length)
-        setHiddenProperties(propertiesArray.filter(p => !p.published_at).length)
+        setActiveProperties(propertiesArray.filter((p: Property) => p.published_at).length)
+        setHiddenProperties(propertiesArray.filter((p: Property) => !p.published_at).length)
       } catch (error) {
         console.error('Error refreshing listings:', error)
       }
@@ -205,8 +205,8 @@ export default function ListingsPage() {
   return (
     <div className="flex min-h-screen bg-gray-100 font-outfit"> {/* agent-dashboard */}
       <AppSidebar/>
-      <main className="ml-[280px] flex-1 w-[calc(100%-280px)] min-h-screen lg:ml-[240px] lg:w-[calc(100%-240px)] md:ml-0 md:w-full"> {/* broker-main */}
-        <div className="px-4 sm:px-6 md:px-10 lg:px-[150px] py-8 lg:py-6 md:py-4 md:pt-20">
+      <main className="main-with-sidebar flex-1 min-h-screen"> {/* broker-main */}
+        <div className="p-8 lg:py-6 md:py-4 md:pt-20">
           <BrokerHeader 
             title="Listings" 
             subtitle="Manage and track all your team's property listings." 

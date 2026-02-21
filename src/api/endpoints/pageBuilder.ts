@@ -65,6 +65,24 @@ export interface PageBuilderData {
   // Design fields
   selected_brand_color?: string
   selected_corner_radius?: string
+  global_design?: {
+    fontFamily?: string
+    fontSize?: string
+    spacing?: string
+    borderStyle?: string
+    shadow?: string
+  }
+  section_styles?: Record<string, {
+    layoutTemplate?: string
+    fontFamily?: string
+    fontSize?: string
+    textColor?: string
+    backgroundColor?: string
+    padding?: string
+    borderStyle?: string
+    borderColor?: string
+    shadow?: string
+  }>
   
   // Additional fields
   featured_listings?: any[]
@@ -141,12 +159,28 @@ export const pageBuilderApi = {
   },
 
   /**
+   * Get a page builder by slug (for editing, public access)
+   */
+  getBySlugForEdit: async (slug: string): Promise<PageBuilderData> => {
+    try {
+      const response = await apiClient.get<PageBuilderResponse>(`/page-builder/${slug}`)
+      if (!response.data.data) {
+        throw new Error('Page builder not found')
+      }
+      return response.data.data
+    } catch (error: any) {
+      console.error('API call error:', error)
+      throw error
+    }
+  },
+
+  /**
    * Create or update a page builder
    * Now accepts page_data structure: { user_type, page_type, page_data }
    */
   save: async (data: { user_type: 'agent' | 'broker', page_type: 'profile' | 'property', page_data: Partial<PageBuilderData>, page_slug?: string }): Promise<PageBuilderData> => {
     try {
-      const response = await apiClient.post<PageBuilderResponse>('/page-builder', data)
+      const response = await apiClient.post<PageBuilderResponse>('/page-builder/save', data)
       if (!response.data.data) {
         throw new Error('Failed to save page builder')
       }
@@ -187,13 +221,29 @@ export const pageBuilderApi = {
   },
 
   /**
-   * Publish/unpublish a page builder
+   * Publish/unpublish a page builder by ID
    */
   publish: async (id: number, publish: boolean = true): Promise<PageBuilderData> => {
     try {
-      const response = await apiClient.post<PageBuilderResponse>(`/page-builder/${id}/publish`, {
+      const response = await apiClient.post<PageBuilderResponse>(`/page-builder/id/${id}/publish`, {
         is_published: publish
       })
+      if (!response.data.data) {
+        throw new Error('Failed to publish page builder')
+      }
+      return response.data.data
+    } catch (error: any) {
+      console.error('API call error:', error)
+      throw error
+    }
+  },
+
+  /**
+   * Publish a page builder by slug
+   */
+  publishBySlug: async (slug: string): Promise<PageBuilderData> => {
+    try {
+      const response = await apiClient.post<PageBuilderResponse>(`/page-builder/${slug}/publish`)
       if (!response.data.data) {
         throw new Error('Failed to publish page builder')
       }

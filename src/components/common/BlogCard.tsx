@@ -28,7 +28,7 @@ function BlogCard({
   return (
     <Link href={link} style={{ textDecoration: 'none', display: 'block' }}>
       <article 
-        className={`relative flex h-[420px] min-h-[320px] max-h-[420px] w-full flex-col overflow-hidden rounded-lg bg-white shadow-[0px_4px_21px_0px_rgba(0,0,0,0.25)] transition-all hover:-translate-y-1 hover:shadow-[0px_6px_25px_0px_rgba(0,0,0,0.3)] md:h-auto md:min-h-[300px] xs:min-h-[200px] xs:rounded-lg ${
+        className={`relative flex h-[200px] min-h-[200px] max-h-[200px] w-full flex-col overflow-hidden rounded-lg bg-white shadow-[0px_4px_21px_0px_rgba(0,0,0,0.25)] transition-all hover:-translate-y-1 hover:shadow-[0px_6px_25px_0px_rgba(0,0,0,0.3)] md:h-auto md:min-h-[260px] xs:min-h-[180px] xs:rounded-lg ${
           size === 'small' 
             ? 'min-w-[220px] max-w-[300px] flex-[0_1_260px]' 
             : 'min-w-[340px] max-w-[520px] flex-[0_1_420px] p-0'
@@ -39,10 +39,10 @@ function BlogCard({
             <img
               src={image}
               alt={title}
-              className="absolute left-0 top-0 z-10 h-full w-full min-h-[220px] max-h-[260px] rounded-lg object-cover"
+              className="absolute left-0 top-0 z-10 h-full w-full min-h-[200px] max-h-[240px] rounded-lg object-cover"
             />
-            <div className="absolute bottom-3 left-3 right-3 z-20 flex h-auto flex-col gap-2.5 rounded-lg bg-white/87 px-8 py-6 md:gap-2 xs:bottom-2 xs:left-2 xs:right-2 xs:gap-1.25 xs:rounded-lg xs:px-4.5 xs:py-4">
-              <div className="mb-2 flex items-center gap-4.25 xs:mb-1 xs:gap-2.5">
+            <div className="absolute bottom-3 left-3 right-3 z-20 flex h-auto flex-col gap-2 rounded-lg bg-white/87 px-6 py-4 md:gap-1.5 xs:bottom-2 xs:left-2 xs:right-2 xs:gap-1 xs:rounded-lg xs:px-4 xs:py-3">
+              <div className="mb-1.5 flex items-center gap-4.25 xs:mb-1 xs:gap-2.5">
                 <span className="rounded-full bg-rental-blue-600 px-3.5 py-1 font-outfit text-xs font-semibold uppercase tracking-wider text-white md:px-2.5 md:py-1 md:text-sm xs:rounded xs:px-1.5 xs:py-0.75 xs:text-sm">
                   {category}
                 </span>
@@ -50,13 +50,13 @@ function BlogCard({
                   {readTime}
                 </span>
               </div>
-              <h3 className="m-0 mb-2 font-outfit text-lg font-normal leading-tight text-black md:text-base xs:mb-1 xs:text-sm xs:leading-snug">
+              <h3 className="m-0 mb-1.5 font-outfit text-lg font-normal leading-tight text-black md:text-base xs:mb-1 xs:text-sm xs:leading-snug">
                 {title}
               </h3>
-              <p className="m-0 mb-3 max-h-[4.84em] min-h-[4.84em] overflow-hidden text-ellipsis text-justify font-outfit text-base font-normal leading-tight text-black/80 line-clamp-4 md:mb-2.5 md:text-sm xs:mb-1.5 xs:text-sm xs:leading-snug">
+              <p className="m-0 mb-2 max-h-[4.84em] min-h-[4.84em] overflow-hidden text-ellipsis text-justify font-outfit text-base font-normal leading-tight text-black/80 line-clamp-4 md:mb-2 md:text-sm xs:mb-1.5 xs:text-sm xs:leading-snug">
                 {excerpt}
               </p>
-              <div className="mb-0 mt-2.5 flex items-center justify-between gap-2.5 md:mb-2.5 xs:mb-1.5">
+              <div className="mb-0 mt-1.5 flex items-center justify-between gap-2.5 md:mb-2 xs:mb-1.5">
                 <div className="flex items-center gap-3.25 font-outfit text-base font-normal leading-tight text-gray-600 md:gap-2 md:text-sm xs:gap-1.25 xs:text-xs">
                   <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 flex-shrink-0 text-black md:h-5 md:w-5 xs:h-3.5 xs:w-3.5">
                     <path d="M10 2a4 4 0 1 1 0 8 4 4 0 0 1 0-8Zm0 10c3.314 0 6 1.343 6 3v1a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-1c0-1.657 2.686-3 6-3Z" />
@@ -85,10 +85,10 @@ function BlogCard({
             <img
               src={image}
               alt={title}
-              className="h-[200px] w-full flex-shrink-0 rounded-t-lg object-cover md:h-[220px] xs:h-[140px]"
+              className="h-[140px] w-full flex-shrink-0 rounded-t-lg object-cover md:h-[160px] xs:h-[120px]"
             />
-            <div className="flex flex-1 flex-col px-6 py-4 md:px-5 md:py-4 xs:gap-1.5 xs:px-3.5 xs:py-3">
-              <div className="mb-2 flex items-center gap-4.25 xs:mb-1 xs:gap-2.5">
+            <div className="flex flex-1 flex-col px-6 py-3 md:px-5 md:py-3 xs:gap-1.5 xs:px-3.5 xs:py-2.5">
+              <div className="mb-1.5 flex items-center gap-4.25 xs:mb-1 xs:gap-2.5">
                 <span className="rounded-full bg-rental-blue-600 px-3.5 py-1 font-outfit text-xs font-semibold uppercase tracking-wider text-white md:px-2.5 md:py-1 md:text-sm xs:rounded xs:px-1.5 xs:py-0.75 xs:text-sm">
                   {category}
                 </span>
@@ -96,13 +96,13 @@ function BlogCard({
                   {readTime}
                 </span>
               </div>
-              <h3 className="m-0 mb-2 font-outfit text-xl font-normal leading-tight text-black md:text-lg xs:mb-1 xs:text-xs xs:leading-snug">
+              <h3 className="m-0 mb-1.5 font-outfit text-xl font-normal leading-tight text-black md:text-lg xs:mb-1 xs:text-xs xs:leading-snug">
                 {title}
               </h3>
-              <p className="m-0 mb-3 max-h-[3.63em] min-h-[3.63em] overflow-hidden text-ellipsis text-justify font-outfit text-sm font-normal leading-tight text-black/80 line-clamp-3 md:mb-2.5 xs:mb-1.5 xs:leading-snug">
+              <p className="m-0 mb-2 max-h-[3.63em] min-h-[3.63em] overflow-hidden text-ellipsis text-justify font-outfit text-sm font-normal leading-tight text-black/80 line-clamp-3 md:mb-2 xs:mb-1.5 xs:leading-snug">
                 {excerpt}
               </p>
-              <div className="mb-0 mt-2.5 flex items-center justify-between gap-2.5 md:gap-10 xs:mb-1.5 xs:gap-5">
+              <div className="mb-0 mt-1.5 flex items-center justify-between gap-2.5 md:gap-10 xs:mb-1 xs:gap-5">
                 <div className="flex items-center gap-3.25 font-outfit text-base font-normal leading-tight text-gray-600 md:gap-2 md:text-sm xs:gap-1.25 xs:text-xs">
                   <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 flex-shrink-0 text-black md:h-5 md:w-5 xs:h-3.5 xs:w-3.5">
                     <path d="M10 2a4 4 0 1 1 0 8 4 4 0 0 1 0-8Zm0 10c3.314 0 6 1.343 6 3v1a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-1c0-1.657 2.686-3 6-3Z" />

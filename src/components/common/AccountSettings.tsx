@@ -25,6 +25,8 @@ export interface EditFormData {
   email: string
   countryCode: string
   contactNumber: string
+  whatsapp?: string
+  facebook?: string
   aboutYourself: string
   addressLine1: string
   country: string
@@ -124,20 +126,6 @@ export default function AccountSettings({
         >
           <FiUser className="text-lg" />
           <span>Profile</span>
-        </button>
-        <button 
-          className={`flex items-center gap-2 px-6 py-4 border-none bg-transparent text-sm font-medium text-gray-500 cursor-pointer transition-all border-b-2 border-transparent relative md:flex-1 md:min-w-[120px] md:px-4 md:py-3 md:text-xs ${activeTab === 'edit' ? 'text-blue-500 border-b-blue-500 bg-white' : 'hover:text-blue-500 hover:bg-gray-100'}`}
-          onClick={() => setActiveTab('edit')}
-        >
-          <FiEdit3 className="text-lg" />
-          <span>Edit Profile</span>
-        </button>
-        <button 
-          className={`flex items-center gap-2 px-6 py-4 border-none bg-transparent text-sm font-medium text-gray-500 cursor-pointer transition-all border-b-2 border-transparent relative md:flex-1 md:min-w-[120px] md:px-4 md:py-3 md:text-xs ${activeTab === 'password' ? 'text-blue-500 border-b-blue-500 bg-white' : 'hover:text-blue-500 hover:bg-gray-100'}`}
-          onClick={() => setActiveTab('password')}
-        >
-          <FiLock className="text-lg" />
-          <span>Change Password</span>
         </button>
       </div>
 
@@ -308,6 +296,36 @@ export default function AccountSettings({
                         className="flex-1 px-4 py-3 border border-gray-300 rounded-lg text-sm text-gray-900 bg-white transition-all font-inherit focus:outline-none focus:border-blue-500 focus:shadow-[0_0_0_3px_rgba(59,130,246,0.1)]"
                       />
                     </div>
+                  </div>
+
+                  <div className="flex flex-col gap-2">
+                    <label htmlFor="whatsapp" className="text-sm font-medium text-gray-700">
+                      WhatsApp Number
+                    </label>
+                    <input
+                      type="text"
+                      id="whatsapp"
+                      name="whatsapp"
+                      value={editFormData.whatsapp || ''}
+                      onChange={onEditFormChange}
+                      className="px-4 py-3 border border-gray-300 rounded-lg text-sm text-gray-900 bg-white transition-all font-inherit focus:outline-none focus:border-blue-500 focus:shadow-[0_0_0_3px_rgba(59,130,246,0.1)]"
+                      placeholder="e.g., +63 912 345 6789"
+                    />
+                  </div>
+
+                  <div className="flex flex-col gap-2">
+                    <label htmlFor="facebook" className="text-sm font-medium text-gray-700">
+                      Facebook Profile URL
+                    </label>
+                    <input
+                      type="text"
+                      id="facebook"
+                      name="facebook"
+                      value={editFormData.facebook || ''}
+                      onChange={onEditFormChange}
+                      className="px-4 py-3 border border-gray-300 rounded-lg text-sm text-gray-900 bg-white transition-all font-inherit focus:outline-none focus:border-blue-500 focus:shadow-[0_0_0_3px_rgba(59,130,246,0.1)]"
+                      placeholder="e.g., https://facebook.com/yourprofile"
+                    />
                   </div>
 
                   <div className="flex flex-col gap-2 col-span-2 lg:col-span-1">

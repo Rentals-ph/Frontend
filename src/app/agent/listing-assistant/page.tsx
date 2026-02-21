@@ -4,12 +4,37 @@ import { useState, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import AppSidebar from '../../../components/common/AppSidebar'
 import AgentHeader from '../../../components/agent/AgentHeader'
-import { ListingAssistantChat } from '../../../components/listing-assistant'
+import { ConversationalListingAssistant } from '../../../components/listing-assistant'
+import VerticalPropertyCard from '../../../components/common/VerticalPropertyCard'
+import type { ExtractedPropertyData } from '../../../types/listingAssistant'
+import { PROPERTY_TYPE_LABELS } from '../../../types/listingAssistant'
+import { formatPrice } from '../../../types/listingAssistant'
+
+// Styles to make property card fill container in listing assistant
+const propertyCardStyles = `
+  .property-card-container article {
+    height: 100% !important;
+    max-height: 100% !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-height: unset !important;
+  }
+  .property-card-container article > div:first-child {
+    max-height: 450px !important;
+    height: 450px !important;
+    flex-shrink: 0 !important;
+  }
+  .property-card-container article > div:first-child img {
+    object-fit: cover !important;
+    height: 100% !important;
+  }
+`
 
 export default function ListingAssistantPage() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const [conversationId, setConversationId] = useState<string | null>(null)
+  const [extractedData, setExtractedData] = useState<ExtractedPropertyData>({})
 
   useEffect(() => {
     const id = searchParams.get('conversation')
@@ -25,10 +50,45 @@ export default function ListingAssistantPage() {
     }, 3000)
   }
 
+  const handleDataChange = (data: ExtractedPropertyData) => {
+    setExtractedData(data)
+  }
+
+  // Format property data for VerticalPropertyCard
+  const formatPropertyData = () => {
+    const images = extractedData.images?.map(img => img.url) || []
+    const firstImage = images[0] || undefined
+    
+    const price = extractedData.price 
+      ? formatPrice(extractedData.price as number) + (extractedData.price_type ? `/${extractedData.price_type}` : '')
+      : undefined
+
+    const propertyType = extractedData.property_type
+      ? PROPERTY_TYPE_LABELS[extractedData.property_type as keyof typeof PROPERTY_TYPE_LABELS] || String(extractedData.property_type)
+      : undefined
+
+    return {
+      title: extractedData.property_name as string || 'New Property Listing',
+      price: price || 'Price TBD',
+      propertyType: propertyType || 'Property',
+      location: extractedData.location as string || extractedData.address as string,
+      bedrooms: extractedData.bedrooms as number,
+      bathrooms: extractedData.bathrooms as number,
+      parking: extractedData.parking_slots as number,
+      propertySize: extractedData.area_sqm ? `${extractedData.area_sqm} sqm` : undefined,
+      image: firstImage,
+      images: images.length > 0 ? images : undefined,
+      date: new Date().toLocaleDateString('en-US', { weekday: 'short', day: '2-digit', month: 'short', year: 'numeric' }),
+    }
+  }
+
+  const propertyCardData = formatPropertyData()
+
   return (
     <div className="flex min-h-screen bg-gray-100 font-outfit">
+      <style dangerouslySetInnerHTML={{ __html: propertyCardStyles }} />
       <AppSidebar />
-      <main className="ml-[280px] flex-1 w-[calc(100%-280px)] p-8 min-h-screen lg:ml-[240px] lg:w-[calc(100%-240px)] lg:p-6 md:ml-[200px] md:w-[calc(100%-200px)] md:p-4">
+      <main className="main-with-sidebar flex-1 p-8 min-h-screen lg:p-6 md:p-4">
         <AgentHeader 
           title="AI Listing Assistant" 
           subtitle="Create property listings with the help of AI" 
@@ -61,11 +121,24 @@ export default function ListingAssistantPage() {
           </div>
         </div>
 
-        <div className="bg-white rounded-2xl border border-gray-200 p-6 h-[calc(100vh-200px)] max-h-[800px] min-h-[500px] overflow-hidden lg:p-4">
-          <ListingAssistantChat
-            initialConversationId={conversationId || undefined}
-            onListingSubmitted={handleListingSubmitted}
-          />
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Left Column - Chat Interface */}
+          <div className="lg:col-span-2 bg-white rounded-2xl border border-gray-200 p-6 h-[calc(100vh-200px)] max-h-[800px] min-h-[500px] overflow-hidden lg:p-4">
+            <ConversationalListingAssistant
+              initialConversationId={conversationId || undefined}
+              onListingSubmitted={handleListingSubmitted}
+              onDataChange={handleDataChange}
+            />
+          </div>
+
+          {/* Right Column - Property Card Preview */}
+          <div className="lg:col-span-1 h-[calc(100vh-200px)] max-h-[800px] min-h-[500px] lg:sticky lg:top-8">
+            <div className="h-full w-full property-card-container">
+              <VerticalPropertyCard
+                {...propertyCardData}
+              />
+            </div>
+          </div>
         </div>
       </main>
     </div>

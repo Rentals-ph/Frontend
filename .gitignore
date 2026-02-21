@@ -12,6 +12,8 @@ package-lock.json
 /dist
 .next/
 
+gitignore.md
+.gitignore
 
 # Misc
 .DS_Store
@@ -31,6 +33,9 @@ yarn-error.log*
 *.swo
 *~
 
+.next.
+./next/
+
 # OS
 Thumbs.db
 
@@ -38,3 +43,10 @@ Thumbs.db
 /public/storage/images/**/*
 !/public/storage/images/**/.gitkeep
 
+.next/*
+.next/app-build-manifest.json
+.next/server/server-reference-manifest.json
+.next/server/app-paths-manifest.json
+
+next-env.d.ts
+tsconfig.json

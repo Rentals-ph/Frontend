@@ -4,6 +4,8 @@ import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { ASSETS } from '@/utils/assets'
+import { agentsApi } from '@/api'
+import { resolveAgentAvatar } from '@/utils/imageResolver'
 import {
   FiMail,
   FiDownload,
@@ -37,6 +39,9 @@ function AppSidebar() {
   const [hasUnreadMessages, setHasUnreadMessages] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [showLogoutDropdown, setShowLogoutDropdown] = useState(false)
+  const [userName, setUserName] = useState<string>('')
+  const [userAvatar, setUserAvatar] = useState<string>(ASSETS.PLACEHOLDER_PROFILE)
+  const [isVerified, setIsVerified] = useState<boolean>(false)
   const [isCollapsed, setIsCollapsed] = useState(() => {
     if (typeof window === 'undefined') return false
     return localStorage.getItem(SIDEBAR_STORAGE_KEY) === 'true'
@@ -57,6 +62,73 @@ function AppSidebar() {
   const isAdminRoute = pathname?.startsWith('/admin')
   const isAgentRoute = pathname?.startsWith('/agent')
   const isBrokerRoute = pathname?.startsWith('/broker')
+
+  // Fetch user data for agent/broker
+  useEffect(() => {
+    if (!isAgentRoute && !isBrokerRoute) return
+
+    const fetchUserData = async () => {
+      try {
+        // Get stored data first
+        const storedName = localStorage.getItem('user_name') || localStorage.getItem('agent_name') || ''
+        const storedAgentId = localStorage.getItem('agent_id')
+        
+        // Set name from localStorage immediately
+        if (storedName) {
+          setUserName(storedName)
+        }
+
+        // Try to fetch current agent data
+        if (isAgentRoute || isBrokerRoute) {
+          try {
+            const agentData = await agentsApi.getCurrent()
+            
+            // Update name
+            if (agentData.first_name && agentData.last_name) {
+              const fullName = `${agentData.first_name} ${agentData.last_name}`
+              setUserName(fullName)
+              localStorage.setItem('agent_name', fullName)
+              localStorage.setItem('user_name', fullName)
+            } else if (agentData.full_name) {
+              setUserName(agentData.full_name)
+              localStorage.setItem('agent_name', agentData.full_name)
+              localStorage.setItem('user_name', agentData.full_name)
+            }
+            
+            // Update avatar and verification status
+            if (agentData.id) {
+              const avatarImage = resolveAgentAvatar(
+                agentData.image || agentData.avatar || agentData.profile_image,
+                agentData.id
+              )
+              setUserAvatar(avatarImage)
+              setIsVerified(agentData.verified || false)
+              localStorage.setItem('agent_id', agentData.id.toString())
+            }
+          } catch (error) {
+            console.error('Error fetching agent data in AppSidebar:', error)
+            // Fallback to stored agent ID for avatar
+            if (storedAgentId) {
+              const avatarImage = resolveAgentAvatar(null, parseInt(storedAgentId))
+              setUserAvatar(avatarImage)
+            }
+          }
+        }
+      } catch (error) {
+        console.error('Error in fetchUserData:', error)
+        // Fallback to localStorage values
+        const storedName = localStorage.getItem('user_name') || localStorage.getItem('agent_name') || ''
+        const storedAgentId = localStorage.getItem('agent_id')
+        if (storedName) setUserName(storedName)
+        if (storedAgentId) {
+          const avatarImage = resolveAgentAvatar(null, parseInt(storedAgentId))
+          setUserAvatar(avatarImage)
+        }
+      }
+    }
+
+    fetchUserData()
+  }, [isAgentRoute, isBrokerRoute])
 
   useEffect(() => {
     // Check unread messages for agent and broker routes
@@ -366,12 +438,12 @@ function AppSidebar() {
             <div 
               className={`flex items-center gap-2.5 px-5 py-4 border-t border-gray-200 flex-shrink-0 transition-colors cursor-pointer hover:bg-gray-100 ${isCollapsed ? 'md:justify-center md:px-2 md:py-3' : ''}`}
               onClick={() => setShowLogoutDropdown(!showLogoutDropdown)}
-              title={isCollapsed ? 'Account / Logout' : undefined}
+              title={isCollapsed ? (userName || 'Account / Logout') : undefined}
             >
               <div className="w-9 h-9 rounded-full overflow-hidden flex-shrink-0 bg-gray-200">
                 <img
-                  src={ASSETS.PLACEHOLDER_PROFILE}
-                  alt="User"
+                  src={userAvatar}
+                  alt={userName || 'User'}
                   className="w-full h-full object-cover"
                   onError={(e) => {
                     const target = e.target as HTMLImageElement
@@ -381,12 +453,22 @@ function AppSidebar() {
                     }
                   }}
                 />
-                <div className="w-full h-full hidden items-center justify-center bg-gradient-to-br from-blue-500 to-purple-600 text-white font-semibold text-[13px]">JA</div>
+                <div className="w-full h-full hidden items-center justify-center bg-gradient-to-br from-blue-500 to-purple-600 text-white font-semibold text-[13px]">
+                  {userName ? userName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) : 'U'}
+                </div>
               </div>
               {!isCollapsed && (
                 <div className="flex flex-col gap-px flex-1 min-w-0">
-                  <span className="text-[13px] font-semibold text-gray-900 whitespace-nowrap overflow-hidden text-ellipsis">John Anderson</span>
-                  <span className="text-[11px] text-gray-400">{isBrokerRoute ? 'Broker' : 'Agent'}</span>
+                  <span className="text-[13px] font-semibold text-gray-900 whitespace-nowrap overflow-hidden text-ellipsis">
+                    {userName || (isBrokerRoute ? 'Broker' : 'Agent')}
+                  </span>
+                  <span className="text-[11px] text-gray-400">
+                    {isBrokerRoute 
+                      ? 'Broker' 
+                      : isVerified 
+                        ? 'Rent Manager' 
+                        : 'Property Agent'}
+                  </span>
                 </div>
               )}
             </div>

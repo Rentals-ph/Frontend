@@ -13,6 +13,7 @@ import PageHeader from '../../components/layout/PageHeader'
 import { propertiesApi } from '../../api/endpoints/properties'
 import type { Property } from '../../types'
 import { ASSETS } from '@/utils/assets'
+import { resolveAgentAvatar } from '@/utils/imageResolver'
 import PopularSearches from '@/components/home/PopularSearches'
 
 function PropertiesContent() {
@@ -461,8 +462,10 @@ function PropertiesContent() {
     <div className="properties-for-rent-page">
       <Navbar />
       
-        <div className="top-search-bar-container sticky top-0 z-30 bg-white border-b border-gray-200 py-3 sm:py-5 px-4 sm:px-6 md:px-10 lg:px-[150px]">
-             <div className="top-search-bar flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 w-full">
+        <div className="top-search-bar-container sticky top-0 z-30 bg-white p-3 sm:pt-5 px-4 sm:px-6 md:px-10 lg:px-[150px]">
+             <div className="top-search-bar flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 w-full border-b border-gray-200 pb-3 sm:pb-5"
+             style={{ borderBottomWidth: '1px', borderBottomStyle: 'solid', borderBottomColor: '#E5E7EB'}}
+             >
               <div className="search-input-container flex-1 w-full sm:min-w-[200px] relative">
                 <svg className="search-icon absolute left-3 sm:left-4 top-3 w-4 h-4 sm:w-5 sm:h-5 text-gray-500 pointer-events-none" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <circle cx="11" cy="11" r="8" stroke="currentColor" strokeWidth="2" />
@@ -476,9 +479,14 @@ function PropertiesContent() {
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
               </div>
-              <div className="top-search-bar-controls flex flex-wrap items-center gap-2 sm:gap-3 w-full sm:w-auto">
+              <div className="top-search-bar-controls h-full flex flex-wrap items-center gap-2 sm:gap-3 w-full sm:w-auto">
                 <select
-                  className="sort-dropdown-btn sort-by-relevance px-3 sm:px-4 md:px-6 py-2 sm:py-2.5 border border-gray-300 rounded-lg bg-white text-gray-700 text-xs sm:text-sm font-medium cursor-pointer hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent flex-1 sm:flex-none min-w-0"
+                  className="sort-dropdown-btn sort-by-relevance px-3 sm:px-4 md:px-6 py-2.5 sm:py-3 border border-gray-300 rounded-lg bg-white text-gray-700 text-xs sm:text-sm font-medium cursor-pointer hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent flex-1 sm:flex-none min-w-0 appearance-none bg-no-repeat bg-right bg-[length:16px_16px] pr-10"
+                  style={{ 
+                    paddingRight: '2.5rem',
+                    backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16' fill='none'%3E%3Cpath d='M4 6L8 10L12 6' stroke='%23666' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")`,
+                    backgroundPosition: 'right 0.75rem center'
+                  }}
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value)}
                 >
@@ -486,7 +494,12 @@ function PropertiesContent() {
                   <option value="oldest">Oldest First</option>
                 </select>
                 <select
-                  className="sort-dropdown-btn sort-by-price px-3 sm:px-4 py-2 sm:py-2.5 border border-gray-300 rounded-lg bg-white text-gray-700 text-xs sm:text-sm font-medium cursor-pointer hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent flex-1 sm:flex-none min-w-0"
+                  className="sort-dropdown-btn sort-by-price px-3 sm:px-4 py-2.5 sm:py-3 border border-gray-300 rounded-lg bg-white text-gray-700 text-xs sm:text-sm font-medium cursor-pointer hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent flex-1 sm:flex-none min-w-0 appearance-none bg-no-repeat bg-right bg-[length:16px_16px] pr-10"
+                  style={{ 
+                    paddingRight: '2.5rem',
+                    backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16' fill='none'%3E%3Cpath d='M4 6L8 10L12 6' stroke='%23666' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")`,
+                    backgroundPosition: 'right 0.75rem center'
+                  }}
                   value={sortByPrice}
                   onChange={(e) => setSortByPrice(e.target.value)}
                 >
@@ -494,8 +507,10 @@ function PropertiesContent() {
                   <option value="price-low">Price: Low to High</option>
                   <option value="price-high">Price: High to Low</option>
                 </select>
+                <div className="rounded-lg"
+                style={{ borderWidth: '1px', borderStyle: 'solid', borderColor: '#E5E7EB' }}>
                 <button
-                  className={`hamburger-menu-btn px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg text-xs sm:text-sm font-medium transition-all duration-200 flex-1 sm:flex-none ${
+                  className={`hamburger-menu-btn px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg text-xs sm:text-sm font-medium transition-all duration-200 flex-1 sm:flex-none ${
                     viewMode === 'horizontal' 
                       ? 'bg-blue-600 text-white hover:bg-blue-700' 
                       : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
@@ -507,7 +522,7 @@ function PropertiesContent() {
                   <span className="sm:hidden">List</span>
                 </button>
                 <button
-                  className={`grid-view-btn px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg text-xs sm:text-sm font-medium transition-all duration-200 flex-1 sm:flex-none ${
+                  className={`grid-view-btn px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg text-xs sm:text-sm font-medium transition-all duration-200 flex-1 sm:flex-none ${
                     viewMode === 'vertical' 
                       ? 'bg-blue-600 text-white hover:bg-blue-700' 
                       : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
@@ -519,7 +534,7 @@ function PropertiesContent() {
                   <span className="sm:hidden">Grid</span>
                 </button>
                 <button
-                  className={`map-view-btn px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg text-xs sm:text-sm font-medium transition-all duration-200 flex-1 sm:flex-none ${
+                  className={`map-view-btn px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg text-xs sm:text-sm font-medium transition-all duration-200 flex-1 sm:flex-none ${
                     viewMode === 'map' 
                       ? 'bg-blue-600 text-white hover:bg-blue-700' 
                       : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
@@ -530,8 +545,9 @@ function PropertiesContent() {
                   <span className="hidden sm:inline">Map view</span>
                   <span className="sm:hidden">Map</span>
                 </button>
+                </div>
                 <button
-                  className="filter-toggle-btn px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg bg-blue-600 text-white text-xs sm:text-sm font-medium hover:bg-blue-700 transition-all duration-200 md:hidden w-full sm:w-auto"
+                  className="filter-toggle-btn px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg bg-blue-600 text-white text-xs sm:text-sm font-medium hover:bg-blue-700 transition-all duration-200 md:hidden w-full sm:w-auto"
                   onClick={() => setIsSidebarOpen(!isSidebarOpen)}
                   aria-label="Toggle filters"
                 >
@@ -542,34 +558,41 @@ function PropertiesContent() {
           </div>
 
       {/* (Secondary sticky search bar removed – top search bar is now sticky instead) */}
-      <main className="properties-main-layout flex flex-col lg:flex-row gap-4 sm:gap-6 mx-auto px-4 sm:px-6 md:px-10 lg:px-[150px] py-4 sm:py-6 max-w-[1920px]">
+      <main className="properties-main-layout flex flex-col lg:flex-row gap-4 sm:gap-6 mx-auto px-4 sm:px-6 md:px-10 lg:px-[150px] pb-4 sm:py-6 max-w-[1920px]">
         {/* Dropdown Filter Menu - Mobile */}
         {isSidebarOpen && (
           <>
             <div 
-              className="filter-dropdown-overlay mobile-only"
+              className="fixed inset-0 bg-black/50 z-40 md:hidden"
               onClick={() => setIsSidebarOpen(false)}
             />
-            <div className={`filter-dropdown mobile-only ${isSidebarOpen ? 'open' : ''}`}>
-              <div className="filter-dropdown-header">
-                <h2 className="filter-dropdown-title">Advance Search</h2>
+            <div className={`fixed top-0 left-0 h-full w-full max-w-sm bg-white shadow-xl z-50 md:hidden transform transition-transform duration-300 ease-in-out ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+              <div className="flex items-center justify-end p-4 sm:p-6 border-b border-gray-200">
+    
                 <button 
-                  className="filter-close-btn"
+                  className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
                   onClick={() => setIsSidebarOpen(false)}
                   aria-label="Close filters"
                 >
-                  <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <svg className="w-6 h-6 text-gray-600" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
                   </svg>
                 </button>
               </div>
               
-              <div className="filter-dropdown-content">
-                <div className="advance-search-section">
-                  <h2 className="section-title">Advance Search</h2>
-                  <div className="filter-group">
+              <div className="overflow-y-auto h-[calc(100%-80px)] p-4 sm:p-6">
+                <div className="space-y-4">
+                  <h2 className="text-base font-semibold text-gray-900 font-outfit mb-4">Advance Search</h2>
+                  
+                  <div className="space-y-2">
+                    <label className="block text-sm font-medium text-gray-700">Location</label>
                     <select
-                      className="filter-select"
+                      className="w-full px-3 sm:px-4 py-2.5 sm:py-3 border border-gray-300 rounded-lg bg-white text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none bg-no-repeat bg-right bg-[length:16px_16px] pr-10"
+                      style={{ 
+                        paddingRight: '2.5rem',
+                        backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16' fill='none'%3E%3Cpath d='M4 6L8 10L12 6' stroke='%23666' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")`,
+                        backgroundPosition: 'right 0.75rem center'
+                      }}
                       value={selectedLocation}
                       onChange={(e) => setSelectedLocation(e.target.value)}
                     >
@@ -580,9 +603,15 @@ function PropertiesContent() {
                     </select>
                   </div>
 
-                  <div className="filter-group">
+                  <div className="space-y-2">
+                    <label className="block text-sm font-medium text-gray-700">Property Type</label>
                     <select
-                      className="filter-select"
+                      className="w-full px-3 sm:px-4 py-2.5 sm:py-3 border border-gray-300 rounded-lg bg-white text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none bg-no-repeat bg-right bg-[length:16px_16px] pr-10"
+                      style={{ 
+                        paddingRight: '2.5rem',
+                        backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16' fill='none'%3E%3Cpath d='M4 6L8 10L12 6' stroke='%23666' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")`,
+                        backgroundPosition: 'right 0.75rem center'
+                      }}
                       value={selectedType}
                       onChange={(e) => setSelectedType(e.target.value)}
                     >
@@ -592,9 +621,15 @@ function PropertiesContent() {
                     </select>
                   </div>
 
-                  <div className="filter-group">
+                  <div className="space-y-2">
+                    <label className="block text-sm font-medium text-gray-700">Min. Baths</label>
                     <select
-                      className="filter-select"
+                      className="w-full px-3 sm:px-4 py-2.5 sm:py-3 border border-gray-300 rounded-lg bg-white text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none bg-no-repeat bg-right bg-[length:16px_16px] pr-10"
+                      style={{ 
+                        paddingRight: '2.5rem',
+                        backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16' fill='none'%3E%3Cpath d='M4 6L8 10L12 6' stroke='%23666' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")`,
+                        backgroundPosition: 'right 0.75rem center'
+                      }}
                       value={minBaths}
                       onChange={(e) => setMinBaths(e.target.value)}
                     >
@@ -605,9 +640,15 @@ function PropertiesContent() {
                     </select>
                   </div>
 
-                  <div className="filter-group">
+                  <div className="space-y-2">
+                    <label className="block text-sm font-medium text-gray-700">Min. Beds</label>
                     <select
-                      className="filter-select"
+                      className="w-full px-3 sm:px-4 py-2.5 sm:py-3 border border-gray-300 rounded-lg bg-white text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none bg-no-repeat bg-right bg-[length:16px_16px] pr-10"
+                      style={{ 
+                        paddingRight: '2.5rem',
+                        backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16' fill='none'%3E%3Cpath d='M4 6L8 10L12 6' stroke='%23666' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")`,
+                        backgroundPosition: 'right 0.75rem center'
+                      }}
                       value={minBeds}
                       onChange={(e) => setMinBeds(e.target.value)}
                     >
@@ -618,31 +659,29 @@ function PropertiesContent() {
                     </select>
                   </div>
 
-                  <div className="filter-group price-range-group">
-                    <label className="price-range-label">Price Range</label>
-                    <div className="price-range-inputs-container">
-                      <div className="price-range-inputs">
+                  <div className="space-y-3">
+                    <label className="block text-sm font-medium text-gray-700">Price Range</label>
+                    <div className="space-y-3">
+                      <div className="flex items-center gap-2 sm:gap-3">
                         <input
                           type="number"
-                          className="price-input"
+                          className="flex-1 min-w-0 px-3 sm:px-4 py-2.5 sm:py-3 border border-gray-300 rounded-lg bg-white text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                           placeholder="Min"
                           value={priceMin}
                           onChange={(e) => setPriceMin(e.target.value)}
                           min="0"
                         />
-                        <div className="price-range-separator">
-                          <span>To</span>
-                        </div>
+                        <span className="text-sm text-gray-500 font-medium flex-shrink-0 whitespace-nowrap">To</span>
                         <input
                           type="number"
-                          className="price-input"
+                          className="flex-1 min-w-0 px-3 sm:px-4 py-2.5 sm:py-3 border border-gray-300 rounded-lg bg-white text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                           placeholder="Max"
                           value={priceMax}
                           onChange={(e) => setPriceMax(e.target.value)}
                           min="0"
                         />
                       </div>
-                      <div className="price-range-sliders">
+                      <div className="space-y-2">
                         <input
                           type="range"
                           min="0"
@@ -650,7 +689,7 @@ function PropertiesContent() {
                           step="1000"
                           value={priceMin || 0}
                           onChange={(e) => setPriceMin(e.target.value)}
-                          className="price-range-slider"
+                          className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
                           aria-label="Minimum price"
                         />
                         <input
@@ -660,14 +699,24 @@ function PropertiesContent() {
                           step="1000"
                           value={priceMax || 200000}
                           onChange={(e) => setPriceMax(e.target.value)}
-                          className="price-range-slider"
+                          className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
                           aria-label="Maximum price"
                         />
                       </div>
                     </div>
                   </div>
 
-                  
+                  {activeFilterCount > 0 && (
+                    <button
+                      className="w-full mt-4 px-4 py-2.5 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors"
+                      onClick={() => {
+                        clearAllFilters()
+                        setIsSidebarOpen(false)
+                      }}
+                    >
+                      Clear All Filters
+                    </button>
+                  )}
                 </div>
               </div>
             </div>
@@ -676,26 +725,32 @@ function PropertiesContent() {
 
         {/* Desktop Floating Filter Panel */}
         {isSidebarOpen && (
-          <div className="desktop-filter-panel">
-            <div className="desktop-filter-panel-content">
-              <div className="desktop-filter-panel-header">
+          <div className="hidden md:block fixed inset-0 bg-black/50 z-40" onClick={() => setIsSidebarOpen(false)}>
+            <div className="absolute top-0 right-0 h-full w-full max-w-md bg-white shadow-xl z-50 overflow-hidden" onClick={(e) => e.stopPropagation()}>
+              <div className="flex items-center justify-between p-6 border-b border-gray-200">
+                <h2 className="text-xl font-semibold text-gray-900 font-outfit">Advance Search</h2>
                 <button 
-                  className="desktop-filter-close-btn"
+                  className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
                   onClick={() => setIsSidebarOpen(false)}
                   aria-label="Close filters"
                 >
-                  <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <svg className="w-6 h-6 text-gray-600" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
                   </svg>
                 </button>
-                <h2 className="desktop-filter-panel-title">Advance Search</h2>
               </div>
               
-              <div className="desktop-filter-panel-body">
-                <div className="advance-search-section">
-                  <div className="filter-group">
+              <div className="overflow-y-auto h-[calc(100%-80px)] p-6">
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <label className="block text-sm font-medium text-gray-700">Location</label>
                     <select
-                      className="filter-select"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-white text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none bg-no-repeat bg-right bg-[length:16px_16px] pr-10"
+                      style={{ 
+                        paddingRight: '2.5rem',
+                        backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16' fill='none'%3E%3Cpath d='M4 6L8 10L12 6' stroke='%23666' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")`,
+                        backgroundPosition: 'right 0.75rem center'
+                      }}
                       value={selectedLocation}
                       onChange={(e) => setSelectedLocation(e.target.value)}
                     >
@@ -706,9 +761,15 @@ function PropertiesContent() {
                     </select>
                   </div>
 
-                  <div className="filter-group">
+                  <div className="space-y-2">
+                    <label className="block text-sm font-medium text-gray-700">Property Type</label>
                     <select
-                      className="filter-select"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-white text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none bg-no-repeat bg-right bg-[length:16px_16px] pr-10"
+                      style={{ 
+                        paddingRight: '2.5rem',
+                        backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16' fill='none'%3E%3Cpath d='M4 6L8 10L12 6' stroke='%23666' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")`,
+                        backgroundPosition: 'right 0.75rem center'
+                      }}
                       value={selectedType}
                       onChange={(e) => setSelectedType(e.target.value)}
                     >
@@ -718,9 +779,15 @@ function PropertiesContent() {
                     </select>
                   </div>
 
-                  <div className="filter-group">
+                  <div className="space-y-2">
+                    <label className="block text-sm font-medium text-gray-700">Min. Baths</label>
                     <select
-                      className="filter-select"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-white text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none bg-no-repeat bg-right bg-[length:16px_16px] pr-10"
+                      style={{ 
+                        paddingRight: '2.5rem',
+                        backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16' fill='none'%3E%3Cpath d='M4 6L8 10L12 6' stroke='%23666' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")`,
+                        backgroundPosition: 'right 0.75rem center'
+                      }}
                       value={minBaths}
                       onChange={(e) => setMinBaths(e.target.value)}
                     >
@@ -731,9 +798,15 @@ function PropertiesContent() {
                     </select>
                   </div>
 
-                  <div className="filter-group">
+                  <div className="space-y-2">
+                    <label className="block text-sm font-medium text-gray-700">Min. Beds</label>
                     <select
-                      className="filter-select"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-white text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none bg-no-repeat bg-right bg-[length:16px_16px] pr-10"
+                      style={{ 
+                        paddingRight: '2.5rem',
+                        backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16' fill='none'%3E%3Cpath d='M4 6L8 10L12 6' stroke='%23666' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")`,
+                        backgroundPosition: 'right 0.75rem center'
+                      }}
                       value={minBeds}
                       onChange={(e) => setMinBeds(e.target.value)}
                     >
@@ -744,31 +817,29 @@ function PropertiesContent() {
                     </select>
                   </div>
 
-                  <div className="filter-group price-range-group">
-                    <label className="price-range-label">Price Range</label>
-                    <div className="price-range-inputs-container">
-                      <div className="price-range-inputs">
+                  <div className="space-y-3">
+                    <label className="block text-sm font-medium text-gray-700">Price Range</label>
+                    <div className="space-y-3">
+                      <div className="flex items-center gap-2 sm:gap-3">
                         <input
                           type="number"
-                          className="price-input"
+                          className="flex-1 min-w-0 px-4 py-3 border border-gray-300 rounded-lg bg-white text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                           placeholder="Min"
                           value={priceMin}
                           onChange={(e) => setPriceMin(e.target.value)}
                           min="0"
                         />
-                        <div className="price-range-separator">
-                          <span>To</span>
-                        </div>
+                        <span className="text-sm text-gray-500 font-medium flex-shrink-0 whitespace-nowrap">To</span>
                         <input
                           type="number"
-                          className="price-input"
+                          className="flex-1 min-w-0 px-4 py-3 border border-gray-300 rounded-lg bg-white text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                           placeholder="Max"
                           value={priceMax}
                           onChange={(e) => setPriceMax(e.target.value)}
                           min="0"
                         />
                       </div>
-                      <div className="price-range-sliders">
+                      <div className="space-y-2">
                         <input
                           type="range"
                           min="0"
@@ -776,7 +847,7 @@ function PropertiesContent() {
                           step="1000"
                           value={priceMin || 0}
                           onChange={(e) => setPriceMin(e.target.value)}
-                          className="price-range-slider"
+                          className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
                           aria-label="Minimum price"
                         />
                         <input
@@ -786,18 +857,16 @@ function PropertiesContent() {
                           step="1000"
                           value={priceMax || 200000}
                           onChange={(e) => setPriceMax(e.target.value)}
-                          className="price-range-slider"
+                          className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
                           aria-label="Maximum price"
                         />
                       </div>
                     </div>
                   </div>
 
-                  
-
                   {activeFilterCount > 0 && (
                     <button
-                      className="clear-filters-btn"
+                      className="w-full mt-4 px-4 py-3 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors"
                       onClick={() => {
                         clearAllFilters()
                         setIsSidebarOpen(false)
@@ -943,23 +1012,6 @@ function PropertiesContent() {
         </div>
         
         <div className="properties-main-content flex-1 min-w-0">
-          <button
-            className={`mobile-filter-btn lg:hidden flex items-center gap-2 px-4 py-2.5 mb-4 bg-white border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-50 transition-colors duration-200 ${
-              isSidebarOpen ? 'bg-blue-50 border-blue-300 text-blue-700' : ''
-            }`}
-            aria-label="Toggle Filters Menu"
-            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-          >
-            <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M22 6H2M22 12H2M22 18H2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-            </svg>
-            <span>Filters</span>
-            {activeFilterCount > 0 && (
-              <span className="filter-count-badge ml-1 px-2 py-0.5 bg-blue-600 text-white text-xs font-semibold rounded-full">
-                {activeFilterCount}
-              </span>
-            )}
-          </button>
 
           {/* Results Count, Categories, and Active Filters */}
           {!loading && paginatedProperties.length > 0 && (
@@ -968,7 +1020,7 @@ function PropertiesContent() {
                 <div className="results-count text-base text-gray-700 font-outfit">
                   <strong className="font-semibold text-gray-900">{totalProperties}</strong> properties available
                 </div>
-                <div className="subcategory-row flex items-center gap-2 flex-wrap">
+                <div className="subcategory-row flex items-center gap-2 flex-wrap rounded-lg" style={{ borderWidth: '1px', borderStyle: 'solid', borderColor: '#E5E7EB' }}>
                   <button
                     className={`subcategory-chip px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
                       subCategory === 'all' 
@@ -1107,11 +1159,12 @@ function PropertiesContent() {
                 {categories.map((category) => (
                   <button
                     key={category.name}
-                    className={`category-chip px-4 py-2 bg-gray-100 text-gray-700 rounded-full text-sm font-medium transition-all duration-200 ${
+                    className={`category-chip px-4 py-2 bg-gray-50 text-gray-700 rounded-full text-sm font-medium transition-all duration-200 ${
                       selectedType === category.name 
                         ? 'bg-blue-600 text-white hover:bg-blue-700' 
-                        : 'bg-gray-300 text-gray-700 border border-gray-300 hover:bg-gray-400'
+                        : 'bg-gray-200 text-gray-700 border border-gray-300 hover:bg-gray-200'
                     }`}
+                    style={{ borderWidth: '1px', borderStyle: 'solid', borderColor: '#E5E7EB' }}
                     onClick={() => {
                       setSelectedType(category.name)
                       setCurrentPage(1)
@@ -1154,6 +1207,11 @@ function PropertiesContent() {
                           : `${(property.bedrooms * 15 + property.bathrooms * 5)} sqft`
                         
                         const mainImage = property.image_url || property.image || ASSETS.PLACEHOLDER_PROPERTY_MAIN
+                        const agentImage = property.agent
+                          ? resolveAgentAvatar(
+                              property.agent.id.toString()
+                            )
+                          : undefined
                         const cardProps = {
                           id: property.id,
                           propertyType: property.type,
@@ -1172,6 +1230,7 @@ function PropertiesContent() {
                           rentManagerRole: property.agent
                             ? getRentManagerRole(property.agent.verified)
                             : getRentManagerRole(property.rent_manager?.is_official),
+                          rentManagerImage: agentImage,
                           bedrooms: property.bedrooms,
                           bathrooms: property.bathrooms,
                           parking: 0, // Parking not in backend model, defaulting to 0

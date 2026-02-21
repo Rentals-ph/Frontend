@@ -7,6 +7,7 @@ import { propertiesApi } from '../../api'
 import type { Property } from '../../types'
 import type { PaginatedResponse } from '../../api/types'
 import { ASSETS } from '@/utils/assets'
+import { resolveAgentAvatar } from '@/utils/imageResolver'
 
 const FeaturedProperties = () => {
   const [selectedLocation, setSelectedLocation] = useState('All Locations')
@@ -188,6 +189,12 @@ const FeaturedProperties = () => {
                 const images = (property.images_url && property.images_url.length > 0)
                   ? [mainImage, ...(property.images_url || []).filter((u): u is string => !!u && u !== mainImage)]
                   : undefined
+                const agentImage = property.agent
+                  ? resolveAgentAvatar(
+                      property.agent.image || property.agent.avatar || (property.agent as any).profile_image,
+                      property.agent.id
+                    )
+                  : undefined
                 return (
                   <div
                     key={`property-${setIndex}-${property.id}`}
@@ -201,8 +208,15 @@ const FeaturedProperties = () => {
                       title={property.title}
                       image={mainImage}
                       images={images}
-                      rentManagerName={property.rent_manager?.name || 'Rental.Ph Official'}
-                      rentManagerRole={getRentManagerRole(property.rent_manager?.is_official)}
+                      rentManagerName={property.agent?.first_name && property.agent?.last_name
+                        ? `${property.agent.first_name} ${property.agent.last_name}`
+                        : property.agent?.full_name
+                        || property.rent_manager?.name
+                        || 'Rental.Ph Official'}
+                      rentManagerRole={property.agent
+                        ? getRentManagerRole(property.agent.verified)
+                        : getRentManagerRole(property.rent_manager?.is_official)}
+                      rentManagerImage={agentImage}
                       bedrooms={property.bedrooms}
                       bathrooms={property.bathrooms}
                       parking={0}

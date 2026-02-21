@@ -12,6 +12,7 @@ import PropertyLocationMap from '../../../components/common/PropertyLocationMap'
 import { propertiesApi, messagesApi } from '../../../api'
 import type { Property } from '../../../types'
 import { ASSETS } from '@/utils/assets'
+import { resolveAgentAvatar } from '@/utils/imageResolver'
 // import './page.css' // Removed - converted to Tailwind
 
 export default function PropertyDetailsPage() {
@@ -568,6 +569,21 @@ export default function PropertyDetailsPage() {
                   <p className="text-sm text-gray-500 mb-2">{property.type}</p>
                   <h1 className="text-2xl font-bold text-gray-800">{property.title}</h1>
                 </div>
+
+                {/* Amenities */}
+                <div className="bg-white rounded-lg shadow-md p-6">
+                  <h3 className="text-xl font-bold mb-4 text-gray-800">Amenities</h3>
+                  <div className="flex flex-wrap gap-2">
+                    {property.amenities && property.amenities.length > 0 ? (
+                      property.amenities.map((amenity, index) => (
+                        <span key={index} className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm">{amenity}</span>
+                      ))
+                    ) : (
+                      <p className="text-gray-500">No amenities listed</p>
+                    )}
+                  </div>
+                </div>
+                
                 {/* Merged Contact/Inquiry Form */}
                 <div className="bg-white rounded-lg shadow-md p-6">
                   {/* Tabs */}
@@ -677,19 +693,7 @@ export default function PropertyDetailsPage() {
                   </div>
                 </div>
 
-                {/* Amenities */}
-                <div className="bg-white rounded-lg shadow-md p-6">
-                  <h3 className="text-xl font-bold mb-4 text-gray-800">Amenities</h3>
-                  <div className="flex flex-wrap gap-2">
-                    {property.amenities && property.amenities.length > 0 ? (
-                      property.amenities.map((amenity, index) => (
-                        <span key={index} className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm">{amenity}</span>
-                      ))
-                    ) : (
-                      <p className="text-gray-500">No amenities listed</p>
-                    )}
-                  </div>
-                </div>
+                
 
               </div>
             </div>
@@ -708,6 +712,12 @@ export default function PropertyDetailsPage() {
                     const mainImg = prop.image_url || prop.image || ASSETS.PLACEHOLDER_PROPERTY_MAIN
                     const images = (prop.images_url && prop.images_url.length > 0)
                       ? [mainImg, ...(prop.images_url || []).filter((u): u is string => !!u && u !== mainImg)]
+                      : undefined
+                    const agentImage = prop.agent
+                      ? resolveAgentAvatar(
+                          prop.agent.id.toString(),
+                          prop.agent.id
+                        )
                       : undefined
                     return (
                       <div key={prop.id}>
@@ -731,6 +741,7 @@ export default function PropertyDetailsPage() {
                               ? getRentManagerRole(prop.agent.verified)
                               : getRentManagerRole(prop.rent_manager?.is_official)
                           }
+                          rentManagerImage={agentImage}
                           bedrooms={prop.bedrooms}
                           bathrooms={prop.bathrooms}
                           parking={0}

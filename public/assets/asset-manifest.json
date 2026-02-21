@@ -114,6 +114,20 @@
         "category": "logos",
         "description": "Logo preview version 24",
         "originalName": "rentals-ph-logo-removebg-preview-24.png"
+      },
+      "LOGO_AI_BOX": {
+        "id": "LOGO_AI_BOX",
+        "path": "/assets/logos/rentalaibox.svg",
+        "category": "logos",
+        "description": "RentalAI box logo for AI assistant button",
+        "originalName": "rentalaibox.svg"
+      },
+      "LOGO_AI": {
+        "id": "LOGO_AI",
+        "path": "/assets/logos/rentalai-logo.svg",
+        "category": "logos",
+        "description": "RentalAI logo icon",
+        "originalName": "RentalAI-logo.svg"
       }
     },
     "icons": {

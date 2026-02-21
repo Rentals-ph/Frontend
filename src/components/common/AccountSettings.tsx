@@ -125,20 +125,6 @@ export default function AccountSettings({
           <FiUser className="text-lg" />
           <span>Profile</span>
         </button>
-        <button 
-          className={`flex items-center gap-2 px-6 py-4 border-none bg-transparent text-sm font-medium text-gray-500 cursor-pointer transition-all border-b-2 border-transparent relative md:flex-1 md:min-w-[120px] md:px-4 md:py-3 md:text-xs ${activeTab === 'edit' ? 'text-blue-500 border-b-blue-500 bg-white' : 'hover:text-blue-500 hover:bg-gray-100'}`}
-          onClick={() => setActiveTab('edit')}
-        >
-          <FiEdit3 className="text-lg" />
-          <span>Edit Profile</span>
-        </button>
-        <button 
-          className={`flex items-center gap-2 px-6 py-4 border-none bg-transparent text-sm font-medium text-gray-500 cursor-pointer transition-all border-b-2 border-transparent relative md:flex-1 md:min-w-[120px] md:px-4 md:py-3 md:text-xs ${activeTab === 'password' ? 'text-blue-500 border-b-blue-500 bg-white' : 'hover:text-blue-500 hover:bg-gray-100'}`}
-          onClick={() => setActiveTab('password')}
-        >
-          <FiLock className="text-lg" />
-          <span>Change Password</span>
-        </button>
       </div>
 
       {/* Tab Content */}

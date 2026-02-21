@@ -212,7 +212,7 @@ const Navbar = () => {
 
   return (
     <>
-      <header className="relative z-[1] bg-white shadow-md overflow-x-hidden overflow-y-hidden">
+      <header className="relative z-50 bg-white shadow-md overflow-x-hidden overflow-y-hidden">
         <div className="flex items-center justify-between gap-2 px-3 sm:px-4 py-3 sm:py-5 md:px-10 lg:px-20 max-w-full min-w-0 overflow-x-hidden overflow-y-hidden">
           {/* Mobile: toggle + logo side by side. Desktop: logo only in this group */}
           <div className="flex items-center gap-2 flex-shrink-0">
@@ -285,7 +285,7 @@ const Navbar = () => {
                       {getInitials(userName)}
                     </span>
                   </span>
-                  <span className="flex flex-col items-start text-left min-w-0 max-w-[140px]">
+                  <span className="flex flex-col items-start justify-center text-left min-w-0 max-w-[140px]">
                     <span className="text-[15px] font-semibold text-gray-900 font-outfit truncate w-full">{userName}</span>
                     <span className="text-[13px] text-gray-500 font-outfit truncate w-full">
                       {userRole === 'admin' ? 'Admin' : userRole === 'broker' ? 'Broker' : 'Agent'}
@@ -357,7 +357,7 @@ const Navbar = () => {
         {/* Mobile Sidebar Overlay */}
         {isMobileMenuOpen && (
           <div 
-            className="lg:hidden fixed inset-0 bg-black/50 z-[999] transition-opacity duration-300"
+            className="lg:hidden fixed inset-0 bg-black/50 z-[60] transition-opacity duration-300"
             onClick={() => setIsMobileMenuOpen(false)}
           />
         )}
@@ -365,7 +365,7 @@ const Navbar = () => {
         {/* Mobile Sidebar - Left Positioned */}
         <nav 
           ref={mobileMenuRef}
-          className={`lg:hidden fixed top-0 left-0 h-full w-[280px] sm:w-[320px] bg-white shadow-2xl z-[1000] overflow-y-auto ${
+          className={`lg:hidden fixed top-0 left-0 h-full w-[280px] sm:w-[320px] bg-white shadow-2xl z-[70] overflow-y-auto ${
             isMobileMenuOpen ? '' : 'hidden'
           }`}
           onClick={(e) => e.stopPropagation()}

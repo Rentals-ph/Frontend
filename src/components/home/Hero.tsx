@@ -82,7 +82,7 @@ function Hero() {
   const [chatMessages, setChatMessages] = useState<Array<{ role: 'user' | 'assistant'; message: string; properties?: Property[] }>>([
     {
       role: 'assistant',
-      message: 'Hello! I\'m your RentalsGroq. How can I help you find the perfect rental property today?'
+      message: 'Hello! I\'m your Rentals AI. How can I help you find the perfect rental property today?'
     }
   ])
   const [conversationId, setConversationId] = useState<string | undefined>()
@@ -213,7 +213,7 @@ function Hero() {
     setChatMessages([
       {
         role: 'assistant',
-        message: 'Hello! I\'m your RentalsGroq. How can I help you find the perfect rental property today?'
+        message: 'Hello! I\'m your Rentals AI. How can I help you find the perfect rental property today?'
       }
     ])
     setShowMenu(false)
@@ -564,16 +564,57 @@ function Hero() {
 
         {/* AI Assistant Button */}
         <button 
-          className="mt-6 px-6 py-3 rounded-full font-outfit text-base font-medium flex items-center gap-2 shadow-lg hover:shadow-xl transition-all hover:scale-105 text-white"
+          className="mt-6 relative font-outfit text-sm font-semibold flex items-center justify-center gap-1 transition-all hover:scale-105 overflow-hidden cursor-pointer rounded-[32.5px] shadow-[0_4px_21px_rgba(0,0,0,0.25)]"
           style={{
-            background: 'linear-gradient(to right, #205ED7, #FE8E0A)'
+            width: '200px',
+            height: '55px',
+            backgroundColor: 'var(--ai-button-bg, white)', // Customizable via CSS variable
+            color: 'var(--ai-button-text, #002978)', // Customizable via CSS variable
+            borderWidth: '2px',
+            borderStyle: 'solid',
+            borderColor: '#205ED7',
           }}
           onClick={() => setIsChatMode(!isChatMode)}
         >
-          <svg className="w-5 h-5 animate-pulse" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M12 2L13.09 8.26L18 6L14.74 10.91L21 12L14.74 13.09L18 18L13.09 15.74L12 22L10.91 15.74L6 18L9.26 13.09L3 12L9.26 10.91L6 6L10.91 8.26L12 2Z" fill="currentColor"/>
+          {/* Orange decorative vector in bottom right */}
+          <svg 
+            className="absolute -bottom-5 -right-1 z-0 pointer-events-none"
+            width="68" 
+            height="67" 
+            viewBox="154 10 68 67" 
+            fill="none" 
+            xmlns="http://www.w3.org/2000/svg"
+            preserveAspectRatio="xMidYMid slice"
+            style={{ 
+              width: '68px',
+              height: '67px',
+            }}
+          >
+            {/* Orange fill */}
+            <path 
+              d="M191.543 40.9593L194.39 38.7754C198.284 35.7874 201.337 31.8399 203.251 27.3204L205.356 22.3506C207.905 16.3331 218.4 12.0101 222.422 10.5451V48.1866C222.422 64.0998 209.522 77 193.609 77H154.263C147.43 77 143.439 69.2957 147.379 63.7138C147.959 62.8912 148.683 62.1793 149.515 61.6119L157.059 56.466C162.195 52.9628 167.918 50.4094 173.955 48.9269L175.99 48.4272C181.636 47.041 186.932 44.4981 191.543 40.9593Z" 
+              fill="var(--ai-button-accent, #FE8E0A)" // Customizable via CSS variable
+            />
+            {/* Rental blue border */}
+            <path 
+              d="M222.422 10V48.1866C222.422 64.0998 209.522 77 193.609 77H154.263C147.43 77 143.439 69.2957 147.379 63.7138C147.959 62.8912 148.683 62.1793 149.515 61.6119L157.059 56.466C162.195 52.9628 167.918 50.4094 173.955 48.9269L175.99 48.4272C181.636 47.041 186.932 44.4981 191.543 40.9593L194.39 38.7754C198.284 35.7874 201.337 31.8399 203.251 27.3204C203.98 25.6005 204.669 23.9734 205.356 22.3506C208.527 14.8637 224 10 224 10" 
+              stroke="var(--ai-button-border, #002978)" // Rental blue border
+              strokeWidth="2"
+              fill="none"
+            />
           </svg>
-          Try our A.I. assistant
+          
+          {/* Content */}
+          <div className="relative z-10 w-full flex items-center">
+            {/* AI Logo - positioned on the left */}
+            <img 
+              src={getAsset('LOGO_AI')} 
+              alt="AI Logo" 
+              className="absolute left-4 w-9 h-9 flex-shrink-0"
+            />
+            {/* Text - centered */}
+            <span className="w-full text-center font-bold text-lg leading-tight">RentalsAI</span>
+          </div>
         </button>
 
         {/* Search bar and filters or Chat container */}
@@ -581,24 +622,24 @@ function Hero() {
           isChatMode ? 'max-h-[600px]' : 'max-h-[400px]'
         }`}>
           {isChatMode ? (
-            <div className="flex flex-col md:flex-row gap-4 w-full h-[600px] max-h-[600px]">
+            <div className="flex flex-col md:flex-row gap-4 w-full h-[auto] max-h-[600px]">
               {/* Chat Interface - Left side */}
               <div className="flex-1 bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl overflow-hidden flex flex-col min-w-0 h-full">
                 <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-rental-blue-50 to-white flex-shrink-0">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-rental-blue-600 flex items-center justify-center">
-                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" fill="currentColor" className="text-white"/>
-                      </svg>
-                    </div>
+                    <img 
+                      src={getAsset('LOGO_AI')} 
+                      alt="AI Logo" 
+                      className=" w-9 h-9 flex-shrink-0"
+                    />
                     <div>
-                      <h3 className="font-outfit text-lg font-semibold text-gray-900">RentalsGroq</h3>
+                      <h3 className="font-outfit text-lg font-semibold text-gray-900">Rentals AI</h3>
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
                     <div className="chat-menu-container relative">
                       <button 
-                        className="p-2 hover:bg-white rounded-lg transition-colors text-gray-600 hover:text-gray-900"
+                        className="p-2 hover:bg-white border-none rounded-lg transition-colors text-gray-600 hover:text-gray-900"
                         onClick={() => setShowMenu(!showMenu)}
                         aria-label="More options"
                         title="More options"
@@ -650,7 +691,7 @@ function Hero() {
                       )}
                     </div>
                     <button 
-                      className="p-2 hover:bg-white rounded-lg transition-colors text-gray-600 hover:text-gray-900"
+                      className="p-2 hover:bg-white border-none rounded-lg transition-colors text-gray-600 hover:text-gray-900"
                       onClick={() => setIsChatMode(false)}
                       aria-label="Close chat"
                     >
@@ -660,10 +701,19 @@ function Hero() {
                     </button>
                   </div>
                 </div>
-                <div ref={chatMessagesContainerRef} className="flex-1 overflow-y-auto p-6 space-y-4 bg-gray-50 min-h-0">
+                <div ref={chatMessagesContainerRef} className="flex-1 overflow-y-auto p-6 space-y-4 min-h-0 relative" style={{
+                  background: 'linear-gradient(to bottom, #f9fafb 0%, #f3f4f6 100%)',
+                }}>
+                  {/* Subtle decorative elements */}
+                  <div className="absolute top-0 right-0 w-32 h-32 opacity-5 pointer-events-none">
+                    <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M0 50 Q25 0 50 50 T100 50" stroke="#FE8E0A" strokeWidth="2" fill="none"/>
+                    </svg>
+                  </div>
+                  
                   {isLoadingHistory ? (
                     <div className="flex flex-col w-full items-start">
-                      <div className="max-w-[75%] p-3 px-4 rounded-xl bg-gray-100 text-gray-900 rounded-bl-sm font-outfit text-sm leading-relaxed break-words text-left">
+                      <div className="max-w-[75%] p-3 px-4 rounded-xl bg-white border border-[#002978]/20 text-gray-900 rounded-bl-sm font-outfit text-sm leading-relaxed break-words text-left shadow-sm">
                         <span className="inline-block text-gray-600 italic after:content-['...'] animate-pulse">Loading conversation</span>
                       </div>
                     </div>
@@ -671,24 +721,65 @@ function Hero() {
                     <>
                       {chatMessages.map((msg, index) => (
                         <div key={index} className={`flex flex-col w-full ${msg.role === 'user' ? 'items-end' : 'items-start'}`}>
-                          <div 
-                            className={`max-w-[75%] p-3 px-4 rounded-xl font-outfit text-sm leading-relaxed break-words text-left ${
-                              msg.role === 'user' 
-                                ? 'bg-[#205ED7] text-white rounded-br-sm' 
-                                : 'bg-gray-100 text-gray-900 rounded-bl-sm'
-                            }`}
-                            dangerouslySetInnerHTML={{
-                              __html: msg.role === 'assistant' 
-                                ? formatAIMessage(msg.message)
-                                : msg.message.replace(/\n/g, '<br />')
-                            }}
-                          />
+                          {msg.role === 'assistant' ? (
+                            <div className="flex items-start gap-2 max-w-[75%]">
+                              <img 
+                                src={getAsset('LOGO_AI')} 
+                                alt="AI Logo" 
+                                className="w-12 h-12 flex-shrink-0"
+                              />
+                              <div className="relative">
+                                {/* Speech bubble pointer pointing to the logo - top left */}
+                                <div 
+                                  className="relative overflow-hidden p-3 px-4 bg-white !border-2 !border-[#002978] rounded-xl rounded-tl-sm shadow-lg font-outfit text-sm leading-relaxed break-words text-left"                                style={{
+                                    borderWidth: '2px',
+                                    borderStyle: 'solid',
+                                    borderColor: '#002978',
+                                    boxShadow: '0 4px 12px rgba(0, 41, 120, 0.15), 0 2px 4px rgba(0, 41, 120, 0.1)',
+                                  }}
+                                >
+                                  <div 
+                                    className="relative z-10"
+                                    dangerouslySetInnerHTML={{
+                                      __html: formatAIMessage(msg.message)
+                                    }}
+                                  />
+                                </div>
+                              </div>
+                            </div>
+                          ) : (
+                            <div 
+                              className="max-w-[75%] !border-2 !border-[#002978] p-3 px-4 rounded-xl font-outfit text-sm leading-relaxed break-words text-left bg-[#205ED7] text-white rounded-br-sm shadow-sm"
+                              style={{
+                                borderWidth: '2px',
+                                borderStyle: 'solid',
+                                borderColor: '#002978',
+                              }}
+                              dangerouslySetInnerHTML={{
+                                __html: msg.message.replace(/\n/g, '<br />')
+                              }}
+                            />
+                          )}
                         </div>
                       ))}
                       {isLoading && (
                         <div className="flex flex-col w-full items-start">
-                          <div className="max-w-[75%] p-3 px-4 rounded-xl bg-gray-100 text-gray-900 rounded-bl-sm font-outfit text-sm leading-relaxed break-words text-left">
-                            <span className="inline-block text-gray-600 italic after:content-['...'] animate-pulse">Thinking</span>
+                          <div className="flex items-start gap-2 max-w-[75%]">
+                            <img 
+                              src={getAsset('LOGO_AI')} 
+                              alt="AI Logo" 
+                              className="w-10 h-0 flex-shrink-0 mt-1"
+                            />
+                            <div 
+                              className="p-3 px-4 rounded-xl bg-white !border-2 !border-[#002978]/30 text-gray-900 rounded-bl-sm font-outfit text-sm leading-relaxed break-words text-left shadow-sm"
+                              style={{
+                                borderWidth: '2px',
+                                borderStyle: 'solid',
+                                borderColor: 'rgba(0, 41, 120, 0.3)',
+                              }}
+                            >
+                              <span className="inline-block text-gray-600 italic after:content-['...'] animate-pulse">Thinking</span>
+                            </div>
                           </div>
                         </div>
                       )}
@@ -787,7 +878,7 @@ function Hero() {
                     </select>
 
                     <button 
-                      className={`flex items-center bg-white border-2 border-indigo-500 rounded-full py-2 px-5 ml-2 mr-2 text-base text-indigo-700 font-medium shadow-sm transition-all hover:border-indigo-600 md:inline-flex hidden ${showAdvancedOptions ? 'border-indigo-600' : ''}`}
+                      className={`flex items-center bg-white border-none rounded-full py-2 px-5 ml-2 mr-2 text-base text-indigo-700 font-medium shadow-sm transition-all hover:border-indigo-600 md:inline-flex hidden ${showAdvancedOptions ? 'border-indigo-600' : ''}`}
                       type="button"
                       onClick={() => setShowAdvancedOptions((prev) => !prev)}
                       aria-label="Show filters"
@@ -800,7 +891,7 @@ function Hero() {
                     </button>
 
                     <button 
-                      className="bg-[#FE8E0A] md:rounded-r-xl md:rounded-l-none rounded-b-xl w-full md:w-[135px] md:h-[67px] h-[50px] border-none cursor-pointer flex items-center justify-center transition-all hover:bg-[#ff7700] hover:shadow-lg active:scale-[0.98] flex-shrink-0 relative overflow-hidden group"
+                      className="bg-[#FE8E0A] md:rounded-r-xl rounded-xl w-full md:w-[135px] md:h-[67px] h-[50px] border-none cursor-pointer flex items-center justify-center transition-all hover:bg-[#ff7700] hover:shadow-lg active:scale-[0.98] flex-shrink-0 relative overflow-hidden group"
                       onClick={handleSearch}
                     >
                       <span className="sr-only">Search</span>

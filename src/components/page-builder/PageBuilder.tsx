@@ -1292,16 +1292,15 @@ export default function PageBuilder({ userType }: PageBuilderProps) {
               subtitle={activeTab === 'profile' ? "Customize your public profile page" : "Customize your property page"} 
             />
           ) : (
-            <header className="flex items-center justify-between mb-4 md:flex-col md:items-start md:gap-3.5">
-              <div className="flex flex-col gap-1">
-                <h1 className="text-2xl font-bold text-gray-900 m-0 mb-1 md:text-xl">
+            <header className="mb-4 w-full">
+              <div className="flex flex-col gap-1 w-full min-w-0">
+                <h1 className="text-2xl font-bold text-gray-900 m-0 mb-1 md:text-xl break-words">
                   {activeTab === 'profile' ? 'Page Builder > Profile' : 'Page Builder > Property'}
                 </h1>
-                <p className="text-sm text-gray-400 m-0">
+                <p className="text-sm text-gray-400 m-0 break-words">
                   {activeTab === 'profile' ? 'Customize your public profile page' : 'Customize your property page'}
                 </p>
               </div>
-             
             </header>
           )}
           

@@ -102,13 +102,13 @@ function VerticalPropertyCard({
 
   return (
     <article
-      className="group bg-white rounded-xl border border-gray-200 overflow-hidden flex flex-col w-full max-w-[400px] shadow-sm hover:shadow-md transition-all duration-200"
+      className="group bg-white rounded-xl border border-gray-200 overflow-hidden flex flex-col w-full max-w-[400px] shadow-sm hover:shadow-md transition-all duration-200 h-[580px] min-h-[580px] max-h-[580px]"
       onClick={handleCardClick}
-      style={{ cursor: id ? 'pointer' : 'default' }}
+      style={{ cursor: id ? 'pointer' : 'default', borderWidth: '1px', borderStyle: 'solid', borderColor: 'rgb(229, 231, 235)' }}
     >
       {/* Property image with hover arrows */}
       <div
-        className="relative w-full aspect-[4/3] overflow-hidden rounded-t-xl bg-gray-100"
+        className="relative w-full aspect-[4/4] overflow-hidden rounded-t-xl bg-gray-100"
         onMouseEnter={() => setImageHovered(true)}
         onMouseLeave={() => setImageHovered(false)}
       >
@@ -143,12 +143,12 @@ function VerticalPropertyCard({
       </div>
 
       {/* Content */}
-      <div className="flex flex-col flex-1 p-4 gap-3">
+      <div className="flex flex-col flex-1 p-4 gap-3 overflow-hidden">
         <div className="flex justify-between items-center gap-2">
           <span className="text-blue-600 text-xs font-semibold uppercase tracking-wide">{propertyType}</span>
           <span className="text-gray-400 text-xs">{date}</span>
         </div>
-        <p className="text-blue-600 text-2xl font-bold leading-tight">{price}</p>
+        <p className="text-blue-600 text-3xl font-bold leading-tight">{price}</p>
         <h3 className="text-gray-900 text-base font-semibold leading-snug line-clamp-2">
           {title}{location ? `, ${location}` : ''}
         </h3>
@@ -184,7 +184,7 @@ function VerticalPropertyCard({
         </div>
 
         {/* Agent strip */}
-        <div className="flex items-center gap-3 p-3 rounded-xl bg-gray-100">
+        <div className="flex items-center gap-3 px-3 py-2 rounded-xl bg-gray-50 !border !border-gray-200" style={{ borderWidth: '1px', borderStyle: 'solid', borderColor: '#E5E7EB' }}>
           <img
             src={rentManagerImage || ASSETS.PLACEHOLDER_PROFILE}
             alt={rentManagerName}
@@ -193,9 +193,9 @@ function VerticalPropertyCard({
               e.currentTarget.src = ASSETS.PLACEHOLDER_PROFILE
             }}
           />
-          <div className="flex-1 min-w-0">
-            <p className="text-gray-900 text-sm font-semibold truncate">{rentManagerName}</p>
-            <p className="text-gray-500 text-xs uppercase tracking-wide">{rentManagerRole}</p>
+          <div className="flex-1 min-w-0 flex flex-col justify-center">
+            <h3 className="text-blue-600 text-sm font-semibold m-0">{rentManagerName}</h3>
+            <p className="text-gray-500 text-xs uppercase tracking-wide m-0">{rentManagerRole}</p>
           </div>
           <div className="flex items-center gap-1.5 flex-shrink-0">
             {rentManagerEmail && (
@@ -265,6 +265,7 @@ function VerticalPropertyCard({
             type="button"
             onClick={(e) => e.stopPropagation()}
             className="w-10 h-10 rounded-lg border border-gray-200 bg-white flex items-center justify-center text-red-500 hover:bg-red-50 transition-colors"
+            style={{ borderWidth: '1px', borderStyle: 'solid', borderColor: '#E5E7EB' }}
             aria-label="Add to favorites"
           >
             <FiHeart className="w-5 h-5" />
@@ -278,6 +279,7 @@ function VerticalPropertyCard({
                 setShowSharePopup(!showSharePopup)
               }}
               className="w-10 h-10 rounded-lg border border-gray-200 bg-white flex items-center justify-center text-gray-700 hover:bg-gray-50 transition-colors"
+              style={{ borderWidth: '1px', borderStyle: 'solid', borderColor: '#E5E7EB' }}
               aria-label="Share"
             >
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-5 h-5">

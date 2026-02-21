@@ -13,6 +13,7 @@ interface ModernPropertyCardProps {
   image?: string
   rentManagerName?: string
   rentManagerRole?: string
+  rentManagerImage?: string
   bedrooms?: number
   bathrooms?: number
   parking?: number
@@ -29,6 +30,7 @@ function ModernPropertyCard({
   image = ASSETS.PLACEHOLDER_PROPERTY_MAIN,
   rentManagerName = 'Rental.Ph Official',
   rentManagerRole = 'Rent Manager',
+  rentManagerImage,
   bedrooms = 4,
   bathrooms = 2,
   parking: _parking = 2,
@@ -122,9 +124,12 @@ function ModernPropertyCard({
         <div className="mt-auto flex items-center justify-between pt-2">
           <div className="flex flex-1 items-center gap-2.5 min-w-0">
             <img
-              src={ASSETS.LOGO_ICON}
-              alt="Rentals.ph Official"
+              src={rentManagerImage || ASSETS.PLACEHOLDER_PROFILE}
+              alt={rentManagerName}
               className="h-10 w-10 flex-shrink-0 rounded-full border-2 border-rental-blue-600 bg-white object-cover"
+              onError={(e) => {
+                e.currentTarget.src = ASSETS.PLACEHOLDER_PROFILE
+              }}
             />
             <div className="flex min-w-0 flex-col gap-0.5">
               <p className="m-0 overflow-hidden text-ellipsis whitespace-nowrap font-outfit text-xs font-semibold leading-tight text-rental-blue-600">

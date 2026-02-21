@@ -610,6 +610,7 @@ export default function RentManagerDetailsPage() {
                       const images = (p.images_url && p.images_url.length > 0)
                         ? [mainImg, ...(p.images_url || []).filter((u): u is string => !!u && u !== mainImg)]
                         : undefined
+                      const managerImage = manager.image ? getAgentImageUrl(manager.image) : undefined
                       return viewMode === 'horizontal' ? (
                         <HorizontalPropertyCard
                           key={p.id}
@@ -622,6 +623,7 @@ export default function RentManagerDetailsPage() {
                           images={images}
                           rentManagerName={manager.name}
                           rentManagerRole={manager.role}
+                          rentManagerImage={managerImage}
                           bedrooms={p.bedrooms}
                           bathrooms={p.bathrooms}
                           parking={0}
@@ -640,6 +642,7 @@ export default function RentManagerDetailsPage() {
                             images={images}
                             rentManagerName={manager.name}
                             rentManagerRole={manager.role}
+                            rentManagerImage={managerImage}
                             bedrooms={p.bedrooms}
                             bathrooms={p.bathrooms}
                             parking={0}

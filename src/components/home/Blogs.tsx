@@ -3,14 +3,22 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Pagination from '../common/Pagination'
+import { BlogCardSkeleton } from '../common/BlogCardSkeleton'
 import { blogsApi } from '../../api'
 import type { Blog } from '../../types'
 import { ASSETS } from '@/utils/assets'
+import FadeInOnView from '@/components/common/FadeInOnView'
+import { BlogCard } from '@/components/common'
 
 const Blogs = () => {
   const [blogs, setBlogs] = useState<Blog[]>([])
   const [loading, setLoading] = useState(true)
-  const [currentIndex, setCurrentIndex] = useState(1) // Index of the large blog (start at 1)
+  const [currentPage, setCurrentPage] = useState(1)
+  const [selectedCategory, setSelectedCategory] = useState<string>('All Categories')
+
+  // Number of cards per row based on screen size
+  // Small screens: 1 column, Medium: 2-3 columns, Large: 4 columns
+  const cardsPerPage = 4 // Maximum cards per row on large screens
 
   useEffect(() => {
     const fetchBlogs = async () => {
@@ -26,41 +34,36 @@ const Blogs = () => {
     fetchBlogs()
   }, [])
 
-  // Always show 3 cards: left (small), center (large), right (small)
-  // If not enough blogs, reuse first or show placeholder
-  const getThreeBlogs = (index: number) => {
-    // index: center (large) blog index
-    const count = blogs.length
-    const placeholder = {
-      id: 'placeholder',
-      image: ASSETS.BLOG_IMAGE_MAIN,
-      category: 'Blog',
-      title: 'No Blog Available',
-      excerpt: 'Stay tuned for more updates!',
-      author: 'Rental.ph',
-      published_at: '',
-      read_time: 1,
-    }
-    if (count === 0) {
-      return [placeholder, placeholder, placeholder]
-    }
-    // left: previous blog or first
-    const left = blogs[(index - 1 + count) % count] || blogs[0] || placeholder
-    // center: current
-    const center = blogs[index % count] || blogs[0] || placeholder
-    // right: next blog or first
-    const right = blogs[(index + 1) % count] || blogs[0] || placeholder
-    return [left, center, right]
-  }
+  // Derive unique categories for chips
+  const categories = ['All Categories', ...Array.from(new Set(blogs.map((b) => b.category).filter(Boolean)))]
 
-  // Pagination: each page is a center (large) blog
-  const totalPages = blogs.length > 0 ? blogs.length : 1
+  // Filter blogs by selected category (if any)
+  const filteredBlogs =
+    selectedCategory === 'All Categories'
+      ? blogs
+      : blogs.filter((b) => b.category === selectedCategory)
+
+  const effectiveBlogs = filteredBlogs.length > 0 ? filteredBlogs : blogs
+
+  // Calculate pagination
+  const totalPages = Math.ceil(effectiveBlogs.length / cardsPerPage)
+  const startIndex = (currentPage - 1) * cardsPerPage
+  const endIndex = startIndex + cardsPerPage
+  const currentPageBlogs = effectiveBlogs.slice(startIndex, endIndex)
 
   const handlePageChange = (newPage: number) => {
-    if (blogs.length === 0) return
-    const newIndex = (newPage - 1) % blogs.length
-    if (newIndex === currentIndex) return
-    setCurrentIndex(newIndex)
+    setCurrentPage(newPage)
+    // Scroll to top of blog section when page changes
+    const blogSection = document.getElementById('blog')
+    if (blogSection) {
+      blogSection.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }
+  }
+
+  // Reset to page 1 when category changes
+  const handleCategoryChange = (category: string) => {
+    setSelectedCategory(category)
+    setCurrentPage(1)
   }
 
   const formatDate = (dateString: string | null): string => {
@@ -88,177 +91,114 @@ const Blogs = () => {
     return image
   }
 
-  const [leftBlog, centerBlog, rightBlog] = getThreeBlogs(currentIndex)
-
   return (
-    <section id="blog" className="bg-white px-4 sm:px-6 md:px-10 lg:px-[150px] w-full mt-0 min-h-[70vh] flex flex-col justify-center py-6 sm:py-8">
+    <section id="blog" className="bg-[#F9FAFB] px-4 sm:px-6 md:px-10 lg:px-[150px] w-full mt-0 min-h-[40vh] sm:min-h-[60vh] flex flex-col justify-center py-6 sm:py-8">
       <div className="w-full mx-auto overflow-visible py-4 sm:py-5">
-        <div className="flex flex-col sm:flex-row justify-between items-start mb-4 sm:mb-6 gap-4">
-          <div>
-            <h2 className="text-gray-900 font-outfit text-2xl sm:text-3xl font-bold leading-tight tracking-tight m-0 mb-2 sm:mb-2.5">
+        {/* Header: stack on mobile, row on larger screens */}
+        <FadeInOnView className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-6 sm:mb-8" as="div">
+          <div className="text-center sm:text-left max-w-xl">
+            <h2 className="text-gray-900 font-outfit text-2xl sm:text-3xl md:text-4xl font-bold leading-tight tracking-tight m-0 mb-2">
               Blogs
             </h2>
-            <p className="text-gray-600 font-outfit text-sm sm:text-base font-light leading-snug tracking-tight m-0">
-              We Share Our Knowledge
+            <p className="text-gray-600 font-outfit text-sm sm:text-base md:text-lg leading-relaxed m-0">
+              Find the latest news and insights from the rentals.ph team.
             </p>
           </div>
-          <Link href="/blog" className="text-rental-blue-600 font-outfit text-sm sm:text-base font-medium no-underline flex items-center gap-2 sm:gap-3.5 tracking-tight leading-none hover:text-rental-orange-500 transition-colors">
-            Visit Blogs
-            <svg width="12" height="14" className="sm:w-[14px] sm:h-4" viewBox="0 0 14 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M7 1L13 8L7 15M13 8H1" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-          </Link>
-        </div>
+          <div className="flex justify-center sm:justify-end">
+            <Link
+              href="/blog"
+              className="inline-flex items-center gap-2 px-4 sm:px-5 py-2.5 rounded-full border-2 border-rental-blue-500 text-rental-blue-600 font-outfit text-sm sm:text-base font-semibold bg-white hover:bg-blue-50 transition-colors"
+            >
+              Visit Blogs
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 20 20"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                className="flex-shrink-0"
+              >
+                <path
+                  d="M7 4L13 10L7 16"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </Link>
+          </div>
+        </FadeInOnView>
 
+        {/* Blog categories chips */}
+        {blogs.length > 0 && (
+          <div className="flex flex-col gap-2 sm:gap-3 mb-3">
+            <div className="flex items-center justify-between gap-2 px-1 sm:px-0">
+              <p className="text-gray-700 font-outfit text-xs sm:text-sm md:text-base font-medium m-0">
+                Browse blog posts by category
+              </p>
+            </div>
+            <div className="subcategory-row flex items-center gap-1.5 sm:gap-2 overflow-x-auto overflow-y-hidden flex-nowrap sm:flex-wrap justify-start sm:justify-start p-1.5 sm:p-2 rounded-full sm:rounded-2xl bg-white shadow-[0_1px_4px_rgba(148,163,184,0.25)] w-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+              {categories.map((cat) => (
+                <button
+                  key={cat}
+                  type="button"
+                  className={`flex-shrink-0 px-3 sm:px-4 py-2 rounded-full text-xs sm:text-sm font-medium transition-all duration-200 touch-manipulation min-h-[32px] sm:min-h-[36px] ${
+                    selectedCategory === cat
+                      ? 'bg-rental-blue-600 text-white shadow-[0_4px_12px_rgba(37,99,235,0.35)]'
+                      : 'bg-transparent text-gray-700 border border-gray-200 hover:bg-blue-50 hover:border-blue-300'
+                  }`}
+                  onClick={() => handleCategoryChange(cat)}
+                >
+                  {cat}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+        
         {loading ? (
-          <div className="text-center p-10">
-            <p>Loading blogs...</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5 lg:gap-6 items-stretch w-full overflow-visible">
+            {Array.from({ length: cardsPerPage }).map((_, idx) => (
+              <div key={idx} className="flex justify-center">
+                <BlogCardSkeleton size="small" className="w-full" />
+              </div>
+            ))}
+          </div>
+        ) : currentPageBlogs.length > 0 ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5 lg:gap-6 items-stretch w-full overflow-visible">
+            {currentPageBlogs.map((blog) => (
+              <div key={blog.id} className="flex justify-center">
+                <BlogCard
+                  image={getImageUrl(blog.image)}
+                  category={blog.category}
+                  title={blog.title}
+                  excerpt={blog.excerpt}
+                  author={blog.author}
+                  date={formatDate(blog.published_at)}
+                  readTime={formatReadTime(blog.read_time)}
+                  link={`/blog/${blog.id}`}
+                />
+              </div>
+            ))}
           </div>
         ) : (
-          <div className="flex flex-col lg:flex-row gap-4 sm:gap-6 lg:gap-10 items-stretch w-full overflow-visible relative">
-            {/* Left Small Blog Card */}
-            <div className="flex-1 min-w-0 lg:max-w-[28%] flex relative transition-all duration-600">
-              <Link href={leftBlog.id === 'placeholder' ? '#' : `/blog/${leftBlog.id}`} className="no-underline w-full h-full">
-                <article className="bg-white rounded-xl sm:rounded-2xl overflow-hidden flex flex-col h-full group shadow-xl transition-shadow">
-                  <div className="w-full h-[140px] sm:h-[190px] overflow-hidden flex-shrink-0">
-                    <img
-                      src={getImageUrl(leftBlog.image)}
-                      alt={leftBlog.title}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <div className="p-4 sm:p-5 flex flex-col flex-1">
-                    <div className="flex justify-between items-center mb-1.5 sm:mb-2">
-                      <span className="text-rental-blue-600 font-outfit text-[10px] sm:text-xs font-semibold uppercase tracking-wider">{leftBlog.category}</span>
-                      <span className="text-gray-500 font-outfit text-[10px] sm:text-xs">{formatReadTime(leftBlog.read_time)}</span>
-                    </div>
-                    <h3 className="text-gray-900 font-outfit text-base sm:text-lg md:text-xl font-bold leading-snug mb-1.5 sm:mb-2 line-clamp-2">{leftBlog.title}</h3>
-                    <p className="text-gray-600 font-outfit text-sm sm:text-base md:text-lg leading-relaxed mb-2 sm:mb-3 line-clamp-3 flex-1">{leftBlog.excerpt}</p>
-                    <div className="flex flex-col gap-1.5 sm:gap-2 mb-2 sm:mb-3">
-                      <div className="flex items-center gap-1.5 sm:gap-2 text-gray-700">
-                        <svg width="20" height="20" className="sm:w-6 sm:h-6 flex-shrink-0" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                          <path d="M12 12c2.761 0 5-2.239 5-5s-2.239-5-5-5-5 2.239-5 5 2.239 5 5 5zm0 2c-3.866 0-7 2.239-7 5v3h14v-3c0-2.761-3.134-5-7-5z"/>
-                        </svg>
-                        <span className="font-outfit text-xs sm:text-sm md:text-base">{leftBlog.author}</span>
-                      </div>
-                      <div className="flex items-center gap-1.5 sm:gap-2 text-gray-600">
-                        <svg width="18" height="18" className="sm:w-5 sm:h-5 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                          <path d="M6 2a1 1 0 1 1 2 0v1h4V2a1 1 0 1 1 2 0v1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h1V2a1 1 0 1 1 2 0v1zm10 3H4v11h12V5zm-1 2v2H5V7h10z"/>
-                        </svg>
-                        <span className="font-outfit text-[10px] sm:text-xs">{formatDate(leftBlog.published_at)}</span>
-                      </div>
-                    </div>
-                    <div className="mt-auto">
-                      <span className="text-rental-blue-600 font-outfit text-sm sm:text-base font-medium flex items-center gap-1.5 sm:gap-2 group-hover:text-rental-orange-500 transition-colors">
-                        Read More
-                        <svg width="16" height="14" className="sm:w-5 sm:h-[17px]" viewBox="0 0 20 17" fill="none" xmlns="http://www.w3.org/2000/svg">
-                          <path d="M12 1L19 8.5L12 16M19 8.5H1" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                        </svg>
-                      </span>
-                    </div>
-                  </div>
-                </article>
-              </Link>
-            </div>
-
-            {/* Center Large Blog Card */}
-            <div className="flex-[2] min-w-0 flex relative transition-all duration-600 order-2 lg:order-none">
-              <Link href={centerBlog.id === 'placeholder' ? '#' : `/blog/${centerBlog.id}`} className="no-underline w-full h-full">
-                <article className="relative rounded-xl sm:rounded-2xl overflow-hidden group h-[360px] sm:h-[450px] lg:h-[520px]">
-                  <div className="absolute inset-0 w-full h-full">
-                    <img
-                      src={getImageUrl(centerBlog.image)}
-                      alt={centerBlog.title}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <div className="absolute inset-0 bg-black/30 z-10"></div>
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent flex flex-col justify-end p-4 sm:p-5 md:p-6 z-20">
-                    <div className="flex justify-between items-center mb-2 sm:mb-3">
-                      <span className="text-white font-outfit text-xs sm:text-sm md:text-base font-semibold uppercase tracking-wider">{centerBlog.category}</span>
-                      <span className="text-white/90 font-outfit text-xs sm:text-sm md:text-base">{formatReadTime(centerBlog.read_time)}</span>
-                    </div>
-                    <h3 className="text-white font-outfit text-xl sm:text-2xl md:text-3xl font-bold leading-tight mb-2 sm:mb-3">{centerBlog.title}</h3>
-                    <p className="text-white/95 font-outfit text-sm sm:text-base md:text-lg leading-relaxed mb-3 sm:mb-4 line-clamp-3">{centerBlog.excerpt}</p>
-                    <div className="flex flex-col sm:flex-row gap-3 sm:gap-6 mb-3 sm:mb-4">
-                      <div className="flex items-center gap-1.5 sm:gap-2 text-white">
-                        <svg width="20" height="20" className="sm:w-6 sm:h-6 flex-shrink-0" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                          <path d="M12 12c2.761 0 5-2.239 5-5s-2.239-5-5-5-5 2.239-5 5 2.239 5 5 5zm0 2c-3.866 0-7 2.239-7 5v3h14v-3c0-2.761-3.134-5-7-5z"/>
-                        </svg>
-                        <span className="font-outfit text-xs sm:text-sm md:text-base">{centerBlog.author}</span>
-                      </div>
-                      <div className="flex items-center gap-1.5 sm:gap-2 text-white/90">
-                        <svg width="18" height="18" className="sm:w-5 sm:h-5 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                          <path d="M6 2a1 1 0 1 1 2 0v1h4V2a1 1 0 1 1 2 0v1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h1V2a1 1 0 1 1 2 0v1zm10 3H4v11h12V5zm-1 2v2H5V7h10z"/>
-                        </svg>
-                        <span className="font-outfit text-xs sm:text-sm md:text-base">{formatDate(centerBlog.published_at)}</span>
-                      </div>
-                    </div>
-                    <div>
-                      <span className="text-white font-outfit text-sm sm:text-base md:text-lg font-medium flex items-center gap-2 sm:gap-3 group-hover:text-rental-orange-500 transition-colors">
-                        Read More
-                        <svg width="16" height="14" className="sm:w-5 sm:h-[17px]" viewBox="0 0 20 17" fill="none" xmlns="http://www.w3.org/2000/svg">
-                          <path d="M12 1L19 8.5L12 16M19 8.5H1" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                        </svg>
-                      </span>
-                    </div>
-                  </div>
-                </article>
-              </Link>
-            </div>
-
-            {/* Right Small Blog Card */}
-            <div className="flex-1 min-w-0 lg:max-w-[28%] flex relative transition-all duration-600 order-3">
-              <Link href={rightBlog.id === 'placeholder' ? '#' : `/blog/${rightBlog.id}`} className="no-underline w-full h-full">
-                <article className="bg-white rounded-xl sm:rounded-2xl overflow-hidden flex flex-col h-full group shadow-xl transition-shadow">
-                  <div className="w-full h-[140px] sm:h-[190px] overflow-hidden flex-shrink-0">
-                    <img
-                      src={getImageUrl(rightBlog.image)}
-                      alt={rightBlog.title}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <div className="p-4 sm:p-5 flex flex-col flex-1">
-                    <div className="flex justify-between items-center mb-1.5 sm:mb-2">
-                      <span className="text-rental-blue-600 font-outfit text-[10px] sm:text-xs font-semibold uppercase tracking-wider">{rightBlog.category}</span>
-                      <span className="text-gray-500 font-outfit text-[10px] sm:text-xs">{formatReadTime(rightBlog.read_time)}</span>
-                    </div>
-                    <h3 className="text-gray-900 font-outfit text-base sm:text-lg md:text-xl font-bold leading-snug mb-2 sm:mb-3 line-clamp-2">{rightBlog.title}</h3>
-                    <p className="text-gray-600 font-outfit text-sm sm:text-base md:text-lg leading-relaxed mb-3 sm:mb-4 line-clamp-3 flex-1">{rightBlog.excerpt}</p>
-                    <div className="flex flex-col gap-1.5 sm:gap-2 mb-3 sm:mb-4">
-                      <div className="flex items-center gap-1.5 sm:gap-2 text-gray-700">
-                        <svg width="20" height="20" className="sm:w-6 sm:h-6 flex-shrink-0" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                          <path d="M12 12c2.761 0 5-2.239 5-5s-2.239-5-5-5-5 2.239-5 5 2.239 5 5 5zm0 2c-3.866 0-7 2.239-7 5v3h14v-3c0-2.761-3.134-5-7-5z"/>
-                        </svg>
-                        <span className="font-outfit text-xs sm:text-sm md:text-base">{rightBlog.author}</span>
-                      </div>
-                      <div className="flex items-center gap-1.5 sm:gap-2 text-gray-600">
-                        <svg width="18" height="18" className="sm:w-5 sm:h-5 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                          <path d="M6 2a1 1 0 1 1 2 0v1h4V2a1 1 0 1 1 2 0v1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h1V2a1 1 0 1 1 2 0v1zm10 3H4v11h12V5zm-1 2v2H5V7h10z"/>
-                        </svg>
-                        <span className="font-outfit text-[10px] sm:text-xs">{formatDate(rightBlog.published_at)}</span>
-                      </div>
-                    </div>
-                    <div className="mt-auto">
-                      <span className="text-rental-blue-600 font-outfit text-sm sm:text-base font-medium flex items-center gap-1.5 sm:gap-2 group-hover:text-rental-orange-500 transition-colors">
-                        Read More
-                        <svg width="16" height="14" className="sm:w-5 sm:h-[17px]" viewBox="0 0 20 17" fill="none" xmlns="http://www.w3.org/2000/svg">
-                          <path d="M12 1L19 8.5L12 16M19 8.5H1" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                        </svg>
-                      </span>
-                    </div>
-                  </div>
-                </article>
-              </Link>
-            </div>
+          <div className="flex flex-col items-center justify-center py-12 text-center">
+            <p className="text-gray-600 font-outfit text-base mb-4">No blog posts found in this category.</p>
+            <button
+              onClick={() => handleCategoryChange('All Categories')}
+              className="px-4 py-2 rounded-full border-2 border-rental-blue-500 text-rental-blue-600 font-outfit text-sm font-semibold bg-white hover:bg-blue-50 transition-colors"
+            >
+              View All Categories
+            </button>
           </div>
         )}
 
         {/* Pagination */}
-        {totalPages > 1 && blogs.length > 1 && (
-          <div className="flex justify-center mt-12">
+        {totalPages > 1 && effectiveBlogs.length > 0 && (
+          <div className="flex justify-center mt-8 sm:mt-12 overflow-x-auto px-2">
             <Pagination
-              currentPage={currentIndex + 1}
+              currentPage={currentPage}
               totalPages={totalPages}
               onPageChange={handlePageChange}
               className="blogs-pagination"

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import VerticalPropertyCard from '../common/VerticalPropertyCard'
+import { VerticalPropertyCardSkeleton } from '../common/VerticalPropertyCardSkeleton'
 import { propertiesApi } from '../../api'
 import type { Property } from '../../types'
 import type { PaginatedResponse } from '../../api/types'
@@ -33,7 +34,14 @@ function PropertiesForRent() {
 
   // Helper function to format price
   const formatPrice = (price: number): string => {
-    return `₱${price.toLocaleString('en-US')}/Month`
+    return `₱${price.toLocaleString('en-US')}`
+  }
+
+  // Helper function to format price type
+  const formatPriceType = (priceType: string | null | undefined): string | undefined => {
+    if (!priceType) return undefined
+    // Capitalize first letter and make rest lowercase for consistency
+    return priceType.charAt(0).toUpperCase() + priceType.slice(1).toLowerCase()
   }
 
   // Helper function to format date
@@ -75,8 +83,12 @@ function PropertiesForRent() {
         </div>
 
         {loading ? (
-          <div className="p-10 text-center">
-            <p>Loading properties...</p>
+          <div className="mx-auto grid w-full max-w-[1280px] grid-cols-3 justify-items-center gap-8 lg:grid-cols-2 lg:gap-6 md:grid-cols-1 md:gap-5">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <div key={i} className="w-full max-w-[420px]">
+                <VerticalPropertyCardSkeleton />
+              </div>
+            ))}
           </div>
         ) : properties.length > 0 ? (
           <div className="mx-auto grid w-full max-w-[1280px] grid-cols-3 justify-items-center gap-8 lg:grid-cols-2 lg:gap-6 md:grid-cols-1 md:gap-5">
@@ -100,7 +112,7 @@ function PropertiesForRent() {
                   key={property.id}
                   id={property.id}
                   propertyType={property.type}
-                  priceType={property.price_type || 'Monthly'}
+                  priceType={formatPriceType(property.price_type)}
                   price={formatPrice(property.price)}
                   title={property.title}
                   image={mainImage}
@@ -119,6 +131,9 @@ function PropertiesForRent() {
                   parking={0}
                   propertySize={propertySize}
                   location={property.location}
+                  city={property.city}
+                  streetAddress={property.street_address}
+                  stateProvince={property.state_province}
                 />
               )
             })}

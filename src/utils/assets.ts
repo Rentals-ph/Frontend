@@ -19,7 +19,7 @@ interface AssetInfo {
   subcategory?: string;
 }
 
-type AssetId = 
+type AssetId =
   // Logos
   | 'LOGO_HERO_MAIN' | 'LOGO_HERO_NEW' | 'LOGO_FOOTER' | 'LOGO_FOOTER_NEW' | 'LOGO_ICON'
   | 'LOGO_ICON_PREVIEW_10' | 'LOGO_PREVIEW_10' | 'LOGO_PREVIEW_11' | 'LOGO_PREVIEW_12' | 'LOGO_PREVIEW_13'
@@ -44,14 +44,19 @@ type AssetId =
   // Images - Testimonials
   | 'TESTIMONIAL_ELAINE' | 'TESTIMONIAL_JAVIE' | 'TESTIMONIAL_RICA'
   | 'TESTIMONIAL_ELAINE_10' | 'TESTIMONIAL_JAVIE_10' | 'TESTIMONIAL_RICA_10'
-  // Images - About
-  | 'ABOUT_TROPICAL_TRAVEL' | 'ABOUT_RENTPH_CARES' | 'ABOUT_TRUSTED_PARTNER' | 'ABOUT_TRANSFORMING' | 'ABOUT_COMPREHENSIVE'
-  | 'ABOUT_BACKGROUND' | 'ABOUT_LANDING_PAGE' | 'ABOUT_ISTOCK_10' | 'ABOUT_ISTOCK_11'
-  | 'ABOUT_UNSPLASH_0' | 'ABOUT_UNSPLASH_1' | 'ABOUT_UNSPLASH_2' | 'ABOUT_UNSPLASH_3'
-  // Backgrounds
-  | 'BG_HERO_LANDING' | 'BG_HERO_LANDING_2' | 'BG_HERO_LANDING_NEW' | 'BG_CONTACT_US' | 'BG_TESTIMONIALS' | 'BG_LOGIN' | 'BG_BLOG' | 'BG_NEWS' | 'BG_CONTACT_HORIZONTAL' | 'BG_CONTACT_VERTICAL' | 'BG_CREATE_LISTING'
+// Images - About
+| 'ABOUT_TROPICAL_TRAVEL' | 'ABOUT_RENTPH_CARES' | 'ABOUT_TRUSTED_PARTNER' | 'ABOUT_TRANSFORMING' | 'ABOUT_COMPREHENSIVE'
+| 'ABOUT_BACKGROUND' | 'ABOUT_LANDING_PAGE' | 'ABOUT_ISTOCK_10' | 'ABOUT_ISTOCK_11'
+| 'ABOUT_OUR_STORY' | 'ABOUT_OUR_MISSION' | 'ABOUT_OUR_VISION'
+| 'ABOUT_UNSPLASH_0' | 'ABOUT_UNSPLASH_1' | 'ABOUT_UNSPLASH_2' | 'ABOUT_UNSPLASH_3'
+// Backgrounds
+| 'BG_HERO_LANDING' | 'BG_HERO_LANDING_2' | 'BG_HERO_LANDING_NEW' | 'BG_CONTACT_US' | 'BG_TESTIMONIALS' | 'BG_LOGIN' | 'BG_LOGIN_MODAL_LEFT' | 'BG_RENT_MANAGERS' | 'BG_RENT_MANAGERS_HERO' | 'BG_RENT_MANAGERS_FOOTER' | 'BG_BLOG' | 'BG_NEWS' | 'BG_CONTACT_HORIZONTAL' | 'BG_CONTACT_VERTICAL' | 'BG_CREATE_LISTING'
   // Images - Contact
   | 'CONTACT_PERSON'
+  // Images - Agents
+  | 'AGENTS_HERO_PERSON'
+  // Images - Modal
+  | 'LOGIN_MODAL_GROUP'
   // Decorative
   | 'DECORATIVE_VECTOR_1' | 'DECORATIVE_VECTOR_2' | 'DECORATIVE_VECTOR_3'
   | 'DECORATIVE_RECTANGLE_320' | 'DECORATIVE_RECTANGLE_340'
@@ -126,7 +131,7 @@ export function getAssetInfo(id: AssetId): AssetInfo | undefined {
 export function getAssetsByCategory(category: AssetCategory): AssetInfo[] {
   const categoryAssets = (assetManifest.assets as any)[category];
   if (!categoryAssets) return [];
-  
+
   return Object.values(categoryAssets) as AssetInfo[];
 }
 
@@ -139,10 +144,10 @@ export function getAssetsByCategory(category: AssetCategory): AssetInfo[] {
 export function getAssetsBySubcategory(category: string, subcategory: string): AssetInfo[] {
   const categoryAssets = (assetManifest.assets as any)[category];
   if (!categoryAssets) return [];
-  
+
   const subcategoryAssets = categoryAssets[subcategory];
   if (!subcategoryAssets) return [];
-  
+
   return Object.values(subcategoryAssets) as AssetInfo[];
 }
 
@@ -177,29 +182,37 @@ export const ASSETS = {
   LOGO_HERO_MAIN: getAsset('LOGO_HERO_MAIN')!,
   LOGO_FOOTER: getAsset('LOGO_FOOTER')!,
   LOGO_ICON: getAsset('LOGO_ICON')!,
-  
+
   // Placeholders
   PLACEHOLDER_PROPERTY_MAIN: getAsset('PLACEHOLDER_PROPERTY_MAIN')!,
   PLACEHOLDER_PROFILE: getAsset('PLACEHOLDER_PROFILE')!,
   PLACEHOLDER_TESTIMONIAL_PERSON: getAsset('PLACEHOLDER_TESTIMONIAL_PERSON')!,
-  
+
   // Icons
   ICON_QUOTE_1: getAsset('ICON_QUOTE_1')!,
   ICON_QUOTE_2: getAsset('ICON_QUOTE_2')!,
-  
+
   // Backgrounds
   BG_HERO_LANDING: getAsset('BG_HERO_LANDING')!,
+  BG_HERO_LANDING_2: getAsset('BG_HERO_LANDING_2')!,
+  BG_HERO_LANDING_NEW: getAsset('BG_HERO_LANDING_NEW')!,
   BG_CONTACT_US: getAsset('BG_CONTACT_US')!,
   BG_TESTIMONIALS: getAsset('BG_TESTIMONIALS')!,
   BG_LOGIN: getAsset('BG_LOGIN')!,
+  BG_LOGIN_MODAL_LEFT: getAsset('BG_LOGIN_MODAL_LEFT')!,
   BG_BLOG: getAsset('BG_BLOG')!,
   BG_NEWS: getAsset('BG_NEWS')!,
+  BG_RENT_MANAGERS: getAsset('BG_RENT_MANAGERS')!,
+  BG_RENT_MANAGERS_HERO: getAsset('BG_RENT_MANAGERS_HERO')!,
+  BG_RENT_MANAGERS_FOOTER: getAsset('BG_RENT_MANAGERS_FOOTER')!,
   BG_CONTACT_HORIZONTAL: getAsset('BG_CONTACT_HORIZONTAL')!,
   BG_CONTACT_VERTICAL: getAsset('BG_CONTACT_VERTICAL')!,
   BG_CREATE_LISTING: getAsset('BG_CREATE_LISTING')!,
   // Contact Images
   CONTACT_PERSON: getAsset('CONTACT_PERSON')!,
-  
+  AGENTS_HERO_PERSON: getAsset('AGENTS_HERO_PERSON')!,
+  LOGIN_MODAL_GROUP: getAsset('LOGIN_MODAL_GROUP')!,
+
   // Partners
   PARTNER_1: getAsset('PARTNER_1')!,
   PARTNER_2: getAsset('PARTNER_2')!,
@@ -216,10 +229,16 @@ export const ASSETS = {
   ABOUT_TRANSFORMING: getAsset('ABOUT_TRANSFORMING')!,
   ABOUT_COMPREHENSIVE: getAsset('ABOUT_COMPREHENSIVE')!,
   ABOUT_BACKGROUND: getAsset('ABOUT_BACKGROUND')!,
+  ABOUT_LANDING_PAGE: getAsset('ABOUT_LANDING_PAGE')!,
+  ABOUT_ISTOCK_10: getAsset('ABOUT_ISTOCK_10')!,
+  ABOUT_ISTOCK_11: getAsset('ABOUT_ISTOCK_11')!,
+  ABOUT_OUR_STORY: getAsset('ABOUT_OUR_STORY')!,
+  ABOUT_OUR_MISSION: getAsset('ABOUT_OUR_MISSION')!,
+  ABOUT_OUR_VISION: getAsset('ABOUT_OUR_VISION')!,
   // Placeholders
   PLACEHOLDER_PROPERTY_MAIN_NEW: getAsset('PLACEHOLDER_PROPERTY_MAIN_NEW')!,
   PLACEHOLDER_PROPERTY: getAsset('PLACEHOLDER_PROPERTY')!,
-    LOGO_FOOTER_WHITE: '/assets/logos/rentals-logo-white.png',
+  LOGO_FOOTER_WHITE: '/assets/logos/rentals-logo-white.png',
 } as const;
 
 export default {

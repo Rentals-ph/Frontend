@@ -526,6 +526,26 @@
           "originalName": "contact-person.png"
         }
       },
+      "agents": {
+        "AGENTS_HERO_PERSON": {
+          "id": "AGENTS_HERO_PERSON",
+          "path": "/assets/images/agents/hero-person.png",
+          "category": "images",
+          "subcategory": "agents",
+          "description": "Agents page hero person image",
+          "originalName": "hero-person.png"
+        }
+      },
+      "modal": {
+        "LOGIN_MODAL_GROUP": {
+          "id": "LOGIN_MODAL_GROUP",
+          "path": "/assets/images/modal/login-modal-group.png",
+          "category": "images",
+          "subcategory": "modal",
+          "description": "Login/Register modal logo and social icons group",
+          "originalName": "login-modal-group.png"
+        }
+      },
       "testimonials": {
         "TESTIMONIAL_ELAINE": {
           "id": "TESTIMONIAL_ELAINE",
@@ -649,6 +669,30 @@
           "description": "iStock photo variant 11",
           "originalName": "istockphoto-511061090-612-x-612-11.png"
         },
+        "ABOUT_OUR_STORY": {
+          "id": "ABOUT_OUR_STORY",
+          "path": "/assets/images/about/our-story.png",
+          "category": "images",
+          "subcategory": "about",
+          "description": "Our Story - house model on blueprints with keys",
+          "originalName": "our-story.png"
+        },
+        "ABOUT_OUR_MISSION": {
+          "id": "ABOUT_OUR_MISSION",
+          "path": "/assets/images/about/our-mission.png",
+          "category": "images",
+          "subcategory": "about",
+          "description": "Our Mission - contract signing and professional service",
+          "originalName": "our-mission.png"
+        },
+        "ABOUT_OUR_VISION": {
+          "id": "ABOUT_OUR_VISION",
+          "path": "/assets/images/about/our-vision.png",
+          "category": "images",
+          "subcategory": "about",
+          "description": "Our Vision - technology and rental platform",
+          "originalName": "our-vision.png"
+        },
         "ABOUT_UNSPLASH_0": {
           "id": "ABOUT_UNSPLASH_0",
           "path": "/assets/images/about/unsplash-eh-it-1-hg-4-hs0.png",
@@ -712,6 +756,13 @@
           "description": "Login modal background image",
           "originalName": "login-bg.png"
         },
+        "BG_LOGIN_MODAL_LEFT": {
+          "id": "BG_LOGIN_MODAL_LEFT",
+          "path": "/assets/backgrounds/login-modal-left-bg.png",
+          "category": "backgrounds",
+          "description": "Login/Register modal left column background (gradient with wavy lines)",
+          "originalName": "login-modal-left-bg.png"
+        },
       "BG_CONTACT_US": {
         "id": "BG_CONTACT_US",
         "path": "/assets/backgrounds/background-contactus.png",
@@ -733,6 +784,20 @@
         "description": "Rent managers section background",
         "originalName": "rent-managers-bg.png"
         },
+      "BG_RENT_MANAGERS_HERO": {
+        "id": "BG_RENT_MANAGERS_HERO",
+        "path": "/assets/backgrounds/rent-manager-hero-bg.png",
+        "category": "backgrounds",
+        "description": "Rent managers hero section background",
+        "originalName": "rent-manager-hero-bg.png"
+        },
+      "BG_RENT_MANAGERS_FOOTER": {
+        "id": "BG_RENT_MANAGERS_FOOTER",
+        "path": "/assets/backgrounds/rent-managers-footer.png",
+        "category": "backgrounds",
+        "description": "Rent managers footer background",
+        "originalName": "rent-managers-footer.png"
+      },
         "BG_BLOG": {
           "id": "BG_BLOG",
           "path": "/assets/backgrounds/blog-bg.png",

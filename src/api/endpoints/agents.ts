@@ -42,6 +42,7 @@ export interface Agent {
   full_name?: string
   email: string
   phone?: string | null
+  whatsapp?: string | null
   agency_name?: string | null
   office_address?: string | null
   city?: string | null
@@ -52,6 +53,7 @@ export interface Agent {
   verified?: boolean
   properties_count?: number
   image?: string | null
+  image_path?: string | null
   avatar?: string | null
   profile_image?: string | null
   created_at?: string | null
